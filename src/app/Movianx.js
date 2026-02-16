@@ -1133,7 +1133,7 @@ You have a choice to make. You always will.`,
               onClick={() => setPg("home")}
               style={{
                 padding: "18px 36px",
-                borderRadius: 24,
+                borderRadius: 20,
                 background: "#fff",
                 border: "none",
                 color: "#000",
@@ -1213,13 +1213,13 @@ You have a choice to make. You always will.`,
     return (
       <div
         style={{
-          minHeight: "100vh",
+          height: "100vh",
           background: "#000",
           fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
           display: "flex",
           flexDirection: "column",
           position: "relative",
-          overflow: "auto",
+          overflowY: "scroll",
           WebkitOverflowScrolling: "touch",
         }}
       >
@@ -1303,17 +1303,17 @@ You have a choice to make. You always will.`,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent: "center",
-            padding: "40px 5%",
-            minHeight: "calc(100vh - 80px)",
+            justifyContent: "flex-start",
+            padding: "32px 5% 60px",
+            overflowY: "auto",
           }}
         >
           <h1
             style={{
-              fontSize: "clamp(28px, 4vw, 48px)",
+              fontSize: "clamp(24px, 4vw, 40px)",
               fontWeight: 700,
               color: "#fff",
-              marginBottom: 12,
+              marginBottom: 8,
               textAlign: "center",
               letterSpacing: "-1px",
               animation: "fadeUp 0.8s ease both 0.1s",
@@ -1324,11 +1324,11 @@ You have a choice to make. You always will.`,
           </h1>
           <p
             style={{
-              fontSize: "clamp(14px, 2vw, 18px)",
+              fontSize: "clamp(13px, 2vw, 16px)",
               color: "rgba(255,255,255,0.6)",
-              marginBottom: 48,
+              marginBottom: 32,
               textAlign: "center",
-              maxWidth: 600,
+              maxWidth: 500,
               animation: "fadeUp 0.8s ease both 0.2s",
               opacity: 0,
             }}
@@ -1355,8 +1355,8 @@ You have a choice to make. You always will.`,
               style={{
                 background: "#fff",
                 border: "none",
-                borderRadius: 24,
-                padding: "32px 24px",
+                borderRadius: 20,
+                padding: "28px 20px",
                 cursor: "pointer",
                 transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                 textAlign: "left",
@@ -1364,7 +1364,6 @@ You have a choice to make. You always will.`,
                 overflow: "hidden",
                 animation: "fadeUp 0.8s ease both 0.3s",
                 opacity: 0,
-                minHeight: 200,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
@@ -1424,8 +1423,8 @@ You have a choice to make. You always will.`,
               style={{
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 24,
-                padding: "32px 24px",
+                borderRadius: 20,
+                padding: "28px 20px",
                 cursor: "not-allowed",
                 textAlign: "left",
                 position: "relative",
@@ -1480,8 +1479,8 @@ You have a choice to make. You always will.`,
               style={{
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
-                borderRadius: 24,
-                padding: "32px 24px",
+                borderRadius: 20,
+                padding: "28px 20px",
                 cursor: "not-allowed",
                 textAlign: "left",
                 position: "relative",
