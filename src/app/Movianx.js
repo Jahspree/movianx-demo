@@ -97,6 +97,7 @@ function EmailGate({ onSubmit }) {
       <div style={{
         width: "100%", maxWidth: 480,
         animation: "fadeUp 0.8s ease both",
+        paddingBottom: 60,
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
@@ -1565,9 +1566,11 @@ You have a choice to make. You always will.`,
     return (
       <div
         style={{
-          minHeight: "100vh",
+          height: "100vh",
           background: "#0A0A0F",
           fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+          overflowY: "scroll",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Hero Section */}
@@ -1618,7 +1621,7 @@ You have a choice to make. You always will.`,
         </div>
 
         {/* Content */}
-        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "40px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", padding: "40px 40px 80px" }}>
           <p style={{ fontSize: 18, color: "#F0F0F5", marginBottom: 40, lineHeight: 1.7 }}>{sel.desc}</p>
 
           {/* Immersion Levels */}
@@ -1671,10 +1674,12 @@ You have a choice to make. You always will.`,
     return (
       <div
         style={{
-          minHeight: "100vh",
+          height: "100vh",
           background: mode === "Immersive" ? "#000" : "#0A0A0F",
           fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
           position: "relative",
+          overflowY: "scroll",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Header */}
