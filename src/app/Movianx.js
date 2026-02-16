@@ -87,10 +87,12 @@ function EmailGate({ onSubmit }) {
 
   return (
     <div style={{
-      minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+      height: "100vh", display: "flex", alignItems: "flex-start", justifyContent: "center",
       background: "#000",
       fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-      padding: "24px",
+      padding: "40px 24px",
+      overflowY: "scroll",
+      WebkitOverflowScrolling: "touch",
     }}>
       <div style={{
         width: "100%", maxWidth: 480,
@@ -1339,11 +1341,13 @@ You have a choice to make. You always will.`,
           {/* App Tiles */}
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
-              gap: 20,
+              display: "flex",
+              gap: 16,
               width: "100%",
-              maxWidth: 800,
+              maxWidth: 900,
+              justifyContent: "center",
+              flexWrap: "wrap",
+              paddingBottom: 40,
             }}
           >
             {/* Stories Tile - ACTIVE */}
@@ -1353,15 +1357,19 @@ You have a choice to make. You always will.`,
                 setPg("detail");
               }}
               style={{
+                width: 160,
+                height: 160,
                 background: "#fff",
                 border: "none",
                 borderRadius: 20,
-                padding: "28px 20px",
+                padding: "20px",
                 cursor: "pointer",
-                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
                 textAlign: "left",
                 position: "relative",
                 overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
                 animation: "fadeUp 0.8s ease both 0.3s",
                 opacity: 0,
               }}
@@ -1374,14 +1382,14 @@ You have a choice to make. You always will.`,
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
-              <div style={{ fontSize: 40, marginBottom: 12 }}>📚</div>
+              <div style={{ fontSize: 36, marginBottom: 8 }}>📚</div>
               <h3
                 style={{
-                  fontSize: 24,
+                  fontSize: 20,
                   fontWeight: 700,
                   color: "#000",
                   marginBottom: 6,
-                  letterSpacing: "-0.5px",
+                  letterSpacing: "-0.3px",
                 }}
               >
                 Stories
@@ -1399,16 +1407,16 @@ You have a choice to make. You always will.`,
               <div
                 style={{
                   position: "absolute",
-                  bottom: 20,
-                  right: 20,
-                  width: 36,
-                  height: 36,
+                  bottom: 16,
+                  right: 16,
+                  width: 32,
+                  height: 32,
                   borderRadius: "50%",
                   background: "#000",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 18,
+                  fontSize: 16,
                   transition: "transform 0.3s ease",
                 }}
                 onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
@@ -1421,21 +1429,24 @@ You have a choice to make. You always will.`,
             {/* Cinema Tile - COMING SOON */}
             <div
               style={{
+                width: 160,
+                height: 160,
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 20,
-                padding: "28px 20px",
+                padding: "20px",
                 cursor: "not-allowed",
                 textAlign: "left",
                 position: "relative",
                 overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
                 transition: "all 0.3s ease",
                 animation: "fadeUp 0.8s ease both 0.4s",
                 opacity: 0,
-                minHeight: 200,
               }}
             >
-              <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.4 }}>🎬</div>
+              <div style={{ fontSize: 36, marginBottom: 8, opacity: 0.4 }}>🎬</div>
               <h3
                 style={{
                   fontSize: 24,
@@ -1477,21 +1488,24 @@ You have a choice to make. You always will.`,
             {/* Artists Tile - COMING SOON */}
             <div
               style={{
+                width: 160,
+                height: 160,
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 20,
-                padding: "28px 20px",
+                padding: "20px",
                 cursor: "not-allowed",
                 textAlign: "left",
                 position: "relative",
                 overflow: "hidden",
+                display: "flex",
+                flexDirection: "column",
                 transition: "all 0.3s ease",
                 animation: "fadeUp 0.8s ease both 0.5s",
                 opacity: 0,
-                minHeight: 200,
               }}
             >
-              <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.4 }}>🎨</div>
+              <div style={{ fontSize: 36, marginBottom: 8, opacity: 0.4 }}>🎨</div>
               <h3
                 style={{
                   fontSize: 24,
