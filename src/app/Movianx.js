@@ -1024,7 +1024,7 @@ You have a choice to make. You always will.`,
       <div
         style={{
           minHeight: "100vh",
-          background: "linear-gradient(135deg, #0A0A0F 0%, #1A0A1F 100%)",
+          background: "#000",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -1035,20 +1035,6 @@ You have a choice to make. You always will.`,
           overflow: "hidden",
         }}
       >
-        {/* Ambient glow */}
-        <div
-          style={{
-            position: "absolute",
-            top: "-20%",
-            left: "-10%",
-            width: "50%",
-            height: "50%",
-            background: "radial-gradient(circle, rgba(232,54,79,0.15) 0%, transparent 70%)",
-            filter: "blur(80px)",
-            pointerEvents: "none",
-          }}
-        />
-
         {/* Top Nav */}
         <div
           style={{
@@ -1059,25 +1045,32 @@ You have a choice to make. You always will.`,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "20px 40px",
+            padding: "24px 5%",
             zIndex: 10,
           }}
         >
-          <div style={{ fontSize: 24, fontWeight: 700, color: "#F0F0F5", letterSpacing: "-0.5px" }}>movianx</div>
-          <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <img 
+            src="/movianx-logo.png" 
+            alt="Movianx"
+            style={{
+              height: 40,
+              width: "auto",
+            }}
+          />
+          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
             <button
               onClick={() => setPg("creator")}
               style={{
                 background: "transparent",
                 border: "none",
-                color: "#9090A0",
+                color: "rgba(255,255,255,0.6)",
                 fontSize: 14,
                 fontWeight: 500,
                 cursor: "pointer",
                 transition: "color 0.2s",
               }}
-              onMouseEnter={(e) => (e.target.style.color = "#F0F0F5")}
-              onMouseLeave={(e) => (e.target.style.color = "#9090A0")}
+              onMouseEnter={(e) => (e.target.style.color = "#fff")}
+              onMouseLeave={(e) => (e.target.style.color = "rgba(255,255,255,0.6)")}
             >
               Sign In
             </button>
@@ -1085,25 +1078,23 @@ You have a choice to make. You always will.`,
               onClick={() => setPg("creator")}
               style={{
                 padding: "10px 20px",
-                borderRadius: 8,
-                background: "linear-gradient(135deg, #E8364F, #D4A843)",
+                borderRadius: 20,
+                background: "#fff",
                 border: "none",
-                color: "#fff",
+                color: "#000",
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: "pointer",
-                transition: "transform 0.2s, box-shadow 0.2s",
+                transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 8px 24px rgba(232,54,79,0.3)";
+                e.target.style.background = "rgba(255,255,255,0.9)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "none";
+                e.target.style.background = "#fff";
               }}
             >
-              Sign Up as a Creator →
+              For Creators
             </button>
           </div>
         </div>
@@ -1113,10 +1104,8 @@ You have a choice to make. You always will.`,
           <h1
             style={{
               fontSize: "clamp(42px, 8vw, 72px)",
-              fontWeight: 800,
-              background: "linear-gradient(135deg, #F0F0F5 0%, #9090A0 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
+              fontWeight: 700,
+              color: "#fff",
               marginBottom: 20,
               letterSpacing: "-2px",
               lineHeight: 1.1,
@@ -1124,7 +1113,7 @@ You have a choice to make. You always will.`,
           >
             What do you want to experience?
           </h1>
-          <p style={{ fontSize: 18, color: "#9090A0", marginBottom: 50, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 18, color: "rgba(255,255,255,0.6)", marginBottom: 50, lineHeight: 1.6 }}>
             Books that adapt to you. Stories that listen. Worlds you shape with every choice.
           </p>
 
@@ -1141,26 +1130,25 @@ You have a choice to make. You always will.`,
               onClick={() => setPg("home")}
               style={{
                 padding: "18px 36px",
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #E8364F, #D4A843)",
+                borderRadius: 24,
+                background: "#fff",
                 border: "none",
-                color: "#fff",
+                color: "#000",
                 fontSize: 16,
-                fontWeight: 700,
+                fontWeight: 600,
                 cursor: "pointer",
                 transition: "all 0.3s",
-                boxShadow: "0 10px 40px rgba(232,54,79,0.3)",
               }}
               onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-3px)";
-                e.target.style.boxShadow = "0 15px 50px rgba(232,54,79,0.5)";
+                e.target.style.background = "rgba(255,255,255,0.9)";
+                e.target.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
+                e.target.style.background = "#fff";
                 e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "0 10px 40px rgba(232,54,79,0.3)";
               }}
             >
-              Explore Stories
+              Get Started
             </button>
           </div>
 
@@ -1179,11 +1167,11 @@ You have a choice to make. You always will.`,
                 style={{
                   padding: "8px 16px",
                   borderRadius: 20,
-                  background: "rgba(232,54,79,0.1)",
-                  border: "1px solid rgba(232,54,79,0.3)",
-                  color: "#E8364F",
+                  background: "rgba(255,255,255,0.1)",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  color: "rgba(255,255,255,0.8)",
                   fontSize: 13,
-                  fontWeight: 600,
+                  fontWeight: 500,
                 }}
               >
                 {f}
@@ -1201,48 +1189,57 @@ You have a choice to make. You always will.`,
       <div
         style={{
           minHeight: "100vh",
-          background: "#0A0A0F",
-          padding: "20px",
+          background: "#000",
           fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+          display: "flex",
+          flexDirection: "column",
+          position: "relative",
+          overflow: "auto",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Header */}
         <div
           style={{
-            maxWidth: 1400,
-            margin: "0 auto",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "20px 0 40px",
+            padding: "24px 5%",
+            borderBottom: "1px solid rgba(255,255,255,0.1)",
           }}
         >
           <div
             onClick={() => setPg("landing")}
             style={{
-              fontSize: 24,
-              fontWeight: 700,
-              color: "#F0F0F5",
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
               cursor: "pointer",
-              letterSpacing: "-0.5px",
             }}
           >
-            movianx
+            <img 
+              src="/movianx-logo.png" 
+              alt="Movianx"
+              style={{
+                height: 40,
+                width: "auto",
+              }}
+            />
           </div>
-          <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
             <button
               onClick={() => setPg("creator")}
               style={{
                 background: "transparent",
                 border: "none",
-                color: "#9090A0",
+                color: "rgba(255,255,255,0.6)",
                 fontSize: 14,
                 fontWeight: 500,
                 cursor: "pointer",
                 transition: "color 0.2s",
               }}
-              onMouseEnter={(e) => (e.target.style.color = "#F0F0F5")}
-              onMouseLeave={(e) => (e.target.style.color = "#9090A0")}
+              onMouseEnter={(e) => (e.target.style.color = "#fff")}
+              onMouseLeave={(e) => (e.target.style.color = "rgba(255,255,255,0.6)")}
             >
               Sign In
             </button>
@@ -1250,106 +1247,242 @@ You have a choice to make. You always will.`,
               onClick={() => setPg("creator")}
               style={{
                 padding: "10px 20px",
-                borderRadius: 8,
-                background: "linear-gradient(135deg, #E8364F, #D4A843)",
+                borderRadius: 20,
+                background: "#fff",
                 border: "none",
-                color: "#fff",
+                color: "#000",
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: "pointer",
-                transition: "transform 0.2s, box-shadow 0.2s",
+                transition: "all 0.2s",
               }}
               onMouseEnter={(e) => {
-                e.target.style.transform = "translateY(-2px)";
-                e.target.style.boxShadow = "0 8px 24px rgba(232,54,79,0.3)";
+                e.target.style.background = "rgba(255,255,255,0.9)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.transform = "translateY(0)";
-                e.target.style.boxShadow = "none";
+                e.target.style.background = "#fff";
               }}
             >
-              Join as a Creator →
+              For Creators
             </button>
           </div>
         </div>
 
-        {/* Story Grid */}
-        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-          <h2
+        {/* Main Content */}
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "60px 5%",
+          }}
+        >
+          <h1
             style={{
-              fontSize: 32,
+              fontSize: "clamp(32px, 5vw, 56px)",
               fontWeight: 700,
-              color: "#F0F0F5",
-              marginBottom: 30,
-              letterSpacing: "-0.5px",
+              color: "#fff",
+              marginBottom: 16,
+              textAlign: "center",
+              letterSpacing: "-1px",
             }}
           >
-            Featured Stories
-          </h2>
+            Choose Your Experience
+          </h1>
+          <p
+            style={{
+              fontSize: "clamp(16px, 2vw, 20px)",
+              color: "rgba(255,255,255,0.6)",
+              marginBottom: 60,
+              textAlign: "center",
+              maxWidth: 600,
+            }}
+          >
+            Explore interactive stories, cinematic adaptations, and connect with creators.
+          </p>
+
+          {/* App Tiles */}
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
               gap: 24,
+              width: "100%",
+              maxWidth: 1000,
             }}
           >
-            {stories.map((s) => (
-              <div
-                key={s.id}
-                onClick={() => {
-                  setSel(s);
-                  setPg("detail");
-                }}
+            {/* Stories Tile - ACTIVE */}
+            <button
+              onClick={() => {
+                setSel(stories[0]);
+                setPg("detail");
+              }}
+              style={{
+                background: "#fff",
+                border: "none",
+                borderRadius: 24,
+                padding: "48px 32px",
+                cursor: "pointer",
+                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                textAlign: "left",
+                position: "relative",
+                overflow: "hidden",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
+                e.currentTarget.style.boxShadow = "0 20px 60px rgba(255,255,255,0.2)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0) scale(1)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              <div style={{ fontSize: 48, marginBottom: 16 }}>📚</div>
+              <h3
                 style={{
-                  background: "#141419",
-                  borderRadius: 16,
-                  overflow: "hidden",
-                  cursor: "pointer",
-                  transition: "transform 0.3s, box-shadow 0.3s",
-                  border: "1px solid #2A2A35",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow = "0 12px 40px rgba(232,54,79,0.2)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow = "none";
+                  fontSize: 28,
+                  fontWeight: 700,
+                  color: "#000",
+                  marginBottom: 8,
+                  letterSpacing: "-0.5px",
                 }}
               >
-                <div style={{ position: "relative" }}>
-                  <img src={s.cover} alt={s.title} style={{ width: "100%", height: 400, objectFit: "cover" }} />
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: 10,
-                      right: 10,
-                      background: "rgba(10,10,15,0.9)",
-                      padding: "6px 12px",
-                      borderRadius: 8,
-                      fontSize: 12,
-                      fontWeight: 600,
-                      color: "#E8364F",
-                    }}
-                  >
-                    ★ {s.rating}
-                  </div>
-                </div>
-                <div style={{ padding: 20 }}>
-                  <div style={{ fontSize: 11, color: "#9090A0", marginBottom: 6, textTransform: "uppercase" }}>
-                    {s.genre}
-                  </div>
-                  <h3 style={{ fontSize: 18, fontWeight: 700, color: "#F0F0F5", marginBottom: 8 }}>{s.title}</h3>
-                  <p style={{ fontSize: 13, color: "#9090A0", marginBottom: 12, lineHeight: 1.5 }}>
-                    {s.desc.slice(0, 80)}...
-                  </p>
-                  <div style={{ display: "flex", gap: 12, fontSize: 11, color: "#9090A0" }}>
-                    <span>📖 {s.chapters} chapters</span>
-                    <span>👁 {s.reads}</span>
-                  </div>
-                </div>
+                Stories
+              </h3>
+              <p
+                style={{
+                  fontSize: 15,
+                  color: "rgba(0,0,0,0.6)",
+                  lineHeight: 1.5,
+                  margin: 0,
+                }}
+              >
+                Interactive fiction
+              </p>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: 24,
+                  right: 24,
+                  width: 40,
+                  height: 40,
+                  borderRadius: "50%",
+                  background: "#000",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 20,
+                }}
+              >
+                →
               </div>
-            ))}
+            </button>
+
+            {/* Cinema Tile - COMING SOON */}
+            <div
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 24,
+                padding: "48px 32px",
+                cursor: "not-allowed",
+                textAlign: "left",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.4 }}>🎬</div>
+              <h3
+                style={{
+                  fontSize: 28,
+                  fontWeight: 700,
+                  color: "rgba(255,255,255,0.4)",
+                  marginBottom: 8,
+                  letterSpacing: "-0.5px",
+                }}
+              >
+                Cinema
+              </h3>
+              <p
+                style={{
+                  fontSize: 15,
+                  color: "rgba(255,255,255,0.3)",
+                  lineHeight: 1.5,
+                  marginBottom: 16,
+                }}
+              >
+                Coming soon
+              </p>
+              <div
+                style={{
+                  display: "inline-block",
+                  padding: "6px 12px",
+                  borderRadius: 12,
+                  background: "rgba(255,255,255,0.1)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "rgba(255,255,255,0.5)",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
+                }}
+              >
+                Coming Soon
+              </div>
+            </div>
+
+            {/* Artists Tile - COMING SOON */}
+            <div
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 24,
+                padding: "48px 32px",
+                cursor: "not-allowed",
+                textAlign: "left",
+                position: "relative",
+                overflow: "hidden",
+              }}
+            >
+              <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.4 }}>🎨</div>
+              <h3
+                style={{
+                  fontSize: 28,
+                  fontWeight: 700,
+                  color: "rgba(255,255,255,0.4)",
+                  marginBottom: 8,
+                  letterSpacing: "-0.5px",
+                }}
+              >
+                Artists
+              </h3>
+              <p
+                style={{
+                  fontSize: 15,
+                  color: "rgba(255,255,255,0.3)",
+                  lineHeight: 1.5,
+                  marginBottom: 16,
+                }}
+              >
+                Coming soon
+              </p>
+              <div
+                style={{
+                  display: "inline-block",
+                  padding: "6px 12px",
+                  borderRadius: 12,
+                  background: "rgba(255,255,255,0.1)",
+                  fontSize: 11,
+                  fontWeight: 600,
+                  color: "rgba(255,255,255,0.5)",
+                  textTransform: "uppercase",
+                  letterSpacing: "1px",
+                }}
+              >
+                Coming Soon
+              </div>
+            </div>
           </div>
         </div>
       </div>
