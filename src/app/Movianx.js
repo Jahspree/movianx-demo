@@ -2,16 +2,16 @@
 import { useState, useEffect, useRef } from "react";
 
 // ═══════════════════════════════════════════════════════════════════════════
-// COLOR SYSTEM
+// COLOR SYSTEM - Black/White Minimalist (Tesla/Apple)
 // ═══════════════════════════════════════════════════════════════════════════
-const ACCENT = "#E8364F";
-const DARK = "#0A0A0F";
-const SURFACE = "#141419";
-const SURFACE2 = "#1C1C24";
-const BORDER = "#2A2A35";
-const TEXT = "#F0F0F5";
-const TEXT2 = "#9090A0";
-const GOLD = "#D4A843";
+const ACCENT = "#fff";
+const DARK = "#000";
+const SURFACE = "rgba(255,255,255,0.05)";
+const SURFACE2 = "rgba(255,255,255,0.08)";
+const BORDER = "rgba(255,255,255,0.1)";
+const TEXT = "#fff";
+const TEXT2 = "rgba(255,255,255,0.6)";
+const GOLD = "rgba(255,255,255,0.9)";
 
 // ═══════════════════════════════════════════════════════════════════════════
 // CREATOR DASHBOARD UTILITIES
@@ -88,9 +88,7 @@ function EmailGate({ onSubmit }) {
   return (
     <div style={{
       minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
-      background: `radial-gradient(ellipse at 30% 20%, rgba(232,54,79,0.08) 0%, transparent 50%),
-                   radial-gradient(ellipse at 70% 80%, rgba(212,168,67,0.05) 0%, transparent 50%),
-                   ${DARK}`,
+      background: "#000",
       fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       padding: "24px",
     }}>
@@ -100,20 +98,15 @@ function EmailGate({ onSubmit }) {
       }}>
         {/* Logo */}
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <div style={{
-            display: "inline-flex", alignItems: "center", gap: 12,
-          }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: 12,
-              background: `linear-gradient(135deg, ${ACCENT}, ${GOLD})`,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              fontSize: 22, fontWeight: 800, color: "#fff",
-              boxShadow: `0 8px 32px rgba(232,54,79,0.3)`,
-            }}>M</div>
-            <span style={{ fontSize: 28, fontWeight: 700, color: TEXT, letterSpacing: "-0.5px" }}>
-              movianx
-            </span>
-          </div>
+          <img 
+            src="/movianx-logo.png" 
+            alt="Movianx"
+            style={{
+              height: 50,
+              width: "auto",
+              marginBottom: 16,
+            }}
+          />
           <p style={{ color: TEXT2, fontSize: 13, marginTop: 8, letterSpacing: "2px", textTransform: "uppercase" }}>
             Creator Studio
           </p>
@@ -121,9 +114,8 @@ function EmailGate({ onSubmit }) {
 
         {/* Card */}
         <div style={{
-          background: SURFACE, borderRadius: 20, padding: "40px 36px",
+          background: SURFACE, borderRadius: 24, padding: "40px 36px",
           border: `1px solid ${BORDER}`,
-          boxShadow: "0 24px 80px rgba(0,0,0,0.5)",
         }}>
           {step === 0 ? (
             <>
@@ -141,10 +133,10 @@ function EmailGate({ onSubmit }) {
                   placeholder="Your name"
                   style={{
                     width: "100%", padding: "14px 16px", background: SURFACE2, border: `1px solid ${BORDER}`,
-                    borderRadius: 10, color: TEXT, fontSize: 15, outline: "none", boxSizing: "border-box",
+                    borderRadius: 12, color: TEXT, fontSize: 15, outline: "none", boxSizing: "border-box",
                     transition: "border-color 0.2s",
                   }}
-                  onFocus={e => e.target.style.borderColor = ACCENT}
+                  onFocus={e => e.target.style.borderColor = "#fff"}
                   onBlur={e => e.target.style.borderColor = BORDER}
                 />
               </label>
@@ -156,10 +148,10 @@ function EmailGate({ onSubmit }) {
                   placeholder="you@example.com"
                   style={{
                     width: "100%", padding: "14px 16px", background: SURFACE2, border: `1px solid ${BORDER}`,
-                    borderRadius: 10, color: TEXT, fontSize: 15, outline: "none", boxSizing: "border-box",
+                    borderRadius: 12, color: TEXT, fontSize: 15, outline: "none", boxSizing: "border-box",
                     transition: "border-color 0.2s",
                   }}
-                  onFocus={e => e.target.style.borderColor = ACCENT}
+                  onFocus={e => e.target.style.borderColor = "#fff"}
                   onBlur={e => e.target.style.borderColor = BORDER}
                 />
               </label>
@@ -170,9 +162,9 @@ function EmailGate({ onSubmit }) {
                   {["Author", "Publisher", "Storyteller", "Investor", "Other"].map(r2 => (
                     <button key={r2} onClick={() => setRole(r2)}
                       style={{
-                        padding: "10px 18px", borderRadius: 8, border: `1px solid ${role === r2 ? ACCENT : BORDER}`,
-                        background: role === r2 ? `rgba(232,54,79,0.15)` : "transparent",
-                        color: role === r2 ? ACCENT : TEXT2, fontSize: 13, cursor: "pointer",
+                        padding: "10px 18px", borderRadius: 20, border: `1px solid ${role === r2 ? "#fff" : BORDER}`,
+                        background: role === r2 ? "#fff" : "transparent",
+                        color: role === r2 ? "#000" : TEXT2, fontSize: 13, cursor: "pointer",
                         fontWeight: role === r2 ? 600 : 400, transition: "all 0.2s",
                       }}>{r2}</button>
                   ))}
@@ -185,13 +177,12 @@ function EmailGate({ onSubmit }) {
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => setHover(false)}
                 style={{
-                  width: "100%", padding: "16px", borderRadius: 10, border: "none",
-                  background: (!isValid || !name) ? SURFACE2 : `linear-gradient(135deg, ${ACCENT}, ${GOLD})`,
-                  color: (!isValid || !name) ? TEXT2 : "#fff",
+                  width: "100%", padding: "16px", borderRadius: 12, border: "none",
+                  background: (!isValid || !name) ? SURFACE2 : "#fff",
+                  color: (!isValid || !name) ? TEXT2 : "#000",
                   fontSize: 14, fontWeight: 600, letterSpacing: "0.5px",
                   cursor: (!isValid || !name) ? "not-allowed" : "pointer",
                   transform: hover && isValid && name ? "translateY(-1px)" : "translateY(0)",
-                  boxShadow: hover && isValid && name ? `0 8px 24px rgba(232,54,79,0.3)` : "none",
                   transition: "all 0.2s",
                 }}>
                 Continue →
@@ -202,33 +193,31 @@ function EmailGate({ onSubmit }) {
               <div style={{ textAlign: "center", marginBottom: 32 }}>
                 <div style={{
                   width: 64, height: 64, borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${ACCENT}, ${GOLD})`,
+                  background: "#fff",
                   display: "inline-flex", alignItems: "center", justifyContent: "center",
-                  fontSize: 32, marginBottom: 20,
+                  fontSize: 32, marginBottom: 20, color: "#000",
                 }}>✓</div>
                 <h2 style={{ color: TEXT, fontSize: 22, fontWeight: 700, margin: "0 0 8px" }}>
                   Welcome, {name.split(" ")[0]}!
                 </h2>
                 <p style={{ color: TEXT2, fontSize: 14, margin: 0, lineHeight: 1.6 }}>
-                  We'll send you an invite to <span style={{ color: ACCENT, fontWeight: 600 }}>{email}</span> once we're ready for early creators.
+                  We'll send you an invite to <span style={{ color: "#fff", fontWeight: 600 }}>{email}</span> once we're ready for early creators.
                 </p>
               </div>
 
               <button
                 onClick={() => onSubmit({ name, email, role })}
                 style={{
-                  width: "100%", padding: "16px", borderRadius: 10, border: "none",
-                  background: `linear-gradient(135deg, ${ACCENT}, ${GOLD})`,
-                  color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer",
-                  transition: "transform 0.2s, box-shadow 0.2s",
+                  width: "100%", padding: "16px", borderRadius: 12, border: "none",
+                  background: "#fff",
+                  color: "#000", fontSize: 14, fontWeight: 600, cursor: "pointer",
+                  transition: "transform 0.2s",
                 }}
                 onMouseEnter={e => {
                   e.target.style.transform = "translateY(-1px)";
-                  e.target.style.boxShadow = `0 8px 24px rgba(232,54,79,0.3)`;
                 }}
                 onMouseLeave={e => {
                   e.target.style.transform = "translateY(0)";
-                  e.target.style.boxShadow = "none";
                 }}>
                 Enter Demo Dashboard →
               </button>
@@ -258,15 +247,14 @@ function Sidebar({ active, setActive, user }) {
     }}>
       {/* Logo */}
       <div style={{ padding: "24px 20px", borderBottom: `1px solid ${BORDER}` }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 36, height: 36, borderRadius: 10,
-            background: `linear-gradient(135deg, ${ACCENT}, ${GOLD})`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, fontWeight: 800, color: "#fff",
-          }}>M</div>
-          <span style={{ fontSize: 18, fontWeight: 700, color: TEXT }}>movianx</span>
-        </div>
+        <img 
+          src="/movianx-logo.png" 
+          alt="Movianx"
+          style={{
+            height: 32,
+            width: "auto",
+          }}
+        />
       </div>
 
       {/* Nav */}
@@ -274,10 +262,10 @@ function Sidebar({ active, setActive, user }) {
         {nav.map(n => (
           <button key={n.id} onClick={() => setActive(n.id)}
             style={{
-              width: "100%", padding: "12px 14px", marginBottom: 6, borderRadius: 10,
+              width: "100%", padding: "12px 14px", marginBottom: 6, borderRadius: 12,
               border: "none", textAlign: "left", cursor: "pointer",
-              background: active === n.id ? `rgba(232,54,79,0.15)` : "transparent",
-              color: active === n.id ? ACCENT : TEXT2,
+              background: active === n.id ? "#fff" : "transparent",
+              color: active === n.id ? "#000" : TEXT2,
               fontSize: 14, fontWeight: active === n.id ? 600 : 400,
               display: "flex", alignItems: "center", gap: 12,
               transition: "all 0.2s",
@@ -297,9 +285,9 @@ function Sidebar({ active, setActive, user }) {
       }}>
         <div style={{
           width: 40, height: 40, borderRadius: "50%",
-          background: `linear-gradient(135deg, ${ACCENT}, ${GOLD})`,
+          background: "#fff",
           display: "flex", alignItems: "center", justifyContent: "center",
-          fontSize: 16, fontWeight: 700, color: "#fff",
+          fontSize: 16, fontWeight: 700, color: "#000",
         }}>{user.name[0]}</div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 600, color: TEXT, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{user.name}</div>
