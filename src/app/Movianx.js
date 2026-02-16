@@ -1020,7 +1020,8 @@ You have a choice to make. You always will.`,
           padding: "20px",
           fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
           position: "relative",
-          overflow: "hidden",
+          overflow: "auto",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {/* Top Nav */}
@@ -1035,6 +1036,7 @@ You have a choice to make. You always will.`,
             alignItems: "center",
             padding: "24px 5%",
             zIndex: 10,
+            animation: "fadeDown 0.6s ease both",
           }}
         >
           <img 
@@ -1055,7 +1057,7 @@ You have a choice to make. You always will.`,
                 fontSize: 14,
                 fontWeight: 500,
                 cursor: "pointer",
-                transition: "color 0.2s",
+                transition: "color 0.3s ease",
               }}
               onMouseEnter={(e) => (e.target.style.color = "#fff")}
               onMouseLeave={(e) => (e.target.style.color = "rgba(255,255,255,0.6)")}
@@ -1073,13 +1075,15 @@ You have a choice to make. You always will.`,
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: "pointer",
-                transition: "all 0.2s",
+                transition: "all 0.3s ease",
               }}
               onMouseEnter={(e) => {
                 e.target.style.background = "rgba(255,255,255,0.9)";
+                e.target.style.transform = "translateY(-1px)";
               }}
               onMouseLeave={(e) => {
                 e.target.style.background = "#fff";
+                e.target.style.transform = "translateY(0)";
               }}
             >
               For Creators
@@ -1097,11 +1101,20 @@ You have a choice to make. You always will.`,
               marginBottom: 20,
               letterSpacing: "-2px",
               lineHeight: 1.1,
+              animation: "fadeUp 0.8s ease both 0.2s",
+              opacity: 0,
             }}
           >
             What do you want to experience?
           </h1>
-          <p style={{ fontSize: 18, color: "rgba(255,255,255,0.6)", marginBottom: 50, lineHeight: 1.6 }}>
+          <p style={{ 
+            fontSize: 18, 
+            color: "rgba(255,255,255,0.6)", 
+            marginBottom: 50, 
+            lineHeight: 1.6,
+            animation: "fadeUp 0.8s ease both 0.3s",
+            opacity: 0,
+          }}>
             Books that adapt to you. Stories that listen. Worlds you shape with every choice.
           </p>
 
@@ -1112,6 +1125,8 @@ You have a choice to make. You always will.`,
               justifyContent: "center",
               flexWrap: "wrap",
               marginBottom: 60,
+              animation: "fadeUp 0.8s ease both 0.4s",
+              opacity: 0,
             }}
           >
             <button
@@ -1125,7 +1140,7 @@ You have a choice to make. You always will.`,
                 fontSize: 16,
                 fontWeight: 600,
                 cursor: "pointer",
-                transition: "all 0.3s",
+                transition: "all 0.3s ease",
               }}
               onMouseEnter={(e) => {
                 e.target.style.background = "rgba(255,255,255,0.9)";
@@ -1147,6 +1162,8 @@ You have a choice to make. You always will.`,
               gap: 12,
               justifyContent: "center",
               flexWrap: "wrap",
+              animation: "fadeUp 0.8s ease both 0.5s",
+              opacity: 0,
             }}
           >
             {["Choice-Driven Narratives", "AI Narration", "Adaptive Soundscapes", "Immersive Visuals"].map((f) => (
@@ -1160,6 +1177,15 @@ You have a choice to make. You always will.`,
                   color: "rgba(255,255,255,0.8)",
                   fontSize: 13,
                   fontWeight: 500,
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.background = "rgba(255,255,255,0.15)";
+                  e.target.style.borderColor = "rgba(255,255,255,0.3)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.background = "rgba(255,255,255,0.1)";
+                  e.target.style.borderColor = "rgba(255,255,255,0.2)";
                 }}
               >
                 {f}
@@ -1167,6 +1193,17 @@ You have a choice to make. You always will.`,
             ))}
           </div>
         </div>
+
+        <style>{`
+          @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
       </div>
     );
   }
@@ -1192,8 +1229,9 @@ You have a choice to make. You always will.`,
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: "24px 5%",
+            padding: "20px 5%",
             borderBottom: "1px solid rgba(255,255,255,0.1)",
+            animation: "fadeDown 0.6s ease both",
           }}
         >
           <div
@@ -1209,12 +1247,12 @@ You have a choice to make. You always will.`,
               src="/movianx-logo.png" 
               alt="Movianx"
               style={{
-                height: 40,
+                height: 36,
                 width: "auto",
               }}
             />
           </div>
-          <div style={{ display: "flex", gap: 32, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
             <button
               onClick={() => setPg("creator")}
               style={{
@@ -1224,7 +1262,7 @@ You have a choice to make. You always will.`,
                 fontSize: 14,
                 fontWeight: 500,
                 cursor: "pointer",
-                transition: "color 0.2s",
+                transition: "color 0.3s ease",
               }}
               onMouseEnter={(e) => (e.target.style.color = "#fff")}
               onMouseLeave={(e) => (e.target.style.color = "rgba(255,255,255,0.6)")}
@@ -1242,13 +1280,15 @@ You have a choice to make. You always will.`,
                 fontSize: 14,
                 fontWeight: 600,
                 cursor: "pointer",
-                transition: "all 0.2s",
+                transition: "all 0.3s ease",
               }}
               onMouseEnter={(e) => {
                 e.target.style.background = "rgba(255,255,255,0.9)";
+                e.target.style.transform = "translateY(-1px)";
               }}
               onMouseLeave={(e) => {
                 e.target.style.background = "#fff";
+                e.target.style.transform = "translateY(0)";
               }}
             >
               For Creators
@@ -1264,28 +1304,33 @@ You have a choice to make. You always will.`,
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            padding: "60px 5%",
+            padding: "40px 5%",
+            minHeight: "calc(100vh - 80px)",
           }}
         >
           <h1
             style={{
-              fontSize: "clamp(32px, 5vw, 56px)",
+              fontSize: "clamp(28px, 4vw, 48px)",
               fontWeight: 700,
               color: "#fff",
-              marginBottom: 16,
+              marginBottom: 12,
               textAlign: "center",
               letterSpacing: "-1px",
+              animation: "fadeUp 0.8s ease both 0.1s",
+              opacity: 0,
             }}
           >
             Choose Your Experience
           </h1>
           <p
             style={{
-              fontSize: "clamp(16px, 2vw, 20px)",
+              fontSize: "clamp(14px, 2vw, 18px)",
               color: "rgba(255,255,255,0.6)",
-              marginBottom: 60,
+              marginBottom: 48,
               textAlign: "center",
               maxWidth: 600,
+              animation: "fadeUp 0.8s ease both 0.2s",
+              opacity: 0,
             }}
           >
             Explore interactive stories, cinematic adaptations, and connect with creators.
@@ -1295,10 +1340,10 @@ You have a choice to make. You always will.`,
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 24,
+              gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
+              gap: 20,
               width: "100%",
-              maxWidth: 1000,
+              maxWidth: 800,
             }}
           >
             {/* Stories Tile - ACTIVE */}
@@ -1311,29 +1356,32 @@ You have a choice to make. You always will.`,
                 background: "#fff",
                 border: "none",
                 borderRadius: 24,
-                padding: "48px 32px",
+                padding: "32px 24px",
                 cursor: "pointer",
-                transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+                transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
                 textAlign: "left",
                 position: "relative",
                 overflow: "hidden",
+                animation: "fadeUp 0.8s ease both 0.3s",
+                opacity: 0,
+                minHeight: 200,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-8px) scale(1.02)";
-                e.currentTarget.style.boxShadow = "0 20px 60px rgba(255,255,255,0.2)";
+                e.currentTarget.style.boxShadow = "0 20px 60px rgba(255,255,255,0.3)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0) scale(1)";
                 e.currentTarget.style.boxShadow = "none";
               }}
             >
-              <div style={{ fontSize: 48, marginBottom: 16 }}>📚</div>
+              <div style={{ fontSize: 40, marginBottom: 12 }}>📚</div>
               <h3
                 style={{
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: 700,
                   color: "#000",
-                  marginBottom: 8,
+                  marginBottom: 6,
                   letterSpacing: "-0.5px",
                 }}
               >
@@ -1341,7 +1389,7 @@ You have a choice to make. You always will.`,
               </h3>
               <p
                 style={{
-                  fontSize: 15,
+                  fontSize: 14,
                   color: "rgba(0,0,0,0.6)",
                   lineHeight: 1.5,
                   margin: 0,
@@ -1352,17 +1400,20 @@ You have a choice to make. You always will.`,
               <div
                 style={{
                   position: "absolute",
-                  bottom: 24,
-                  right: 24,
-                  width: 40,
-                  height: 40,
+                  bottom: 20,
+                  right: 20,
+                  width: 36,
+                  height: 36,
                   borderRadius: "50%",
                   background: "#000",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
-                  fontSize: 20,
+                  fontSize: 18,
+                  transition: "transform 0.3s ease",
                 }}
+                onMouseEnter={(e) => e.target.style.transform = "scale(1.1)"}
+                onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
               >
                 →
               </div>
@@ -1374,20 +1425,24 @@ You have a choice to make. You always will.`,
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 24,
-                padding: "48px 32px",
+                padding: "32px 24px",
                 cursor: "not-allowed",
                 textAlign: "left",
                 position: "relative",
                 overflow: "hidden",
+                transition: "all 0.3s ease",
+                animation: "fadeUp 0.8s ease both 0.4s",
+                opacity: 0,
+                minHeight: 200,
               }}
             >
-              <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.4 }}>🎬</div>
+              <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.4 }}>🎬</div>
               <h3
                 style={{
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: 700,
                   color: "rgba(255,255,255,0.4)",
-                  marginBottom: 8,
+                  marginBottom: 6,
                   letterSpacing: "-0.5px",
                 }}
               >
@@ -1395,10 +1450,10 @@ You have a choice to make. You always will.`,
               </h3>
               <p
                 style={{
-                  fontSize: 15,
+                  fontSize: 14,
                   color: "rgba(255,255,255,0.3)",
                   lineHeight: 1.5,
-                  marginBottom: 16,
+                  marginBottom: 12,
                 }}
               >
                 Coming soon
@@ -1406,10 +1461,10 @@ You have a choice to make. You always will.`,
               <div
                 style={{
                   display: "inline-block",
-                  padding: "6px 12px",
+                  padding: "4px 10px",
                   borderRadius: 12,
                   background: "rgba(255,255,255,0.1)",
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: 600,
                   color: "rgba(255,255,255,0.5)",
                   textTransform: "uppercase",
@@ -1426,20 +1481,24 @@ You have a choice to make. You always will.`,
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid rgba(255,255,255,0.1)",
                 borderRadius: 24,
-                padding: "48px 32px",
+                padding: "32px 24px",
                 cursor: "not-allowed",
                 textAlign: "left",
                 position: "relative",
                 overflow: "hidden",
+                transition: "all 0.3s ease",
+                animation: "fadeUp 0.8s ease both 0.5s",
+                opacity: 0,
+                minHeight: 200,
               }}
             >
-              <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.4 }}>🎨</div>
+              <div style={{ fontSize: 40, marginBottom: 12, opacity: 0.4 }}>🎨</div>
               <h3
                 style={{
-                  fontSize: 28,
+                  fontSize: 24,
                   fontWeight: 700,
                   color: "rgba(255,255,255,0.4)",
-                  marginBottom: 8,
+                  marginBottom: 6,
                   letterSpacing: "-0.5px",
                 }}
               >
@@ -1447,10 +1506,10 @@ You have a choice to make. You always will.`,
               </h3>
               <p
                 style={{
-                  fontSize: 15,
+                  fontSize: 14,
                   color: "rgba(255,255,255,0.3)",
                   lineHeight: 1.5,
-                  marginBottom: 16,
+                  marginBottom: 12,
                 }}
               >
                 Coming soon
@@ -1458,10 +1517,10 @@ You have a choice to make. You always will.`,
               <div
                 style={{
                   display: "inline-block",
-                  padding: "6px 12px",
+                  padding: "4px 10px",
                   borderRadius: 12,
                   background: "rgba(255,255,255,0.1)",
-                  fontSize: 11,
+                  fontSize: 10,
                   fontWeight: 600,
                   color: "rgba(255,255,255,0.5)",
                   textTransform: "uppercase",
@@ -1473,6 +1532,17 @@ You have a choice to make. You always will.`,
             </div>
           </div>
         </div>
+
+        <style>{`
+          @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
       </div>
     );
   }
