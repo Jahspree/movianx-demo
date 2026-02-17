@@ -807,101 +807,156 @@ export default function MovianxPlatform() {
   const [showChoice, setShowChoice] = useState(false);
   const [voiceMode, setVoiceMode] = useState(false);
   const [voiceActive, setVoiceActive] = useState(false);
+  const [narratorOn, setNarratorOn] = useState(true);
+  const [soundEffectsOn, setSoundEffectsOn] = useState(true);
 
   const ambientRef = useRef(null);
   const oscRef = useRef(null);
   const audioCtxRef = useRef(null);
+  const soundEffectRef = useRef(null);
 
   const chaps = [
     {
-      title: "Chapter 1: The Encrypted Letter",
-      text: `The envelope arrived on a Tuesday, ordinary in every way except the seal—a cipher I'd only seen once before, in a footnote of a banned manuscript.
+      title: "Chapter 1: The Lake House",
+      text: `The car's headlights cut through the fog as you and Sarah pull up to your family's old lake house. It's been abandoned for ten years—ever since your cousin disappeared here.
 
-I set my coffee down, pulse quickening. The wax bore a symbol: three interlocking circles, each containing a different phase of the moon. My grandmother had warned me about this mark. "If you ever see it," she'd whispered on her deathbed, "you'll have to choose between truth and safety."
+"I don't like this, Jamie," Sarah says, gripping the wheel. "It's midnight. We should come back tomorrow."
 
-The letter inside contained just seven words:
-"The garden remembers what history forgot."
+But you got that text. The one that said: "She's still here. Come tonight or lose her forever."
 
-Outside my window, Washington D.C. hummed with its usual bureaucratic rhythm. Nobody knew that beneath the National Archives, in a vault labeled "Classified: Indefinite," sat documents that could rewrite everything we thought we knew about the founding of this country.
+You both step out into the cold air. The house looms ahead, windows dark like empty eyes. Behind it, the lake stretches into blackness.
 
-I had 48 hours to decide: decode the message and risk everything, or burn it and return to my comfortable life of academic obscurity.`,
+A sound comes from the woods to your left. Rustling. Movement.
+
+Sarah freezes. "Did you hear that?"`,
       choice: {
-        prompt: "What do you do with the letter?",
+        prompt: "Sarah turns to you, fear in her eyes. What do you say?",
         opts: [
-          { txt: "Begin decoding immediately", next: 1 },
-          { txt: "Take it to your mentor, Dr. Ashford", next: 1 },
-          { txt: "Burn it and forget you ever saw it", next: 1 },
+          { txt: "Let's check the woods first", next: 1, consequence: "woods" },
+          { txt: "Ignore it and go straight to the house", next: 2, consequence: "house" },
         ],
       },
+      sound: "ambient-woods.mp3",
+      narrator: "You arrive at the abandoned lake house at midnight. Something rustles in the woods nearby.",
     },
     {
-      title: "Chapter 2: The Hidden Archive",
-      text: `The decision haunted me through three sleepless nights. When dawn broke on the third day, I found myself standing before Dr. Ashford's townhouse in Georgetown, the letter clutched in my hand like a loaded gun.
+      title: "Chapter 2: Into the Woods",
+      text: `You grab your flashlight and head toward the sound. Sarah follows reluctantly.
 
-She opened the door still in her nightgown, took one look at the seal, and went pale.
+The beam catches movement between the trees. Footprints in the mud—fresh ones.
 
-"Come inside. Quickly."
+"Jamie, someone was just here," Sarah whispers.
 
-In her study, surrounded by maps of old Washington that didn't match any official records, she explained: "Your grandmother was part of something called the Midnight Society. Cryptographers, historians, archivists—people who believed that democracy dies when secrets outlive their keepers."
+Then you see it: a figure, standing completely still about thirty yards away, facing you. Not moving. Just... watching.
 
-She pulled a hidden panel in her bookshelf, revealing a spiral staircase I'd walked past a hundred times without seeing.
-
-"The real Archives are down there. Everything they didn't want us to know. Everything they still don't want us to know. And if you decoded that letter, they already know you have it."
-
-A car pulled up outside. Then another.
-
-"There's a tunnel," Dr. Ashford said, pressing an ancient key into my palm. "It leads to the Library of Congress. You have about ninety seconds to decide if you're ready to learn what they've been hiding."`,
+Sarah grabs your arm. "RUN!"`,
       choice: {
-        prompt: "Do you follow Dr. Ashford into the hidden archives?",
+        prompt: "The figure starts moving toward you. Fast. Do you:",
         opts: [
-          { txt: "Follow her down the staircase", next: 2 },
-          { txt: "Ask to see identification from the visitors first", next: 2 },
-          { txt: "Escape through the tunnel alone", next: 2 },
+          { txt: "Run back to the car", next: 3, consequence: "survive-woods" },
+          { txt: "Run toward the house", next: 4, consequence: "house-pursued" },
         ],
       },
+      sound: "footsteps-running.mp3",
+      narrator: "You venture into the woods and encounter something that shouldn't be there.",
+      jumpScare: true,
     },
     {
-      title: "Chapter 3: The Revelation",
-      text: `The tunnel smelled of old paper and forgotten promises. Emergency lights cast everything in amber. Behind us, footsteps echoed—they'd found the entrance faster than Dr. Ashford had expected.
+      title: "Chapter 2: The Front Door",
+      text: `You ignore the sound and approach the house. The front door is already open—swinging slightly in the wind.
 
-"They've been monitoring you for weeks," she panted as we ran. "Ever since you published that paper on Revolutionary War ciphers. You got too close to something they've been protecting for 200 years."
+"Someone's been here," you say.
 
-We emerged in a sub-basement I'd never known existed, surrounded by filing cabinets that stretched into darkness. Dr. Ashford pulled out a folder marked "Project Garden."
+Inside, the house is exactly as you remember. Family photos still on the walls. Your cousin Emma's soccer trophy still on the mantle.
 
-Inside were letters—from Franklin, from Jefferson, from Adams. But the signatures were all wrong. The handwriting didn't match. The dates contradicted official histories.
+But something's wrong. The photos... in every single one, Emma's face has been scratched out.
 
-"The Declaration of Independence," Dr. Ashford said quietly, "was written by seventeen people, not just Jefferson. Six of them were women. Two were former slaves. Three were Native American leaders. They made a deal: they'd allow the official history to erase them if future generations would eventually learn the truth."
+Sarah's phone buzzes. A text from an unknown number: "Wrong choice. She needed you to look first."
 
-She handed me a photograph. It showed the original Declaration, before the edits. Before the erasures. Before history was rewritten.
-
-"This is what they're protecting. Not national security. Not diplomatic relations. Just... ego. Legacy. The myth of the Founding Fathers."
-
-The footsteps were getting closer.
-
-"If we publish this," I said, "we destroy American mythology."
-
-"Yes," Dr. Ashford agreed. "But we restore American truth."`,
+A scream pierces the air from upstairs.`,
       choice: {
-        prompt: "What do you choose?",
+        prompt: "Sarah looks at you, terrified. What do you do?",
         opts: [
-          { txt: "Publish everything immediately", next: 3 },
-          { txt: "Negotiate with those in power", next: 3 },
-          { txt: "Destroy the evidence to protect the myth", next: 3 },
+          { txt: "Run upstairs toward the scream", next: 5, consequence: "upstairs" },
+          { txt: "Leave immediately", next: 6, consequence: "abandon" },
         ],
       },
+      sound: "door-creak.mp3",
+      narrator: "You enter the house. Something is very wrong here.",
     },
     {
-      title: "Epilogue: Your Path",
-      text: `[This ending changes based on your choices throughout the story]
+      title: "Chapter 3: The Car Won't Start",
+      text: `You both sprint back to the car. Sarah fumbles with the keys, hands shaking.
 
-The choices you made led to consequences rippling through history. Some truths were meant to be told. Others were meant to be protected. And some secrets... some secrets choose their own time to emerge.
+The engine turns over once. Twice. Nothing.
 
-Three months later, you sit in a café in Prague, reading a newspaper article about "newly discovered documents" from the Revolutionary War. The journalist who broke the story looks familiar. You realize it's the face from the photograph Dr. Ashford showed you that night.
+"No no no no—" Sarah keeps trying.
 
-Your phone buzzes. Unknown number:
-"The garden still has secrets. Are you ready for the next one?"
+In the rearview mirror, you see the figure emerge from the woods. Walking slowly now. Deliberately.
 
-You have a choice to make. You always will.`,
+Your phone lights up. A video message. You open it.
+
+It's footage from a security camera—this very moment, from a different angle. Someone is watching you right now.
+
+The figure is getting closer. Twenty yards. Fifteen.`,
+      choice: {
+        prompt: "The car won't start and the figure is approaching. Quick, what do you do?",
+        opts: [
+          { txt: "Hide in the car and call 911", next: 7, consequence: "call-help" },
+          { txt: "Make a run for the house", next: 4, consequence: "house-pursued" },
+        ],
+      },
+      sound: "heartbeat.mp3",
+      narrator: "The car won't start. The figure is getting closer.",
+    },
+    {
+      title: "Chapter 3: Pursued",
+      text: `You both crash through the front door and slam it behind you. Heavy footsteps pound up the porch stairs behind you.
+
+BANG BANG BANG on the door.
+
+"Upstairs!" Sarah screams.
+
+You race up the stairs. The door downstairs splinters open.
+
+In the hallway, there are three doors. One leads to Emma's old room. One to the bathroom. One to the attic.
+
+Sarah is breathing hard. "Which way?"
+
+Footsteps on the stairs. Slow. Steady. Getting closer.`,
+      choice: {
+        prompt: "You have seconds to choose. Where do you hide?",
+        opts: [
+          { txt: "Emma's room", next: 8, consequence: "emmas-room" },
+          { txt: "The attic", next: 9, consequence: "attic" },
+        ],
+      },
+      sound: "door-slam.mp3",
+      narrator: "You're being chased through the house. You need to hide. Now.",
+    },
+    {
+      title: "Epilogue: The Truth",
+      text: `[Your choices have led you here]
+
+The police find you three hours later. Sarah didn't make it—you tried to save her, but you were too late.
+
+In your pocket, they find a note that wasn't there before:
+
+"You were so close. Emma tried to warn you. The woods first. Always the woods first. She left clues there—clues that would have saved you both.
+
+But you chose wrong.
+
+Some stories don't have happy endings.
+
+Some choices can't be undone."
+
+The case remains unsolved. The figure was never found.
+
+But sometimes, late at night, you get texts from Sarah's number.
+
+She's still at the lake house.
+
+And she's not alone.`,
     },
   ];
 
@@ -914,15 +969,36 @@ You have a choice to make. You always will.`,
       if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
       const ctx = audioCtxRef.current;
       if (oscRef.current) return;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(110, ctx.currentTime);
-      gain.gain.setValueAtTime(0.03, ctx.currentTime);
-      osc.connect(gain);
-      gain.connect(ctx.destination);
-      osc.start();
-      oscRef.current = osc;
+      
+      // Create a more complex thriller soundscape
+      const bass = ctx.createOscillator();
+      const mid = ctx.createOscillator();
+      const bassGain = ctx.createGain();
+      const midGain = ctx.createGain();
+      const masterGain = ctx.createGain();
+      
+      // Deep bass drone
+      bass.type = "sine";
+      bass.frequency.setValueAtTime(55, ctx.currentTime);
+      bassGain.gain.setValueAtTime(0.05, ctx.currentTime);
+      
+      // Mid-range tension
+      mid.type = "triangle";
+      mid.frequency.setValueAtTime(220, ctx.currentTime);
+      midGain.gain.setValueAtTime(0.02, ctx.currentTime);
+      
+      // Connect everything
+      bass.connect(bassGain);
+      mid.connect(midGain);
+      bassGain.connect(masterGain);
+      midGain.connect(masterGain);
+      masterGain.connect(ctx.destination);
+      masterGain.gain.setValueAtTime(0.3, ctx.currentTime);
+      
+      bass.start();
+      mid.start();
+      
+      oscRef.current = { bass, mid };
     } catch (err) {
       console.error("Audio error:", err);
     }
@@ -930,18 +1006,90 @@ You have a choice to make. You always will.`,
 
   const stopAmbient = () => {
     if (oscRef.current) {
-      oscRef.current.stop();
+      if (oscRef.current.bass) oscRef.current.bass.stop();
+      if (oscRef.current.mid) oscRef.current.mid.stop();
       oscRef.current = null;
+    }
+  };
+
+  const playSoundEffect = (type) => {
+    if (!soundEffectsOn || typeof window === "undefined") return;
+    
+    try {
+      if (!audioCtxRef.current) audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)();
+      const ctx = audioCtxRef.current;
+      
+      // Generate procedural sound effects
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      
+      switch(type) {
+        case "footsteps":
+          // Quick percussive sounds
+          osc.type = "square";
+          osc.frequency.setValueAtTime(80, ctx.currentTime);
+          gain.gain.setValueAtTime(0.3, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.1);
+          break;
+          
+        case "creak":
+          osc.type = "sawtooth";
+          osc.frequency.setValueAtTime(200, ctx.currentTime);
+          osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.8);
+          gain.gain.setValueAtTime(0.2, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.8);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.8);
+          break;
+          
+        case "jumpscare":
+          // Sharp, loud burst
+          osc.type = "square";
+          osc.frequency.setValueAtTime(440, ctx.currentTime);
+          gain.gain.setValueAtTime(0.5, ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start();
+          osc.stop(ctx.currentTime + 0.3);
+          break;
+          
+        case "heartbeat":
+          // Double thump
+          for (let i = 0; i < 2; i++) {
+            const beat = ctx.createOscillator();
+            const beatGain = ctx.createGain();
+            beat.type = "sine";
+            beat.frequency.setValueAtTime(60, ctx.currentTime + i * 0.2);
+            beatGain.gain.setValueAtTime(0.4, ctx.currentTime + i * 0.2);
+            beatGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + i * 0.2 + 0.15);
+            beat.connect(beatGain);
+            beatGain.connect(ctx.destination);
+            beat.start(ctx.currentTime + i * 0.2);
+            beat.stop(ctx.currentTime + i * 0.2 + 0.15);
+          }
+          break;
+      }
+    } catch (err) {
+      console.error("Sound effect error:", err);
     }
   };
 
   const speak = (text) => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
+    if (!narratorOn) return; // Respect narrator toggle
+    
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95;
-    u.pitch = 1.0;
-    u.volume = 0.8;
+    u.rate = 0.9;
+    u.pitch = 0.95;
+    u.volume = 0.9;
     window.speechSynthesis.speak(u);
   };
 
@@ -1018,14 +1166,42 @@ You have a choice to make. You always will.`,
     if (pg === "reading" && chIdx < chaps.length) {
       const ch = chaps[chIdx];
       setTxt(ch.text);
-      if (mode === "Cinematic" || mode === "Immersive") speak(ch.text);
+      
+      // Play sound effects if chapter has them
+      if (ch.sound && soundEffectsOn) {
+        const soundType = ch.sound.includes("creak") ? "creak" :
+                         ch.sound.includes("footsteps") ? "footsteps" :
+                         ch.sound.includes("heartbeat") ? "heartbeat" : null;
+        if (soundType) {
+          setTimeout(() => playSoundEffect(soundType), 500);
+        }
+      }
+      
+      // Jump scare effect
+      if (ch.jumpScare && soundEffectsOn) {
+        setTimeout(() => playSoundEffect("jumpscare"), 3000);
+      }
+      
+      // Narrator reads text or just the narrator summary
+      if (mode === "Cinematic" || mode === "Immersive") {
+        const narratorText = ch.narrator || ch.text;
+        speak(narratorText);
+      }
+      
       if (mode === "Immersive") startAmbient();
+      
       const timer = setTimeout(() => {
-        if (ch.choice) setShowChoice(true);
+        if (ch.choice) {
+          setShowChoice(true);
+          // Narrator asks the choice question
+          if (ch.choice.prompt && (mode === "Cinematic" || mode === "Immersive")) {
+            speak(ch.choice.prompt);
+          }
+        }
       }, mode === "Reader" ? 2000 : 8000);
       return () => clearTimeout(timer);
     }
-  }, [pg, chIdx, mode]);
+  }, [pg, chIdx, mode, narratorOn, soundEffectsOn]);
 
   useEffect(() => {
     return () => {
@@ -1749,8 +1925,44 @@ You have a choice to make. You always will.`,
           >
             ← Exit
           </button>
-          <div style={{ fontSize: 13, color: "#9090A0" }}>
-            {ch.title} • {mode} Mode
+          <div style={{ fontSize: 13, color: "#9090A0", display: "flex", gap: 16, alignItems: "center" }}>
+            <span>{ch.title} • {mode} Mode</span>
+            
+            {(mode === "Cinematic" || mode === "Immersive") && (
+              <>
+                <button
+                  onClick={() => setNarratorOn(!narratorOn)}
+                  style={{
+                    padding: "4px 12px",
+                    borderRadius: 6,
+                    background: narratorOn ? "rgba(232,54,79,0.2)" : "transparent",
+                    border: `1px solid ${narratorOn ? "#E8364F" : "#2A2A35"}`,
+                    color: narratorOn ? "#E8364F" : "#9090A0",
+                    fontSize: 11,
+                    cursor: "pointer",
+                  }}
+                  title="Toggle narrator voice"
+                >
+                  {narratorOn ? "🔊 Narrator" : "🔇 Narrator"}
+                </button>
+                
+                <button
+                  onClick={() => setSoundEffectsOn(!soundEffectsOn)}
+                  style={{
+                    padding: "4px 12px",
+                    borderRadius: 6,
+                    background: soundEffectsOn ? "rgba(232,54,79,0.2)" : "transparent",
+                    border: `1px solid ${soundEffectsOn ? "#E8364F" : "#2A2A35"}`,
+                    color: soundEffectsOn ? "#E8364F" : "#9090A0",
+                    fontSize: 11,
+                    cursor: "pointer",
+                  }}
+                  title="Toggle sound effects"
+                >
+                  {soundEffectsOn ? "🎵 Effects" : "🔇 Effects"}
+                </button>
+              </>
+            )}
           </div>
           {mode === "Immersive" && (
             <button
