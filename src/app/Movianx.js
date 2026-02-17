@@ -961,12 +961,46 @@ You have a choice to make. You always will.`,
       const transcript = e.results[0][0].transcript.toLowerCase();
       const choice = chaps[chIdx].choice;
       if (!choice) return;
-      const idx = choice.opts.findIndex((o) => transcript.includes(o.txt.toLowerCase().substring(0, 10)));
-      if (idx !== -1) makeChoice(choice.opts[idx]);
-      else speak("I didn't understand that choice. Please try again.");
+      
+      // Map natural speech to choices using keyword matching
+      const userSaid = transcript;
+      let matchedChoice = null;
+      
+      // Check each option for keyword matches
+      choice.opts.forEach(opt => {
+        const optionText = opt.txt.toLowerCase();
+        
+        // Extract key action words from the option
+        const keywords = optionText.match(/\b(decode|decoding|mentor|ashford|burn|burning|destroy|ignore|go|take|escape|tunnel|follow|ask|publish|negotiate|power)\b/g) || [];
+        
+        // Check if user's speech contains any of these keywords
+        const matched = keywords.some(keyword => userSaid.includes(keyword));
+        
+        if (matched && !matchedChoice) {
+          matchedChoice = opt;
+        }
+      });
+      
+      if (matchedChoice) {
+        speak(`Okay, ${matchedChoice.txt.toLowerCase()}`);
+        setTimeout(() => makeChoice(matchedChoice), 1500);
+      } else {
+        // Didn't match - ask them to rephrase
+        const optionsList = choice.opts.map(o => o.txt).join(", or ");
+        speak(`I didn't quite catch that. You can say something like: ${optionsList}`);
+        setTimeout(() => {
+          setVoiceActive(false);
+        }, 3000);
+      }
     };
     rec.onerror = () => setVoiceActive(false);
-    rec.onend = () => setVoiceActive(false);
+    rec.onend = () => {
+      setVoiceActive(false);
+      // Auto-restart if in voice mode
+      if (voiceMode && showChoice) {
+        setTimeout(() => startVoiceRecognition(), 500);
+      }
+    };
     rec.start();
   };
 
@@ -1740,7 +1774,7 @@ You have a choice to make. You always will.`,
         </div>
 
         {/* Content */}
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "100px 40px 60px" }}>
+        <div style={{ maxWidth: 800, margin: "0 auto", padding: "100px 40px 120px" }}>
           <h2 style={{ fontSize: 28, fontWeight: 700, color: "#F0F0F5", marginBottom: 30, letterSpacing: "-0.5px" }}>
             {ch.title}
           </h2>
