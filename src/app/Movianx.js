@@ -1902,87 +1902,93 @@ And she's not alone.`,
             background: "rgba(10,10,15,0.95)",
             backdropFilter: "blur(10px)",
             borderBottom: "1px solid #2A2A35",
-            padding: "16px 40px",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            padding: "12px 20px",
             zIndex: 100,
           }}
         >
-          <button
-            onClick={() => {
-              stopAmbient();
-              if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
-              setPg("detail");
-            }}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "#9090A0",
-              fontSize: 14,
-              cursor: "pointer",
-            }}
-          >
-            ← Exit
-          </button>
-          <div style={{ fontSize: 13, color: "#9090A0", display: "flex", gap: 16, alignItems: "center" }}>
-            <span>{ch.title} • {mode} Mode</span>
-            
-            {(mode === "Cinematic" || mode === "Immersive") && (
-              <>
-                <button
-                  onClick={() => setNarratorOn(!narratorOn)}
-                  style={{
-                    padding: "4px 12px",
-                    borderRadius: 6,
-                    background: narratorOn ? "rgba(232,54,79,0.2)" : "transparent",
-                    border: `1px solid ${narratorOn ? "#E8364F" : "#2A2A35"}`,
-                    color: narratorOn ? "#E8364F" : "#9090A0",
-                    fontSize: 11,
-                    cursor: "pointer",
-                  }}
-                  title="Toggle narrator voice"
-                >
-                  {narratorOn ? "🔊 Narrator" : "🔇 Narrator"}
-                </button>
-                
-                <button
-                  onClick={() => setSoundEffectsOn(!soundEffectsOn)}
-                  style={{
-                    padding: "4px 12px",
-                    borderRadius: 6,
-                    background: soundEffectsOn ? "rgba(232,54,79,0.2)" : "transparent",
-                    border: `1px solid ${soundEffectsOn ? "#E8364F" : "#2A2A35"}`,
-                    color: soundEffectsOn ? "#E8364F" : "#9090A0",
-                    fontSize: 11,
-                    cursor: "pointer",
-                  }}
-                  title="Toggle sound effects"
-                >
-                  {soundEffectsOn ? "🎵 Effects" : "🔇 Effects"}
-                </button>
-              </>
-            )}
-          </div>
-          {mode === "Immersive" && (
+          {/* Row 1: Exit + Title */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <button
               onClick={() => {
-                setVoiceMode(!voiceMode);
-                if (!voiceMode) startVoiceRecognition();
+                stopAmbient();
+                if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
+                setPg("detail");
               }}
               style={{
-                padding: "8px 16px",
-                borderRadius: 8,
-                background: voiceActive ? "#E8364F" : "transparent",
-                border: `1px solid ${voiceActive ? "#E8364F" : "#2A2A35"}`,
-                color: voiceActive ? "#fff" : "#9090A0",
-                fontSize: 13,
+                background: "transparent",
+                border: "none",
+                color: "#9090A0",
+                fontSize: 14,
                 cursor: "pointer",
               }}
             >
-              {voiceActive ? "🎤 Listening..." : "🎤 Voice Control"}
+              ← Exit
             </button>
-          )}
+            <div style={{ fontSize: 12, color: "#9090A0" }}>
+              {ch.title} • {mode} Mode
+            </div>
+          </div>
+          
+          {/* Row 2: Controls */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              {(mode === "Cinematic" || mode === "Immersive") && (
+                <>
+                  <button
+                    onClick={() => setNarratorOn(!narratorOn)}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: 6,
+                      background: narratorOn ? "rgba(232,54,79,0.2)" : "transparent",
+                      border: `1px solid ${narratorOn ? "#E8364F" : "#2A2A35"}`,
+                      color: narratorOn ? "#E8364F" : "#9090A0",
+                      fontSize: 11,
+                      cursor: "pointer",
+                    }}
+                    title="Toggle narrator voice"
+                  >
+                    {narratorOn ? "🔊" : "🔇"}
+                  </button>
+                  
+                  <button
+                    onClick={() => setSoundEffectsOn(!soundEffectsOn)}
+                    style={{
+                      padding: "6px 12px",
+                      borderRadius: 6,
+                      background: soundEffectsOn ? "rgba(232,54,79,0.2)" : "transparent",
+                      border: `1px solid ${soundEffectsOn ? "#E8364F" : "#2A2A35"}`,
+                      color: soundEffectsOn ? "#E8364F" : "#9090A0",
+                      fontSize: 11,
+                      cursor: "pointer",
+                    }}
+                    title="Toggle sound effects"
+                  >
+                    {soundEffectsOn ? "🎵" : "🔇"}
+                  </button>
+                </>
+              )}
+            </div>
+            
+            {mode === "Immersive" && (
+              <button
+                onClick={() => {
+                  setVoiceMode(!voiceMode);
+                  if (!voiceMode) startVoiceRecognition();
+                }}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  background: voiceActive ? "#E8364F" : "transparent",
+                  border: `1px solid ${voiceActive ? "#E8364F" : "#2A2A35"}`,
+                  color: voiceActive ? "#fff" : "#9090A0",
+                  fontSize: 11,
+                  cursor: "pointer",
+                }}
+              >
+                {voiceActive ? "🎤 Listening..." : "🎤 Voice"}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Content */}
@@ -1995,7 +2001,7 @@ And she's not alone.`,
           </div>
 
           {/* Choices */}
-          {showChoice && ch.choice && (
+          {showChoice && ch.choice && mode !== "Immersive" && (
             <div
               style={{
                 background: "#141419",
@@ -2035,6 +2041,28 @@ And she's not alone.`,
                   </button>
                 ))}
               </div>
+            </div>
+          )}
+          
+          {/* Immersive Mode: Voice-only instruction */}
+          {showChoice && ch.choice && mode === "Immersive" && (
+            <div
+              style={{
+                background: "rgba(232,54,79,0.1)",
+                borderRadius: 16,
+                border: "1px solid rgba(232,54,79,0.3)",
+                padding: 32,
+                marginTop: 40,
+                textAlign: "center",
+              }}
+            >
+              <div style={{ fontSize: 32, marginBottom: 12 }}>🎤</div>
+              <p style={{ fontSize: 16, fontWeight: 600, color: "#E8364F", marginBottom: 8 }}>
+                {voiceActive ? "Listening..." : "Tap the mic to respond"}
+              </p>
+              <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", lineHeight: 1.6 }}>
+                {ch.choice.prompt}
+              </p>
             </div>
           )}
         </div>
