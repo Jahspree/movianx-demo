@@ -693,6 +693,7 @@ function StreamingPage() {
 function CreatorDashboard({ onBackToReader }) {
   const [user, setUser] = useState(null);
   const [active, setActive] = useState("overview");
+  const [menuOpen, setMenuOpen] = useState(false);
 
   if (!user) return <EmailGate onSubmit={setUser} />;
 
@@ -711,9 +712,60 @@ function CreatorDashboard({ onBackToReader }) {
       display: "flex", minHeight: "100vh", background: DARK,
       fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       color: TEXT,
+      position: "relative",
     }}>
-      <Sidebar active={active} setActive={setActive} user={user} />
-      <div style={{ flex: 1, padding: "32px 40px", overflowY: "auto", maxHeight: "100vh" }}>
+      {/* Mobile Menu Button */}
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        style={{
+          position: "fixed",
+          top: 20,
+          left: 20,
+          zIndex: 200,
+          padding: "12px",
+          borderRadius: 8,
+          background: SURFACE,
+          border: `1px solid ${BORDER}`,
+          color: TEXT,
+          fontSize: 20,
+          cursor: "pointer",
+          display: typeof window !== "undefined" && window.innerWidth > 768 ? "none" : "block",
+        }}
+      >
+        {menuOpen ? "✕" : "☰"}
+      </button>
+
+      {/* Sidebar with overlay for mobile */}
+      <div
+        style={{
+          position: typeof window !== "undefined" && window.innerWidth <= 768 ? "fixed" : "relative",
+          top: 0,
+          left: menuOpen || (typeof window !== "undefined" && window.innerWidth > 768) ? 0 : -300,
+          height: "100vh",
+          zIndex: 150,
+          transition: "left 0.3s ease",
+        }}
+      >
+        <Sidebar active={active} setActive={(id) => { setActive(id); setMenuOpen(false); }} user={user} />
+      </div>
+
+      {/* Overlay */}
+      {menuOpen && typeof window !== "undefined" && window.innerWidth <= 768 && (
+        <div
+          onClick={() => setMenuOpen(false)}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,0.7)",
+            zIndex: 140,
+          }}
+        />
+      )}
+
+      <div style={{ flex: 1, padding: "32px 20px", overflowY: "auto", maxHeight: "100vh" }}>
         {/* Back to Reader Button */}
         <button
           onClick={onBackToReader}
@@ -1106,39 +1158,67 @@ And she's not alone.`,
     rec.lang = "en-US";
     rec.onstart = () => setVoiceActive(true);
     rec.onresult = (e) => {
-      const transcript = e.results[0][0].transcript.toLowerCase();
+      const transcript = e.results[0][0].transcript.toLowerCase().trim();
       const choice = chaps[chIdx].choice;
       if (!choice) return;
       
-      // Map natural speech to choices using keyword matching
-      const userSaid = transcript;
-      let matchedChoice = null;
+      console.log("User said:", transcript);
       
-      // Check each option for keyword matches
+      // Map natural speech to choices - MUCH more flexible
+      let bestMatch = null;
+      let highestScore = 0;
+      
       choice.opts.forEach(opt => {
         const optionText = opt.txt.toLowerCase();
         
-        // Extract key action words from the option
-        const keywords = optionText.match(/\b(decode|decoding|mentor|ashford|burn|burning|destroy|ignore|go|take|escape|tunnel|follow|ask|publish|negotiate|power)\b/g) || [];
+        // Extract ALL meaningful words from the option (not just hardcoded ones)
+        const stopWords = ['the', 'a', 'an', 'to', 'and', 'or', 'it', 'in', 'on', 'at', 'for', 'with', 'as', 'your', 'my'];
+        const optionWords = optionText
+          .replace(/[^\w\s]/g, '') // Remove punctuation
+          .split(/\s+/)
+          .filter(word => word.length > 2 && !stopWords.includes(word));
         
-        // Check if user's speech contains any of these keywords
-        const matched = keywords.some(keyword => userSaid.includes(keyword));
+        // Count how many words from the option appear in what the user said
+        let matchScore = 0;
+        optionWords.forEach(word => {
+          if (transcript.includes(word)) {
+            matchScore++;
+          }
+        });
         
-        if (matched && !matchedChoice) {
-          matchedChoice = opt;
+        // Also check for partial matches (e.g., "upstairs" matches "upstair")
+        optionWords.forEach(word => {
+          const partial = word.substring(0, Math.max(4, word.length - 2));
+          if (partial.length > 3 && transcript.includes(partial)) {
+            matchScore += 0.5;
+          }
+        });
+        
+        // Boost score if user said something very similar
+        if (transcript.includes(optionText.substring(0, 15))) {
+          matchScore += 3;
+        }
+        
+        console.log(`Option "${opt.txt}" scored ${matchScore}`);
+        
+        if (matchScore > highestScore) {
+          highestScore = matchScore;
+          bestMatch = opt;
         }
       });
       
-      if (matchedChoice) {
-        speak(`Okay, ${matchedChoice.txt.toLowerCase()}`);
-        setTimeout(() => makeChoice(matchedChoice), 1500);
+      // Accept if we got ANY match (even weak ones)
+      if (bestMatch && highestScore > 0.5) {
+        console.log(`Matched: "${bestMatch.txt}" with score ${highestScore}`);
+        speak(`Got it.`);
+        setTimeout(() => makeChoice(bestMatch), 800);
       } else {
         // Didn't match - ask them to rephrase
-        const optionsList = choice.opts.map(o => o.txt).join(", or ");
-        speak(`I didn't quite catch that. You can say something like: ${optionsList}`);
+        console.log("No match found");
+        speak(`I didn't catch that. Try saying one of the options more clearly.`);
         setTimeout(() => {
           setVoiceActive(false);
-        }, 3000);
+        }, 2000);
       }
     };
     rec.onerror = () => setVoiceActive(false);
