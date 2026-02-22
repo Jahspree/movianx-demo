@@ -245,8 +245,13 @@ function Sidebar({ active, setActive, user }) {
   ];
   return (
     <div style={{
-      width: 260, background: SURFACE, borderRight: `1px solid ${BORDER}`,
-      display: "flex", flexDirection: "column", flexShrink: 0,
+      width: 260, 
+      height: "100%",
+      background: "#000", // Solid black, not transparent
+      borderRight: `1px solid ${BORDER}`,
+      display: "flex", 
+      flexDirection: "column", 
+      flexShrink: 0,
     }}>
       {/* Logo */}
       <div style={{ padding: "24px 20px", borderBottom: `1px solid ${BORDER}` }}>
@@ -714,42 +719,48 @@ function CreatorDashboard({ onBackToReader }) {
       color: TEXT,
       position: "relative",
     }}>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Always Visible */}
       <button
         onClick={() => setMenuOpen(!menuOpen)}
         style={{
           position: "fixed",
           top: 20,
           left: 20,
-          zIndex: 200,
-          padding: "12px",
+          zIndex: 250,
+          padding: "12px 14px",
           borderRadius: 8,
-          background: SURFACE,
-          border: `1px solid ${BORDER}`,
-          color: TEXT,
+          background: "#000",
+          border: "1px solid #fff",
+          color: "#fff",
           fontSize: 20,
           cursor: "pointer",
-          display: typeof window !== "undefined" && window.innerWidth > 768 ? "none" : "block",
+          display: typeof window !== "undefined" && window.innerWidth > 768 ? "none" : "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
         }}
       >
         {menuOpen ? "✕" : "☰"}
       </button>
 
-      {/* Sidebar with overlay for mobile */}
+      {/* Sidebar - Solid Background */}
       <div
         style={{
           position: typeof window !== "undefined" && window.innerWidth <= 768 ? "fixed" : "relative",
           top: 0,
           left: menuOpen || (typeof window !== "undefined" && window.innerWidth > 768) ? 0 : -300,
           height: "100vh",
-          zIndex: 150,
+          width: 260,
+          background: "#000", // Solid black background
+          zIndex: 200,
           transition: "left 0.3s ease",
+          boxShadow: typeof window !== "undefined" && window.innerWidth <= 768 ? "4px 0 12px rgba(0,0,0,0.5)" : "none",
         }}
       >
         <Sidebar active={active} setActive={(id) => { setActive(id); setMenuOpen(false); }} user={user} />
       </div>
 
-      {/* Overlay */}
+      {/* Overlay - Darker */}
       {menuOpen && typeof window !== "undefined" && window.innerWidth <= 768 && (
         <div
           onClick={() => setMenuOpen(false)}
@@ -759,8 +770,8 @@ function CreatorDashboard({ onBackToReader }) {
             left: 0,
             right: 0,
             bottom: 0,
-            background: "rgba(0,0,0,0.7)",
-            zIndex: 140,
+            background: "rgba(0,0,0,0.85)",
+            zIndex: 150,
           }}
         />
       )}
