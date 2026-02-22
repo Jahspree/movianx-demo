@@ -893,7 +893,8 @@ A sound comes from the woods to your left. Rustling. Movement.
 
 Sarah freezes. "Did you hear that?"`,
       choice: {
-        prompt: "Sarah turns to you, fear in her eyes. What do you say?",
+        prompt: "Sarah turns to you, fear in her eyes. Should we check the woods first, or ignore it and go straight to the house?",
+        emotion: "tense",
         opts: [
           { txt: "Let's check the woods first", next: 1, consequence: "woods" },
           { txt: "Ignore it and go straight to the house", next: 2, consequence: "house" },
@@ -901,6 +902,7 @@ Sarah freezes. "Did you hear that?"`,
       },
       sound: "ambient-woods.mp3",
       narrator: "You arrive at the abandoned lake house at midnight. Something rustles in the woods nearby.",
+      emotion: "calm",
     },
     {
       title: "Chapter 2: Into the Woods",
@@ -914,7 +916,8 @@ Then you see it: a figure, standing completely still about thirty yards away, fa
 
 Sarah grabs your arm. "RUN!"`,
       choice: {
-        prompt: "The figure starts moving toward you. Fast. Do you:",
+        prompt: "The figure starts moving toward you. Fast. Should we run back to the car, or run toward the house?",
+        emotion: "panicked",
         opts: [
           { txt: "Run back to the car", next: 3, consequence: "survive-woods" },
           { txt: "Run toward the house", next: 4, consequence: "house-pursued" },
@@ -922,6 +925,7 @@ Sarah grabs your arm. "RUN!"`,
       },
       sound: "footsteps-running.mp3",
       narrator: "You venture into the woods and encounter something that shouldn't be there.",
+      emotion: "terrified",
       jumpScare: true,
     },
     {
@@ -938,7 +942,8 @@ Sarah's phone buzzes. A text from an unknown number: "Wrong choice. She needed y
 
 A scream pierces the air from upstairs.`,
       choice: {
-        prompt: "Sarah looks at you, terrified. What do you do?",
+        prompt: "Sarah looks at you, terrified. Should we run upstairs toward the scream, or leave immediately?",
+        emotion: "scared",
         opts: [
           { txt: "Run upstairs toward the scream", next: 5, consequence: "upstairs" },
           { txt: "Leave immediately", next: 6, consequence: "abandon" },
@@ -946,6 +951,7 @@ A scream pierces the air from upstairs.`,
       },
       sound: "door-creak.mp3",
       narrator: "You enter the house. Something is very wrong here.",
+      emotion: "uneasy",
     },
     {
       title: "Chapter 3: The Car Won't Start",
@@ -963,7 +969,8 @@ It's footage from a security camera—this very moment, from a different angle. 
 
 The figure is getting closer. Twenty yards. Fifteen.`,
       choice: {
-        prompt: "The car won't start and the figure is approaching. Quick, what do you do?",
+        prompt: "The car won't start and the figure is approaching. Should we hide in the car and call 911, or make a run for the house?",
+        emotion: "breathing-hard",
         opts: [
           { txt: "Hide in the car and call 911", next: 7, consequence: "call-help" },
           { txt: "Make a run for the house", next: 4, consequence: "house-pursued" },
@@ -971,6 +978,7 @@ The figure is getting closer. Twenty yards. Fifteen.`,
       },
       sound: "heartbeat.mp3",
       narrator: "The car won't start. The figure is getting closer.",
+      emotion: "panicked",
     },
     {
       title: "Chapter 3: Pursued",
@@ -988,7 +996,8 @@ Sarah is breathing hard. "Which way?"
 
 Footsteps on the stairs. Slow. Steady. Getting closer.`,
       choice: {
-        prompt: "You have seconds to choose. Where do you hide?",
+        prompt: "You have seconds to choose. Should we hide in Emma's room, or go to the attic?",
+        emotion: "out-of-breath",
         opts: [
           { txt: "Emma's room", next: 8, consequence: "emmas-room" },
           { txt: "The attic", next: 9, consequence: "attic" },
@@ -996,6 +1005,7 @@ Footsteps on the stairs. Slow. Steady. Getting closer.`,
       },
       sound: "door-slam.mp3",
       narrator: "You're being chased through the house. You need to hide. Now.",
+      emotion: "terrified",
     },
     {
       title: "Epilogue: The Truth",
@@ -1144,15 +1154,49 @@ And she's not alone.`,
     }
   };
 
-  const speak = (text) => {
+  const speak = (text, emotion = "calm") => {
     if (typeof window === "undefined" || !window.speechSynthesis) return;
     if (!narratorOn) return; // Respect narrator toggle
     
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.9;
-    u.pitch = 0.95;
-    u.volume = 0.9;
+    
+    // Apply emotion-based voice parameters
+    switch(emotion) {
+      case "terrified":
+      case "panicked":
+        u.rate = 1.3; // Faster when scared
+        u.pitch = 1.15; // Higher pitch
+        u.volume = 0.95;
+        break;
+      case "out-of-breath":
+      case "breathing-hard":
+        u.rate = 1.2; // Quick, breathless
+        u.pitch = 1.1;
+        u.volume = 0.85; // Quieter
+        break;
+      case "scared":
+      case "tense":
+        u.rate = 1.0;
+        u.pitch = 1.05;
+        u.volume = 0.9;
+        break;
+      case "uneasy":
+        u.rate = 0.95;
+        u.pitch = 0.98;
+        u.volume = 0.85;
+        break;
+      case "whispering":
+        u.rate = 0.85;
+        u.pitch = 0.9;
+        u.volume = 0.5; // Very quiet
+        break;
+      default: // calm
+        u.rate = 0.9;
+        u.pitch = 0.95;
+        u.volume = 0.9;
+    }
+    
     window.speechSynthesis.speak(u);
   };
 
@@ -1273,10 +1317,11 @@ And she's not alone.`,
         setTimeout(() => playSoundEffect("jumpscare"), 3000);
       }
       
-      // Narrator reads text or just the narrator summary
+      // Narrator reads text or just the narrator summary with emotion
       if (mode === "Cinematic" || mode === "Immersive") {
         const narratorText = ch.narrator || ch.text;
-        speak(narratorText);
+        const emotion = ch.emotion || "calm";
+        speak(narratorText, emotion);
       }
       
       if (mode === "Immersive") startAmbient();
@@ -1284,9 +1329,18 @@ And she's not alone.`,
       const timer = setTimeout(() => {
         if (ch.choice) {
           setShowChoice(true);
-          // Narrator asks the choice question
+          // Narrator asks the choice question with emotion
           if (ch.choice.prompt && (mode === "Cinematic" || mode === "Immersive")) {
-            speak(ch.choice.prompt);
+            const choiceEmotion = ch.choice.emotion || "calm";
+            speak(ch.choice.prompt, choiceEmotion);
+            
+            // Auto-start voice recognition in Immersive mode after asking question
+            if (mode === "Immersive") {
+              setTimeout(() => {
+                setVoiceMode(true);
+                startVoiceRecognition();
+              }, 3000); // Wait 3 seconds for question to finish
+            }
           }
         }
       }, mode === "Reader" ? 2000 : 8000);
