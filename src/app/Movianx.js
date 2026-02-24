@@ -804,6 +804,10 @@ function CreatorDashboard({ onBackToReader }) {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 1; }
+          50% { transform: scale(1.1); opacity: 0.8; }
+        }
         * { box-sizing: border-box; margin: 0; }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: ${DARK}; }
@@ -847,15 +851,16 @@ const stories = [
   },
   {
     id: 3,
-    title: "Echoes of Tomorrow",
-    author: "Marcus Webb",
-    genre: "Sci-Fi / Romance",
-    cover: "https://picsum.photos/seed/echoes/400/600",
-    desc: "In a world where memories can be shared, two strangers must decide if love is worth losing themselves.",
-    immersions: ["Reader", "Cinematic"],
-    rating: 4.6,
-    reads: "1.8M",
-    chapters: 9,
+    title: "10 Seconds",
+    author: "Movianx Original",
+    genre: "Thriller / Survival Horror",
+    cover: "https://picsum.photos/seed/seconds/400/600",
+    desc: "You have 10 seconds to decide. Every choice. Every time. One wrong move and someone dies. Can you survive when every decision is life or death? ⏱️ TIMED CHOICES - Feel the pressure.",
+    immersions: ["Reader", "Cinematic", "Immersive"],
+    rating: 4.9,
+    reads: "New",
+    chapters: 4,
+    isTimed: true,
   },
 ];
 
@@ -870,6 +875,8 @@ export default function MovianxPlatform() {
   const [chIdx, setChIdx] = useState(0);
   const [choices, setChoices] = useState([]);
   const [showChoice, setShowChoice] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(null);
+  const [timerActive, setTimerActive] = useState(false);
   const [voiceMode, setVoiceMode] = useState(false);
   const [voiceActive, setVoiceActive] = useState(false);
   const [narratorOn, setNarratorOn] = useState(true);
@@ -1154,9 +1161,157 @@ THE END
     },
   ];
   
+  // Timed thriller - 10 SECONDS to decide, high stakes, survival horror
+  const timedThrillerChapters = [
+    {
+      title: "Home Invasion - 3:47 AM",
+      text: `CRASH.
+
+Glass shattering downstairs. Your eyes snap open.
+
+Your wife Sarah is beside you, stirring. Your daughter's room is down the hall. Your son sleeps across from her.
+
+Another sound. Footsteps. Multiple people. Whispering.
+
+"Did you hear that?" Sarah grabs your arm, terrified.
+
+Your phone is on the nightstand. The panic button for the alarm is across the room. The gun safe is in the closet - code 4-7-2-9 - but it'll take 15 seconds to open.
+
+More footsteps. Coming up the stairs.
+
+You have 10 seconds.`,
+      choice: {
+        prompt: "DECIDE NOW.",
+        emotion: "panicked",
+        timeLimit: 10, // seconds
+        opts: [
+          { txt: "Get the gun from the safe", next: 1, consequence: "armed" },
+          { txt: "Hit the panic button", next: 2, consequence: "alarm" },
+          { txt: "Grab the kids and hide", next: 3, consequence: "hide" },
+        ],
+      },
+      narrator: "Glass breaks. Intruders are in your house. Your family is in danger.",
+      emotion: "terrified",
+      sound: "heartbeat.mp3",
+      urgentSound: "ticking.mp3",
+    },
+    {
+      title: "The Standoff",
+      text: `You sprint to the closet. 4-7-2-9. Your hands are shaking.
+
+The safe opens. Glock 19. Loaded mag. You chamber a round.
+
+Sarah is at the bedroom door, holding it shut. "They're right outside!"
+
+The doorknob turns.
+
+"Don't come in!" you shout. "I'm armed!"
+
+A voice from the other side: "We know. That's why we brought three guns."
+
+Silence.
+
+Then: "Here's the deal. We're taking your daughter. You can either let us walk out, or we can shoot through this door and take her anyway. You might get one of us. We'll definitely get you, your wife, and both kids."
+
+Sarah is crying. "What do we do?"
+
+Through the crack in the door, you see shadows. Three of them. They're not lying.
+
+10 seconds.`,
+      choice: {
+        prompt: "WHAT DO YOU DO?",
+        emotion: "desperate",
+        timeLimit: 10,
+        opts: [
+          { txt: "Open fire through the door", next: 4, consequence: "violence" },
+          { txt: "Negotiate - offer them money instead", next: 4, consequence: "negotiate" },
+          { txt: "Stall - police might be coming", next: 4, consequence: "stall" },
+        ],
+      },
+      narrator: "Three armed intruders. They want your daughter. You have one gun.",
+      emotion: "out-of-breath",
+      sound: "heartbeat.mp3",
+      urgentSound: "ticking.mp3",
+    },
+    {
+      title: "The Alarm",
+      text: `You lunge across the room and slam the panic button.
+
+BEEEEEP BEEEEEP BEEEEEP
+
+Sirens. Lights. The alarm company will call in 30 seconds. Police response time: 7 minutes.
+
+Footsteps pound up the stairs - faster now.
+
+Your bedroom door SLAMS open. Three masked figures. Guns drawn.
+
+"Shut it off! NOW!"
+
+One of them grabs Sarah. Gun to her head. "Shut off the alarm or I blow her brains out!"
+
+The control panel is on the wall. Code: 1-9-8-3.
+
+But if you shut it off, the alarm company won't call. No police.
+
+Sarah is screaming. Your kids are crying down the hall.
+
+The lead intruder cocks the hammer. "I'm counting to five. ONE."
+
+10 seconds to decide.`,
+      choice: {
+        prompt: "FIVE SECONDS.",
+        emotion: "panicked",
+        timeLimit: 10,
+        opts: [
+          { txt: "Shut off the alarm - save Sarah now", next: 4, consequence: "comply" },
+          { txt: "Refuse - 7 minutes until police arrive", next: 4, consequence: "resist" },
+          { txt: "Give them what they want - no one dies", next: 4, consequence: "surrender" },
+        ],
+      },
+      narrator: "Gun to your wife's head. Alarm is blaring. They're giving you five seconds.",
+      emotion: "terrified",
+      sound: "alarm.mp3",
+      urgentSound: "ticking.mp3",
+      jumpScare: true,
+    },
+    {
+      title: "Consequences",
+      text: `[Time's up]
+
+BANG.
+
+The choice you made - or didn't make - determined everything.
+
+Armed resistance: You fired. They fired back. Sarah took three rounds protecting the kids. She bled out in 4 minutes. The police arrived in 7.
+
+Negotiation: They took the money, the jewelry, everything. Then they took your daughter anyway. "You're a witness now," one said. She was found two states over, three weeks later. Alive, but changed forever.
+
+Stalling: They didn't believe you. Shot your son to prove they were serious. You gave them everything. They left. Your son died in your arms waiting for the ambulance.
+
+Alarm refusal: Sarah died instantly. But the alarm brought police in 6 minutes. The intruders fled. Your kids survived. You'll never forget the sound of that gunshot. Never.
+
+Surrender: They took your daughter. You never saw her again. The guilt of choosing your wife over your child consumes you. Sarah can't look at you anymore.
+
+The truth?
+
+There was no good choice.
+
+Just the one you made in 10 seconds.
+
+And the one you'll live with forever.
+
+[END]
+
+This is what pressure feels like. This is what stakes mean. Every choice in 10 seconds. Every consequence permanent.
+
+Welcome to Movianx.`,
+    },
+  ];
+  
   // Route to correct chapters based on selected story
   const chaps = sel?.id === 1 ? frankensteinChapters : 
-                sel?.id === 2 ? sampleChapters : 
+                sel?.id === 2 ? sampleChapters :
+                sel?.id === 3 ? timedThrillerChapters :
                 frankensteinChapters; // default to Frankenstein
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -1453,6 +1608,8 @@ THE END
   const makeChoice = (opt) => {
     setChoices([...choices, { ch: chIdx, choice: opt.txt }]);
     setShowChoice(false);
+    setTimerActive(false); // Stop timer when choice is made
+    setTimeRemaining(null);
     if (opt.next < chaps.length) setChIdx(opt.next);
     if (opt.next === chaps.length - 1) stopAmbient();
   };
@@ -1489,6 +1646,13 @@ THE END
       const timer = setTimeout(() => {
         if (ch.choice) {
           setShowChoice(true);
+          
+          // Start countdown timer if this choice has a time limit
+          if (ch.choice.timeLimit) {
+            setTimeRemaining(ch.choice.timeLimit);
+            setTimerActive(true);
+          }
+          
           // Narrator asks the choice question with emotion
           if (ch.choice.prompt && (mode === "Cinematic" || mode === "Immersive")) {
             const choiceEmotion = ch.choice.emotion || "calm";
@@ -1507,6 +1671,33 @@ THE END
       return () => clearTimeout(timer);
     }
   }, [pg, chIdx, mode, narratorOn, soundEffectsOn]);
+
+  // Countdown timer for timed choices
+  useEffect(() => {
+    if (!timerActive || timeRemaining === null) return;
+    
+    if (timeRemaining <= 0) {
+      // Time's up! Auto-select first choice
+      const ch = chaps[chIdx];
+      if (ch.choice && ch.choice.opts[0]) {
+        speak("Time's up.", "panicked");
+        setTimeout(() => makeChoice(ch.choice.opts[0]), 500);
+      }
+      setTimerActive(false);
+      return;
+    }
+    
+    // Play urgent tick sound at 3, 2, 1
+    if (timeRemaining <= 3 && soundEffectsOn) {
+      playSoundEffect("heartbeat");
+    }
+    
+    const countdown = setTimeout(() => {
+      setTimeRemaining(timeRemaining - 1);
+    }, 1000);
+    
+    return () => clearTimeout(countdown);
+  }, [timerActive, timeRemaining]);
 
   // CRITICAL: Cleanup audio and microphone when navigating away or unmounting
   useEffect(() => {
@@ -2343,11 +2534,32 @@ THE END
               style={{
                 background: "#141419",
                 borderRadius: 16,
-                border: "1px solid #2A2A35",
+                border: `1px solid ${timerActive && timeRemaining <= 3 ? "#E8364F" : "#2A2A35"}`,
                 padding: 32,
                 marginTop: 40,
               }}
             >
+              {/* Timer Display */}
+              {timerActive && timeRemaining !== null && (
+                <div style={{ 
+                  textAlign: "center", 
+                  marginBottom: 20,
+                  animation: timeRemaining <= 3 ? "pulse 0.5s infinite" : "none",
+                }}>
+                  <div style={{ 
+                    fontSize: 48, 
+                    fontWeight: 700, 
+                    color: timeRemaining <= 3 ? "#E8364F" : "#F0F0F5",
+                    fontFamily: "monospace",
+                  }}>
+                    {timeRemaining}
+                  </div>
+                  <div style={{ fontSize: 12, color: "#9090A0", textTransform: "uppercase", letterSpacing: 2 }}>
+                    {timeRemaining <= 3 ? "DECIDE NOW!" : "SECONDS REMAINING"}
+                  </div>
+                </div>
+              )}
+              
               <p style={{ fontSize: 18, fontWeight: 600, color: "#F0F0F5", marginBottom: 20 }}>{ch.choice.prompt}</p>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 {ch.choice.opts.map((opt, i) => (
