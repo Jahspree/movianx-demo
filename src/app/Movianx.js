@@ -1948,6 +1948,112 @@ Welcome to Movianx.`,
   }
 
   // ─── HOME PAGE ───
+  // ─── STORY LIBRARY ───
+  if (pg === "library") {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          background: "#000",
+          fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+          overflowY: "scroll",
+          WebkitOverflowScrolling: "touch",
+          padding: "80px 5%",
+          opacity: fadeOut ? 0 : 1,
+          transition: "opacity 0.2s ease-in-out",
+        }}
+      >
+        {/* Back Button */}
+        <button
+          onClick={() => navigateTo("home")}
+          style={{
+            background: "transparent",
+            border: "1px solid rgba(255,255,255,0.2)",
+            color: "#fff",
+            padding: "12px 24px",
+            borderRadius: 8,
+            fontSize: 14,
+            cursor: "pointer",
+            marginBottom: 40,
+          }}
+        >
+          ← Back
+        </button>
+
+        <h1 style={{ fontSize: 48, fontWeight: 700, color: "#fff", marginBottom: 16 }}>
+          Story Library
+        </h1>
+        <p style={{ fontSize: 18, color: "rgba(255,255,255,0.6)", marginBottom: 60 }}>
+          Choose your experience
+        </p>
+
+        {/* Story Grid */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: 24,
+            maxWidth: 1200,
+          }}
+        >
+          {stories.map((story) => (
+            <div
+              key={story.id}
+              onClick={() => {
+                setSel(story);
+                navigateTo("detail");
+              }}
+              style={{
+                background: "rgba(255,255,255,0.05)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                borderRadius: 16,
+                overflow: "hidden",
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-8px)";
+                e.currentTarget.style.borderColor = "#fff";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+              }}
+            >
+              <div
+                style={{
+                  height: 200,
+                  background: `url(${story.cover})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                }}
+              />
+              <div style={{ padding: 20 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
+                  <h3 style={{ fontSize: 20, fontWeight: 700, color: "#fff", margin: 0 }}>
+                    {story.title}
+                  </h3>
+                  {story.isTimed && <span style={{ fontSize: 20 }}>⏱️</span>}
+                </div>
+                <p style={{ fontSize: 13, color: "rgba(255,255,255,0.5)", marginBottom: 12 }}>
+                  {story.author} • {story.genre}
+                </p>
+                <p style={{ fontSize: 14, color: "rgba(255,255,255,0.7)", lineHeight: 1.6, marginBottom: 16 }}>
+                  {story.desc}
+                </p>
+                <div style={{ display: "flex", gap: 16, fontSize: 12, color: "rgba(255,255,255,0.5)" }}>
+                  <span>⭐ {story.rating}</span>
+                  <span>📖 {story.chapters} chapters</span>
+                  <span>👁️ {story.reads}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (pg === "home") {
     return (
       <div
@@ -2092,8 +2198,11 @@ Welcome to Movianx.`,
             {/* Stories Tile - ACTIVE */}
             <button
               onClick={() => {
-                setSel(stories[0]);
-                setPg("detail");
+                setFadeOut(true);
+                setTimeout(() => {
+                  setPg("library"); // Go to story library, not directly to a story
+                  setFadeOut(false);
+                }, 200);
               }}
               style={{
                 width: 160,
