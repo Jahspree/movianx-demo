@@ -2248,6 +2248,7 @@ Welcome to Movianx.`,
                   color: "rgba(0,0,0,0.6)",
                   lineHeight: 1.5,
                   margin: 0,
+                  paddingRight: 40, // Add padding so text doesn't overlap arrow
                 }}
               >
                 Interactive fiction
@@ -2255,8 +2256,8 @@ Welcome to Movianx.`,
               <div
                 style={{
                   position: "absolute",
-                  bottom: 16,
-                  right: 16,
+                  bottom: 20,
+                  right: 20,
                   width: 32,
                   height: 32,
                   borderRadius: "50%",
