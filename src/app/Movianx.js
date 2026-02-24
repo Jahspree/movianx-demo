@@ -821,18 +821,32 @@ function CreatorDashboard({ onBackToReader }) {
 const stories = [
   {
     id: 1,
-    title: "The Midnight Cipher",
-    author: "Sarah Chen",
-    genre: "Thriller / Mystery",
-    cover: "https://picsum.photos/seed/cipher/400/600",
-    desc: "A cryptographer uncovers a century-old code that rewrites history. Your choices determine which secrets stay buried.",
+    title: "Frankenstein",
+    author: "Mary Shelley",
+    genre: "Gothic / Classic",
+    cover: "https://picsum.photos/seed/frankenstein/400/600",
+    desc: "The timeless tale of ambition and creation. Victor Frankenstein's pursuit of forbidden knowledge leads to consequences that will haunt him forever. Your choices shape the tragic destinies of creator and creature.",
     immersions: ["Reader", "Cinematic", "Immersive"],
-    rating: 4.8,
-    reads: "2.3M",
-    chapters: 12,
+    rating: 4.9,
+    reads: "159K",
+    chapters: 6,
+    isClassic: true,
   },
   {
     id: 2,
+    title: "The Choice [Sample]",
+    author: "Movianx Demo",
+    genre: "Thriller / Interactive",
+    cover: "https://picsum.photos/seed/choice/400/600",
+    desc: "A quick 3-minute demo showing how choices branch the story. Perfect for creators to see the platform in action.",
+    immersions: ["Reader", "Cinematic", "Immersive"],
+    rating: 4.7,
+    reads: "Sample",
+    chapters: 3,
+    isSample: true,
+  },
+  {
+    id: 3,
     title: "Echoes of Tomorrow",
     author: "Marcus Webb",
     genre: "Sci-Fi / Romance",
@@ -842,18 +856,6 @@ const stories = [
     rating: 4.6,
     reads: "1.8M",
     chapters: 9,
-  },
-  {
-    id: 3,
-    title: "The Last Garden",
-    author: "Elena Rodriguez",
-    genre: "Fantasy / Adventure",
-    cover: "https://picsum.photos/seed/garden/400/600",
-    desc: "When nature strikes back, a botanist must choose between saving humanity or the Earth itself.",
-    immersions: ["Reader", "Cinematic", "Immersive"],
-    rating: 4.9,
-    reads: "3.1M",
-    chapters: 15,
   },
 ];
 
@@ -872,166 +874,290 @@ export default function MovianxPlatform() {
   const [voiceActive, setVoiceActive] = useState(false);
   const [narratorOn, setNarratorOn] = useState(true);
   const [soundEffectsOn, setSoundEffectsOn] = useState(true);
+  const [fadeOut, setFadeOut] = useState(false); // For smooth page transitions
 
   const ambientRef = useRef(null);
   const oscRef = useRef(null);
   const audioCtxRef = useRef(null);
   const soundEffectRef = useRef(null);
+  const recognitionRef = useRef(null); // Store recognition instance for cleanup
 
-  const chaps = [
+  // ═══════════════════════════════════════════════════════════════════════════
+  // STORY CHAPTERS - Multiple Stories
+  // ═══════════════════════════════════════════════════════════════════════════
+  
+  const frankensteinChapters = [
     {
-      title: "Chapter 1: The Lake House",
-      text: `The car's headlights cut through the fog as you and Sarah pull up to your family's old lake house. It's been abandoned for ten years—ever since your cousin disappeared here.
+      title: "Letter I - To Mrs. Saville, England",
+      text: `St. Petersburgh, Dec. 11th, 17—.
 
-"I don't like this, Jamie," Sarah says, gripping the wheel. "It's midnight. We should come back tomorrow."
+You will rejoice to hear that no disaster has accompanied the commencement of an enterprise which you have regarded with such evil forebodings. I arrived here yesterday, and my first task is to assure my dear sister of my welfare and increasing confidence in the success of my undertaking.
 
-But you got that text. The one that said: "She's still here. Come tonight or lose her forever."
+I am already far north of London, and as I walk in the streets of Petersburgh, I feel a cold northern breeze play upon my cheeks, which braces my nerves and fills me with delight. Do you understand this feeling? This breeze, which has travelled from the regions towards which I am advancing, gives me a foretaste of those icy climes.
 
-You both step out into the cold air. The house looms ahead, windows dark like empty eyes. Behind it, the lake stretches into blackness.
+Inspired by this wind of promise, my daydreams become more fervent and vivid. I try in vain to be persuaded that the pole is the seat of frost and desolation; it ever presents itself to my imagination as the region of beauty and delight.
 
-A sound comes from the woods to your left. Rustling. Movement.
+There—for with your leave, my sister, I will put some trust in preceding navigators—there snow and frost are banished; and, sailing over a calm sea, we may be wafted to a land surpassing in wonders and in beauty every region hitherto discovered on the habitable globe.
 
-Sarah freezes. "Did you hear that?"`,
+What may not be expected in a country of eternal light? I may there discover the wondrous power which attracts the needle and may regulate a thousand celestial observations that require only this voyage to render their seeming eccentricities consistent forever.
+
+I shall satiate my ardent curiosity with the sight of a part of the world never before visited, and may tread a land never before imprinted by the foot of man. These are my enticements, and they are sufficient to conquer all fear of danger or death.`,
       choice: {
-        prompt: "Sarah turns to you, fear in her eyes. Should we check the woods first, or ignore it and go straight to the house?",
-        emotion: "tense",
+        prompt: "As Captain Walton, should I share my deepest ambitions with my sister, or keep some doubts to myself?",
+        emotion: "ambitious",
         opts: [
-          { txt: "Let's check the woods first", next: 1, consequence: "woods" },
-          { txt: "Ignore it and go straight to the house", next: 2, consequence: "house" },
+          { txt: "Share everything - my burning desire for glory", next: 1, consequence: "honest" },
+          { txt: "Express some caution about the dangers ahead", next: 1, consequence: "cautious" },
         ],
       },
-      sound: "ambient-woods.mp3",
-      narrator: "You arrive at the abandoned lake house at midnight. Something rustles in the woods nearby.",
+      narrator: "Captain Robert Walton writes to his sister from St. Petersburgh, filled with ambition for his Arctic expedition.",
       emotion: "calm",
     },
     {
-      title: "Chapter 2: Into the Woods",
-      text: `You grab your flashlight and head toward the sound. Sarah follows reluctantly.
+      title: "Letter IV - The Stranger",
+      text: `August 5th, 17—.
 
-The beam catches movement between the trees. Footprints in the mud—fresh ones.
+So strange an accident has happened to us that I cannot forbear recording it, although it is very probable that you will see me before these papers can come into your possession.
 
-"Jamie, someone was just here," Sarah whispers.
+Last Monday we were nearly surrounded by ice, which closed in the ship on all sides, scarcely leaving her the sea-room in which she floated. Our situation was somewhat dangerous, especially as we were compassed round by a very thick fog.
 
-Then you see it: a figure, standing completely still about thirty yards away, facing you. Not moving. Just... watching.
+At about two o'clock the mist cleared away, and we beheld, stretched out in every direction, vast and irregular plains of ice, which seemed to have no end. Some of my comrades groaned, and my own mind began to grow watchful with anxious thoughts, when a strange sight suddenly attracted our attention and diverted our solicitude from our own situation.
 
-Sarah grabs your arm. "RUN!"`,
+We perceived a low carriage, fixed on a sledge and drawn by dogs, pass on towards the north, at the distance of half a mile; a being which had the shape of a man, but apparently of gigantic stature, sat in the sledge and guided the dogs. We watched the rapid progress of the traveller with our telescopes until he was lost among the distant inequalities of the ice.
+
+The next morning—this sight appeared to have troubled my crew—we were again surrounded by ice. A traveller's sledge appeared, and we perceived that it was a man of ordinary stature. He was not, as the other traveller seemed to be, a savage inhabitant of some undiscovered island, but a European.
+
+When I appeared on deck, the stranger addressed me in English, although with a foreign accent. "Before I come on board your vessel," said he, "will you have the kindness to inform me whither you are bound?"
+
+I replied that we were on a voyage of discovery towards the northern pole. Upon hearing this he consented to come on board.
+
+His limbs were nearly frozen, and his body dreadfully emaciated by fatigue and suffering. I never saw a man in so wretched a condition. We attempted to carry him into the cabin, but as soon as he had quitted the fresh air he fainted.
+
+When he recovered, I nursed him with the greatest care. Two days passed before he was able to speak, and I often feared that his sufferings had deprived him of understanding. When he had in some measure recovered, I removed him to my own cabin and attended on him as much as my duty would permit.`,
       choice: {
-        prompt: "The figure starts moving toward you. Fast. Should we run back to the car, or run toward the house?",
-        emotion: "panicked",
+        prompt: "This stranger seems to carry a terrible burden. Should I press him for his story now, or give him more time to recover?",
+        emotion: "curious",
         opts: [
-          { txt: "Run back to the car", next: 3, consequence: "survive-woods" },
-          { txt: "Run toward the house", next: 4, consequence: "house-pursued" },
+          { txt: "Ask him gently about his journey", next: 2, consequence: "patient" },
+          { txt: "Wait until he's ready to share", next: 2, consequence: "respectful" },
         ],
       },
-      sound: "footsteps-running.mp3",
-      narrator: "You venture into the woods and encounter something that shouldn't be there.",
+      narrator: "Walton's crew encounters a mysterious figure on the ice, followed by a desperate stranger seeking refuge.",
+      emotion: "tense",
+      sound: "ambient-winds.mp3",
+    },
+    {
+      title: "Chapter I - Victor's Childhood",
+      text: `I am by birth a Genevese, and my family is one of the most distinguished of that republic. My ancestors had been for many years counsellors and syndics, and my father had filled several public situations with honour and reputation.
+
+My father had a sister whom he tenderly loved. After her marriage, he saw her husband become through a series of unfortunate circumstances, reduced to great poverty. My father relieved him in a very generous manner, and after my cousin's death, he took upon himself the care of my aunt's only daughter.
+
+My mother's tender caresses and my father's smile of benevolent pleasure while regarding me are my first recollections. I was their plaything and their idol, and something better—their child, the innocent and helpless creature bestowed on them by heaven, whom to bring up to good, and whose future lot it was in their hands to direct to happiness or misery.
+
+For a long time I was their only care. When I was about five years old, while making an excursion beyond the frontiers of Italy, they passed a week on the shores of the Lake of Como. On the evening of their return, my mother, accompanied by a young girl, entered our home. That young girl was Elizabeth Lavenza, the daughter of a Milanese nobleman.
+
+She became more than a sister to me. She was the living spirit of love to soften and attract; I might have become sullen in my study, rough through the ardour of my nature, but that she was there to subdue me to a semblance of her own gentleness.
+
+On the birth of a second son, my junior by seven years, my parents gave up entirely their wandering life and fixed themselves in their native country. We possessed a house in Geneva, and a campagne on Belrive, the eastern shore of the lake, at the distance of rather more than a league from the city.
+
+My temper was sometimes violent, and my passions vehement; but by some law in my temperature they were turned not towards childish pursuits but to an eager desire to learn.`,
+      choice: {
+        prompt: "Young Victor shows early signs of intense curiosity. Should I encourage this thirst for knowledge without bounds, or should I counsel moderation?",
+        emotion: "reflective",
+        opts: [
+          { txt: "Pursue knowledge with unbridled passion", next: 3, consequence: "ambitious" },
+          { txt: "Balance ambition with wisdom and caution", next: 3, consequence: "measured" },
+        ],
+      },
+      narrator: "Victor Frankenstein recounts his idyllic childhood in Geneva and his deep bond with Elizabeth.",
+      emotion: "calm",
+    },
+    {
+      title: "Chapter IV - The Secret of Life",
+      text: `It was on a dreary night of November that I beheld the accomplishment of my toils. With an anxiety that almost amounted to agony, I collected the instruments of life around me, that I might infuse a spark of being into the lifeless thing that lay at my feet.
+
+It was already one in the morning; the rain pattered dismally against the panes, and my candle was nearly burnt out, when, by the glimmer of the half-extinguished light, I saw the dull yellow eye of the creature open; it breathed hard, and a convulsive motion agitated its limbs.
+
+How can I describe my emotions at this catastrophe, or how delineate the wretch whom with such infinite pains and care I had endeavoured to form? His limbs were in proportion, and I had selected his features as beautiful. Beautiful! Great God!
+
+His yellow skin scarcely covered the work of muscles and arteries beneath; his hair was of a lustrous black, and flowing; his teeth of a pearly whiteness; but these luxuriances only formed a more horrid contrast with his watery eyes, that seemed almost of the same colour as the dun-white sockets in which they were set, his shrivelled complexion and straight black lips.
+
+I had worked hard for nearly two years, for the sole purpose of infusing life into an inanimate body. For this I had deprived myself of rest and health. I had desired it with an ardour that far exceeded moderation; but now that I had finished, the beauty of the dream vanished, and breathless horror and disgust filled my heart.
+
+Unable to endure the aspect of the being I had created, I rushed out of the room and continued a long time traversing my bed-chamber, unable to compose my mind to sleep.
+
+Oh! No mortal could support the horror of that countenance. A mummy again endued with animation could not be so hideous as that wretch. I had gazed on him while unfinished; he was ugly then, but when those muscles and joints were rendered capable of motion, it became a thing such as even Dante could not have conceived.`,
+      choice: {
+        prompt: "I have created life, but it fills me with horror. Should I face my creation and take responsibility, or flee from this nightmare?",
+        emotion: "terrified",
+        opts: [
+          { txt: "Return to the laboratory and face what I've created", next: 4, consequence: "responsibility" },
+          { txt: "Abandon the creature and try to forget this horror", next: 4, consequence: "abandonment" },
+        ],
+      },
+      narrator: "Victor brings his creation to life, but is immediately struck with horror at what he has made.",
       emotion: "terrified",
+      sound: "heartbeat.mp3",
       jumpScare: true,
     },
     {
-      title: "Chapter 2: The Front Door",
-      text: `You ignore the sound and approach the house. The front door is already open—swinging slightly in the wind.
+      title: "The Creature Speaks",
+      text: `"All men hate the wretched; how, then, must I be hated, who am miserable beyond all living things! Yet you, my creator, detest and spurn me, thy creature, to whom thou art bound by ties only dissoluble by the annihilation of one of us.
 
-"Someone's been here," you say.
+"You purpose to kill me. How dare you sport thus with life? Do your duty towards me, and I will do mine towards you and the rest of mankind. If you will comply with my conditions, I will leave them and you at peace; but if you refuse, I will glut the maw of death, until it be satiated with the blood of your remaining friends."
 
-Inside, the house is exactly as you remember. Family photos still on the walls. Your cousin Emma's soccer trophy still on the mantle.
+"Abhorred monster! Fiend that thou art! The tortures of hell are too mild a vengeance for thy crimes. Wretched devil! You reproach me with your creation, come on, then, that I may extinguish the spark which I so negligently bestowed."
 
-But something's wrong. The photos... in every single one, Emma's face has been scratched out.
+"Be calm! I entreat you to hear me before you give vent to your hatred on my devoted head. Have I not suffered enough, that you seek to increase my misery? Life, although it may only be an accumulation of anguish, is dear to me, and I will defend it.
 
-Sarah's phone buzzes. A text from an unknown number: "Wrong choice. She needed you to look first."
+"Remember, thou hast made me more powerful than thyself; my height is superior to thine, my joints more supple. But I will not be tempted to set myself in opposition to thee. I am thy creature, and I will be even mild and docile to my natural lord and king if thou wilt also perform thy part, the which thou owest me.
 
-A scream pierces the air from upstairs.`,
+"Oh, Frankenstein, be not equitable to every other and trample upon me alone, to whom thy justice, and even thy clemency and affection, is most due. Remember that I am thy creature; I ought to be thy Adam, but I am rather the fallen angel, whom thou drivest from joy for no misdeed. Everywhere I see bliss, from which I alone am irrevocably excluded. I was benevolent and good; misery made me a fiend. Make me happy, and I shall again be virtuous."
+
+"Begone! I will not hear you. There can be no community between you and me; we are enemies. Begone, or let us try our strength in a fight, in which one must fall."
+
+"How can I move thee? Will no entreaties cause thee to turn a favourable eye upon thy creature, who implores thy goodness and compassion? Believe me, Frankenstein, I was benevolent; my soul glowed with love and humanity; but am I not alone, miserably alone? You, my creator, abhor me; what hope can I gather from your fellow creatures, who owe me nothing? They spurn and hate me."`,
       choice: {
-        prompt: "Sarah looks at you, terrified. Should we run upstairs toward the scream, or leave immediately?",
-        emotion: "scared",
+        prompt: "The creature demands that I create a companion for him. Should I grant this request and risk unleashing two monsters, or refuse and face his vengeance?",
+        emotion: "anguished",
         opts: [
-          { txt: "Run upstairs toward the scream", next: 5, consequence: "upstairs" },
-          { txt: "Leave immediately", next: 6, consequence: "abandon" },
+          { txt: "Agree to create a companion - perhaps it will bring peace", next: 5, consequence: "agreement" },
+          { txt: "Refuse - I cannot risk creating another monster", next: 5, consequence: "refusal" },
         ],
       },
-      sound: "door-creak.mp3",
-      narrator: "You enter the house. Something is very wrong here.",
-      emotion: "uneasy",
+      narrator: "The creature confronts Victor and makes a terrible demand.",
+      emotion: "tense",
     },
     {
-      title: "Chapter 3: The Car Won't Start",
-      text: `You both sprint back to the car. Sarah fumbles with the keys, hands shaking.
+      title: "Epilogue - The Cost of Ambition",
+      text: `[Your choices have shaped Victor's fate]
 
-The engine turns over once. Twice. Nothing.
+"Farewell, Walton! Seek happiness in tranquillity and avoid ambition, even if it be only the apparently innocent one of distinguishing yourself in science and discoveries. Yet why do I say this? I have myself been blasted in these hopes, yet another may succeed."
 
-"No no no no—" Sarah keeps trying.
+His voice became fainter as he spoke, and at length, exhausted by his effort, he sank into silence. The monster has disappeared, vanished into the darkness of the Arctic night.
 
-In the rearview mirror, you see the figure emerge from the woods. Walking slowly now. Deliberately.
+I am returning to England. I have learned that some secrets are not meant to be discovered, and some knowledge comes at too terrible a price. The modern Prometheus has paid for his theft of nature's fire.
 
-Your phone lights up. A video message. You open it.
+What lessons will you carry forward? That ambition unchecked leads to ruin? That we bear responsibility for what we create? That even monsters deserve compassion?
 
-It's footage from a security camera—this very moment, from a different angle. Someone is watching you right now.
+Frankenstein's tale is a warning that echoes through the ages: "Learn from me, if not by my precepts, at least by my example, how dangerous is the acquirement of knowledge and how much happier that man is who believes his native town to be the world, than he who aspires to become greater than his nature will allow."
 
-The figure is getting closer. Twenty yards. Fifteen.`,
-      choice: {
-        prompt: "The car won't start and the figure is approaching. Should we hide in the car and call 911, or make a run for the house?",
-        emotion: "breathing-hard",
-        opts: [
-          { txt: "Hide in the car and call 911", next: 7, consequence: "call-help" },
-          { txt: "Make a run for the house", next: 4, consequence: "house-pursued" },
-        ],
-      },
-      sound: "heartbeat.mp3",
-      narrator: "The car won't start. The figure is getting closer.",
-      emotion: "panicked",
-    },
-    {
-      title: "Chapter 3: Pursued",
-      text: `You both crash through the front door and slam it behind you. Heavy footsteps pound up the porch stairs behind you.
+The icy wastes hold many secrets still. But some stories end not with triumph, but with the haunting question:
 
-BANG BANG BANG on the door.
-
-"Upstairs!" Sarah screams.
-
-You race up the stairs. The door downstairs splinters open.
-
-In the hallway, there are three doors. One leads to Emma's old room. One to the bathroom. One to the attic.
-
-Sarah is breathing hard. "Which way?"
-
-Footsteps on the stairs. Slow. Steady. Getting closer.`,
-      choice: {
-        prompt: "You have seconds to choose. Should we hide in Emma's room, or go to the attic?",
-        emotion: "out-of-breath",
-        opts: [
-          { txt: "Emma's room", next: 8, consequence: "emmas-room" },
-          { txt: "The attic", next: 9, consequence: "attic" },
-        ],
-      },
-      sound: "door-slam.mp3",
-      narrator: "You're being chased through the house. You need to hide. Now.",
-      emotion: "terrified",
-    },
-    {
-      title: "Epilogue: The Truth",
-      text: `[Your choices have led you here]
-
-The police find you three hours later. Sarah didn't make it—you tried to save her, but you were too late.
-
-In your pocket, they find a note that wasn't there before:
-
-"You were so close. Emma tried to warn you. The woods first. Always the woods first. She left clues there—clues that would have saved you both.
-
-But you chose wrong.
-
-Some stories don't have happy endings.
-
-Some choices can't be undone."
-
-The case remains unsolved. The figure was never found.
-
-But sometimes, late at night, you get texts from Sarah's number.
-
-She's still at the lake house.
-
-And she's not alone.`,
+What have we become in our pursuit to become gods?`,
     },
   ];
+  
+  // Sample story - quick 3-chapter demo for creators
+  const sampleChapters = [
+    {
+      title: "The Message",
+      text: `Your phone buzzes at 2 AM. Unknown number.
+
+"Meet me at the old lighthouse. Come alone. You have one hour."
+
+You've been investigating the disappearance of three journalists who were all working on the same story - something about the mayor's connection to offshore accounts. This could be the break you need.
+
+But it could also be a trap.
+
+Your editor told you to drop it. Your partner told you to be careful. The threatening letter you got last week told you to stop digging.
+
+One hour. The lighthouse.`,
+      choice: {
+        prompt: "You have one hour to decide. Do you go to the lighthouse alone, or call for backup?",
+        emotion: "tense",
+        opts: [
+          { txt: "Go alone - this source won't talk if I bring anyone", next: 1, consequence: "alone" },
+          { txt: "Call my partner for backup first", next: 2, consequence: "backup" },
+        ],
+      },
+      narrator: "You receive a mysterious message in the middle of the night.",
+      emotion: "calm",
+    },
+    {
+      title: "The Lighthouse - Alone",
+      text: `The lighthouse looms against the night sky. No lights. No cars in the lot.
+
+You park a quarter mile away and approach on foot, phone flashlight off. The door is unlocked.
+
+Inside, the beam of your flashlight catches something on the floor. Files. Dozens of them, scattered everywhere. Financial records. Wire transfers. Photos.
+
+Then you hear it - footsteps on the spiral stairs above. Coming down.
+
+A voice from the darkness: "You came alone. Good. That means you're serious about the truth."
+
+A figure emerges. You recognize them immediately - it's the mayor's chief of staff. They're holding a USB drive.
+
+"Everything's on here. But if you take it, they'll know it was me. We both go down. Or..." They pause. "Or you walk away, and I'll make sure the right people see this anonymously. You get your story, I keep my life."`,
+      choice: {
+        prompt: "Take the evidence yourself and risk exposing your source, or trust them to leak it anonymously?",
+        emotion: "tense",
+        opts: [
+          { txt: "Take the USB drive - I need to verify this myself", next: 3, consequence: "take" },
+          { txt: "Let them leak it anonymously - protect the source", next: 3, consequence: "trust" },
+        ],
+      },
+      narrator: "You arrive at the lighthouse and make a fateful choice.",
+      emotion: "nervous",
+      sound: "footsteps.mp3",
+    },
+    {
+      title: "The Lighthouse - With Backup",
+      text: `Your partner arrives in an unmarked car. You approach the lighthouse together.
+
+The door is unlocked. Inside, files are scattered everywhere - financial records, wire transfers, photos. But no one is here.
+
+"This is too easy," your partner whispers. "Something's wrong."
+
+That's when you hear the click. A camera shutter. Then another. Then footsteps - multiple people, moving fast.
+
+Lights flood the lighthouse. Cameras. Reporters.
+
+A voice shouts: "There they are! The journalists who fabricated evidence against the mayor!"
+
+Your partner grabs your arm. The files on the floor - you recognize them now. They're the stories YOU'VE been working on. But the documents have been altered. Forged signatures. Fake timestamps.
+
+Someone set you up.
+
+The story breaks before sunrise: "Journalists caught planting false evidence in staged meeting." Your source never existed. The real story - whatever it was - is buried forever.`,
+      choice: {
+        prompt: "Your reputation is destroyed, but you know the truth is still out there. Give up and accept defeat, or keep digging despite everything?",
+        emotion: "defeated",
+        opts: [
+          { txt: "This is over - I can't fight this", next: 4, consequence: "give-up" },
+          { txt: "Someone went to a lot of trouble to stop me - I'm getting closer", next: 4, consequence: "persist" },
+        ],
+      },
+      narrator: "The setup was perfect. You walked right into it.",
+      emotion: "shocked",
+      sound: "camera-shutters.mp3",
+    },
+    {
+      title: "Consequences",
+      text: `[Your choices have led you here]
+
+Three days later, the truth comes out - but not the way you expected.
+
+The mayor announces their resignation amid a federal investigation. The offshore accounts were real. The missing journalists - they're alive, in witness protection, cooperating with the FBI.
+
+Your choice to go alone meant the source trusted you. The evidence was real. Your story breaks the case wide open, and you win the Pulitzer.
+
+OR
+
+Your choice to bring backup triggered the trap. The real whistleblower saw the setup and disappeared. The mayor is still in office. The investigation is closed. You're working at a small-town paper, trying to rebuild your career.
+
+In journalism, sometimes the story chooses you. And sometimes, your choices determine whether you become part of the story - or its victim.
+
+THE END
+
+[This was a sample. Imagine this at novel length, with dozens of branching paths, multiple perspectives, and consequences that echo through 20+ chapters.]`,
+    },
+  ];
+  
+  // Route to correct chapters based on selected story
+  const chaps = sel?.id === 1 ? frankensteinChapters : 
+                sel?.id === 2 ? sampleChapters : 
+                frankensteinChapters; // default to Frankenstein
 
   // ═══════════════════════════════════════════════════════════════════════════
   // AUDIO FUNCTIONS
@@ -1207,7 +1333,19 @@ And she's not alone.`,
       alert("Voice recognition not supported in this browser");
       return;
     }
+    
+    // Stop any existing recognition first
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {
+        console.log("Recognition already stopped");
+      }
+    }
+    
     const rec = new SpeechRecognition();
+    recognitionRef.current = rec; // Store for cleanup
+    
     rec.continuous = false;
     rec.interimResults = false;
     rec.lang = "en-US";
@@ -1286,6 +1424,28 @@ And she's not alone.`,
     };
     rec.start();
   };
+  
+  const stopVoiceRecognition = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+        recognitionRef.current = null;
+      } catch (e) {
+        console.log("Recognition cleanup:", e);
+      }
+    }
+    setVoiceActive(false);
+    setVoiceMode(false);
+  };
+  
+  // Smooth page navigation
+  const navigateTo = (newPage) => {
+    setFadeOut(true);
+    setTimeout(() => {
+      setPg(newPage);
+      setFadeOut(false);
+    }, 200);
+  };
 
   // ═══════════════════════════════════════════════════════════════════════════
   // CHOICE HANDLING
@@ -1348,6 +1508,28 @@ And she's not alone.`,
     }
   }, [pg, chIdx, mode, narratorOn, soundEffectsOn]);
 
+  // CRITICAL: Cleanup audio and microphone when navigating away or unmounting
+  useEffect(() => {
+    return () => {
+      stopAmbient();
+      stopVoiceRecognition(); // Stop microphone
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+  
+  // Stop microphone when leaving reading page or changing chapters
+  useEffect(() => {
+    if (pg !== "reading") {
+      stopVoiceRecognition();
+      stopAmbient();
+      if (typeof window !== "undefined" && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    }
+  }, [pg, chIdx]);
+
   useEffect(() => {
     return () => {
       stopAmbient();
@@ -1380,6 +1562,8 @@ And she's not alone.`,
           position: "relative",
           overflow: "auto",
           WebkitOverflowScrolling: "touch",
+          opacity: fadeOut ? 0 : 1,
+          transition: "opacity 0.2s ease-in-out",
         }}
       >
         {/* Top Nav */}
@@ -1488,7 +1672,13 @@ And she's not alone.`,
             }}
           >
             <button
-              onClick={() => setPg("home")}
+              onClick={() => {
+                setFadeOut(true);
+                setTimeout(() => {
+                  setPg("home");
+                  setFadeOut(false);
+                }, 200);
+              }}
               style={{
                 padding: "18px 36px",
                 borderRadius: 20,
@@ -1579,6 +1769,8 @@ And she's not alone.`,
           position: "relative",
           overflowY: "scroll",
           WebkitOverflowScrolling: "touch",
+          opacity: fadeOut ? 0 : 1,
+          transition: "opacity 0.2s ease-in-out",
         }}
       >
         {/* Header */}
