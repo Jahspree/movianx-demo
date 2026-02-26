@@ -889,6 +889,16 @@ export default function MovianxPlatform() {
   const [colorTheme, setColorTheme] = useState("cream"); // cream, eink, night, sepia
   const [showSettings, setShowSettings] = useState(false);
   
+  // Priority 2 features
+  const [listenOnly, setListenOnly] = useState(false);
+  const [highlights, setHighlights] = useState([]);
+  const [notes, setNotes] = useState([]);
+  const [showNotes, setShowNotes] = useState(false);
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
+  const [selectedText, setSelectedText] = useState("");
+  const [touchStartX, setTouchStartX] = useState(0);
+  const [touchEndX, setTouchEndX] = useState(0);
+  
   // Color themes
   const themes = {
     cream: { bg: "#F5F1E8", text: "#2C2C2C", name: "Cream" },
@@ -1740,6 +1750,59 @@ Welcome to Movianx.`,
       setPg(newPage);
       setFadeOut(false);
     }, 200);
+  };
+  
+  // Swipe gesture handlers
+  const handleTouchStart = (e) => {
+    setTouchStartX(e.touches[0].clientX);
+  };
+  
+  const handleTouchEnd = (e) => {
+    setTouchEndX(e.changedTouches[0].clientX);
+    handleSwipe();
+  };
+  
+  const handleSwipe = () => {
+    if (touchStartX - touchEndX > 75) {
+      // Swiped left - next chapter
+      if (chIdx < chaps.length - 1) {
+        setChIdx(chIdx + 1);
+        setShowChoice(false);
+        stopVoiceRecognition();
+        window.scrollTo(0, 0);
+      }
+    }
+    
+    if (touchEndX - touchStartX > 75) {
+      // Swiped right - previous chapter
+      if (chIdx > 0) {
+        setChIdx(chIdx - 1);
+        setShowChoice(false);
+        stopVoiceRecognition();
+        window.scrollTo(0, 0);
+      }
+    }
+  };
+  
+  // Text selection handler for highlighting
+  const handleTextSelection = () => {
+    if (typeof window === "undefined") return;
+    const selection = window.getSelection();
+    const text = selection.toString().trim();
+    if (text.length > 0) {
+      setSelectedText(text);
+      // Could show highlight menu here
+    }
+  };
+  
+  // Add highlight
+  const addHighlight = (text, color = "#FFEB3B") => {
+    setHighlights([...highlights, { text, color, chIdx, timestamp: Date.now() }]);
+  };
+  
+  // Add note
+  const addNote = (text, noteText) => {
+    setNotes([...notes, { text, note: noteText, chIdx, timestamp: Date.now() }]);
   };
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -2763,6 +2826,44 @@ Welcome to Movianx.`,
                 </select>
               </div>
 
+              {/* Listen-Only Mode */}
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "flex", alignItems: "center", justifyContent: "space-between", cursor: "pointer" }}>
+                  <div>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: currentTheme.text }}>
+                      Listen-Only Mode
+                    </div>
+                    <div style={{ fontSize: 12, color: `${currentTheme.text}80`, marginTop: 4 }}>
+                      Audio narration only, no text
+                    </div>
+                  </div>
+                  <div
+                    onClick={() => setListenOnly(!listenOnly)}
+                    style={{
+                      width: 48,
+                      height: 28,
+                      borderRadius: 14,
+                      background: listenOnly ? "#E8364F" : `${currentTheme.text}20`,
+                      position: "relative",
+                      transition: "background 0.3s",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 24,
+                        height: 24,
+                        borderRadius: 12,
+                        background: "#fff",
+                        position: "absolute",
+                        top: 2,
+                        left: listenOnly ? 22 : 2,
+                        transition: "left 0.3s",
+                      }}
+                    />
+                  </div>
+                </label>
+              </div>
+
               {/* Color Theme */}
               <div style={{ marginBottom: 24 }}>
                 <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: currentTheme.text, marginBottom: 8 }}>
@@ -2959,23 +3060,49 @@ Welcome to Movianx.`,
         </div>
 
         {/* Content */}
-        <div style={{ maxWidth: 800, margin: "0 auto", padding: "100px 40px 120px" }}>
-          <h2 style={{ fontSize: 28, fontWeight: 700, color: "#F0F0F5", marginBottom: 30, letterSpacing: "-0.5px" }}>
-            {ch.title}
-          </h2>
-          <div style={{ 
-            fontSize: fontSize, 
-            color: currentTheme.text, 
-            lineHeight: 1.9, 
-            marginBottom: 40, 
-            whiteSpace: "pre-wrap",
-            fontFamily: fontFamily,
-          }}>
-            {txt}
-          </div>
+        <div 
+          style={{ maxWidth: 800, margin: "0 auto", padding: "100px 40px 120px" }}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
+          {listenOnly ? (
+            /* Listen-Only Mode Interface */
+            <div style={{ textAlign: "center", paddingTop: 60 }}>
+              <h2 style={{ fontSize: 32, fontWeight: 700, color: currentTheme.text, marginBottom: 16 }}>
+                {ch.title}
+              </h2>
+              <div style={{ fontSize: 14, color: `${currentTheme.text}80`, marginBottom: 40 }}>
+                🎧 Listen-only mode active
+              </div>
+              
+              {/* Simple audio controls */}
+              <div style={{ fontSize: 48, marginTop: 40 }}>📖</div>
+            </div>
+          ) : (
+            /* Regular Reading Mode */
+            <>
+              <h2 style={{ fontSize: 28, fontWeight: 700, color: currentTheme.text, marginBottom: 30, letterSpacing: "-0.5px" }}>
+                {ch.title}
+              </h2>
+              <div 
+                style={{ 
+                  fontSize: fontSize, 
+                  color: currentTheme.text, 
+                  lineHeight: 1.9, 
+                  marginBottom: 40, 
+                  whiteSpace: "pre-wrap",
+                  fontFamily: fontFamily,
+                }}
+                onMouseUp={handleTextSelection}
+                onTouchEnd={handleTextSelection}
+              >
+                {txt}
+              </div>
+            </>
+          )}
 
-          {/* Choices */}
-          {showChoice && ch.choice && mode !== "Immersive" && (
+          {/* Choices - only show if not in listen-only mode */}
+          {!listenOnly && showChoice && ch.choice && mode !== "Immersive" && (
             <div
               style={{
                 background: "#141419",
