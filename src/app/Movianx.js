@@ -828,12 +828,12 @@ const stories = [
     title: "Frankenstein",
     author: "Mary Shelley",
     genre: "Gothic / Classic",
-    cover: "https://picsum.photos/seed/frankenstein/400/600",
+    cover: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=600&fit=crop", // Dark gothic laboratory
     desc: "The timeless tale of ambition and creation. Victor Frankenstein's pursuit of forbidden knowledge leads to consequences that will haunt him forever. Your choices shape the tragic destinies of creator and creature.",
     immersions: ["Reader", "Cinematic", "Immersive"],
     rating: 4.9,
     reads: "159K",
-    chapters: 6,
+    chapters: 10,
     isClassic: true,
   },
   {
@@ -841,12 +841,12 @@ const stories = [
     title: "The Choice [Sample]",
     author: "Movianx Demo",
     genre: "Thriller / Interactive",
-    cover: "https://picsum.photos/seed/choice/400/600",
+    cover: "https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&h=600&fit=crop", // Newspaper/journalism
     desc: "A quick 3-minute demo showing how choices branch the story. Perfect for creators to see the platform in action.",
     immersions: ["Reader", "Cinematic", "Immersive"],
     rating: 4.7,
     reads: "Sample",
-    chapters: 3,
+    chapters: 4,
     isSample: true,
   },
   {
@@ -854,7 +854,7 @@ const stories = [
     title: "10 Seconds",
     author: "Movianx Original",
     genre: "Thriller / Survival Horror",
-    cover: "https://picsum.photos/seed/seconds/400/600",
+    cover: "https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&h=600&fit=crop", // Dark house/horror
     desc: "You have 10 seconds to decide. Every choice. Every time. One wrong move and someone dies. Can you survive when every decision is life or death? ⏱️ TIMED CHOICES - Feel the pressure.",
     immersions: ["Reader", "Cinematic", "Immersive"],
     rating: 4.9,
@@ -1052,6 +1052,120 @@ Frankenstein's tale is a warning that echoes through the ages: "Learn from me, i
 The icy wastes hold many secrets still. But some stories end not with triumph, but with the haunting question:
 
 What have we become in our pursuit to become gods?`,
+    },
+    {
+      title: "Chapter X - The Creature's Tale",
+      text: `"You must create a female for me with whom I can live in the interchange of those sympathies necessary for my being. This you alone can do, and I demand it of you as a right which you must not refuse to concede."
+
+The creature stood before me, his yellow eyes burning with a mixture of hope and desperation. For hours, I had listened to his tale - how he learned language by observing a family through a crack in their hovel, how he saved a girl from drowning only to be shot for his troubles, how every hand was turned against him.
+
+"I am malicious because I am miserable," he continued. "Am I not shunned and hated by all mankind? You, my creator, would tear me to pieces and triumph; remember that, and tell me why I should pity man more than he pities me?
+
+"If I cannot inspire love, I will cause fear. I will work at your destruction, nor finish until I desolate your heart, so that you shall curse the hour of your birth."
+
+He paused, and his voice softened. "My vices are the children of a forced solitude that I abhor. My virtues will necessarily arise when I live in communion with an equal. I shall feel the affections of a sensitive being and become linked to the chain of existence and events from which I am now excluded."
+
+Elizabeth's face flashed through my mind. My father. My friend Henry. All would be at risk if I refused.
+
+Yet to create another monster - perhaps even more malicious than the first - was that not a crime against humanity itself?`,
+      choice: {
+        prompt: "The creature demands a companion. Do I agree to create another being, or refuse and face his wrath?",
+        emotion: "anguished",
+        opts: [
+          { txt: "Agree - Create a female companion for him", next: 7, consequence: "create-companion" },
+          { txt: "Refuse - I cannot unleash another monster upon the world", next: 8, consequence: "refuse-companion" },
+        ],
+      },
+      narrator: "The creature tells his tragic story and demands Victor create him a mate.",
+      emotion: "tense",
+    },
+    {
+      title: "Chapter XIV - The Wedding Night",
+      text: `The creature's words echoed in my mind: "I shall be with you on your wedding night."
+
+Elizabeth and I were finally married, but the joy was poisoned by terror. Every shadow seemed to hide a threat. Every creaking floorboard made my heart race.
+
+"Victor, you are pale and trembling," Elizabeth said, her hand gentle on my arm. "What is it that you fear?"
+
+How could I tell her? That my own creation stalked us? That my hubris had doomed us both?
+
+"This night is dreadful," I whispered. "Very dreadful."
+
+I sent Elizabeth to our room while I prowled the house with a pistol, searching every corner. But the creature was cunning. He knew exactly where to strike.
+
+A scream - Elizabeth's scream - tore through the night.
+
+I ran, but I was too late. She lay upon the bed, lifeless, the marks of the monster's grasp upon her neck.
+
+Through the window, I saw him. His face twisted in a grin of malice and triumph. He pointed at Elizabeth's corpse, then fled into the darkness.
+
+My father died of grief weeks later. Henry Clerval, murdered months before. Elizabeth, now cold in death. Everyone I loved - destroyed by the being I had created.`,
+      choice: {
+        prompt: "My entire family is dead because of my creation. Do I pursue vengeance to the ends of the earth, or surrender to despair?",
+        emotion: "devastated",
+        opts: [
+          { txt: "Hunt the monster to the Arctic wastes - vengeance at any cost", next: 9, consequence: "vengeance" },
+          { txt: "End my own life - I cannot live with this guilt", next: 9, consequence: "suicide" },
+        ],
+      },
+      narrator: "The creature fulfills his promise. Elizabeth is murdered on her wedding night.",
+      emotion: "terrified",
+      sound: "heartbeat.mp3",
+      jumpScare: true,
+    },
+    {
+      title: "Chapter XVI - The Arctic Pursuit",
+      text: `I pursued him across frozen wastes, through storms that would kill any ordinary man. But I was sustained by vengeance alone.
+
+For months I tracked him through the ice. He left me signs - messages carved in trees, scraps of food to keep me alive. He wanted me to follow. He wanted me to suffer.
+
+And then my strength failed. I would have died on the ice if Captain Walton had not found me.
+
+Now, here on this ship, I am dying. The cold has claimed what vengeance could not.
+
+But the monster... he came to me one final time.
+
+"That is also my victim!" he cried, standing over my deathbed. "In his murder my crimes are consummated. Oh, Frankenstein! Generous and self-devoted being! What does it avail that I now ask thee to pardon me?
+
+"When I run over the frightful catalogue of my sins, I cannot believe that I am the same creature whose thoughts were once filled with sublime and transcendent visions. But it is even so; the fallen angel becomes a malignant devil.
+
+"Fear not that I shall be the instrument of future mischief. My work is nearly complete. I shall quit your vessel and seek the most northern extremity of the globe; I shall collect my funeral pile and consume to ashes this miserable frame."
+
+He looked at me one last time. "Farewell, Frankenstein. You were my creator, but I was your master. Think of me, and lament."`,
+    },
+    {
+      title: "Epilogue - Walton's Final Entry",
+      text: `[Your choices have determined how this tragedy ends]
+
+I watched from the cabin window as the creature departed across the ice, borne away upon a raft into darkness. He spoke of immolating himself, of ending his cursed existence.
+
+Whether he carried through with that promise, I cannot say.
+
+Frankenstein is dead. His final words were a warning: "Seek happiness in tranquillity and avoid ambition, even if it be only the apparently innocent one of distinguishing yourself in science and discoveries."
+
+But I wonder - was the true monster the creature, born innocent but made malicious by a cruel world? Or was it Frankenstein himself, who played God and then abandoned his creation?
+
+I think of the choices we all make. The knowledge we pursue. The consequences we cannot foresee.
+
+The creature said: "I was benevolent and good; misery made me a fiend."
+
+Frankenstein said: "Learn from me... how dangerous is the acquirement of knowledge."
+
+Who was right? Who was wrong?
+
+Or are we all victims of the choices we cannot take back?
+
+The ship turns south toward England. The Arctic keeps its secrets.
+
+But sometimes, on the coldest nights, I think I hear a voice carried on the wind:
+
+"Think of me, and lament."
+
+[END]
+
+Some stories are warnings. Some choices cannot be undone.
+
+You have finished Frankenstein.`,
     },
   ];
   
