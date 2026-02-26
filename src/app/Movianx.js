@@ -882,6 +882,32 @@ export default function MovianxPlatform() {
   const [narratorOn, setNarratorOn] = useState(true);
   const [soundEffectsOn, setSoundEffectsOn] = useState(true);
   const [fadeOut, setFadeOut] = useState(false); // For smooth page transitions
+  
+  // Reading customization settings
+  const [fontSize, setFontSize] = useState(17);
+  const [fontFamily, setFontFamily] = useState("Georgia");
+  const [colorTheme, setColorTheme] = useState("cream"); // cream, eink, night, sepia
+  const [showSettings, setShowSettings] = useState(false);
+  
+  // Color themes
+  const themes = {
+    cream: { bg: "#F5F1E8", text: "#2C2C2C", name: "Cream" },
+    eink: { bg: "#E5E5E5", text: "#1A1A1A", name: "E-Ink" },
+    night: { bg: "#1A1A1A", text: "#E5E5E5", name: "Night" },
+    sepia: { bg: "#F4ECD8", text: "#5C4B37", name: "Sepia" },
+  };
+  
+  const currentTheme = themes[colorTheme];
+  
+  // New settings for Kindle-like experience
+  const [fontSize, setFontSize] = useState(17);
+  const [backgroundColor, setBackgroundColor] = useState("#F5F1E8"); // Cream default
+  const [textColor, setTextColor] = useState("#2C2C2C");
+  const [fontFamily, setFontFamily] = useState("Georgia");
+  const [listenOnly, setListenOnly] = useState(false);
+  const [highlights, setHighlights] = useState([]);
+  const [notes, setNotes] = useState([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
 
   const ambientRef = useRef(null);
   const oscRef = useRef(null);
@@ -1748,7 +1774,7 @@ Welcome to Movianx.`,
         setTimeout(() => playSoundEffect("jumpscare"), 3000);
       }
       
-      // Narrator reads text or just the narrator summary with emotion
+      // Narrator reads the story text first (not choice)
       if (mode === "Cinematic" || mode === "Immersive") {
         const narratorText = ch.narrator || ch.text;
         const emotion = ch.emotion || "calm";
@@ -1757,6 +1783,7 @@ Welcome to Movianx.`,
       
       if (mode === "Immersive") startAmbient();
       
+      // Wait for story narration to finish, THEN show choice
       const timer = setTimeout(() => {
         if (ch.choice) {
           setShowChoice(true);
@@ -1767,21 +1794,24 @@ Welcome to Movianx.`,
             setTimerActive(true);
           }
           
-          // Narrator asks the choice question with emotion
-          if (ch.choice.prompt && (mode === "Cinematic" || mode === "Immersive")) {
-            const choiceEmotion = ch.choice.emotion || "calm";
-            speak(ch.choice.prompt, choiceEmotion);
-            
-            // Auto-start voice recognition in Immersive mode after asking question
-            if (mode === "Immersive") {
-              setTimeout(() => {
-                setVoiceMode(true);
-                startVoiceRecognition();
-              }, 3000); // Wait 3 seconds for question to finish
+          // NOW narrator asks the choice question (after story is read)
+          // Add a 2 second delay so user can read the text choice first
+          setTimeout(() => {
+            if (ch.choice.prompt && (mode === "Cinematic" || mode === "Immersive")) {
+              const choiceEmotion = ch.choice.emotion || "calm";
+              speak(ch.choice.prompt, choiceEmotion);
+              
+              // Auto-start voice recognition in Immersive mode
+              if (mode === "Immersive") {
+                setTimeout(() => {
+                  setVoiceMode(true);
+                  startVoiceRecognition();
+                }, 3000);
+              }
             }
-          }
+          }, 2000); // Wait 2 seconds after choice appears before reading it
         }
-      }, mode === "Reader" ? 2000 : 8000);
+      }, mode === "Reader" ? 2000 : 10000); // Longer delay for Cinematic/Immersive
       return () => clearTimeout(timer);
     }
   }, [pg, chIdx, mode, narratorOn, soundEffectsOn]);
@@ -2637,52 +2667,237 @@ Welcome to Movianx.`,
       <div
         style={{
           height: "100vh",
-          background: mode === "Immersive" ? "#000" : "#0A0A0F",
-          fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
+          background: currentTheme.bg,
+          fontFamily: fontFamily,
           position: "relative",
           overflowY: "scroll",
           WebkitOverflowScrolling: "touch",
         }}
       >
-        {/* Header */}
+        {/* Settings Panel */}
+        {showSettings && (
+          <>
+            {/* Overlay */}
+            <div
+              onClick={() => setShowSettings(false)}
+              style={{
+                position: "fixed",
+                inset: 0,
+                background: "rgba(0,0,0,0.6)",
+                zIndex: 200,
+              }}
+            />
+            {/* Settings Panel */}
+            <div
+              style={{
+                position: "fixed",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                width: 320,
+                background: currentTheme.bg,
+                borderLeft: `1px solid ${currentTheme.text}20`,
+                padding: 24,
+                zIndex: 201,
+                overflowY: "auto",
+                boxShadow: "-4px 0 20px rgba(0,0,0,0.3)",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+                <h3 style={{ fontSize: 20, fontWeight: 700, color: currentTheme.text, margin: 0 }}>Reading Settings</h3>
+                <button
+                  onClick={() => setShowSettings(false)}
+                  style={{
+                    background: "transparent",
+                    border: "none",
+                    fontSize: 24,
+                    color: currentTheme.text,
+                    cursor: "pointer",
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+
+              {/* Font Size */}
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: currentTheme.text, marginBottom: 8 }}>
+                  Font Size: {fontSize}px
+                </label>
+                <input
+                  type="range"
+                  min="14"
+                  max="22"
+                  value={fontSize}
+                  onChange={(e) => setFontSize(Number(e.target.value))}
+                  style={{ width: "100%" }}
+                />
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: `${currentTheme.text}80`, marginTop: 4 }}>
+                  <span>Small</span>
+                  <span>Large</span>
+                </div>
+              </div>
+
+              {/* Font Family */}
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: currentTheme.text, marginBottom: 8 }}>
+                  Font
+                </label>
+                <select
+                  value={fontFamily}
+                  onChange={(e) => setFontFamily(e.target.value)}
+                  style={{
+                    width: "100%",
+                    padding: 12,
+                    borderRadius: 8,
+                    background: `${currentTheme.text}10`,
+                    border: `1px solid ${currentTheme.text}20`,
+                    color: currentTheme.text,
+                    fontSize: 14,
+                  }}
+                >
+                  <option value="Georgia">Georgia (Serif)</option>
+                  <option value="Merriweather">Merriweather (Serif)</option>
+                  <option value="'Open Sans', sans-serif">Open Sans</option>
+                  <option value="-apple-system, BlinkMacSystemFont, sans-serif">System</option>
+                </select>
+              </div>
+
+              {/* Color Theme */}
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "block", fontSize: 14, fontWeight: 600, color: currentTheme.text, marginBottom: 8 }}>
+                  Color Theme
+                </label>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+                  {Object.entries(themes).map(([key, theme]) => (
+                    <button
+                      key={key}
+                      onClick={() => setColorTheme(key)}
+                      style={{
+                        padding: 16,
+                        borderRadius: 8,
+                        background: theme.bg,
+                        border: `2px solid ${colorTheme === key ? "#E8364F" : "transparent"}`,
+                        cursor: "pointer",
+                        textAlign: "left",
+                      }}
+                    >
+                      <div style={{ fontSize: 12, fontWeight: 600, color: theme.text }}>{theme.name}</div>
+                      <div style={{ fontSize: 10, color: `${theme.text}80`, marginTop: 4 }}>Aa</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Header with Navigation */}
         <div
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             right: 0,
-            background: "rgba(10,10,15,0.95)",
+            background: `${currentTheme.bg}F5`,
             backdropFilter: "blur(10px)",
-            borderBottom: "1px solid #2A2A35",
+            borderBottom: `1px solid ${currentTheme.text}20`,
             padding: "12px 20px",
             zIndex: 100,
           }}
         >
-          {/* Row 1: Exit + Title */}
+          {/* Row 1: Back, Progress, Settings */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
             <button
               onClick={() => {
                 stopAmbient();
+                stopVoiceRecognition();
                 if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
-                setPg("detail");
+                setPg("library");
               }}
               style={{
                 background: "transparent",
                 border: "none",
-                color: "#9090A0",
+                color: currentTheme.text,
                 fontSize: 14,
                 cursor: "pointer",
+                opacity: 0.7,
               }}
             >
-              ← Exit
+              ← Library
             </button>
-            <div style={{ fontSize: 12, color: "#9090A0" }}>
-              {ch.title} • {mode} Mode
+            
+            <div style={{ fontSize: 12, color: `${currentTheme.text}80` }}>
+              Chapter {chIdx + 1} of {chaps.length}
             </div>
+
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: 18,
+                color: currentTheme.text,
+                cursor: "pointer",
+                opacity: 0.7,
+              }}
+            >
+              ⚙️
+            </button>
           </div>
           
-          {/* Row 2: Controls */}
+          {/* Row 2: Chapter Navigation + Controls */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            {/* Chapter Navigation */}
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => {
+                  if (chIdx > 0) {
+                    setChIdx(chIdx - 1);
+                    setShowChoice(false);
+                    stopVoiceRecognition();
+                    window.scrollTo(0, 0);
+                  }
+                }}
+                disabled={chIdx === 0}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: 6,
+                  background: chIdx === 0 ? "transparent" : `${currentTheme.text}10`,
+                  border: `1px solid ${currentTheme.text}20`,
+                  color: chIdx === 0 ? `${currentTheme.text}40` : currentTheme.text,
+                  fontSize: 11,
+                  cursor: chIdx === 0 ? "not-allowed" : "pointer",
+                }}
+              >
+                ← Prev
+              </button>
+              
+              <button
+                onClick={() => {
+                  if (chIdx < chaps.length - 1) {
+                    setChIdx(chIdx + 1);
+                    setShowChoice(false);
+                    stopVoiceRecognition();
+                    window.scrollTo(0, 0);
+                  }
+                }}
+                disabled={chIdx === chaps.length - 1}
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: 6,
+                  background: chIdx === chaps.length - 1 ? "transparent" : `${currentTheme.text}10`,
+                  border: `1px solid ${currentTheme.text}20`,
+                  color: chIdx === chaps.length - 1 ? `${currentTheme.text}40` : currentTheme.text,
+                  fontSize: 11,
+                  cursor: chIdx === chaps.length - 1 ? "not-allowed" : "pointer",
+                }}
+              >
+                Next →
+              </button>
+            </div>
+
+            {/* Audio Controls */}
             <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
               {(mode === "Cinematic" || mode === "Immersive") && (
                 <>
@@ -2692,8 +2907,8 @@ Welcome to Movianx.`,
                       padding: "6px 12px",
                       borderRadius: 6,
                       background: narratorOn ? "rgba(232,54,79,0.2)" : "transparent",
-                      border: `1px solid ${narratorOn ? "#E8364F" : "#2A2A35"}`,
-                      color: narratorOn ? "#E8364F" : "#9090A0",
+                      border: `1px solid ${narratorOn ? "#E8364F" : `${currentTheme.text}20`}`,
+                      color: narratorOn ? "#E8364F" : currentTheme.text,
                       fontSize: 11,
                       cursor: "pointer",
                     }}
@@ -2748,7 +2963,14 @@ Welcome to Movianx.`,
           <h2 style={{ fontSize: 28, fontWeight: 700, color: "#F0F0F5", marginBottom: 30, letterSpacing: "-0.5px" }}>
             {ch.title}
           </h2>
-          <div style={{ fontSize: 17, color: "#F0F0F5", lineHeight: 1.9, marginBottom: 40, whiteSpace: "pre-wrap" }}>
+          <div style={{ 
+            fontSize: fontSize, 
+            color: currentTheme.text, 
+            lineHeight: 1.9, 
+            marginBottom: 40, 
+            whiteSpace: "pre-wrap",
+            fontFamily: fontFamily,
+          }}>
             {txt}
           </div>
 
