@@ -45,7 +45,31 @@ const CSS = `
 // SCENE ILLUSTRATIONS — Atmospheric SVG + CSS motion
 // ═══════════════════════════════════════════════════════════════════════════
 function SceneIllustration({chapterIdx,storyId,theme}){
-  if(storyId!==1)return null; // Only Frankenstein has illustrations for now
+  // Check asset manifest for cached AI-generated image
+  const assets = typeof getAssets === "function" ? getAssets(storyId, chapterIdx) : null;
+
+  // If we have a cached image URL from the pipeline, use it with subtle motion
+  if(assets && assets.imageUrl){
+    const motionStyles = {
+      sway: {animation:"sway 8s ease-in-out infinite",transformOrigin:"center bottom"},
+      drift: {animation:"driftFog 20s ease-in-out infinite"},
+      breathe: {animation:"breathe 6s ease-in-out infinite"},
+      flicker: {animation:"flicker 3s infinite"},
+      slowApproach: {animation:"slowTurn 12s ease-in-out infinite"},
+      fade: {animation:"fadeIn 3s ease both"},
+    };
+    const motion = motionStyles[assets.visualMotion] || {};
+    return(
+      <div style={{position:"relative",overflow:"hidden",borderRadius:16}}>
+        <img src={assets.imageUrl} alt={assets.sceneDesc} style={{width:"100%",height:"auto",display:"block",...motion}}/>
+        {/* Subtle vignette overlay */}
+        <div style={{position:"absolute",inset:0,background:"radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.4) 100%)",pointerEvents:"none"}}/>
+      </div>
+    );
+  }
+
+  // Fallback: procedural SVG illustrations
+  if(storyId!==1)return null;
   const dark=theme==="night"||theme==="sepia";
   const fg=dark?"#c8c8c8":"#1a1a1a";
   const mg=dark?"#888":"#555";
@@ -545,6 +569,156 @@ function getChapters(storyId){
   return FRANK;
 }
 
+// ═══════════════════════════════════════════════════════════════════════════
+// ASSET MANIFEST SYSTEM
+// ═══════════════════════════════════════════════════════════════════════════
+// Architecture: Pre-process once per story upload → cache forever
+//
+// PIPELINE (runs once when creator uploads a story):
+// 1. AI analyzes full text → identifies key visual moments + emotional beats
+// 2. For each scene break, generates:
+//    - imagePrompt: text prompt for image generation API
+//    - audioMood: tag for ambient audio generation
+//    - visualMotion: type of subtle CSS animation to apply
+// 3. Calls image API → stores URL in manifest
+// 4. Calls audio API → stores URL in manifest
+// 5. Manifest saved to DB/GCS, loaded by reader at chapter load
+//
+// During reading: ZERO AI calls. Everything served from cached manifest.
+//
+// To connect APIs, implement generateStoryAssets() below:
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Pre-analyzed scene data for Frankenstein (what the AI pipeline would produce)
+// imageUrl: null means use SVG fallback. When API connected, these get filled with GCS URLs.
+const FRANK_ASSETS = [
+  {
+    sceneDesc: "A sailing ship locked in Arctic ice under the northern lights, ink wash illustration style, dark atmospheric, pen and ink",
+    imagePrompt: "dark ink wash illustration, sailing ship trapped in arctic ice, northern lights above, gothic atmosphere, pen and ink style, scary stories to tell in the dark aesthetic, no text",
+    imageUrl: null,
+    audioMood: "arctic-wind",
+    audioUrl: null,
+    visualMotion: "sway",
+    emotionalBeat: "anticipation",
+  },
+  {
+    sceneDesc: "A giant mysterious figure on a dog sled crossing a frozen wasteland, with a wretched stranger in the foreground",
+    imagePrompt: "dark ink wash illustration, mysterious giant figure on dog sled in arctic wasteland, second emaciated figure reaching out, fog, gothic horror style, pen and ink, monochrome",
+    imageUrl: null,
+    audioMood: "tension-drone",
+    audioUrl: null,
+    visualMotion: "drift",
+    emotionalBeat: "mystery",
+  },
+  {
+    sceneDesc: "Idyllic Lake Como scene with mountains, two children by the water, warm but with a hint of foreboding",
+    imagePrompt: "ink wash illustration, lake como italy with mountains, two small children by water, warm golden light, nostalgic but slightly ominous undertone, pen and ink with wash",
+    imageUrl: null,
+    audioMood: "pastoral-calm",
+    audioUrl: null,
+    visualMotion: "breathe",
+    emotionalBeat: "innocence",
+  },
+  {
+    sceneDesc: "Dark laboratory, a body on a table, a single yellow eye opening, candle flickering, lightning flash, scientist recoiling in horror",
+    imagePrompt: "dark gothic ink wash illustration, frankenstein laboratory scene, creature on table with single glowing yellow eye opening, candle light, lightning, terrified scientist recoiling, pen and ink, horror, scary stories to tell in the dark style",
+    imageUrl: null,
+    audioMood: "horror-creation",
+    audioUrl: null,
+    visualMotion: "flicker",
+    emotionalBeat: "horror",
+  },
+  {
+    sceneDesc: "Large imposing creature facing viewer with glowing eyes, small human figure shrinking back, mountain wilderness, mist",
+    imagePrompt: "dark ink wash illustration, frankenstein creature large imposing figure with glowing eyes facing viewer, small human cowering, mountain wilderness, heavy mist, gothic horror, pen and ink monochrome",
+    imageUrl: null,
+    audioMood: "confrontation",
+    audioUrl: null,
+    visualMotion: "slowApproach",
+    emotionalBeat: "anguish",
+  },
+  {
+    sceneDesc: "Vast empty Arctic landscape, single tiny figure walking away into fog and darkness, profound loneliness",
+    imagePrompt: "dark ink wash illustration, vast empty arctic ice field, single tiny figure disappearing into fog and darkness, stars above, profound solitude, pen and ink, haunting atmosphere",
+    imageUrl: null,
+    audioMood: "desolation",
+    audioUrl: null,
+    visualMotion: "fade",
+    emotionalBeat: "grief",
+  },
+];
+
+// Audio mood → procedural Web Audio parameters (used when no audioUrl cached)
+const AUDIO_MOODS = {
+  "arctic-wind": { baseFreq: 80, type: "sine", modFreq: 0.3, gain: 0.08, filterFreq: 400 },
+  "tension-drone": { baseFreq: 55, type: "sawtooth", modFreq: 0.15, gain: 0.06, filterFreq: 300 },
+  "pastoral-calm": { baseFreq: 220, type: "sine", modFreq: 0.1, gain: 0.04, filterFreq: 800 },
+  "horror-creation": { baseFreq: 40, type: "square", modFreq: 0.5, gain: 0.1, filterFreq: 200 },
+  "confrontation": { baseFreq: 65, type: "triangle", modFreq: 0.25, gain: 0.08, filterFreq: 350 },
+  "desolation": { baseFreq: 100, type: "sine", modFreq: 0.05, gain: 0.03, filterFreq: 500 },
+};
+
+function getAssets(storyId, chapterIdx) {
+  if (storyId === 1 && FRANK_ASSETS[chapterIdx]) return FRANK_ASSETS[chapterIdx];
+  return null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// generateStoryAssets() — CONNECT YOUR APIs HERE
+// ═══════════════════════════════════════════════════════════════════════════
+// This function runs ONCE when a creator uploads a story.
+// It analyzes text, generates assets, and caches them.
+//
+// async function generateStoryAssets(storyText, chapters) {
+//   // Step 1: Send full text to LLM to identify visual moments
+//   // const analysis = await fetch('VERTEX_AI_ENDPOINT', {
+//   //   body: JSON.stringify({
+//   //     prompt: `Analyze this story and identify the 6-8 most visually impactful 
+//   //     moments. For each, provide: sceneDesc, imagePrompt (ink wash gothic style), 
+//   //     audioMood, emotionalBeat, which chapter it belongs to.`,
+//   //     text: storyText
+//   //   })
+//   // });
+//   //
+//   // Step 2: Generate images
+//   // for (const scene of analysis.scenes) {
+//   //   // Option A: Replicate (Flux/SDXL)
+//   //   const img = await fetch('https://api.replicate.com/v1/predictions', {
+//   //     headers: { 'Authorization': `Token ${REPLICATE_API_KEY}` },
+//   //     body: JSON.stringify({
+//   //       model: 'black-forest-labs/flux-schnell',
+//   //       input: { prompt: scene.imagePrompt, aspect_ratio: '16:9' }
+//   //     })
+//   //   });
+//   //   
+//   //   // Option B: Google Imagen (uses your GCP credits)
+//   //   // const img = await fetch('IMAGEN_ENDPOINT', { ... });
+//   //   
+//   //   // Option C: OpenAI DALL-E
+//   //   // const img = await fetch('https://api.openai.com/v1/images/generations', { ... });
+//   //   
+//   //   // Store to GCS
+//   //   // await uploadToGCS(img.url, `stories/${storyId}/ch${scene.chapter}.webp`);
+//   //   // scene.imageUrl = gcsPublicUrl;
+//   // }
+//   //
+//   // Step 3: Generate ambient audio loops (optional)
+//   // for (const scene of analysis.scenes) {
+//   //   // Replicate MusicGen
+//   //   const audio = await fetch('https://api.replicate.com/v1/predictions', {
+//   //     body: JSON.stringify({
+//   //       model: 'meta/musicgen',
+//   //       input: { prompt: `${scene.audioMood}, ambient, atmospheric, 15 seconds loop` }
+//   //     })
+//   //   });
+//   //   // await uploadToGCS(audio.url, `stories/${storyId}/audio_ch${scene.chapter}.mp3`);
+//   // }
+//   //
+//   // Step 4: Save manifest to DB
+//   // await saveManifest(storyId, analysis.scenes);
+// }
+
+
 
 // ═══════════════════════════════════════════════════════════════════════════
 // MAIN COMPONENT
@@ -612,38 +786,71 @@ export default function MovianxPlatform(){
       const ctx=getAudioCtx();if(!ctx)return;
       // Stop existing ambient
       if(oscRef.current){try{oscRef.current.forEach(n=>n.stop())}catch(e){} oscRef.current=null}
+
+      // Check asset manifest for cached audio or mood-specific parameters
+      const assets=sel?getAssets(sel.id,chIdx):null;
+
+      // If we have a cached audio URL from the pipeline, play it
+      if(assets&&assets.audioUrl){
+        const audio=new Audio(assets.audioUrl);
+        audio.loop=true;audio.volume=0.3;audio.play().catch(()=>{});
+        oscRef.current=[{stop:()=>audio.pause()}]; // Unified cleanup interface
+        return;
+      }
+
+      // Use manifest mood params if available, otherwise fall back to emotion-based
+      const manifestMood=assets?AUDIO_MOODS[assets.audioMood]:null;
       const nodes=[];
-      const moods={
-        calm:{bass:40,mid:0,vol:0.06,type:"sine"},
-        tense:{bass:55,mid:185,vol:0.08,type:"triangle"},
-        terrified:{bass:65,mid:220,vol:0.1,type:"sawtooth"},
-        panicked:{bass:70,mid:260,vol:0.12,type:"sawtooth"},
-        nervous:{bass:50,mid:160,vol:0.07,type:"triangle"},
-        anguished:{bass:48,mid:200,vol:0.09,type:"triangle"},
-        reflective:{bass:35,mid:0,vol:0.04,type:"sine"},
-      };
-      const m=moods[emotion]||moods.calm;
-      const master=ctx.createGain();master.gain.setValueAtTime(m.vol,ctx.currentTime);master.connect(ctx.destination);
-      // Bass drone
-      const bass=ctx.createOscillator();const bg=ctx.createGain();
-      bass.type="sine";bass.frequency.setValueAtTime(m.bass,ctx.currentTime);
-      // Slow LFO on bass for organic feel
-      bass.frequency.setValueAtTime(m.bass,ctx.currentTime);
-      bass.frequency.linearRampToValueAtTime(m.bass*0.9,ctx.currentTime+4);
-      bass.frequency.linearRampToValueAtTime(m.bass,ctx.currentTime+8);
-      bg.gain.setValueAtTime(0.5,ctx.currentTime);
-      bass.connect(bg);bg.connect(master);bass.start();nodes.push(bass);
-      // Mid tone only for tense/terrified
-      if(m.mid>0){
-        const mid=ctx.createOscillator();const mg=ctx.createGain();
-        mid.type=m.type;mid.frequency.setValueAtTime(m.mid,ctx.currentTime);
-        mid.frequency.linearRampToValueAtTime(m.mid*1.05,ctx.currentTime+3);
-        mid.frequency.linearRampToValueAtTime(m.mid,ctx.currentTime+6);
-        mg.gain.setValueAtTime(0.2,ctx.currentTime);
-        mid.connect(mg);mg.connect(master);mid.start();nodes.push(mid);
+
+      if(manifestMood){
+        // Rich mood-specific ambient from pipeline analysis
+        const master=ctx.createGain();master.gain.setValueAtTime(manifestMood.gain,ctx.currentTime);master.connect(ctx.destination);
+        const bass=ctx.createOscillator();const bg2=ctx.createGain();
+        bass.type=manifestMood.type;bass.frequency.setValueAtTime(manifestMood.baseFreq,ctx.currentTime);
+        // Slow organic modulation
+        bass.frequency.linearRampToValueAtTime(manifestMood.baseFreq*0.9,ctx.currentTime+5);
+        bass.frequency.linearRampToValueAtTime(manifestMood.baseFreq*1.05,ctx.currentTime+10);
+        bass.frequency.linearRampToValueAtTime(manifestMood.baseFreq,ctx.currentTime+15);
+        bg2.gain.setValueAtTime(0.5,ctx.currentTime);
+        bass.connect(bg2);bg2.connect(master);bass.start();nodes.push(bass);
+        // Add filtered noise texture via high-freq oscillator with low gain
+        if(manifestMood.modFreq>0.1){
+          const tex=ctx.createOscillator();const tg=ctx.createGain();
+          tex.type="triangle";tex.frequency.setValueAtTime(manifestMood.filterFreq,ctx.currentTime);
+          tex.frequency.linearRampToValueAtTime(manifestMood.filterFreq*0.8,ctx.currentTime+8);
+          tg.gain.setValueAtTime(0.08,ctx.currentTime);
+          tex.connect(tg);tg.connect(master);tex.start();nodes.push(tex);
+        }
+      }else{
+        // Fallback: emotion-based ambient
+        const moods={
+          calm:{bass:40,mid:0,vol:0.06,type:"sine"},
+          tense:{bass:55,mid:185,vol:0.08,type:"triangle"},
+          terrified:{bass:65,mid:220,vol:0.1,type:"sawtooth"},
+          panicked:{bass:70,mid:260,vol:0.12,type:"sawtooth"},
+          nervous:{bass:50,mid:160,vol:0.07,type:"triangle"},
+          anguished:{bass:48,mid:200,vol:0.09,type:"triangle"},
+          reflective:{bass:35,mid:0,vol:0.04,type:"sine"},
+        };
+        const m=moods[emotion]||moods.calm;
+        const master=ctx.createGain();master.gain.setValueAtTime(m.vol,ctx.currentTime);master.connect(ctx.destination);
+        const bass=ctx.createOscillator();const bg2=ctx.createGain();
+        bass.type="sine";bass.frequency.setValueAtTime(m.bass,ctx.currentTime);
+        bass.frequency.linearRampToValueAtTime(m.bass*0.9,ctx.currentTime+4);
+        bass.frequency.linearRampToValueAtTime(m.bass,ctx.currentTime+8);
+        bg2.gain.setValueAtTime(0.5,ctx.currentTime);
+        bass.connect(bg2);bg2.connect(master);bass.start();nodes.push(bass);
+        if(m.mid>0){
+          const mid=ctx.createOscillator();const mg2=ctx.createGain();
+          mid.type=m.type;mid.frequency.setValueAtTime(m.mid,ctx.currentTime);
+          mid.frequency.linearRampToValueAtTime(m.mid*1.05,ctx.currentTime+3);
+          mid.frequency.linearRampToValueAtTime(m.mid,ctx.currentTime+6);
+          mg2.gain.setValueAtTime(0.2,ctx.currentTime);
+          mid.connect(mg2);mg2.connect(master);mid.start();nodes.push(mid);
+        }
       }
       oscRef.current=nodes;
-    }catch(e){}
+    }catch(e){console.log("Ambient error:",e)}
   };
 
   const stopAmbient=()=>{
