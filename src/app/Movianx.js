@@ -1757,29 +1757,43 @@ Welcome to Movianx.`,
     setTouchStartX(e.touches[0].clientX);
   };
   
-  const handleTouchEnd = (e) => {
-    setTouchEndX(e.changedTouches[0].clientX);
+  const handleTouchMove = (e) => {
+    setTouchEndX(e.touches[0].clientX);
+  };
+  
+  const handleTouchEnd = () => {
     handleSwipe();
   };
   
   const handleSwipe = () => {
-    if (touchStartX - touchEndX > 75) {
+    const swipeDistance = touchStartX - touchEndX;
+    const minSwipeDistance = 50; // Lowered from 75 for easier swiping
+    
+    if (Math.abs(swipeDistance) < minSwipeDistance) return;
+    
+    if (swipeDistance > 0) {
       // Swiped left - next chapter
       if (chIdx < chaps.length - 1) {
-        setChIdx(chIdx + 1);
-        setShowChoice(false);
-        stopVoiceRecognition();
-        window.scrollTo(0, 0);
+        setFadeOut(true);
+        setTimeout(() => {
+          setChIdx(chIdx + 1);
+          setShowChoice(false);
+          stopVoiceRecognition();
+          setFadeOut(false);
+          if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 200);
       }
-    }
-    
-    if (touchEndX - touchStartX > 75) {
+    } else {
       // Swiped right - previous chapter
       if (chIdx > 0) {
-        setChIdx(chIdx - 1);
-        setShowChoice(false);
-        stopVoiceRecognition();
-        window.scrollTo(0, 0);
+        setFadeOut(true);
+        setTimeout(() => {
+          setChIdx(chIdx - 1);
+          setShowChoice(false);
+          stopVoiceRecognition();
+          setFadeOut(false);
+          if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 200);
       }
     }
   };
@@ -1813,7 +1827,13 @@ Welcome to Movianx.`,
     setShowChoice(false);
     setTimerActive(false); // Stop timer when choice is made
     setTimeRemaining(null);
-    if (opt.next < chaps.length) setChIdx(opt.next);
+    if (opt.next < chaps.length) {
+      setChIdx(opt.next);
+      // Scroll to top immediately when choice is made
+      setTimeout(() => {
+        if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 100);
+    }
     if (opt.next === chaps.length - 1) stopAmbient();
   };
 
@@ -1837,16 +1857,18 @@ Welcome to Movianx.`,
         setTimeout(() => playSoundEffect("jumpscare"), 3000);
       }
       
-      // Narrator reads the story text first (not choice)
+      // Narrator reads the FULL STORY TEXT first (not the summary)
       if (mode === "Cinematic" || mode === "Immersive") {
-        const narratorText = ch.narrator || ch.text;
+        // Read the actual story text, not just narrator summary
+        const storyText = ch.text; // Full text, not shortened narrator version
         const emotion = ch.emotion || "calm";
-        speak(narratorText, emotion);
+        speak(storyText, emotion);
       }
       
       if (mode === "Immersive") startAmbient();
       
-      // Wait for story narration to finish, THEN show choice
+      // Wait much longer for story narration to finish, THEN show choice
+      const estimatedReadTime = ch.text ? ch.text.split(' ').length * 400 : 10000; // ~400ms per word
       const timer = setTimeout(() => {
         if (ch.choice) {
           setShowChoice(true);
@@ -1857,8 +1879,8 @@ Welcome to Movianx.`,
             setTimerActive(true);
           }
           
-          // NOW narrator asks the choice question (after story is read)
-          // Add a 2 second delay so user can read the text choice first
+          // NOW narrator asks the choice question (after story is fully read)
+          // Add a 3 second delay so user can read the text choice first
           setTimeout(() => {
             if (ch.choice.prompt && (mode === "Cinematic" || mode === "Immersive")) {
               const choiceEmotion = ch.choice.emotion || "calm";
@@ -1872,9 +1894,9 @@ Welcome to Movianx.`,
                 }, 3000);
               }
             }
-          }, 2000); // Wait 2 seconds after choice appears before reading it
+          }, 3000); // Wait 3 seconds after choice appears before reading it
         }
-      }, mode === "Reader" ? 2000 : 10000); // Longer delay for Cinematic/Immersive
+      }, Math.max(estimatedReadTime, 15000)); // At least 15 seconds for story reading
       return () => clearTimeout(timer);
     }
   }, [pg, chIdx, mode, narratorOn, soundEffectsOn]);
@@ -2913,7 +2935,9 @@ Welcome to Movianx.`,
               onClick={() => {
                 stopAmbient();
                 stopVoiceRecognition();
-                if (typeof window !== "undefined" && window.speechSynthesis) window.speechSynthesis.cancel();
+                if (typeof window !== "undefined" && window.speechSynthesis) {
+                  window.speechSynthesis.cancel();
+                }
                 setPg("library");
               }}
               style={{
@@ -3061,8 +3085,16 @@ Welcome to Movianx.`,
 
         {/* Content */}
         <div 
-          style={{ maxWidth: 800, margin: "0 auto", padding: "100px 40px 120px" }}
+          style={{ 
+            maxWidth: 800, 
+            margin: "0 auto", 
+            padding: "100px 40px 120px",
+            opacity: fadeOut ? 0 : 1,
+            transform: fadeOut ? "translateX(-20px)" : "translateX(0)",
+            transition: "opacity 0.2s ease-out, transform 0.2s ease-out",
+          }}
           onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
           {listenOnly ? (
