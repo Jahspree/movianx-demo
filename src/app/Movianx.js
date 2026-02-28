@@ -399,37 +399,79 @@ export default function MovianxPlatform(){
   const startAmbient=()=>{
     if(typeof window==="undefined"||mode!=="Immersive")return;
     try{
-      if(!audioCtxRef.current)audioCtxRef.current=new(window.AudioContext||window.webkitAudioContext)();
-      const ctx=audioCtxRef.current;if(oscRef.current)return;
+      const ctx=getAudioCtx();if(!ctx||oscRef.current)return;
       const bass=ctx.createOscillator(),mid=ctx.createOscillator();
       const bg=ctx.createGain(),mg=ctx.createGain(),master=ctx.createGain();
       bass.type="sine";bass.frequency.setValueAtTime(55,ctx.currentTime);bg.gain.setValueAtTime(0.05,ctx.currentTime);
       mid.type="triangle";mid.frequency.setValueAtTime(220,ctx.currentTime);mg.gain.setValueAtTime(0.02,ctx.currentTime);
       bass.connect(bg);mid.connect(mg);bg.connect(master);mg.connect(master);master.connect(ctx.destination);master.gain.setValueAtTime(0.3,ctx.currentTime);
       bass.start();mid.start();oscRef.current={bass,mid};
-    }catch(e){}
+    }catch(e){console.log("Ambient error:",e)}
+  };
+
+  const getAudioCtx=()=>{
+    if(!audioCtxRef.current&&typeof window!=="undefined")audioCtxRef.current=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtxRef.current&&audioCtxRef.current.state==="suspended")audioCtxRef.current.resume();
+    return audioCtxRef.current;
   };
 
   const playSFX=(type)=>{
     if(!soundEffectsOn||typeof window==="undefined")return;
     try{
-      if(!audioCtxRef.current)audioCtxRef.current=new(window.AudioContext||window.webkitAudioContext)();
-      const ctx=audioCtxRef.current,osc=ctx.createOscillator(),g=ctx.createGain();
+      const ctx=getAudioCtx();if(!ctx)return;
       if(type==="heartbeat"){
         for(let i=0;i<2;i++){const b=ctx.createOscillator(),bg=ctx.createGain();b.type="sine";b.frequency.setValueAtTime(60,ctx.currentTime+i*0.2);bg.gain.setValueAtTime(0.4,ctx.currentTime+i*0.2);bg.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+i*0.2+0.15);b.connect(bg);bg.connect(ctx.destination);b.start(ctx.currentTime+i*0.2);b.stop(ctx.currentTime+i*0.2+0.15)}
         return;
       }
-      if(type==="jumpscare"){osc.type="square";osc.frequency.setValueAtTime(440,ctx.currentTime);g.gain.setValueAtTime(0.5,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.3);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.3)}
-    }catch(e){}
+      if(type==="jumpscare"){
+        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="square";osc.frequency.setValueAtTime(440,ctx.currentTime);g.gain.setValueAtTime(0.5,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.3);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.3);
+        return;
+      }
+      if(type==="footsteps"){
+        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="square";osc.frequency.setValueAtTime(80,ctx.currentTime);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.1);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.1);
+        return;
+      }
+      if(type==="ambient"){
+        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(120,ctx.currentTime);osc.frequency.linearRampToValueAtTime(80,ctx.currentTime+2);g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+2);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+2);
+        return;
+      }
+      if(type==="creak"){
+        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="sawtooth";osc.frequency.setValueAtTime(200,ctx.currentTime);osc.frequency.linearRampToValueAtTime(150,ctx.currentTime+0.8);g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.8);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.8);
+        return;
+      }
+    }catch(e){console.log("SFX error:",e)}
   };
 
   const speak=(text,emotion="calm")=>{
     if(typeof window==="undefined"||!window.speechSynthesis||!narratorOn)return;
+    // Cancel previous speech with a small delay to avoid Chrome bug
     window.speechSynthesis.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    const emotions={terrified:{rate:1.3,pitch:1.15,volume:0.95},panicked:{rate:1.3,pitch:1.15,volume:0.95},tense:{rate:1.0,pitch:1.05,volume:0.9},calm:{rate:0.9,pitch:0.95,volume:0.9},whispering:{rate:0.85,pitch:0.9,volume:0.5}};
-    const e=emotions[emotion]||emotions.calm;u.rate=e.rate;u.pitch=e.pitch;u.volume=e.volume;
-    window.speechSynthesis.speak(u);
+    const doSpeak=()=>{
+      const u=new SpeechSynthesisUtterance(text);
+      const emotions={
+        terrified:{rate:1.3,pitch:1.15,volume:0.95},
+        panicked:{rate:1.3,pitch:1.15,volume:0.95},
+        tense:{rate:1.0,pitch:1.05,volume:0.9},
+        nervous:{rate:1.05,pitch:1.0,volume:0.9},
+        calm:{rate:0.9,pitch:0.95,volume:0.9},
+        reflective:{rate:0.85,pitch:0.92,volume:0.85},
+        ambitious:{rate:0.95,pitch:1.0,volume:0.9},
+        curious:{rate:0.95,pitch:1.0,volume:0.9},
+        anguished:{rate:0.9,pitch:1.1,volume:0.95},
+        whispering:{rate:0.85,pitch:0.9,volume:0.5},
+        devastated:{rate:0.8,pitch:0.85,volume:0.8}
+      };
+      const em=emotions[emotion]||emotions.calm;
+      u.rate=em.rate;u.pitch=em.pitch;u.volume=em.volume;
+      // Try to pick a good voice
+      const voices=window.speechSynthesis.getVoices();
+      const english=voices.filter(v=>v.lang.startsWith("en"));
+      if(english.length>0)u.voice=english[0];
+      window.speechSynthesis.speak(u);
+    };
+    // Chrome requires voices to be loaded first
+    if(window.speechSynthesis.getVoices().length>0){setTimeout(doSpeak,50)}
+    else{window.speechSynthesis.onvoiceschanged=()=>{setTimeout(doSpeak,50)}}
   };
 
   const startVoiceRec=()=>{
@@ -498,7 +540,7 @@ export default function MovianxPlatform(){
   useEffect(()=>{
     if(pg!=="reading"||!ch.text)return;
     setTxt(ch.text);
-    if(ch.sound&&soundEffectsOn)setTimeout(()=>playSFX(ch.sound==="heartbeat"?"heartbeat":"heartbeat"),500);
+    if(ch.sound&&soundEffectsOn)setTimeout(()=>playSFX(ch.sound),500);
     if(ch.jumpScare&&soundEffectsOn)setTimeout(()=>playSFX("jumpscare"),3000);
     if(mode==="Cinematic"||mode==="Immersive")speak(ch.text,ch.emotion||"calm");
     if(mode==="Immersive")startAmbient();
@@ -548,7 +590,7 @@ export default function MovianxPlatform(){
   // ─── LANDING PAGE ───
   if(pg==="landing"){
     return(
-      <div style={{minHeight:"100vh",background:"#000",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",overflow:"auto",WebkitOverflowScrolling:"touch",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
+      <div style={{minHeight:"100vh",background:"#000",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <div style={{position:"absolute",top:0,left:0,right:0,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"24px 5%",zIndex:10,animation:"fadeDown 0.6s ease both"}}>
           <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
           <div style={{display:"flex",gap:32,alignItems:"center"}}>
@@ -576,7 +618,7 @@ export default function MovianxPlatform(){
   // ─── HOME PAGE ───
   if(pg==="home"){
     return(
-      <div style={{height:"100vh",background:"#000",fontFamily:FF,display:"flex",flexDirection:"column",position:"relative",overflowY:"scroll",WebkitOverflowScrolling:"touch",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
+      <div style={{minHeight:"100vh",background:"#000",fontFamily:FF,display:"flex",flexDirection:"column",position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 5%",borderBottom:"1px solid rgba(255,255,255,0.1)",animation:"fadeDown 0.6s ease both"}}>
           <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
           <div style={{display:"flex",gap:24,alignItems:"center"}}>
@@ -617,7 +659,7 @@ export default function MovianxPlatform(){
   // ─── LIBRARY PAGE ───
   if(pg==="library"){
     return(
-      <div style={{height:"100vh",background:"#000",fontFamily:FF,overflowY:"scroll",WebkitOverflowScrolling:"touch",padding:"80px 5%",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
+      <div style={{minHeight:"100vh",background:"#000",fontFamily:FF,padding:"80px 5% 120px",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <button onClick={()=>navigateTo("home")} style={{background:"transparent",border:"1px solid rgba(255,255,255,0.2)",color:"#fff",padding:"12px 24px",borderRadius:8,fontSize:14,cursor:"pointer",marginBottom:40,fontFamily:FF}}>← Back</button>
         <h1 style={{fontSize:48,fontWeight:700,color:"#fff",marginBottom:16}}>Story Library</h1>
         <p style={{fontSize:18,color:"rgba(255,255,255,0.6)",marginBottom:60}}>Choose your experience</p>
@@ -647,7 +689,7 @@ export default function MovianxPlatform(){
   // ─── DETAIL PAGE ───
   if(pg==="detail"&&sel){
     return(
-      <div style={{height:"100vh",background:"#000",fontFamily:FF,overflowY:"scroll",WebkitOverflowScrolling:"touch",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
+      <div style={{minHeight:"100vh",background:"#000",fontFamily:FF,opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <div style={{position:"relative",height:360,background:`url(${sel.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}>
           <div style={{position:"absolute",inset:0,background:"linear-gradient(transparent 30%,#000 100%)"}}/>
           <button onClick={()=>navigateTo("library")} style={{position:"absolute",top:24,left:24,background:"rgba(0,0,0,0.5)",border:"1px solid rgba(255,255,255,0.3)",color:"#fff",padding:"10px 20px",borderRadius:8,fontSize:14,cursor:"pointer",zIndex:2,fontFamily:FF,backdropFilter:"blur(10px)"}}>← Back</button>
@@ -687,7 +729,7 @@ export default function MovianxPlatform(){
   // ═══════════════════════════════════════════════════════════════════════════
   if(pg==="reading"){
     return(
-      <div style={{minHeight:"100vh",background:currentTheme.bg,fontFamily:FF,position:"relative",overflowX:"hidden"}}
+      <div style={{minHeight:"100vh",background:currentTheme.bg,fontFamily:FF,position:"relative",overflowY:"auto",WebkitOverflowScrolling:"touch"}}
         onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
 
         {monetizeModal}
@@ -708,13 +750,12 @@ export default function MovianxPlatform(){
             <button onClick={()=>setShowSettings(!showSettings)} style={{padding:"6px 12px",borderRadius:6,background:"transparent",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:12,cursor:"pointer",fontFamily:FF,opacity:0.7}}>⚙</button>
             {/* Listen-only toggle */}
             <button onClick={()=>setListenOnly(!listenOnly)} style={{padding:"6px 12px",borderRadius:6,background:listenOnly?`${C.red}20`:"transparent",border:`1px solid ${listenOnly?C.red:`${currentTheme.text}20`}`,color:listenOnly?C.red:currentTheme.text,fontSize:11,cursor:"pointer",fontFamily:FF}}>{listenOnly?"🎧 Listen":"🎧"}</button>
-            {/* Audio controls */}
-            {(mode==="Cinematic"||mode==="Immersive")&&(
-              <>
-                <button onClick={()=>setNarratorOn(!narratorOn)} style={{padding:"6px 12px",borderRadius:6,background:narratorOn?`${C.red}20`:"transparent",border:`1px solid ${narratorOn?C.red:`${currentTheme.text}20`}`,color:narratorOn?C.red:currentTheme.text,fontSize:11,cursor:"pointer"}}>{narratorOn?"🔊":"🔇"}</button>
-                <button onClick={()=>setSoundEffectsOn(!soundEffectsOn)} style={{padding:"6px 12px",borderRadius:6,background:soundEffectsOn?`${C.red}20`:"transparent",border:`1px solid ${soundEffectsOn?C.red:"#2A2A35"}`,color:soundEffectsOn?C.red:"#9090A0",fontSize:11,cursor:"pointer"}}>{soundEffectsOn?"🎵":"🔇"}</button>
-              </>
-            )}
+            {/* Audio controls - visible in ALL modes */}
+            <button onClick={()=>{setNarratorOn(!narratorOn);if(!narratorOn&&ch.text){setTimeout(()=>speak(ch.text,ch.emotion||"calm"),100)}else if(narratorOn&&typeof window!=="undefined"&&window.speechSynthesis){window.speechSynthesis.cancel()}}} style={{padding:"6px 12px",borderRadius:6,background:narratorOn?`${C.red}20`:"transparent",border:`1px solid ${narratorOn?C.red:`${currentTheme.text}20`}`,color:narratorOn?C.red:currentTheme.text,fontSize:11,cursor:"pointer"}} title="Toggle narrator">{narratorOn?"🔊 On":"🔇 Off"}</button>
+            <button onClick={()=>setSoundEffectsOn(!soundEffectsOn)} style={{padding:"6px 12px",borderRadius:6,background:soundEffectsOn?`${C.red}20`:"transparent",border:`1px solid ${soundEffectsOn?C.red:"#2A2A35"}`,color:soundEffectsOn?C.red:"#9090A0",fontSize:11,cursor:"pointer"}} title="Toggle SFX">{soundEffectsOn?"🎵":"🔇"}</button>
+            {mode==="Cinematic"||mode==="Immersive"?(
+              <button onClick={()=>{if(ch.text)speak(ch.text,ch.emotion||"calm")}} style={{padding:"6px 12px",borderRadius:6,background:"transparent",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:11,cursor:"pointer"}} title="Replay narration">▶ Read</button>
+            ):null}
             {mode==="Immersive"&&(
               <button onClick={()=>{setVoiceMode(!voiceMode);if(!voiceMode)startVoiceRec()}} style={{padding:"6px 12px",borderRadius:8,background:voiceActive?C.red:"transparent",border:`1px solid ${voiceActive?C.red:"#2A2A35"}`,color:voiceActive?"#fff":"#9090A0",fontSize:11,cursor:"pointer"}}>{voiceActive?"🎤 Listening...":"🎤 Voice"}</button>
             )}
@@ -758,7 +799,7 @@ export default function MovianxPlatform(){
 
         {/* Content */}
         <div style={{
-          maxWidth:800,margin:"0 auto",padding:"100px 40px 120px",
+          maxWidth:800,margin:"0 auto",padding:"100px 40px 200px",
           opacity:pageAnim==="out"?0:1,
           transform:pageAnim==="out"?"translateX(-30px)":pageAnim==="in"?"translateX(0)":"translateX(0)",
           transition:"opacity 0.25s ease, transform 0.25s ease",
