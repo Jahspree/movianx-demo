@@ -31,7 +31,219 @@ const CSS = `
   @keyframes breathe{0%,100%{opacity:0.4}50%{opacity:1}}
   @keyframes pageTurn{0%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(-30px)}}
   @keyframes pageEnter{0%{opacity:0;transform:translateX(30px)}100%{opacity:1;transform:translateX(0)}}
+  @keyframes driftFog{0%{transform:translateX(-5%)}50%{transform:translateX(5%)}100%{transform:translateX(-5%)}}
+  @keyframes flicker{0%,100%{opacity:0.6}20%{opacity:0.8}40%{opacity:0.5}60%{opacity:0.9}80%{opacity:0.55}}
+  @keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+  @keyframes slowTurn{0%{transform:scaleX(1)}50%{transform:scaleX(1.02) translateX(2px)}100%{transform:scaleX(1)}}
+  @keyframes rise{0%{transform:translateY(0);opacity:0.3}50%{transform:translateY(-10px);opacity:0.7}100%{transform:translateY(-20px);opacity:0}}
+  @keyframes eyeGlow{0%,100%{filter:drop-shadow(0 0 4px rgba(200,180,50,0.3))}50%{filter:drop-shadow(0 0 12px rgba(200,180,50,0.8))}}
+  @keyframes iceShift{0%{transform:translateX(0) translateY(0)}33%{transform:translateX(3px) translateY(-2px)}66%{transform:translateX(-2px) translateY(1px)}100%{transform:translateX(0) translateY(0)}}
+  @keyframes lightning{0%,95%,100%{opacity:0}96%{opacity:0.8}97%{opacity:0}98%{opacity:0.5}}
 `;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SCENE ILLUSTRATIONS — Atmospheric SVG + CSS motion
+// ═══════════════════════════════════════════════════════════════════════════
+function SceneIllustration({chapterIdx,storyId,theme}){
+  if(storyId!==1)return null; // Only Frankenstein has illustrations for now
+  const dark=theme==="night"||theme==="sepia";
+  const fg=dark?"#c8c8c8":"#1a1a1a";
+  const mg=dark?"#888":"#555";
+  const bg2=dark?"#333":"#d0d0d0";
+  const accent=dark?"#c8b432":"#8B7500";
+
+  const scenes={
+    // Chapter 0: Arctic voyage - ship, ice, northern lights
+    0:(
+      <svg viewBox="0 0 800 350" style={{width:"100%",height:"auto",animation:"fadeIn 1.5s ease both"}}>
+        {/* Sky */}
+        <defs>
+          <linearGradient id="sky0" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={dark?"#0a0a18":"#2a2a40"}/><stop offset="100%" stopColor={dark?"#1a1a2a":"#a0a0b8"}/></linearGradient>
+          <filter id="fog0"><feGaussianBlur in="SourceGraphic" stdDeviation="8"/></filter>
+        </defs>
+        <rect width="800" height="350" fill="url(#sky0)"/>
+        {/* Stars */}
+        {[...Array(30)].map((_,i)=><circle key={i} cx={Math.random()*800} cy={Math.random()*150} r={Math.random()*1.5+0.5} fill="#fff" opacity={Math.random()*0.6+0.2} style={{animation:`breathe ${3+Math.random()*4}s infinite ${Math.random()*3}s`}}/>)}
+        {/* Northern lights */}
+        <ellipse cx="400" cy="80" rx="300" ry="60" fill="none" stroke={accent} strokeWidth="1.5" opacity="0.15" style={{animation:"breathe 8s infinite"}}/>
+        <ellipse cx="350" cy="60" rx="200" ry="40" fill="none" stroke="#4a8" strokeWidth="1" opacity="0.1" style={{animation:"breathe 6s infinite 1s"}}/>
+        {/* Ice field */}
+        <path d="M0,250 L100,240 L200,255 L350,235 L500,250 L650,240 L800,248 L800,350 L0,350Z" fill={bg2} opacity="0.5" style={{animation:"iceShift 20s ease-in-out infinite"}}/>
+        <path d="M0,260 L150,250 L300,265 L450,248 L600,258 L800,252 L800,350 L0,350Z" fill={bg2} opacity="0.7"/>
+        {/* Ship silhouette */}
+        <g style={{animation:"sway 8s ease-in-out infinite",transformOrigin:"400px 240px"}}>
+          <path d="M360,240 L380,200 L420,200 L440,240Z" fill={fg} opacity="0.8"/>
+          <line x1="400" y1="200" x2="400" y2="160" stroke={fg} strokeWidth="2" opacity="0.8"/>
+          <path d="M400,165 L400,195 L415,185Z" fill={fg} opacity="0.6"/>
+          <path d="M350,242 L450,242 L440,255 L360,255Z" fill={fg} opacity="0.9"/>
+        </g>
+        {/* Fog layer */}
+        <ellipse cx="200" cy="280" rx="250" ry="40" fill={bg2} opacity="0.3" filter="url(#fog0)" style={{animation:"driftFog 15s ease-in-out infinite"}}/>
+        <ellipse cx="600" cy="290" rx="200" ry="35" fill={bg2} opacity="0.25" filter="url(#fog0)" style={{animation:"driftFog 12s ease-in-out infinite 3s"}}/>
+      </svg>
+    ),
+    // Chapter 1: Stranger on the ice - mysterious figure, frozen landscape
+    1:(
+      <svg viewBox="0 0 800 350" style={{width:"100%",height:"auto",animation:"fadeIn 1.5s ease both"}}>
+        <defs>
+          <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={dark?"#0c0c1a":"#3a3a50"}/><stop offset="100%" stopColor={dark?"#1c1c30":"#bbb8c8"}/></linearGradient>
+          <filter id="fog1"><feGaussianBlur in="SourceGraphic" stdDeviation="6"/></filter>
+        </defs>
+        <rect width="800" height="350" fill="url(#sky1)"/>
+        {/* Ice plains */}
+        <path d="M0,220 L200,215 L400,225 L600,210 L800,220 L800,350 L0,350Z" fill={bg2} opacity="0.6"/>
+        {/* Giant figure silhouette - far away, on sled */}
+        <g style={{animation:"slowTurn 12s ease-in-out infinite",transformOrigin:"250px 200px"}}>
+          <rect x="230" y="210" width="40" height="20" rx="3" fill={fg} opacity="0.5"/>
+          <ellipse cx="250" cy="195" rx="8" ry="15" fill={fg} opacity="0.6"/>
+          <circle cx="250" cy="180" r="6" fill={fg} opacity="0.6"/>
+          {/* Sled dogs */}
+          {[0,1,2].map(i=><ellipse key={i} cx={200-i*15} cy={218} rx="6" ry="4" fill={fg} opacity="0.4"/>)}
+        </g>
+        {/* Second figure - closer, wretched */}
+        <g style={{animation:"sway 10s ease-in-out infinite",transformOrigin:"580px 190px"}}>
+          <ellipse cx="580" cy="170" rx="7" ry="10" fill={fg} opacity="0.8"/>
+          <circle cx="580" cy="158" r="5" fill={fg} opacity="0.8"/>
+          <line x1="580" y1="180" x2="575" y2="195" stroke={fg} strokeWidth="2" opacity="0.7"/>
+          <line x1="580" y1="180" x2="585" y2="195" stroke={fg} strokeWidth="2" opacity="0.7"/>
+          {/* Reaching arm */}
+          <line x1="575" y1="172" x2="560" y2="178" stroke={fg} strokeWidth="1.5" opacity="0.7"/>
+        </g>
+        {/* Fog */}
+        <ellipse cx="400" cy="260" rx="350" ry="50" fill={bg2} opacity="0.3" filter="url(#fog1)" style={{animation:"driftFog 18s ease-in-out infinite"}}/>
+        {/* Falling snow */}
+        {[...Array(25)].map((_,i)=><circle key={i} cx={Math.random()*800} cy={Math.random()*300} r={Math.random()*2+0.5} fill="#fff" opacity={Math.random()*0.4+0.1} style={{animation:`rise ${4+Math.random()*6}s linear infinite ${Math.random()*5}s`}}/>)}
+      </svg>
+    ),
+    // Chapter 2: Victor's childhood - lake, mountains, warmth
+    2:(
+      <svg viewBox="0 0 800 350" style={{width:"100%",height:"auto",animation:"fadeIn 1.5s ease both"}}>
+        <defs>
+          <linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={dark?"#1a1825":"#5a6a80"}/><stop offset="100%" stopColor={dark?"#2a2535":"#b8c0d0"}/></linearGradient>
+        </defs>
+        <rect width="800" height="350" fill="url(#sky2)"/>
+        {/* Mountains */}
+        <path d="M0,180 L100,120 L200,160 L320,80 L440,150 L520,100 L650,140 L800,110 L800,350 L0,350Z" fill={mg} opacity="0.3"/>
+        {/* Lake */}
+        <ellipse cx="400" cy="280" rx="350" ry="60" fill={dark?"#1a2030":"#7090b0"} opacity="0.4"/>
+        {/* Trees */}
+        {[100,200,350,550,680].map((x,i)=>(
+          <g key={i} style={{animation:`sway ${6+i*2}s ease-in-out infinite`,transformOrigin:`${x}px 230px`}}>
+            <line x1={x} y1={230} x2={x} y2={190-i*5} stroke={fg} strokeWidth="3" opacity="0.6"/>
+            <path d={`M${x-15},${200-i*5} L${x},${175-i*5} L${x+15},${200-i*5}Z`} fill={fg} opacity="0.4"/>
+          </g>
+        ))}
+        {/* Two small figures (Victor & Elizabeth) */}
+        <g style={{animation:"slowTurn 15s ease-in-out infinite",transformOrigin:"400px 250px"}}>
+          <circle cx="390" cy="242" r="3.5" fill={fg} opacity="0.7"/>
+          <line x1="390" y1="246" x2="390" y2="260" stroke={fg} strokeWidth="2" opacity="0.7"/>
+          <circle cx="410" cy="244" r="3" fill={fg} opacity="0.7"/>
+          <line x1="410" y1="248" x2="410" y2="260" stroke={fg} strokeWidth="1.5" opacity="0.7"/>
+        </g>
+        {/* Warm sun glow */}
+        <circle cx="650" cy="100" r="30" fill={accent} opacity="0.15" style={{animation:"breathe 6s infinite"}}/>
+      </svg>
+    ),
+    // Chapter 3: Creation scene - laboratory, lightning, the creature's eye
+    3:(
+      <svg viewBox="0 0 800 350" style={{width:"100%",height:"auto",animation:"fadeIn 1.5s ease both"}}>
+        <defs>
+          <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#0a0a0a"/><stop offset="100%" stopColor={dark?"#151520":"#2a2a35"}/></linearGradient>
+          <filter id="glow3"><feGaussianBlur in="SourceGraphic" stdDeviation="4"/></filter>
+        </defs>
+        <rect width="800" height="350" fill="url(#sky3)"/>
+        {/* Lightning flash */}
+        <rect width="800" height="350" fill="#fff" opacity="0" style={{animation:"lightning 8s infinite"}}/>
+        {/* Lab table */}
+        <rect x="200" y="220" width="400" height="8" rx="2" fill={fg} opacity="0.6"/>
+        <rect x="220" y="228" width="8" height="80" fill={fg} opacity="0.5"/>
+        <rect x="572" y="228" width="8" height="80" fill={fg} opacity="0.5"/>
+        {/* Body on table */}
+        <ellipse cx="400" cy="215" rx="140" ry="12" fill={fg} opacity="0.4"/>
+        {/* The creature's EYE - the key moment */}
+        <g style={{animation:"eyeGlow 4s ease-in-out infinite"}}>
+          <ellipse cx="380" cy="208" rx="6" ry="4" fill={accent} opacity="0.9"/>
+          <circle cx="380" cy="208" r="2" fill="#000"/>
+        </g>
+        {/* Equipment silhouettes */}
+        <rect x="150" y="150" width="20" height="70" rx="3" fill={fg} opacity="0.3"/>
+        <rect x="630" y="160" width="25" height="60" rx="3" fill={fg} opacity="0.3"/>
+        <circle cx="160" cy="145" r="12" fill="none" stroke={fg} strokeWidth="1.5" opacity="0.3"/>
+        {/* Wires/tubes */}
+        <path d="M170,180 Q250,170 340,210" fill="none" stroke={fg} strokeWidth="1" opacity="0.3"/>
+        <path d="M630,180 Q550,170 460,210" fill="none" stroke={fg} strokeWidth="1" opacity="0.3"/>
+        {/* Candle with flicker */}
+        <rect x="680" y="200" width="4" height="20" fill={fg} opacity="0.6"/>
+        <ellipse cx="682" cy="198" rx="4" ry="6" fill={accent} opacity="0.7" style={{animation:"flicker 2s infinite"}}/>
+        {/* Victor recoiling - silhouette */}
+        <g style={{animation:"slowTurn 6s ease-in-out infinite",transformOrigin:"120px 220px"}}>
+          <circle cx="120" cy="190" r="8" fill={fg} opacity="0.7"/>
+          <path d="M120,198 L118,230 M112,208 L95,220 M128,208 L140,200" stroke={fg} strokeWidth="2.5" opacity="0.7" strokeLinecap="round"/>
+        </g>
+        {/* Smoke/steam rising */}
+        {[300,350,400,450,500].map((x,i)=><circle key={i} cx={x} cy={200-i*8} r={3+Math.random()*3} fill={mg} opacity="0.15" style={{animation:`rise ${5+i}s linear infinite ${i*0.8}s`}}/>)}
+      </svg>
+    ),
+    // Chapter 4: Creature speaks - confrontation, two figures, anguish
+    4:(
+      <svg viewBox="0 0 800 350" style={{width:"100%",height:"auto",animation:"fadeIn 1.5s ease both"}}>
+        <defs>
+          <linearGradient id="sky4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={dark?"#0c0c10":"#1a1a25"}/><stop offset="100%" stopColor={dark?"#1a1a22":"#3a3a48"}/></linearGradient>
+          <filter id="fog4"><feGaussianBlur in="SourceGraphic" stdDeviation="5"/></filter>
+        </defs>
+        <rect width="800" height="350" fill="url(#sky4)"/>
+        {/* Mountain backdrop */}
+        <path d="M0,200 L200,130 L400,180 L600,120 L800,160 L800,350 L0,350Z" fill={mg} opacity="0.15"/>
+        {/* The Creature - large, imposing, facing viewer */}
+        <g style={{animation:"slowTurn 10s ease-in-out infinite",transformOrigin:"300px 200px"}}>
+          <circle cx="300" cy="140" r="16" fill={fg} opacity="0.8"/>
+          {/* Eyes that glow */}
+          <g style={{animation:"eyeGlow 5s ease-in-out infinite"}}>
+            <ellipse cx="294" cy="138" rx="3" ry="2" fill={accent} opacity="0.9"/>
+            <ellipse cx="306" cy="138" rx="3" ry="2" fill={accent} opacity="0.9"/>
+          </g>
+          <line x1="300" y1="156" x2="300" y2="230" stroke={fg} strokeWidth="6" opacity="0.7" strokeLinecap="round"/>
+          <line x1="300" y1="170" x2="270" y2="200" stroke={fg} strokeWidth="4" opacity="0.6" strokeLinecap="round"/>
+          <line x1="300" y1="170" x2="330" y2="195" stroke={fg} strokeWidth="4" opacity="0.6" strokeLinecap="round"/>
+          <line x1="296" y1="230" x2="280" y2="290" stroke={fg} strokeWidth="4" opacity="0.6" strokeLinecap="round"/>
+          <line x1="304" y1="230" x2="320" y2="290" stroke={fg} strokeWidth="4" opacity="0.6" strokeLinecap="round"/>
+        </g>
+        {/* Victor - smaller, shrinking back */}
+        <g style={{animation:"sway 8s ease-in-out infinite",transformOrigin:"550px 220px"}}>
+          <circle cx="550" cy="195" r="8" fill={fg} opacity="0.6"/>
+          <line x1="550" y1="203" x2="548" y2="250" stroke={fg} strokeWidth="2.5" opacity="0.6" strokeLinecap="round"/>
+          <line x1="550" y1="215" x2="565" y2="230" stroke={fg} strokeWidth="2" opacity="0.5" strokeLinecap="round"/>
+        </g>
+        {/* Mist between them */}
+        <ellipse cx="420" cy="270" rx="200" ry="40" fill={mg} opacity="0.15" filter="url(#fog4)" style={{animation:"driftFog 12s ease-in-out infinite"}}/>
+      </svg>
+    ),
+    // Chapter 5: Epilogue - Arctic, emptiness, final reckoning
+    5:(
+      <svg viewBox="0 0 800 350" style={{width:"100%",height:"auto",animation:"fadeIn 1.5s ease both"}}>
+        <defs>
+          <linearGradient id="sky5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={dark?"#080810":"#1a1a28"}/><stop offset="100%" stopColor={dark?"#141420":"#4a4a60"}/></linearGradient>
+          <filter id="fog5"><feGaussianBlur in="SourceGraphic" stdDeviation="10"/></filter>
+        </defs>
+        <rect width="800" height="350" fill="url(#sky5)"/>
+        {/* Stars */}
+        {[...Array(40)].map((_,i)=><circle key={i} cx={Math.random()*800} cy={Math.random()*200} r={Math.random()*1.2+0.3} fill="#fff" opacity={Math.random()*0.5+0.2} style={{animation:`breathe ${3+Math.random()*5}s infinite ${Math.random()*3}s`}}/>)}
+        {/* Vast ice */}
+        <path d="M0,230 L200,225 L400,235 L600,220 L800,230 L800,350 L0,350Z" fill={bg2} opacity="0.4"/>
+        {/* Single figure walking away - disappearing into darkness */}
+        <g style={{animation:"slowTurn 20s ease-in-out infinite",transformOrigin:"400px 220px"}}>
+          <circle cx="400" cy="210" r="4" fill={fg} opacity="0.5"/>
+          <line x1="400" y1="214" x2="400" y2="230" stroke={fg} strokeWidth="2" opacity="0.4"/>
+        </g>
+        {/* Heavy fog - the creature vanishes */}
+        <ellipse cx="400" cy="260" rx="400" ry="60" fill={bg2} opacity="0.3" filter="url(#fog5)" style={{animation:"driftFog 25s ease-in-out infinite"}}/>
+        <ellipse cx="200" cy="280" rx="250" ry="40" fill={bg2} opacity="0.2" filter="url(#fog5)" style={{animation:"driftFog 20s ease-in-out infinite 5s"}}/>
+      </svg>
+    ),
+  };
+
+  return scenes[chapterIdx]||null;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // UTILITIES
@@ -271,16 +483,21 @@ function MonetizationSim({storyTitle,onClose}){
 
 function CreatorDashboard({onBack}){
   const[user,setUser]=useState(null);const[active,setActive]=useState("overview");const[menuOpen,setMenuOpen]=useState(false);
+  const[showSim,setShowSim]=useState(false);
   const ww=useWinWidth();const mob=ww<=768;
   if(!user)return<EmailGate onSubmit={setUser}/>;
   const pages={overview:<DashOverview/>,upload:<DashUpload/>,analytics:<DashAnalytics/>,merch:<DashMerch/>,streaming:<DashStreaming/>};
   return(
     <div style={{display:"flex",minHeight:"100vh",background:C.dark,fontFamily:FF,color:C.text}}>
+      {showSim&&<MonetizationSim storyTitle="Your Story" onClose={()=>setShowSim(false)}/>}
       {mob&&<button onClick={()=>setMenuOpen(!menuOpen)} style={{position:"fixed",top:20,left:20,zIndex:250,padding:"12px 14px",borderRadius:8,background:"#000",border:"1px solid #fff",color:"#fff",fontSize:20,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>{menuOpen?"✕":"☰"}</button>}
       <div style={{position:mob?"fixed":"relative",top:0,left:(menuOpen||!mob)?0:-300,height:"100vh",width:260,background:"#000",zIndex:200,transition:"left 0.3s ease"}}><DashSidebar active={active} setActive={id=>{setActive(id);setMenuOpen(false)}} user={user}/></div>
       {menuOpen&&mob&&<div onClick={()=>setMenuOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",zIndex:150}}/>}
       <div style={{flex:1,padding:"32px 20px",overflowY:"auto",maxHeight:"100vh"}}>
-        <button onClick={onBack} style={{position:"absolute",top:20,right:20,padding:"10px 20px",borderRadius:8,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>{e.target.style.borderColor=C.accent;e.target.style.color=C.accent}} onMouseLeave={e=>{e.target.style.borderColor=C.border;e.target.style.color=C.text2}}>← Back to Reader</button>
+        <div style={{display:"flex",gap:12,position:"absolute",top:20,right:20}}>
+          <button onClick={()=>setShowSim(true)} style={{padding:"10px 20px",borderRadius:8,border:"1px solid "+C.green,background:"transparent",color:C.green,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}}>💰 Revenue Simulator</button>
+          <button onClick={onBack} style={{padding:"10px 20px",borderRadius:8,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>{e.target.style.borderColor=C.accent;e.target.style.color=C.accent}} onMouseLeave={e=>{e.target.style.borderColor=C.border;e.target.style.color=C.text2}}>← Back to Reader</button>
+        </div>
         {pages[active]}
       </div>
       <style>{CSS}</style>
@@ -362,6 +579,7 @@ export default function MovianxPlatform(){
   const[touchEndX,setTouchEndX]=useState(0);
   const[showMonetize,setShowMonetize]=useState(false);
   const[showBranchInfo,setShowBranchInfo]=useState(false);
+  const[currentWordIdx,setCurrentWordIdx]=useState(-1); // word-by-word highlight
 
   const oscRef=useRef(null);
   const audioCtxRef=useRef(null);
@@ -382,32 +600,54 @@ export default function MovianxPlatform(){
 
   // ─── Audio Engine (FIXED: proper cleanup) ───
   const stopAllAudio=useCallback(()=>{
-    // Stop speech
     if(typeof window!=="undefined"&&window.speechSynthesis)window.speechSynthesis.cancel();
-    // Stop oscillators
-    if(oscRef.current){
-      try{if(oscRef.current.bass)oscRef.current.bass.stop();if(oscRef.current.mid)oscRef.current.mid.stop()}catch(e){}
-      oscRef.current=null;
-    }
-    // Stop voice recognition
-    if(recognitionRef.current){
-      try{recognitionRef.current.stop()}catch(e){}
-      recognitionRef.current=null;
-    }
-    setVoiceActive(false);setVoiceMode(false);
+    if(oscRef.current){try{if(Array.isArray(oscRef.current))oscRef.current.forEach(n=>n.stop());else{if(oscRef.current.bass)oscRef.current.bass.stop();if(oscRef.current.mid)oscRef.current.mid.stop()}}catch(e){} oscRef.current=null}
+    if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
+    setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
   },[]);
 
-  const startAmbient=()=>{
-    if(typeof window==="undefined"||mode!=="Immersive")return;
+  const startAmbient=(emotion="calm")=>{
+    if(typeof window==="undefined")return;
     try{
-      const ctx=getAudioCtx();if(!ctx||oscRef.current)return;
-      const bass=ctx.createOscillator(),mid=ctx.createOscillator();
-      const bg=ctx.createGain(),mg=ctx.createGain(),master=ctx.createGain();
-      bass.type="sine";bass.frequency.setValueAtTime(55,ctx.currentTime);bg.gain.setValueAtTime(0.05,ctx.currentTime);
-      mid.type="triangle";mid.frequency.setValueAtTime(220,ctx.currentTime);mg.gain.setValueAtTime(0.02,ctx.currentTime);
-      bass.connect(bg);mid.connect(mg);bg.connect(master);mg.connect(master);master.connect(ctx.destination);master.gain.setValueAtTime(0.3,ctx.currentTime);
-      bass.start();mid.start();oscRef.current={bass,mid};
-    }catch(e){console.log("Ambient error:",e)}
+      const ctx=getAudioCtx();if(!ctx)return;
+      // Stop existing ambient
+      if(oscRef.current){try{oscRef.current.forEach(n=>n.stop())}catch(e){} oscRef.current=null}
+      const nodes=[];
+      const moods={
+        calm:{bass:40,mid:0,vol:0.06,type:"sine"},
+        tense:{bass:55,mid:185,vol:0.08,type:"triangle"},
+        terrified:{bass:65,mid:220,vol:0.1,type:"sawtooth"},
+        panicked:{bass:70,mid:260,vol:0.12,type:"sawtooth"},
+        nervous:{bass:50,mid:160,vol:0.07,type:"triangle"},
+        anguished:{bass:48,mid:200,vol:0.09,type:"triangle"},
+        reflective:{bass:35,mid:0,vol:0.04,type:"sine"},
+      };
+      const m=moods[emotion]||moods.calm;
+      const master=ctx.createGain();master.gain.setValueAtTime(m.vol,ctx.currentTime);master.connect(ctx.destination);
+      // Bass drone
+      const bass=ctx.createOscillator();const bg=ctx.createGain();
+      bass.type="sine";bass.frequency.setValueAtTime(m.bass,ctx.currentTime);
+      // Slow LFO on bass for organic feel
+      bass.frequency.setValueAtTime(m.bass,ctx.currentTime);
+      bass.frequency.linearRampToValueAtTime(m.bass*0.9,ctx.currentTime+4);
+      bass.frequency.linearRampToValueAtTime(m.bass,ctx.currentTime+8);
+      bg.gain.setValueAtTime(0.5,ctx.currentTime);
+      bass.connect(bg);bg.connect(master);bass.start();nodes.push(bass);
+      // Mid tone only for tense/terrified
+      if(m.mid>0){
+        const mid=ctx.createOscillator();const mg=ctx.createGain();
+        mid.type=m.type;mid.frequency.setValueAtTime(m.mid,ctx.currentTime);
+        mid.frequency.linearRampToValueAtTime(m.mid*1.05,ctx.currentTime+3);
+        mid.frequency.linearRampToValueAtTime(m.mid,ctx.currentTime+6);
+        mg.gain.setValueAtTime(0.2,ctx.currentTime);
+        mid.connect(mg);mg.connect(master);mid.start();nodes.push(mid);
+      }
+      oscRef.current=nodes;
+    }catch(e){}
+  };
+
+  const stopAmbient=()=>{
+    if(oscRef.current){try{oscRef.current.forEach(n=>n.stop())}catch(e){} oscRef.current=null}
   };
 
   const getAudioCtx=()=>{
@@ -445,32 +685,36 @@ export default function MovianxPlatform(){
 
   const speak=(text,emotion="calm")=>{
     if(typeof window==="undefined"||!window.speechSynthesis||!narratorOn)return;
-    // Cancel previous speech with a small delay to avoid Chrome bug
     window.speechSynthesis.cancel();
+    setCurrentWordIdx(-1);
     const doSpeak=()=>{
       const u=new SpeechSynthesisUtterance(text);
       const emotions={
-        terrified:{rate:1.3,pitch:1.15,volume:0.95},
-        panicked:{rate:1.3,pitch:1.15,volume:0.95},
-        tense:{rate:1.0,pitch:1.05,volume:0.9},
-        nervous:{rate:1.05,pitch:1.0,volume:0.9},
-        calm:{rate:0.9,pitch:0.95,volume:0.9},
-        reflective:{rate:0.85,pitch:0.92,volume:0.85},
-        ambitious:{rate:0.95,pitch:1.0,volume:0.9},
-        curious:{rate:0.95,pitch:1.0,volume:0.9},
-        anguished:{rate:0.9,pitch:1.1,volume:0.95},
-        whispering:{rate:0.85,pitch:0.9,volume:0.5},
+        terrified:{rate:1.3,pitch:1.15,volume:0.95},panicked:{rate:1.3,pitch:1.15,volume:0.95},
+        tense:{rate:1.0,pitch:1.05,volume:0.9},nervous:{rate:1.05,pitch:1.0,volume:0.9},
+        calm:{rate:0.9,pitch:0.95,volume:0.9},reflective:{rate:0.85,pitch:0.92,volume:0.85},
+        ambitious:{rate:0.95,pitch:1.0,volume:0.9},curious:{rate:0.95,pitch:1.0,volume:0.9},
+        anguished:{rate:0.9,pitch:1.1,volume:0.95},whispering:{rate:0.85,pitch:0.9,volume:0.5},
         devastated:{rate:0.8,pitch:0.85,volume:0.8}
       };
       const em=emotions[emotion]||emotions.calm;
       u.rate=em.rate;u.pitch=em.pitch;u.volume=em.volume;
-      // Try to pick a good voice
       const voices=window.speechSynthesis.getVoices();
       const english=voices.filter(v=>v.lang.startsWith("en"));
       if(english.length>0)u.voice=english[0];
+      // Word-by-word highlight tracking
+      const words=text.split(/\s+/);
+      u.onboundary=(e)=>{
+        if(e.name==="word"){
+          // Estimate word index from char offset
+          const spoken=text.substring(0,e.charIndex);
+          const idx=spoken.split(/\s+/).length-1;
+          setCurrentWordIdx(Math.max(0,idx));
+        }
+      };
+      u.onend=()=>setCurrentWordIdx(-1);
       window.speechSynthesis.speak(u);
     };
-    // Chrome requires voices to be loaded first
     if(window.speechSynthesis.getVoices().length>0){setTimeout(doSpeak,50)}
     else{window.speechSynthesis.onvoiceschanged=()=>{setTimeout(doSpeak,50)}}
   };
@@ -543,9 +787,13 @@ export default function MovianxPlatform(){
     setTxt(ch.text);
     if(ch.sound&&soundEffectsOn)setTimeout(()=>playSFX(ch.sound),500);
     if(ch.jumpScare&&soundEffectsOn)setTimeout(()=>playSFX("jumpscare"),3000);
-    if(mode==="Cinematic"||mode==="Immersive")speak(ch.text,ch.emotion||"calm");
-    if(mode==="Immersive")startAmbient();
-    const readTime=ch.text?ch.text.split(" ").length*400:10000;
+    // Mood-based ambient in Cinematic + Immersive
+    if(mode==="Cinematic"||mode==="Immersive"){
+      startAmbient(ch.emotion||"calm");
+      speak(ch.text,ch.emotion||"calm");
+    }
+    // Show choice after short read delay (fast for demo)
+    const readDelay=ch.text?Math.min(ch.text.split(" ").length*200,8000):3000;
     const timer=setTimeout(()=>{
       if(ch.choice){
         setShowChoice(true);
@@ -557,7 +805,7 @@ export default function MovianxPlatform(){
           }
         },3000);
       }
-    },Math.max(readTime,15000));
+    },readDelay);
     return()=>clearTimeout(timer);
   },[pg,chIdx,mode,narratorOn,soundEffectsOn]);
 
@@ -584,9 +832,6 @@ export default function MovianxPlatform(){
 
   // ─── CREATOR DASHBOARD ───
   if(pg==="creator")return<CreatorDashboard onBack={()=>navigateTo("home")}/>;
-
-  // ─── MONETIZATION MODAL ───
-  const monetizeModal=showMonetize&&<MonetizationSim storyTitle={sel?.title} onClose={()=>setShowMonetize(false)}/>;
 
   // ─── LANDING PAGE ───
   if(pg==="landing"){
@@ -733,33 +978,23 @@ export default function MovianxPlatform(){
       <div style={{minHeight:"100vh",background:currentTheme.bg,fontFamily:FF,position:"relative",overflowY:"auto",WebkitOverflowScrolling:"touch"}}
         onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
 
-        {monetizeModal}
-
-        {/* Top Bar */}
-        <div style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:`${currentTheme.bg}F0`,backdropFilter:"blur(12px)",borderBottom:`1px solid ${currentTheme.text}15`,padding:"12px 20px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <button onClick={()=>navigateTo("detail")} style={{background:"transparent",border:"none",color:currentTheme.text,fontSize:14,cursor:"pointer",fontFamily:FF,opacity:0.7}}>← Library</button>
-            <span style={{fontSize:12,color:`${currentTheme.text}60`}}>|</span>
-            <span style={{fontSize:12,color:`${currentTheme.text}80`}}>{chIdx+1} of {chaps.length}</span>
-            {/* Branch Memory Indicator (NEW) */}
-            {getBranchLabel()&&(
-              <span style={{fontSize:11,padding:"3px 10px",borderRadius:10,background:`${C.red}20`,color:C.red,fontWeight:600,animation:"breathe 3s infinite"}}>{getBranchLabel()}</span>
-            )}
+        {/* Top Bar — Clean, no duplicate icons */}
+        <div style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:`${currentTheme.bg}F0`,backdropFilter:"blur(12px)",borderBottom:`1px solid ${currentTheme.text}15`,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <button onClick={()=>navigateTo("detail")} style={{background:"transparent",border:"none",color:currentTheme.text,fontSize:13,cursor:"pointer",fontFamily:FF,opacity:0.7}}>← Back</button>
+            <span style={{fontSize:12,color:`${currentTheme.text}40`}}>|</span>
+            <span style={{fontSize:12,color:`${currentTheme.text}60`}}>{chIdx+1}/{chaps.length}</span>
+            {getBranchLabel()&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:8,background:`${C.red}15`,color:C.red,fontWeight:600}}>{getBranchLabel()}</span>}
           </div>
-          <div style={{display:"flex",alignItems:"center",gap:8}}>
-            {/* Settings toggle */}
-            <button onClick={()=>setShowSettings(!showSettings)} style={{padding:"6px 12px",borderRadius:6,background:"transparent",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:12,cursor:"pointer",fontFamily:FF,opacity:0.7}}>⚙</button>
-            {/* Listen-only toggle */}
-            <button onClick={()=>setListenOnly(!listenOnly)} style={{padding:"6px 12px",borderRadius:6,background:listenOnly?`${C.red}20`:"transparent",border:`1px solid ${listenOnly?C.red:`${currentTheme.text}20`}`,color:listenOnly?C.red:currentTheme.text,fontSize:11,cursor:"pointer",fontFamily:FF}}>{listenOnly?"🎧 Listen":"🎧"}</button>
-            {/* Audio controls - visible in ALL modes */}
-            <button onClick={()=>{setNarratorOn(!narratorOn);if(!narratorOn&&ch.text){setTimeout(()=>speak(ch.text,ch.emotion||"calm"),100)}else if(narratorOn&&typeof window!=="undefined"&&window.speechSynthesis){window.speechSynthesis.cancel()}}} style={{padding:"6px 12px",borderRadius:6,background:narratorOn?`${C.red}20`:"transparent",border:`1px solid ${narratorOn?C.red:`${currentTheme.text}20`}`,color:narratorOn?C.red:currentTheme.text,fontSize:11,cursor:"pointer"}} title="Toggle narrator">{narratorOn?"🔊 On":"🔇 Off"}</button>
-            <button onClick={()=>setSoundEffectsOn(!soundEffectsOn)} style={{padding:"6px 12px",borderRadius:6,background:soundEffectsOn?`${C.red}20`:"transparent",border:`1px solid ${soundEffectsOn?C.red:"#2A2A35"}`,color:soundEffectsOn?C.red:"#9090A0",fontSize:11,cursor:"pointer"}} title="Toggle SFX">{soundEffectsOn?"🎵":"🔇"}</button>
-            {mode==="Cinematic"||mode==="Immersive"?(
-              <button onClick={()=>{if(ch.text)speak(ch.text,ch.emotion||"calm")}} style={{padding:"6px 12px",borderRadius:6,background:"transparent",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:11,cursor:"pointer"}} title="Replay narration">▶ Read</button>
-            ):null}
-            {mode==="Immersive"&&(
-              <button onClick={()=>{setVoiceMode(!voiceMode);if(!voiceMode)startVoiceRec()}} style={{padding:"6px 12px",borderRadius:8,background:voiceActive?C.red:"transparent",border:`1px solid ${voiceActive?C.red:"#2A2A35"}`,color:voiceActive?"#fff":"#9090A0",fontSize:11,cursor:"pointer"}}>{voiceActive?"🎤 Listening...":"🎤 Voice"}</button>
-            )}
+          <div style={{display:"flex",alignItems:"center",gap:6}}>
+            <button onClick={()=>setShowSettings(!showSettings)} style={{padding:"5px 10px",borderRadius:6,background:showSettings?`${currentTheme.text}15`:"transparent",border:`1px solid ${currentTheme.text}15`,color:currentTheme.text,fontSize:11,cursor:"pointer",opacity:0.7}}>⚙</button>
+            <button onClick={()=>setListenOnly(!listenOnly)} style={{padding:"5px 10px",borderRadius:6,background:listenOnly?`${C.red}15`:"transparent",border:`1px solid ${listenOnly?C.red:`${currentTheme.text}15`}`,color:listenOnly?C.red:`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>🎧</button>
+            <button onClick={()=>{
+              const next=!narratorOn;setNarratorOn(next);
+              if(next&&ch.text)setTimeout(()=>speak(ch.text,ch.emotion||"calm"),100);
+              else if(typeof window!=="undefined"&&window.speechSynthesis){window.speechSynthesis.cancel();setCurrentWordIdx(-1)}
+            }} style={{padding:"5px 10px",borderRadius:6,background:narratorOn?`${C.red}15`:"transparent",border:`1px solid ${narratorOn?C.red:`${currentTheme.text}15`}`,color:narratorOn?C.red:`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>{narratorOn?"🔊":"🔇"}</button>
+            {mode==="Immersive"&&<button onClick={()=>{setVoiceMode(!voiceMode);if(!voiceMode)startVoiceRec()}} style={{padding:"5px 10px",borderRadius:6,background:voiceActive?C.red:"transparent",border:`1px solid ${voiceActive?C.red:`${currentTheme.text}15`}`,color:voiceActive?"#fff":`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>🎤</button>}
           </div>
         </div>
 
@@ -814,7 +1049,26 @@ export default function MovianxPlatform(){
           ):(
             <>
               <h2 style={{fontSize:28,fontWeight:700,color:currentTheme.text,marginBottom:30,letterSpacing:"-0.5px"}}>{ch.title}</h2>
-              <div style={{fontSize:fontSize,color:currentTheme.text,lineHeight:1.9,marginBottom:40,whiteSpace:"pre-wrap",fontFamily:fontFamily}}>{txt}</div>
+              {/* Scene Illustration */}
+              {sel&&<div style={{marginBottom:32,borderRadius:16,overflow:"hidden",border:`1px solid ${currentTheme.text}10`}}><SceneIllustration chapterIdx={chIdx} storyId={sel.id} theme={colorTheme}/></div>}
+              <div style={{fontSize:fontSize,color:currentTheme.text,lineHeight:1.9,marginBottom:40,fontFamily:fontFamily}}>
+                {currentWordIdx>=0?
+                  txt.split(/(\s+)/).map((segment,i)=>{
+                    // Split preserves whitespace as separate entries
+                    if(/^\s+$/.test(segment))return <span key={i}>{segment}</span>;
+                    // Count actual word index (non-whitespace segments)
+                    const wordsBefore=txt.split(/(\s+)/).slice(0,i).filter(s=>!/^\s+$/.test(s)).length;
+                    const isActive=wordsBefore===currentWordIdx;
+                    return <span key={i} style={{
+                      background:isActive?`${C.red}25`:"transparent",
+                      borderRadius:isActive?3:0,
+                      padding:isActive?"1px 2px":0,
+                      transition:"background 0.1s ease"
+                    }}>{segment}</span>;
+                  })
+                  :<span style={{whiteSpace:"pre-wrap"}}>{txt}</span>
+                }
+              </div>
             </>
           )}
 
@@ -838,12 +1092,24 @@ export default function MovianxPlatform(){
             </div>
           )}
 
-          {/* Immersive Voice Choice */}
+          {/* Immersive Choice — voice + tap options */}
           {showChoice&&ch.choice&&mode==="Immersive"&&(
-            <div style={{background:`${C.red}15`,borderRadius:16,border:`1px solid ${C.red}40`,padding:32,marginTop:40,textAlign:"center",animation:"fadeUp 0.4s ease both"}}>
-              <div style={{fontSize:32,marginBottom:12}}>🎤</div>
-              <p style={{fontSize:16,fontWeight:600,color:C.red,marginBottom:8}}>{voiceActive?"Listening...":"Tap the mic to respond"}</p>
-              <p style={{fontSize:13,color:"rgba(255,255,255,0.5)",lineHeight:1.6}}>{ch.choice.prompt}</p>
+            <div style={{background:`${C.red}08`,borderRadius:16,border:`1px solid ${C.red}30`,padding:32,marginTop:40,animation:"fadeUp 0.4s ease both"}}>
+              {timerActive&&timeRemaining!==null&&(
+                <div style={{textAlign:"center",marginBottom:20,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
+                  <div style={{fontSize:48,fontWeight:700,color:timeRemaining<=3?C.red:currentTheme.text,fontFamily:"monospace"}}>{timeRemaining}</div>
+                  <div style={{fontSize:12,color:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS"}</div>
+                </div>
+              )}
+              <p style={{fontSize:18,fontWeight:600,color:currentTheme.text,marginBottom:8}}>{ch.choice.prompt}</p>
+              {voiceActive&&<p style={{fontSize:12,color:C.red,marginBottom:16,animation:"breathe 1.5s infinite"}}>🎤 Listening — speak your choice or tap below...</p>}
+              <div style={{display:"flex",flexDirection:"column",gap:12,marginTop:16}}>
+                {ch.choice.opts.map((opt,i)=>(
+                  <button key={i} onClick={()=>makeChoice(opt)} style={{padding:"16px 20px",borderRadius:12,background:`${currentTheme.text}08`,border:`1px solid ${currentTheme.text}15`,color:currentTheme.text,fontSize:15,textAlign:"left",cursor:"pointer",transition:"all 0.2s",fontFamily:FF}} onMouseEnter={e=>{e.target.style.background=`${C.red}15`;e.target.style.borderColor=C.red}} onMouseLeave={e=>{e.target.style.background=`${currentTheme.text}08`;e.target.style.borderColor=`${currentTheme.text}15`}}>
+                    {opt.txt}
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 
@@ -853,16 +1119,6 @@ export default function MovianxPlatform(){
             <span style={{fontSize:12,color:`${currentTheme.text}50`}}>{chIdx+1} / {chaps.length}</span>
             <button disabled={chIdx>=chaps.length-1} onClick={()=>goChapter(chIdx+1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx>=chaps.length-1?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx>=chaps.length-1?"not-allowed":"pointer",fontFamily:FF}}>Next →</button>
           </div>
-
-          {/* End-of-Story: Monetization Simulator Button (NEW) */}
-          {!ch.choice&&chIdx===chaps.length-1&&(
-            <div style={{textAlign:"center",marginTop:40}}>
-              <button onClick={()=>setShowMonetize(true)} style={{padding:"16px 32px",borderRadius:12,background:"#fff",border:"none",color:"#000",fontSize:14,fontWeight:700,cursor:"pointer",fontFamily:FF,transition:"transform 0.2s"}} onMouseEnter={e=>e.target.style.transform="translateY(-2px)"} onMouseLeave={e=>e.target.style.transform="translateY(0)"}>
-                💰 See What This Story Could Earn
-              </button>
-              <p style={{fontSize:12,color:`${currentTheme.text}50`,marginTop:12}}>Explore creator revenue potential on Movianx</p>
-            </div>
-          )}
 
           {/* Branch Memory Display */}
           {choices.length>0&&(
