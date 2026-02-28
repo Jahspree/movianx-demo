@@ -21,6 +21,7 @@ const FF = "'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-se
 const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
+  html,body,#__next{height:auto;overflow:auto;overflow-x:hidden}
   ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:3px}
   input::placeholder{color:rgba(255,255,255,0.35)}
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
