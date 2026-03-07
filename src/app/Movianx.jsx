@@ -2,18 +2,20 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ===========================================================================
-// DESIGN SYSTEM - Dark Cinematic Glass (Netflix meets Frosted Modern)
+// DESIGN SYSTEM - White Frosted Glass with Dark Cinematic Red
 // ===========================================================================
 const C = {
-  accent: "#E50914", dark: "#0A0A0A", surface: "rgba(255,255,255,0.06)",
-  surface2: "rgba(255,255,255,0.04)", border: "rgba(255,255,255,0.08)",
-  text: "#F0F0F0", text2: "rgba(255,255,255,0.55)", gold: "#E8B84A",
-  green: "#4ADE80", purple: "#818CF8", red: "#E50914",
-  glass: "rgba(20,20,20,0.75)", glassBorder: "rgba(255,255,255,0.1)",
-  bg: "linear-gradient(160deg, #0A0A0A 0%, #141418 30%, #1a0a0a 60%, #0A0A0A 100%)",
-  bgSolid: "#0A0A0A",
-  cardBg: "rgba(255,255,255,0.04)",
-  pillBg: "rgba(255,255,255,0.08)",
+  accent: "#8B1A1A", dark: "#f8f9fa", surface: "rgba(255,255,255,0.7)",
+  surface2: "rgba(255,255,255,0.5)", border: "rgba(0,0,0,0.06)",
+  text: "#1a1a2e", text2: "rgba(26,26,46,0.55)", gold: "#B8860B",
+  green: "#16a34a", purple: "#6366f1", red: "#8B1A1A",
+  glass: "rgba(255,255,255,0.7)", glassBorder: "rgba(0,0,0,0.06)",
+  bg: "linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 50%, #f5f3f0 100%)",
+  bgSolid: "#f8f9fa",
+  cardBg: "rgba(255,255,255,0.6)",
+  pillBg: "rgba(0,0,0,0.04)",
+  shadow: "0 4px 24px rgba(0,0,0,0.06)",
+  shadowHover: "0 12px 40px rgba(139,26,26,0.12)",
 };
 const THEMES = {
   cream: { bg: "#F5F1E8", text: "#2C2C2C", name: "Cream" },
@@ -27,8 +29,8 @@ const CSS = `
   @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
   html,body,#__next{height:auto;overflow:auto;overflow-x:hidden}
-  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:3px}
-  input::placeholder{color:rgba(255,255,255,0.3)}
+  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px}
+  input::placeholder{color:rgba(0,0,0,0.3)}
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -278,7 +280,7 @@ function Sparkline({data,color=C.accent,w=120,h=32}){
 function EmailGate({onSubmit}){
   const[email,setEmail]=useState("");const[name,setName]=useState("");const[role,setRole]=useState("");const[step,setStep]=useState(0);const[hover,setHover]=useState(false);
   const ok=email.includes("@")&&email.includes(".")&&name;
-  const inp={width:"100%",padding:"14px 16px",background:C.surface2,border:`1px solid ${C.border}`,borderRadius:12,color:C.text,fontSize:15,outline:"none",boxSizing:"border-box",transition:"border-color 0.2s",fontFamily:FF};
+  const inp={width:"100%",padding:"14px 16px",background:"rgba(255,255,255,0.8)",border:`1px solid ${C.border}`,borderRadius:12,color:C.text,fontSize:15,outline:"none",boxSizing:"border-box",transition:"border-color 0.2s",fontFamily:FF,boxShadow:"0 2px 8px rgba(0,0,0,0.04)"};
   return(
     <div style={{height:"100vh",display:"flex",alignItems:"flex-start",justifyContent:"center",background:C.bg,fontFamily:FF,padding:"40px 24px",overflowY:"scroll",WebkitOverflowScrolling:"touch"}}>
       <div style={{width:"100%",maxWidth:480,animation:"fadeUp 0.8s ease both",paddingBottom:60}}>
@@ -286,18 +288,18 @@ function EmailGate({onSubmit}){
           <img src="/movianx-logo.png" alt="Movianx" style={{height:50,width:"auto",marginBottom:16}}/>
           <p style={{color:C.text2,fontSize:13,marginTop:8,letterSpacing:"2px",textTransform:"uppercase"}}>Creator Studio</p>
         </div>
-        <div style={{background:C.surface,borderRadius:24,padding:"40px 36px",border:`1px solid ${C.border}`}}>
+        <div style={{background:C.glass,borderRadius:24,padding:"40px 36px",border:`1px solid ${C.glassBorder}`,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>
           {step===0?(
             <>
               <h2 style={{color:C.text,fontSize:22,fontWeight:700,margin:"0 0 8px"}}>Get Early Access</h2>
               <p style={{color:C.text2,fontSize:14,margin:"0 0 32px",lineHeight:1.6}}>Transform your books into immersive, choice-driven experiences with synchronized audio, AI visuals, and direct-to-reader commerce.</p>
               <label style={{display:"block",marginBottom:20}}>
                 <span style={{color:C.text2,fontSize:11,textTransform:"uppercase",letterSpacing:"1.5px",display:"block",marginBottom:8}}>Full Name</span>
-                <input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" style={inp} onFocus={e=>e.target.style.borderColor="#fff"} onBlur={e=>e.target.style.borderColor=C.border}/>
+                <input value={name} onChange={e=>setName(e.target.value)} placeholder="Your name" style={inp} onFocus={e=>e.target.style.borderColor=C.accent} onBlur={e=>e.target.style.borderColor=C.border}/>
               </label>
               <label style={{display:"block",marginBottom:20}}>
                 <span style={{color:C.text2,fontSize:11,textTransform:"uppercase",letterSpacing:"1.5px",display:"block",marginBottom:8}}>Email</span>
-                <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" style={inp} onFocus={e=>e.target.style.borderColor="#fff"} onBlur={e=>e.target.style.borderColor=C.border}/>
+                <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com" style={inp} onFocus={e=>e.target.style.borderColor=C.accent} onBlur={e=>e.target.style.borderColor=C.border}/>
               </label>
               <label style={{display:"block",marginBottom:28}}>
                 <span style={{color:C.text2,fontSize:11,textTransform:"uppercase",letterSpacing:"1.5px",display:"block",marginBottom:8}}>I am a...</span>
@@ -312,11 +314,11 @@ function EmailGate({onSubmit}){
           ):(
             <>
               <div style={{textAlign:"center",marginBottom:32}}>
-                <div style={{width:64,height:64,borderRadius:"50%",background:"#fff",display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:32,marginBottom:20,color:C.text}}>✓</div>
+                <div style={{width:64,height:64,borderRadius:"50%",background:C.accent,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:32,marginBottom:20,color:"#fff"}}>✓</div>
                 <h2 style={{color:C.text,fontSize:22,fontWeight:700,margin:"0 0 8px"}}>Welcome, {name.split(" ")[0]}!</h2>
                 <p style={{color:C.text2,fontSize:14,margin:0,lineHeight:1.6}}>We'll notify <span style={{color:C.text,fontWeight:600}}>{email}</span> when we're ready.</p>
               </div>
-              <button onClick={()=>onSubmit({name,email,role})} style={{width:"100%",padding:"16px",borderRadius:12,border:"none",background:"#fff",color:C.text,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.transform="translateY(-1px)"} onMouseLeave={e=>e.target.style.transform="translateY(0)"}>Enter Demo Dashboard →</button>
+              <button onClick={()=>onSubmit({name,email,role})} style={{width:"100%",padding:"16px",borderRadius:12,border:"none",background:C.accent,color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF,boxShadow:"0 4px 16px rgba(139,26,26,0.2)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-1px)";e.target.style.boxShadow="0 8px 24px rgba(139,26,26,0.3)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 4px 16px rgba(139,26,26,0.2)"}}>Enter Demo Dashboard →</button>
             </>
           )}
         </div>
@@ -332,11 +334,11 @@ function DashSidebar({active,setActive,user}){
       <div style={{padding:"24px 20px",borderBottom:`1px solid ${C.border}`}}><img src="/movianx-logo.png" alt="Movianx" style={{height:32,width:"auto"}}/></div>
       <div style={{flex:1,padding:"16px 12px",overflowY:"auto"}}>
         {nav.map(n=>(
-          <button key={n.id} onClick={()=>setActive(n.id)} style={{width:"100%",padding:"12px 14px",marginBottom:6,borderRadius:12,border:"none",textAlign:"left",cursor:"pointer",background:active===n.id?C.accent:"transparent",color:active===n.id?"#fff":C.text2,fontSize:14,fontWeight:active===n.id?600:400,display:"flex",alignItems:"center",gap:12,transition:"all 0.2s",fontFamily:FF}} onMouseEnter={e=>{if(active!==n.id)e.currentTarget.style.background=C.surface2}} onMouseLeave={e=>{if(active!==n.id)e.currentTarget.style.background="transparent"}}><span style={{fontSize:18}}>{n.icon}</span>{n.label}</button>
+          <button key={n.id} onClick={()=>setActive(n.id)} style={{width:"100%",padding:"12px 14px",marginBottom:6,borderRadius:12,border:"none",textAlign:"left",cursor:"pointer",background:active===n.id?C.accent:"transparent",color:active===n.id?"#fff":C.text2,fontSize:14,fontWeight:active===n.id?600:400,display:"flex",alignItems:"center",gap:12,transition:"all 0.2s",fontFamily:FF,boxShadow:active===n.id?"0 2px 8px rgba(139,26,26,0.15)":"none"}} onMouseEnter={e=>{if(active!==n.id)e.currentTarget.style.background="rgba(0,0,0,0.03)"}} onMouseLeave={e=>{if(active!==n.id)e.currentTarget.style.background="transparent"}}><span style={{fontSize:18}}>{n.icon}</span>{n.label}</button>
         ))}
       </div>
       <div style={{padding:20,borderTop:`1px solid ${C.border}`,display:"flex",alignItems:"center",gap:12}}>
-        <div style={{width:40,height:40,borderRadius:"50%",background:"#fff",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:700,color:C.text}}>{user.name[0]}</div>
+        <div style={{width:40,height:40,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,fontWeight:700,color:"#fff"}}>{user.name[0]}</div>
         <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>{user.name}</div><div style={{fontSize:11,color:C.text2}}>Creator</div></div>
       </div>
     </div>
@@ -351,18 +353,18 @@ function DashOverview(){
       <p style={{color:C.text2,fontSize:14,margin:"0 0 32px"}}>Your interactive storytelling empire at a glance</p>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:16,marginBottom:24}}>
         {[{label:"Total Revenue",val:27800,prefix:"$",change:"+18%",color:C.green,spark:rev},{label:"Active Readers",val:1248,change:"+12%",color:C.accent,spark:rdr},{label:"Stories Published",val:7,change:"+2",color:C.gold},{label:"Avg. Completion",val:68,suffix:"%",change:"+5%",color:C.purple}].map((s,i)=>(
-          <div key={i} style={{background:C.surface,borderRadius:16,border:`1px solid ${C.border}`,padding:20}}>
+          <div key={i} style={{background:C.glass,borderRadius:16,border:`1px solid ${C.glassBorder}`,padding:20,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>
             <div style={{fontSize:12,color:C.text2,marginBottom:8}}>{s.label}</div>
             <div style={{fontSize:28,fontWeight:700,color:C.text,marginBottom:4}}><AnimCounter end={s.val} prefix={s.prefix||""} suffix={s.suffix||""}/></div>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}><span style={{fontSize:12,fontWeight:600,color:s.color}}>{s.change}</span>{s.spark&&<Sparkline data={s.spark} color={s.color} w={80} h={24}/>}</div>
           </div>
         ))}
       </div>
-      <div style={{background:C.surface,borderRadius:16,border:`1px solid ${C.border}`,padding:24}}>
+      <div style={{background:C.glass,borderRadius:16,border:`1px solid ${C.glassBorder}`,padding:24,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>
         <div style={{fontSize:14,fontWeight:600,color:C.text,marginBottom:16}}>Recent Activity</div>
         {[{act:"New reader completed The Midnight Cipher",time:"2 min ago",icon:"✓",color:C.green},{act:"Merch sale: Signed Hardcover Bundle",time:"18 min ago",icon:"$",color:C.gold},{act:"Choice analytics updated for Chapter 7",time:"1 hour ago",icon:"📊",color:C.purple},{act:"AI narration processed",time:"3 hours ago",icon:"🎙",color:C.accent}].map((a,i)=>(
           <div key={i} style={{display:"flex",alignItems:"center",gap:14,padding:"12px 0",borderBottom:i<3?`1px solid ${C.border}`:"none"}}>
-            <div style={{width:32,height:32,borderRadius:8,background:C.surface2,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:a.color,flexShrink:0}}>{a.icon}</div>
+            <div style={{width:32,height:32,borderRadius:8,background:"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:a.color,flexShrink:0}}>{a.icon}</div>
             <div><div style={{fontSize:13,color:C.text}}>{a.act}</div><div style={{fontSize:11,color:C.text2,marginTop:2}}>{a.time}</div></div>
           </div>
         ))}
@@ -376,7 +378,7 @@ function DashUpload(){
     <div style={{animation:"fadeUp 0.5s ease both"}}>
       <h1 style={{fontSize:26,fontWeight:700,color:C.text,margin:"0 0 4px"}}>Upload Story</h1>
       <p style={{color:C.text2,fontSize:14,margin:"0 0 32px"}}>Transform your manuscript into an interactive experience</p>
-      <div style={{border:`2px dashed ${C.border}`,borderRadius:20,padding:"60px 40px",textAlign:"center",marginBottom:24,cursor:"pointer"}}>
+      <div style={{border:`2px dashed rgba(0,0,0,0.12)`,borderRadius:20,padding:"60px 40px",textAlign:"center",marginBottom:24,cursor:"pointer",background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)"}}>
         <div style={{fontSize:48,marginBottom:16}}>📄</div>
         <p style={{fontSize:16,fontWeight:600,color:C.text,marginBottom:8}}>Drop your manuscript here</p>
         <p style={{fontSize:13,color:C.text2}}>Supports .epub, .docx, .txt, .pdf</p>
@@ -392,7 +394,7 @@ function DashAnalytics(){
       <p style={{color:C.text2,fontSize:14,margin:"0 0 32px"}}>Reader behavior & story performance</p>
       <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(280px,1fr))",gap:16}}>
         {[{story:"The Midnight Cipher",readers:847,completion:72},{story:"Echoes of Tomorrow",readers:312,completion:58},{story:"Silent Horizons",readers:89,completion:81}].map((s,i)=>(
-          <div key={i} style={{background:C.surface,borderRadius:16,border:`1px solid ${C.border}`,padding:20}}>
+          <div key={i} style={{background:C.glass,borderRadius:16,border:`1px solid ${C.glassBorder}`,padding:20,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>
             <div style={{fontSize:15,fontWeight:600,color:C.text,marginBottom:12}}>{s.story}</div>
             <div style={{display:"flex",gap:16,marginBottom:12}}>
               <div><div style={{fontSize:11,color:C.text2}}>Readers</div><div style={{fontSize:22,fontWeight:700,color:C.accent}}>{s.readers}</div></div>
@@ -411,10 +413,10 @@ function DashMerch(){
     <div style={{animation:"fadeUp 0.5s ease both"}}>
       <h1 style={{fontSize:26,fontWeight:700,color:C.text,margin:"0 0 4px"}}>Merch & Products</h1>
       <p style={{color:C.text2,fontSize:14,margin:"0 0 32px"}}>Sell directly to your readers</p>
-      <div style={{background:C.surface,borderRadius:16,border:`1px solid ${C.border}`,padding:24}}>
+      <div style={{background:C.glass,borderRadius:16,border:`1px solid ${C.glassBorder}`,padding:24,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>
         {[{img:"📕",name:"Signed Hardcover",price:"$32",sold:124},{img:"🎧",name:"Audiobook Bundle",price:"$18",sold:312},{img:"👕",name:"Limited Tee",price:"$28",sold:47}].map((p,i)=>(
           <div key={i} style={{display:"flex",alignItems:"center",gap:16,padding:"14px 0",borderBottom:i<2?`1px solid ${C.border}`:"none"}}>
-            <div style={{width:48,height:48,borderRadius:10,background:C.surface2,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>{p.img}</div>
+            <div style={{width:48,height:48,borderRadius:10,background:"rgba(0,0,0,0.04)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28}}>{p.img}</div>
             <div><div style={{fontSize:14,fontWeight:600,color:C.text}}>{p.name}</div><div style={{fontSize:18,fontWeight:700,color:C.accent,marginTop:4}}>{p.price}</div><div style={{fontSize:11,color:C.text2,marginTop:2}}>{p.sold} sold</div></div>
           </div>
         ))}
@@ -430,7 +432,7 @@ function DashStreaming(){
       <p style={{color:C.text2,fontSize:14,margin:"0 0 32px"}}>Your content, distributed everywhere</p>
       <div style={{display:"flex",gap:16,flexWrap:"wrap"}}>
         {[{p:"Movianx App",s:"Live",c:C.accent},{p:"Spotify",s:"Synced",c:"#1DB954"},{p:"Apple Books",s:"Pending",c:"#FC3C44"},{p:"Audible",s:"In Queue",c:"#FF9900"}].map((x,i)=>(
-          <div key={i} style={{flex:"1 1 calc(50% - 8px)",minWidth:240,background:C.surface,borderRadius:16,border:`1px solid ${C.border}`,padding:20}}>
+          <div key={i} style={{flex:"1 1 calc(50% - 8px)",minWidth:240,background:C.glass,borderRadius:16,border:`1px solid ${C.glassBorder}`,padding:20,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>
             <div style={{display:"flex",justifyContent:"space-between",alignItems:"center"}}><span style={{fontSize:15,fontWeight:600,color:C.text}}>{x.p}</span><span style={{fontSize:11,fontWeight:600,padding:"4px 10px",borderRadius:6,background:(x.s==="Live"||x.s==="Synced")?"rgba(74,222,128,0.15)":"rgba(212,168,67,0.15)",color:(x.s==="Live"||x.s==="Synced")?C.green:C.gold}}>{x.s}</span></div>
           </div>
         ))}
@@ -446,35 +448,35 @@ function MonetizationSim({storyTitle,onClose}){
   const adRev=Math.round(free*0.008*30),subRev=Math.round(prem*9.99*0.7),tipRev=Math.round(readers*0.02*4.5),merchRev=Math.round(readers*0.03*22);
   const total=adRev+subRev+tipRev+merchRev;
   return(
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.92)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,animation:"fadeIn 0.3s ease"}}>
-      <div style={{width:"100%",maxWidth:540,background:C.glass,borderRadius:24,border:`1px solid ${C.border}`,padding:"36px 32px",maxHeight:"90vh",overflowY:"auto",animation:"fadeUp 0.4s ease both"}}>
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.4)",backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",zIndex:1000,display:"flex",alignItems:"center",justifyContent:"center",padding:20,animation:"fadeIn 0.3s ease"}}>
+      <div style={{width:"100%",maxWidth:540,background:C.glass,borderRadius:24,border:`1px solid ${C.glassBorder}`,padding:"36px 32px",maxHeight:"90vh",overflowY:"auto",animation:"fadeUp 0.4s ease both",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:"0 20px 60px rgba(0,0,0,0.12)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:28}}>
           <div><h2 style={{fontSize:20,fontWeight:700,color:C.text,margin:0}}>Revenue Simulator</h2><p style={{fontSize:13,color:C.text2,marginTop:4}}>{storyTitle||"Your Story"}</p></div>
           <button onClick={onClose} style={{width:36,height:36,borderRadius:"50%",border:`1px solid ${C.border}`,background:"transparent",color:C.text2,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>✕</button>
         </div>
         <div style={{marginBottom:24}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><span style={{fontSize:11,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Monthly Readers</span><span style={{fontSize:14,fontWeight:700,color:C.text}}>{readers.toLocaleString()}</span></div>
-          <input type="range" min="1000" max="100000" step="1000" value={readers} onChange={e=>setReaders(+e.target.value)} style={{width:"100%",accentColor:"#fff"}}/>
+          <input type="range" min="1000" max="100000" step="1000" value={readers} onChange={e=>setReaders(+e.target.value)} style={{width:"100%",accentColor:C.accent}}/>
         </div>
         <div style={{marginBottom:28}}>
           <div style={{display:"flex",justifyContent:"space-between",marginBottom:8}}><span style={{fontSize:11,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Premium Conversion</span><span style={{fontSize:14,fontWeight:700,color:C.text}}>{rate}%</span></div>
-          <input type="range" min="2" max="30" value={rate} onChange={e=>setRate(+e.target.value)} style={{width:"100%",accentColor:"#fff"}}/>
+          <input type="range" min="2" max="30" value={rate} onChange={e=>setRate(+e.target.value)} style={{width:"100%",accentColor:C.accent}}/>
         </div>
         {!show?(
-          <button onClick={()=>setShow(true)} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:"#fff",color:C.text,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:FF}}>Calculate Potential Revenue →</button>
+          <button onClick={()=>setShow(true)} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:C.accent,color:"#fff",fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:FF,boxShadow:"0 4px 16px rgba(139,26,26,0.2)"}}>Calculate Potential Revenue →</button>
         ):(
           <div style={{animation:"fadeUp 0.5s ease both"}}>
-            <div style={{textAlign:"center",padding:"24px 0",marginBottom:20,borderRadius:16,background:C.surface,border:`1px solid ${C.border}`}}>
+            <div style={{textAlign:"center",padding:"24px 0",marginBottom:20,borderRadius:16,background:"rgba(255,255,255,0.5)",border:`1px solid ${C.glassBorder}`}}>
               <div style={{fontSize:11,color:C.text2,textTransform:"uppercase",letterSpacing:"2px",marginBottom:8}}>Estimated Monthly Revenue</div>
               <div style={{fontSize:44,fontWeight:800,color:C.text,letterSpacing:"-2px"}}>${total.toLocaleString()}</div>
               <div style={{fontSize:14,color:C.green,fontWeight:600,marginTop:4}}>${(total*12).toLocaleString()}/year</div>
             </div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:20}}>
               {[{l:"Ad Revenue",v:adRev,c:C.purple},{l:"Subscriptions",v:subRev,c:C.green},{l:"Tips",v:tipRev,c:C.gold},{l:"Merch",v:merchRev,c:C.red}].map((r,i)=>(
-                <div key={i} style={{padding:14,borderRadius:12,background:C.surface,border:`1px solid ${C.border}`}}><div style={{fontSize:11,color:C.text2,marginBottom:4}}>{r.l}</div><div style={{fontSize:18,fontWeight:700,color:r.c}}>${r.v.toLocaleString()}</div></div>
+                <div key={i} style={{padding:14,borderRadius:12,background:"rgba(255,255,255,0.5)",border:`1px solid ${C.glassBorder}`}}><div style={{fontSize:11,color:C.text2,marginBottom:4}}>{r.l}</div><div style={{fontSize:18,fontWeight:700,color:r.c}}>${r.v.toLocaleString()}</div></div>
               ))}
             </div>
-            <div style={{padding:16,borderRadius:12,background:C.surface,border:`1px solid ${C.border}`,marginBottom:16}}>
+            <div style={{padding:16,borderRadius:12,background:"rgba(255,255,255,0.5)",border:`1px solid ${C.glassBorder}`,marginBottom:16}}>
               <div style={{fontSize:12,fontWeight:600,color:C.text,marginBottom:10}}>Your Creator Tier</div>
               {[{t:"Explorer",s:"60%",min:0},{t:"Pro",s:"70%",min:1000},{t:"Elite",s:"80%",min:5000},{t:"Partner",s:"85%",min:20000}].map((t,i,arr)=>{
                 const next=arr[i+1];const on=total>=t.min&&(!next||total<next.min);
@@ -498,12 +500,12 @@ function CreatorDashboard({onBack}){
   return(
     <div style={{display:"flex",minHeight:"100vh",background:C.bg,fontFamily:FF,color:C.text}}>
       {showSim&&<MonetizationSim storyTitle="Your Story" onClose={()=>setShowSim(false)}/>}
-      {mob&&<button onClick={()=>setMenuOpen(!menuOpen)} style={{position:"fixed",top:20,left:20,zIndex:250,padding:"12px 14px",borderRadius:8,background:C.bg,border:`1px solid ${C.border}`,color:C.text,fontSize:20,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}>{menuOpen?"✕":"☰"}</button>}
+      {mob&&<button onClick={()=>setMenuOpen(!menuOpen)} style={{position:"fixed",top:20,left:20,zIndex:250,padding:"12px 14px",borderRadius:8,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,color:C.text,fontSize:20,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:C.shadow}}>{menuOpen?"✕":"☰"}</button>}
       <div style={{position:mob?"fixed":"relative",top:0,left:(menuOpen||!mob)?0:-300,height:"100vh",width:260,background:C.bg,zIndex:200,transition:"left 0.3s ease"}}><DashSidebar active={active} setActive={id=>{setActive(id);setMenuOpen(false)}} user={user}/></div>
-      {menuOpen&&mob&&<div onClick={()=>setMenuOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.85)",zIndex:150}}/>}
+      {menuOpen&&mob&&<div onClick={()=>setMenuOpen(false)} style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.3)",backdropFilter:"blur(4px)",WebkitBackdropFilter:"blur(4px)",zIndex:150}}/>}
       <div style={{flex:1,padding:"32px 20px",overflowY:"auto",maxHeight:"100vh"}}>
         <div style={{display:"flex",gap:12,position:"absolute",top:20,right:20}}>
-          <button onClick={()=>setShowSim(true)} style={{padding:"10px 20px",borderRadius:8,border:"1px solid "+C.green,background:"transparent",color:C.green,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}}>💰 Revenue Simulator</button>
+          <button onClick={()=>setShowSim(true)} style={{padding:"10px 20px",borderRadius:8,border:"1px solid "+C.green,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",color:C.green,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF,boxShadow:C.shadow}}>💰 Revenue Simulator</button>
           <button onClick={onBack} style={{padding:"10px 20px",borderRadius:8,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>{e.target.style.borderColor=C.accent;e.target.style.color=C.accent}} onMouseLeave={e=>{e.target.style.borderColor=C.border;e.target.style.color=C.text2}}>← Back to Reader</button>
         </div>
         {pages[active]}
@@ -1049,14 +1051,14 @@ export default function MovianxPlatform(){
           <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
           <div style={{display:"flex",gap:32,alignItems:"center"}}>
             <button onClick={()=>navigateTo("creator")} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Sign In</button>
-            <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:C.text,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
+            <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
           </div>
         </div>
         <div style={{textAlign:"center",maxWidth:900,zIndex:1,marginTop:60}}>
           <h1 style={{fontSize:"clamp(42px,8vw,72px)",fontWeight:700,color:C.text,marginBottom:20,letterSpacing:"-2px",lineHeight:1.1,animation:"fadeUp 0.8s ease both 0.2s",opacity:0}}>What do you want to experience?</h1>
           <p style={{fontSize:18,color:C.text2,marginBottom:50,lineHeight:1.6,animation:"fadeUp 0.8s ease both 0.3s",opacity:0}}>Books that adapt to you. Stories that listen. Worlds you shape with every choice.</p>
           <div style={{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap",marginBottom:60,animation:"fadeUp 0.8s ease both 0.4s",opacity:0}}>
-            <button onClick={()=>navigateTo("home")} style={{padding:"18px 36px",borderRadius:20,background:C.accent,border:"none",color:C.text,fontSize:16,fontWeight:600,cursor:"pointer",fontFamily:FF,boxShadow:"0 8px 32px rgba(229,9,20,0.35)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(229,9,20,0.5)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(229,9,20,0.35)"}}>Get Started</button>
+            <button onClick={()=>navigateTo("home")} style={{padding:"18px 36px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:16,fontWeight:600,cursor:"pointer",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>Get Started</button>
           </div>
           <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",animation:"fadeUp 0.8s ease both 0.5s",opacity:0}}>
             {["Choice-Driven Narratives","AI Narration","Adaptive Soundscapes","Immersive Visuals"].map(f=>(
@@ -1077,7 +1079,7 @@ export default function MovianxPlatform(){
           <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
           <div style={{display:"flex",gap:24,alignItems:"center"}}>
             <button onClick={()=>navigateTo("creator")} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Creator Studio</button>
-            <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:C.text,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
+            <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
           </div>
         </div>
         <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"32px 5% 60px"}}>
@@ -1085,20 +1087,20 @@ export default function MovianxPlatform(){
           <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:500,animation:"fadeUp 0.8s ease both 0.2s",opacity:0}}>Explore interactive stories, cinematic adaptations, and connect with creators.</p>
           <div style={{display:"flex",gap:16,width:"100%",maxWidth:900,justifyContent:"center",flexWrap:"wrap",paddingBottom:40}}>
             {/* Stories Tile - Active */}
-            <button onClick={()=>navigateTo("library")} style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",position:"relative",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.3s",opacity:0,transition:"all 0.3s",boxShadow:"0 8px 32px rgba(255,255,255,0.04)"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow="0 20px 60px rgba(229,9,20,0.2)"}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow="0 8px 32px rgba(255,255,255,0.04)"}}>
+            <button onClick={()=>navigateTo("library")} style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",position:"relative",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.3s",opacity:0,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
               <div style={{fontSize:36,marginBottom:8}}>📚</div>
               <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Stories</h3>
               <p style={{fontSize:14,color:C.text2,margin:0}}>Interactive fiction</p>
-              <div style={{position:"absolute",bottom:20,right:20,width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:C.text,fontSize:16}}>→</div>
+              <div style={{position:"absolute",bottom:20,right:20,width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16}}>→</div>
             </button>
             {/* Cinema - Coming Soon */}
-            <div style={{width:160,height:160,background:C.surface2,backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid ${C.border}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.4s",opacity:0}}>
+            <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.4s",opacity:0,boxShadow:C.shadow}}>
               <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎬</div>
               <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Cinema</h3>
               <div style={{display:"inline-block",padding:"4px 10px",borderRadius:12,background:C.pillBg,fontSize:10,fontWeight:600,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Coming Soon</div>
             </div>
             {/* Artists - Coming Soon */}
-            <div style={{width:160,height:160,background:C.surface2,backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid ${C.border}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.5s",opacity:0}}>
+            <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.5s",opacity:0,boxShadow:C.shadow}}>
               <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎨</div>
               <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Artists</h3>
               <div style={{display:"inline-block",padding:"4px 10px",borderRadius:12,background:C.pillBg,fontSize:10,fontWeight:600,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Coming Soon</div>
@@ -1114,12 +1116,12 @@ export default function MovianxPlatform(){
   if(pg==="library"){
     return(
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,padding:"80px 5% 120px",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
-        <button onClick={()=>navigateTo("home")} style={{background:"transparent",border:`1px solid ${C.border}`,color:C.text,padding:"12px 24px",borderRadius:8,fontSize:14,cursor:"pointer",marginBottom:40,fontFamily:FF}}>← Back</button>
+        <button onClick={()=>navigateTo("home")} style={{background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,color:C.text,padding:"12px 24px",borderRadius:8,fontSize:14,cursor:"pointer",marginBottom:40,fontFamily:FF,boxShadow:C.shadow}}>← Back</button>
         <h1 style={{fontSize:48,fontWeight:700,color:C.text,marginBottom:16}}>Story Library</h1>
         <p style={{fontSize:18,color:C.text2,marginBottom:60}}>Choose your experience</p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:24,maxWidth:1200}}>
           {STORIES.map(story=>(
-            <div key={story.id} onClick={()=>{setSel(story);navigateTo("detail")}} style={{background:C.surface2,border:`1px solid ${C.border}`,borderRadius:16,overflow:"hidden",cursor:"pointer",transition:"all 0.3s"}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.borderColor=C.accent}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.borderColor="transparent"}}>
+            <div key={story.id} onClick={()=>{setSel(story);navigateTo("detail")}} style={{background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:16,overflow:"hidden",cursor:"pointer",transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=C.shadow}}>
               <div style={{height:200,background:`url(${story.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}/>
               <div style={{padding:20}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
@@ -1145,8 +1147,8 @@ export default function MovianxPlatform(){
     return(
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <div style={{position:"relative",height:360,background:`url(${sel.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}>
-          <div style={{position:"absolute",inset:0,background:"linear-gradient(transparent 30%,#000 100%)"}}/>
-          <button onClick={()=>navigateTo("library")} style={{position:"absolute",top:24,left:24,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,padding:"10px 20px",borderRadius:8,fontSize:14,cursor:"pointer",zIndex:2,fontFamily:FF,backdropFilter:"blur(10px)"}}>← Back</button>
+          <div style={{position:"absolute",inset:0,background:"linear-gradient(transparent 30%, rgba(248,249,250,0.8) 70%, #f8f9fa 100%)"}}/>
+          <button onClick={()=>navigateTo("library")} style={{position:"absolute",top:24,left:24,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,padding:"10px 20px",borderRadius:8,fontSize:14,cursor:"pointer",zIndex:2,fontFamily:FF,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>← Back</button>
         </div>
         <div style={{maxWidth:800,margin:"-80px auto 0",padding:"0 24px 60px",position:"relative",zIndex:2}}>
           <h1 style={{fontSize:40,fontWeight:700,color:C.text,marginBottom:8,letterSpacing:"-1px"}}>{sel.title}</h1>
@@ -1168,7 +1170,7 @@ export default function MovianxPlatform(){
             </div>
           </div>
           {/* Start Button */}
-          <button onClick={()=>{setChIdx(0);setChoices([]);setShowChoice(false);navigateTo("reading")}} style={{width:"100%",maxWidth:400,padding:"18px",borderRadius:14,border:"none",background:"#fff",color:C.text,fontSize:16,fontWeight:700,cursor:"pointer",transition:"all 0.2s",fontFamily:FF}} onMouseEnter={e=>e.target.style.transform="translateY(-2px)"} onMouseLeave={e=>e.target.style.transform="translateY(0)"}>
+          <button onClick={()=>{setChIdx(0);setChoices([]);setShowChoice(false);navigateTo("reading")}} style={{width:"100%",maxWidth:400,padding:"18px",borderRadius:14,border:"none",background:C.accent,color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",transition:"all 0.2s",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>
             Begin Reading →
           </button>
         </div>
@@ -1209,7 +1211,7 @@ export default function MovianxPlatform(){
 
         {/* Settings Panel */}
         {showSettings&&(
-          <div style={{position:"fixed",top:52,right:12,zIndex:110,width:280,background:colorTheme==="night"?"#1C1C24":"#fff",borderRadius:16,border:`1px solid ${currentTheme.text}20`,padding:24,boxShadow:"0 20px 60px rgba(0,0,0,0.3)",animation:"fadeUp 0.2s ease both"}}>
+          <div style={{position:"fixed",top:52,right:12,zIndex:110,width:280,background:colorTheme==="night"?"#1C1C24":"rgba(255,255,255,0.9)",borderRadius:16,border:`1px solid ${currentTheme.text}20`,padding:24,boxShadow:"0 20px 60px rgba(0,0,0,0.1)",backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",animation:"fadeUp 0.2s ease both"}}>
             <div style={{fontSize:13,fontWeight:700,color:currentTheme.text,marginBottom:16}}>Reading Settings</div>
             {/* Font Size */}
             <div style={{marginBottom:16}}>
@@ -1293,7 +1295,7 @@ export default function MovianxPlatform(){
               <p style={{fontSize:18,fontWeight:600,color:currentTheme.text,marginBottom:20}}>{ch.choice.prompt}</p>
               <div style={{display:"flex",flexDirection:"column",gap:12}}>
                 {ch.choice.opts.map((opt,i)=>(
-                  <button key={i} onClick={()=>makeChoice(opt)} style={{padding:"16px 20px",borderRadius:12,background:colorTheme==="night"?"#1C1C24":"#fff",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:15,textAlign:"left",cursor:"pointer",transition:"all 0.2s",fontFamily:FF}} onMouseEnter={e=>{e.target.style.background=`${C.red}15`;e.target.style.borderColor=C.red}} onMouseLeave={e=>{e.target.style.background=colorTheme==="night"?"#1C1C24":"#fff";e.target.style.borderColor=`${currentTheme.text}20`}}>
+                  <button key={i} onClick={()=>makeChoice(opt)} style={{padding:"16px 20px",borderRadius:12,background:colorTheme==="night"?"#1C1C24":"rgba(255,255,255,0.8)",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:15,textAlign:"left",cursor:"pointer",transition:"all 0.2s",fontFamily:FF,boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}} onMouseEnter={e=>{e.target.style.background=`${C.red}15`;e.target.style.borderColor=C.red;e.target.style.boxShadow="0 4px 16px rgba(139,26,26,0.1)"}} onMouseLeave={e=>{e.target.style.background=colorTheme==="night"?"#1C1C24":"rgba(255,255,255,0.8)";e.target.style.borderColor=`${currentTheme.text}20`;e.target.style.boxShadow="0 2px 8px rgba(0,0,0,0.04)"}}>
                     {opt.txt}
                   </button>
                 ))}
