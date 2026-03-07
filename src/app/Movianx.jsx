@@ -307,7 +307,7 @@ function EmailGate({onSubmit}){
                   ))}
                 </div>
               </label>
-              <button disabled={!ok} onClick={()=>setStep(1)} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} style={{width:"100%",padding:"16px",borderRadius:12,border:"none",background:ok?C.accent:C.surface2,color:ok?"#fff":C.text2,fontSize:14,fontWeight:600,cursor:ok?"pointer":"not-allowed",transform:hover&&ok?"translateY(-1px)":"translateY(0)",transition:"all 0.2s",fontFamily:FF}}>Continue -></button>
+              <button disabled={!ok} onClick={()=>setStep(1)} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)} style={{width:"100%",padding:"16px",borderRadius:12,border:"none",background:ok?C.accent:C.surface2,color:ok?"#fff":C.text2,fontSize:14,fontWeight:600,cursor:ok?"pointer":"not-allowed",transform:hover&&ok?"translateY(-1px)":"translateY(0)",transition:"all 0.2s",fontFamily:FF}}>Continue →</button>
             </>
           ):(
             <>
@@ -316,7 +316,7 @@ function EmailGate({onSubmit}){
                 <h2 style={{color:C.text,fontSize:22,fontWeight:700,margin:"0 0 8px"}}>Welcome, {name.split(" ")[0]}!</h2>
                 <p style={{color:C.text2,fontSize:14,margin:0,lineHeight:1.6}}>We'll notify <span style={{color:C.text,fontWeight:600}}>{email}</span> when we're ready.</p>
               </div>
-              <button onClick={()=>onSubmit({name,email,role})} style={{width:"100%",padding:"16px",borderRadius:12,border:"none",background:"#fff",color:C.text,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.transform="translateY(-1px)"} onMouseLeave={e=>e.target.style.transform="translateY(0)"}>Enter Demo Dashboard -></button>
+              <button onClick={()=>onSubmit({name,email,role})} style={{width:"100%",padding:"16px",borderRadius:12,border:"none",background:"#fff",color:C.text,fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.transform="translateY(-1px)"} onMouseLeave={e=>e.target.style.transform="translateY(0)"}>Enter Demo Dashboard →</button>
             </>
           )}
         </div>
@@ -461,7 +461,7 @@ function MonetizationSim({storyTitle,onClose}){
           <input type="range" min="2" max="30" value={rate} onChange={e=>setRate(+e.target.value)} style={{width:"100%",accentColor:"#fff"}}/>
         </div>
         {!show?(
-          <button onClick={()=>setShow(true)} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:"#fff",color:C.text,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:FF}}>Calculate Potential Revenue -></button>
+          <button onClick={()=>setShow(true)} style={{width:"100%",padding:16,borderRadius:12,border:"none",background:"#fff",color:C.text,fontSize:15,fontWeight:700,cursor:"pointer",fontFamily:FF}}>Calculate Potential Revenue →</button>
         ):(
           <div style={{animation:"fadeUp 0.5s ease both"}}>
             <div style={{textAlign:"center",padding:"24px 0",marginBottom:20,borderRadius:16,background:C.surface,border:`1px solid ${C.border}`}}>
@@ -504,7 +504,7 @@ function CreatorDashboard({onBack}){
       <div style={{flex:1,padding:"32px 20px",overflowY:"auto",maxHeight:"100vh"}}>
         <div style={{display:"flex",gap:12,position:"absolute",top:20,right:20}}>
           <button onClick={()=>setShowSim(true)} style={{padding:"10px 20px",borderRadius:8,border:"1px solid "+C.green,background:"transparent",color:C.green,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}}>💰 Revenue Simulator</button>
-          <button onClick={onBack} style={{padding:"10px 20px",borderRadius:8,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>{e.target.style.borderColor=C.accent;e.target.style.color=C.accent}} onMouseLeave={e=>{e.target.style.borderColor=C.border;e.target.style.color=C.text2}}><- Back to Reader</button>
+          <button onClick={onBack} style={{padding:"10px 20px",borderRadius:8,border:`1px solid ${C.border}`,background:C.surface,color:C.text2,fontSize:13,fontWeight:600,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>{e.target.style.borderColor=C.accent;e.target.style.color=C.accent}} onMouseLeave={e=>{e.target.style.borderColor=C.border;e.target.style.color=C.text2}}>← Back to Reader</button>
         </div>
         {pages[active]}
       </div>
@@ -1089,7 +1089,7 @@ export default function MovianxPlatform(){
               <div style={{fontSize:36,marginBottom:8}}>📚</div>
               <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Stories</h3>
               <p style={{fontSize:14,color:C.text2,margin:0}}>Interactive fiction</p>
-              <div style={{position:"absolute",bottom:20,right:20,width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:C.text,fontSize:16}}>-></div>
+              <div style={{position:"absolute",bottom:20,right:20,width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:C.text,fontSize:16}}>→</div>
             </button>
             {/* Cinema - Coming Soon */}
             <div style={{width:160,height:160,background:C.surface2,backdropFilter:"blur(8px)",WebkitBackdropFilter:"blur(8px)",border:`1px solid ${C.border}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.4s",opacity:0}}>
@@ -1114,7 +1114,7 @@ export default function MovianxPlatform(){
   if(pg==="library"){
     return(
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,padding:"80px 5% 120px",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
-        <button onClick={()=>navigateTo("home")} style={{background:"transparent",border:`1px solid ${C.border}`,color:C.text,padding:"12px 24px",borderRadius:8,fontSize:14,cursor:"pointer",marginBottom:40,fontFamily:FF}}><- Back</button>
+        <button onClick={()=>navigateTo("home")} style={{background:"transparent",border:`1px solid ${C.border}`,color:C.text,padding:"12px 24px",borderRadius:8,fontSize:14,cursor:"pointer",marginBottom:40,fontFamily:FF}}>← Back</button>
         <h1 style={{fontSize:48,fontWeight:700,color:C.text,marginBottom:16}}>Story Library</h1>
         <p style={{fontSize:18,color:C.text2,marginBottom:60}}>Choose your experience</p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:24,maxWidth:1200}}>
@@ -1146,7 +1146,7 @@ export default function MovianxPlatform(){
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <div style={{position:"relative",height:360,background:`url(${sel.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}>
           <div style={{position:"absolute",inset:0,background:"linear-gradient(transparent 30%,#000 100%)"}}/>
-          <button onClick={()=>navigateTo("library")} style={{position:"absolute",top:24,left:24,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,padding:"10px 20px",borderRadius:8,fontSize:14,cursor:"pointer",zIndex:2,fontFamily:FF,backdropFilter:"blur(10px)"}}><- Back</button>
+          <button onClick={()=>navigateTo("library")} style={{position:"absolute",top:24,left:24,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,padding:"10px 20px",borderRadius:8,fontSize:14,cursor:"pointer",zIndex:2,fontFamily:FF,backdropFilter:"blur(10px)"}}>← Back</button>
         </div>
         <div style={{maxWidth:800,margin:"-80px auto 0",padding:"0 24px 60px",position:"relative",zIndex:2}}>
           <h1 style={{fontSize:40,fontWeight:700,color:C.text,marginBottom:8,letterSpacing:"-1px"}}>{sel.title}</h1>
@@ -1169,7 +1169,7 @@ export default function MovianxPlatform(){
           </div>
           {/* Start Button */}
           <button onClick={()=>{setChIdx(0);setChoices([]);setShowChoice(false);navigateTo("reading")}} style={{width:"100%",maxWidth:400,padding:"18px",borderRadius:14,border:"none",background:"#fff",color:C.text,fontSize:16,fontWeight:700,cursor:"pointer",transition:"all 0.2s",fontFamily:FF}} onMouseEnter={e=>e.target.style.transform="translateY(-2px)"} onMouseLeave={e=>e.target.style.transform="translateY(0)"}>
-            Begin Reading ->
+            Begin Reading →
           </button>
         </div>
         <style>{CSS}</style>
@@ -1189,7 +1189,7 @@ export default function MovianxPlatform(){
         {/* Top Bar - Clean, no duplicate icons */}
         <div style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:`${currentTheme.bg}F0`,backdropFilter:"blur(12px)",borderBottom:`1px solid ${currentTheme.text}15`,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <button onClick={()=>navigateTo("detail")} style={{background:"transparent",border:"none",color:currentTheme.text,fontSize:13,cursor:"pointer",fontFamily:FF,opacity:0.7}}><- Back</button>
+            <button onClick={()=>navigateTo("detail")} style={{background:"transparent",border:"none",color:currentTheme.text,fontSize:13,cursor:"pointer",fontFamily:FF,opacity:0.7}}>← Back</button>
             <span style={{fontSize:12,color:`${currentTheme.text}40`}}>|</span>
             <span style={{fontSize:12,color:`${currentTheme.text}60`}}>{chIdx+1}/{chaps.length}</span>
             {getBranchLabel()&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:8,background:`${C.red}15`,color:C.red,fontWeight:600}}>{getBranchLabel()}</span>}
@@ -1324,9 +1324,9 @@ export default function MovianxPlatform(){
 
           {/* Chapter Navigation */}
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:60,paddingTop:20,borderTop:`1px solid ${currentTheme.text}15`}}>
-            <button disabled={chIdx===0} onClick={()=>goChapter(chIdx-1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx===0?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx===0?"not-allowed":"pointer",fontFamily:FF}}><- Previous</button>
+            <button disabled={chIdx===0} onClick={()=>goChapter(chIdx-1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx===0?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx===0?"not-allowed":"pointer",fontFamily:FF}}>← Previous</button>
             <span style={{fontSize:12,color:`${currentTheme.text}50`}}>{chIdx+1} / {chaps.length}</span>
-            <button disabled={chIdx>=chaps.length-1} onClick={()=>goChapter(chIdx+1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx>=chaps.length-1?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx>=chaps.length-1?"not-allowed":"pointer",fontFamily:FF}}>Next -></button>
+            <button disabled={chIdx>=chaps.length-1} onClick={()=>goChapter(chIdx+1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx>=chaps.length-1?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx>=chaps.length-1?"not-allowed":"pointer",fontFamily:FF}}>Next →</button>
           </div>
 
           {/* Branch Memory Display */}
