@@ -914,10 +914,16 @@ export default function MovianxPlatform(){
     else{window.speechSynthesis.onvoiceschanged=()=>{setTimeout(doSpeak,50)}}
   };
 
+  const speakImmersiveOptions=(choice)=>{
+    if(!choice||!choice.opts)return;
+    const optLines=choice.opts.map((opt,i)=>`Say "option ${i+1}" for: ${opt.txt}`).join(". Or, ");
+    speak(`${choice.prompt}. ${optLines}.`,choice.emotion||"calm");
+  };
+
   const startVoiceRec=()=>{
     if(typeof window==="undefined")return;
     const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){alert("Voice recognition not supported");return}
+    if(!SR)return;
     if(recognitionRef.current)try{recognitionRef.current.stop()}catch(e){}
     const rec=new SR();recognitionRef.current=rec;
     rec.continuous=false;rec.interimResults=false;rec.lang="en-US";
@@ -925,6 +931,13 @@ export default function MovianxPlatform(){
     rec.onresult=(e)=>{
       const t=e.results[0][0].transcript.toLowerCase().trim();
       const choice=chaps[chIdx].choice;if(!choice)return;
+      // Check for "option N" pattern first
+      const numMatch=t.match(/option\s*(\d)/);
+      if(numMatch){
+        const idx=parseInt(numMatch[1])-1;
+        if(idx>=0&&idx<choice.opts.length){speak("Got it.");setTimeout(()=>makeChoice(choice.opts[idx]),800);return}
+      }
+      // Fallback: fuzzy match against option text
       let best=null,hi=0;
       choice.opts.forEach(opt=>{
         const words=opt.txt.toLowerCase().replace(/[^\w\s]/g,"").split(/\s+/).filter(w=>w.length>2);
@@ -932,9 +945,20 @@ export default function MovianxPlatform(){
         if(score>hi){hi=score;best=opt}
       });
       if(best&&hi>0.5){speak("Got it.");setTimeout(()=>makeChoice(best),800)}
-      else{speak("Try saying one of the options more clearly.");setTimeout(()=>setVoiceActive(false),2000)}
+      else{
+        // Re-read options and listen again
+        speak("I didn't catch that. Let me repeat your choices.");
+        setTimeout(()=>{speakImmersiveOptions(choice);setTimeout(()=>startVoiceRec(),6000)},2000);
+      }
     };
-    rec.onerror=()=>setVoiceActive(false);
+    rec.onerror=()=>{
+      setVoiceActive(false);
+      // Retry after error in immersive mode
+      if(voiceMode&&showChoice){
+        const choice=chaps[chIdx].choice;
+        if(choice){speak("Let me repeat your choices.");setTimeout(()=>{speakImmersiveOptions(choice);setTimeout(()=>startVoiceRec(),6000)},1500)}
+      }
+    };
     rec.onend=()=>{setVoiceActive(false);if(voiceMode&&showChoice)setTimeout(()=>startVoiceRec(),500)};
     rec.start();
   };
@@ -995,9 +1019,10 @@ export default function MovianxPlatform(){
     if(pg!=="reading"||!ch.text)return;
     setTxt(ch.text);
     logEvent("scene_playback_started",{chapter:chIdx,title:ch.title,mode});
-    if(ch.sound&&soundEffectsOn)setTimeout(()=>playSFX(ch.sound),500);
-    if(ch.jumpScare&&soundEffectsOn)setTimeout(()=>playSFX("jumpscare"),3000);
-    // Mood-based ambient in Cinematic + Immersive
+    // Reader mode: text only, no audio at all
+    if(mode!=="Reader"&&ch.sound&&soundEffectsOn)setTimeout(()=>playSFX(ch.sound),500);
+    if(mode!=="Reader"&&ch.jumpScare&&soundEffectsOn)setTimeout(()=>playSFX("jumpscare"),3000);
+    // Mood-based ambient + narration in Cinematic + Immersive
     if(mode==="Cinematic"||mode==="Immersive"){
       startAmbient(ch.emotion||"calm");
       speak(ch.text,ch.emotion||"calm");
@@ -1009,9 +1034,12 @@ export default function MovianxPlatform(){
         setShowChoice(true);
         if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
         setTimeout(()=>{
-          if(ch.choice.prompt&&(mode==="Cinematic"||mode==="Immersive")){
+          if(ch.choice.prompt&&mode==="Cinematic"){
             speak(ch.choice.prompt,ch.choice.emotion||"calm");
-            if(mode==="Immersive")setTimeout(()=>{setVoiceMode(true);startVoiceRec()},3000);
+          }
+          if(ch.choice.prompt&&mode==="Immersive"){
+            speakImmersiveOptions(ch.choice);
+            setTimeout(()=>{setVoiceMode(true);startVoiceRec()},6000);
           }
         },3000);
       }
@@ -1303,24 +1331,19 @@ export default function MovianxPlatform(){
             </div>
           )}
 
-          {/* Immersive Choice - voice + tap options */}
+          {/* Immersive Choice - voice only, no clickable buttons */}
           {showChoice&&ch.choice&&mode==="Immersive"&&(
-            <div style={{background:`${C.red}08`,borderRadius:16,border:`1px solid ${C.red}30`,padding:32,marginTop:40,animation:"fadeUp 0.4s ease both"}}>
+            <div style={{textAlign:"center",padding:"48px 20px",marginTop:40,animation:"fadeUp 0.4s ease both"}}>
               {timerActive&&timeRemaining!==null&&(
-                <div style={{textAlign:"center",marginBottom:20,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
+                <div style={{marginBottom:24,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
                   <div style={{fontSize:48,fontWeight:700,color:timeRemaining<=3?C.red:currentTheme.text,fontFamily:"monospace"}}>{timeRemaining}</div>
                   <div style={{fontSize:12,color:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS"}</div>
                 </div>
               )}
-              <p style={{fontSize:18,fontWeight:600,color:currentTheme.text,marginBottom:8}}>{ch.choice.prompt}</p>
-              {voiceActive&&<p style={{fontSize:12,color:C.red,marginBottom:16,animation:"breathe 1.5s infinite"}}>🎤 Listening - speak your choice or tap below...</p>}
-              <div style={{display:"flex",flexDirection:"column",gap:12,marginTop:16}}>
-                {ch.choice.opts.map((opt,i)=>(
-                  <button key={i} onClick={()=>makeChoice(opt)} style={{padding:"16px 20px",borderRadius:12,background:`${currentTheme.text}08`,border:`1px solid ${currentTheme.text}15`,color:currentTheme.text,fontSize:15,textAlign:"left",cursor:"pointer",transition:"all 0.2s",fontFamily:FF}} onMouseEnter={e=>{e.target.style.background=`${C.red}15`;e.target.style.borderColor=C.red}} onMouseLeave={e=>{e.target.style.background=`${currentTheme.text}08`;e.target.style.borderColor=`${currentTheme.text}15`}}>
-                    {opt.txt}
-                  </button>
-                ))}
+              <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:64,height:64,borderRadius:"50%",background:voiceActive?`${C.red}15`:`${currentTheme.text}08`,border:`2px solid ${voiceActive?C.red:`${currentTheme.text}20`}`,animation:voiceActive?"pulse 1.5s ease-in-out infinite":"breathe 3s ease-in-out infinite",transition:"all 0.3s"}}>
+                <span style={{fontSize:28,opacity:voiceActive?1:0.5}}>🎤</span>
               </div>
+              <div style={{fontSize:12,color:`${currentTheme.text}40`,marginTop:16,letterSpacing:"1px"}}>{voiceActive?"LISTENING...":"WAITING..."}</div>
             </div>
           )}
 
