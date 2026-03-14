@@ -1,5 +1,9 @@
 "use client";
 import { useState, useEffect, useRef, useCallback } from "react";
+import audioEngine from "../lib/AudioEngine";
+import assetResolver from "../lib/AssetResolver";
+import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
+import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
 
 // ===========================================================================
 // DESIGN SYSTEM - White Frosted Glass with Dark Cinematic Red
@@ -634,20 +638,7 @@ const FRANK_ASSETS = [
   },
 ];
 
-// Audio mood -> procedural Web Audio parameters (used when no audioUrl cached)
-const AUDIO_MOODS = {
-  "arctic-wind": { baseFreq: 80, type: "sine", modFreq: 0.3, gain: 0.08, filterFreq: 400 },
-  "tension-drone": { baseFreq: 55, type: "sawtooth", modFreq: 0.15, gain: 0.06, filterFreq: 300 },
-  "pastoral-calm": { baseFreq: 220, type: "sine", modFreq: 0.1, gain: 0.04, filterFreq: 800 },
-  "horror-creation": { baseFreq: 40, type: "square", modFreq: 0.5, gain: 0.1, filterFreq: 200 },
-  "confrontation": { baseFreq: 65, type: "triangle", modFreq: 0.25, gain: 0.08, filterFreq: 350 },
-  "desolation": { baseFreq: 100, type: "sine", modFreq: 0.05, gain: 0.03, filterFreq: 500 },
-};
-
-function getAssets(storyId, chapterIdx) {
-  if (storyId === 1 && FRANK_ASSETS[chapterIdx]) return FRANK_ASSETS[chapterIdx];
-  return null;
-}
+// AUDIO_MOODS and getAssets removed — now handled by AudioEngine + manifests
 
 // ===========================================================================
 // generateStoryAssets() - CONNECT YOUR APIs HERE
@@ -741,8 +732,6 @@ export default function MovianxPlatform(){
   const[showBranchInfo,setShowBranchInfo]=useState(false);
   const[currentWordIdx,setCurrentWordIdx]=useState(-1); // word-by-word highlight
 
-  const oscRef=useRef(null);
-  const audioCtxRef=useRef(null);
   const recognitionRef=useRef(null);
   const navLockRef=useRef(false); // P0: prevents double navigation
   const telemetryRef=useRef([]); // P3: event logging
@@ -760,124 +749,134 @@ export default function MovianxPlatform(){
     return labels[last]||"Your Path";
   };
 
-  // --- Audio Engine (FIXED: proper cleanup) ---
+  // --- Audio Engine (delegates to AudioEngine singleton) ---
   const stopAllAudio=useCallback(()=>{
-    if(typeof window!=="undefined"&&window.speechSynthesis)window.speechSynthesis.cancel();
-    if(oscRef.current){try{if(Array.isArray(oscRef.current))oscRef.current.forEach(n=>n.stop());else{if(oscRef.current.bass)oscRef.current.bass.stop();if(oscRef.current.mid)oscRef.current.mid.stop()}}catch(e){} oscRef.current=null}
+    if(audioEngine)audioEngine.stopAll();
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
     setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
   },[]);
 
-  const startAmbient=(emotion="calm")=>{
-    if(typeof window==="undefined")return;
-    try{
-      const ctx=getAudioCtx();if(!ctx)return;
-      // Stop existing ambient
-      if(oscRef.current){try{oscRef.current.forEach(n=>n.stop())}catch(e){} oscRef.current=null}
+  // Get manifest for current story
+  const getManifest=(storyId)=>{
+    if(storyId===1)return FRANKENSTEIN_AUDIO;
+    if(storyId===3)return TIMED_HORROR_AUDIO;
+    return null;
+  };
 
-      // Check asset manifest for cached audio or mood-specific parameters
-      const assets=sel?getAssets(sel.id,chIdx):null;
+  // Play full chapter audio from manifest
+  const playChapterAudio=(storyId,chapIdx,currentMode)=>{
+    if(!audioEngine||!audioEngine.ctx)return;
+    const manifest=getManifest(storyId);
+    if(!manifest)return;
+    const chManifest=manifest.chapters[chapIdx];
+    if(!chManifest)return;
 
-      // If we have a cached audio URL from the pipeline, play it
-      if(assets&&assets.audioUrl){
-        const audio=new Audio(assets.audioUrl);
-        audio.loop=true;audio.volume=0.3;audio.play().catch(()=>{});
-        oscRef.current=[{stop:()=>audio.pause()}]; // Unified cleanup interface
-        return;
-      }
-
-      // Use manifest mood params if available, otherwise fall back to emotion-based
-      const manifestMood=assets?AUDIO_MOODS[assets.audioMood]:null;
-      const nodes=[];
-
-      if(manifestMood){
-        // Rich mood-specific ambient from pipeline analysis
-        const master=ctx.createGain();master.gain.setValueAtTime(manifestMood.gain,ctx.currentTime);master.connect(ctx.destination);
-        const bass=ctx.createOscillator();const bg2=ctx.createGain();
-        bass.type=manifestMood.type;bass.frequency.setValueAtTime(manifestMood.baseFreq,ctx.currentTime);
-        // Slow organic modulation
-        bass.frequency.linearRampToValueAtTime(manifestMood.baseFreq*0.9,ctx.currentTime+5);
-        bass.frequency.linearRampToValueAtTime(manifestMood.baseFreq*1.05,ctx.currentTime+10);
-        bass.frequency.linearRampToValueAtTime(manifestMood.baseFreq,ctx.currentTime+15);
-        bg2.gain.setValueAtTime(0.5,ctx.currentTime);
-        bass.connect(bg2);bg2.connect(master);bass.start();nodes.push(bass);
-        // Add filtered noise texture via high-freq oscillator with low gain
-        if(manifestMood.modFreq>0.1){
-          const tex=ctx.createOscillator();const tg=ctx.createGain();
-          tex.type="triangle";tex.frequency.setValueAtTime(manifestMood.filterFreq,ctx.currentTime);
-          tex.frequency.linearRampToValueAtTime(manifestMood.filterFreq*0.8,ctx.currentTime+8);
-          tg.gain.setValueAtTime(0.08,ctx.currentTime);
-          tex.connect(tg);tg.connect(master);tex.start();nodes.push(tex);
+    // 1. Start ambient sounds
+    if(chManifest.ambient){
+      chManifest.ambient.forEach(amb=>{
+        if(amb.type==="procedural"){
+          audioEngine.playProcedural(amb.sound,{volume:amb.volume,frequency:amb.frequency,waveform:amb.waveform,label:amb.label,fadeIn:amb.fadeIn||0});
+        }else if(amb.file){
+          audioEngine.playAmbient(assetResolver.resolveFile(amb.file),amb.volume,amb.fadeIn||0,amb.label||null);
         }
-      }else{
-        // Fallback: emotion-based ambient
-        const moods={
-          calm:{bass:40,mid:0,vol:0.06,type:"sine"},
-          tense:{bass:55,mid:185,vol:0.08,type:"triangle"},
-          terrified:{bass:65,mid:220,vol:0.1,type:"sawtooth"},
-          panicked:{bass:70,mid:260,vol:0.12,type:"sawtooth"},
-          nervous:{bass:50,mid:160,vol:0.07,type:"triangle"},
-          anguished:{bass:48,mid:200,vol:0.09,type:"triangle"},
-          reflective:{bass:35,mid:0,vol:0.04,type:"sine"},
+      });
+    }
+
+    // 2. Start spatial sounds with triggers
+    if(chManifest.spatial){
+      chManifest.spatial.forEach(sp=>{
+        const playIt=()=>{
+          if(sp.type==="procedural"){
+            audioEngine.playProcedural(sp.sound,{volume:sp.volume,position:sp.position,label:sp.label});
+            return;
+          }
+          const url=assetResolver.resolveFile(sp.file);
+          if(sp.movement){
+            const mv=sp.movement;
+            const from=mv.from||{x:mv.axis==="x"?mv.from:0,y:0,z:0};
+            const to=mv.to||{x:mv.axis==="x"?mv.to:0,y:0,z:0};
+            if(typeof mv.from==="number"){
+              // sweep format: axis, from number, to number
+              audioEngine.playSpatialMoving(url,sp.volume,{x:mv.from,y:0,z:0},{x:mv.to,y:0,z:0},mv.duration,sp.loop||false,mv.fadeWithDistance||false,sp.label||null);
+            }else{
+              audioEngine.playSpatialMoving(url,sp.volume,from,to,mv.duration,sp.loop||false,mv.fadeWithDistance||false,sp.label||null);
+            }
+          }else{
+            audioEngine.playSpatial(url,sp.volume,sp.position||{x:0,y:0,z:0},sp.loop||false,sp.trigger?.fadeIn||0,sp.label||null);
+          }
         };
-        const m=moods[emotion]||moods.calm;
-        const master=ctx.createGain();master.gain.setValueAtTime(m.vol,ctx.currentTime);master.connect(ctx.destination);
-        const bass=ctx.createOscillator();const bg2=ctx.createGain();
-        bass.type="sine";bass.frequency.setValueAtTime(m.bass,ctx.currentTime);
-        bass.frequency.linearRampToValueAtTime(m.bass*0.9,ctx.currentTime+4);
-        bass.frequency.linearRampToValueAtTime(m.bass,ctx.currentTime+8);
-        bg2.gain.setValueAtTime(0.5,ctx.currentTime);
-        bass.connect(bg2);bg2.connect(master);bass.start();nodes.push(bass);
-        if(m.mid>0){
-          const mid=ctx.createOscillator();const mg2=ctx.createGain();
-          mid.type=m.type;mid.frequency.setValueAtTime(m.mid,ctx.currentTime);
-          mid.frequency.linearRampToValueAtTime(m.mid*1.05,ctx.currentTime+3);
-          mid.frequency.linearRampToValueAtTime(m.mid,ctx.currentTime+6);
-          mg2.gain.setValueAtTime(0.2,ctx.currentTime);
-          mid.connect(mg2);mg2.connect(master);mid.start();nodes.push(mid);
+
+        if(!sp.trigger||sp.trigger.type==="immediate"){
+          playIt();
+        }else if(sp.trigger.type==="timed"){
+          audioEngine.addTimeout(playIt,sp.trigger.delay);
+        }else if(sp.trigger.type==="random"){
+          const scheduleRandom=()=>{
+            const delay=sp.trigger.minDelay+Math.random()*(sp.trigger.maxDelay-sp.trigger.minDelay);
+            audioEngine.addTimeout(()=>{
+              playIt();
+              scheduleRandom();
+            },delay);
+          };
+          scheduleRandom();
         }
-      }
-      oscRef.current=nodes;
-    }catch(e){console.log("Ambient error:",e)}
+      });
+    }
+
+    // 3. Execute timed sequence
+    if(chManifest.timedSequence){
+      chManifest.timedSequence.forEach(cue=>{
+        audioEngine.addTimeout(()=>{
+          if(cue.action==="play"){
+            if(cue.type==="procedural"){
+              audioEngine.playProcedural(cue.sound,{volume:cue.volume,position:cue.position,label:cue.label});
+            }else{
+              const url=assetResolver.resolveFile(cue.file);
+              if(cue.movement){
+                audioEngine.playSpatialMoving(url,cue.volume,cue.movement.from,cue.movement.to,cue.movement.duration,cue.loop||false,false,cue.label||null);
+              }else if(cue.position){
+                audioEngine.playSpatial(url,cue.volume,cue.position,cue.loop||false,0,cue.label||null);
+              }else{
+                audioEngine.playAmbient(url,cue.volume,0,cue.label||null);
+              }
+            }
+          }else if(cue.action==="silence"){
+            audioEngine.silence(cue.duration);
+          }else if(cue.action==="fadeGain"){
+            const targetGain=audioEngine.labeledGains[cue.target];
+            if(targetGain)audioEngine.fadeGain(targetGain,cue.toVolume,cue.duration);
+          }else if(cue.action==="fadeAllAmbient"){
+            audioEngine.fadeAllAmbient(cue.toVolume,cue.duration);
+          }
+        },cue.time);
+      });
+    }
+
+    // 4. Start narration
+    const useCompanion=currentMode==="Immersive"&&storyId===3;
+    const narrationUrl=useCompanion
+      ?assetResolver.getCompanionNarration(storyId,chapIdx)
+      :assetResolver.getNarration(storyId,chapIdx);
+
+    // Try to load audio file; fall back to Web Speech API
+    if(narrationUrl){
+      const testAudio=new Audio(narrationUrl);
+      testAudio.addEventListener("canplaythrough",()=>{
+        testAudio.pause();
+        audioEngine.playNarration(narrationUrl);
+      },{once:true});
+      testAudio.addEventListener("error",()=>{
+        // File doesn't exist or is empty — fall back to Web Speech
+        const chData=chManifest;
+        const textForSpeech=useCompanion&&manifest.companionScript?.[chapIdx]?.text
+          ||chaps[chapIdx]?.text||"";
+        if(textForSpeech)speak(textForSpeech,chData.emotion||"calm");
+      },{once:true});
+      testAudio.load();
+    }
   };
 
-  const stopAmbient=()=>{
-    if(oscRef.current){try{oscRef.current.forEach(n=>n.stop())}catch(e){} oscRef.current=null}
-  };
-
-  const getAudioCtx=()=>{
-    if(!audioCtxRef.current&&typeof window!=="undefined")audioCtxRef.current=new(window.AudioContext||window.webkitAudioContext)();
-    if(audioCtxRef.current&&audioCtxRef.current.state==="suspended")audioCtxRef.current.resume();
-    return audioCtxRef.current;
-  };
-
-  const playSFX=(type)=>{
-    if(!soundEffectsOn||typeof window==="undefined")return;
-    try{
-      const ctx=getAudioCtx();if(!ctx)return;
-      if(type==="heartbeat"){
-        for(let i=0;i<2;i++){const b=ctx.createOscillator(),bg=ctx.createGain();b.type="sine";b.frequency.setValueAtTime(60,ctx.currentTime+i*0.2);bg.gain.setValueAtTime(0.4,ctx.currentTime+i*0.2);bg.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+i*0.2+0.15);b.connect(bg);bg.connect(ctx.destination);b.start(ctx.currentTime+i*0.2);b.stop(ctx.currentTime+i*0.2+0.15)}
-        return;
-      }
-      if(type==="jumpscare"){
-        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="square";osc.frequency.setValueAtTime(440,ctx.currentTime);g.gain.setValueAtTime(0.5,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.3);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.3);
-        return;
-      }
-      if(type==="footsteps"){
-        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="square";osc.frequency.setValueAtTime(80,ctx.currentTime);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.1);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.1);
-        return;
-      }
-      if(type==="ambient"){
-        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="sine";osc.frequency.setValueAtTime(120,ctx.currentTime);osc.frequency.linearRampToValueAtTime(80,ctx.currentTime+2);g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+2);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+2);
-        return;
-      }
-      if(type==="creak"){
-        const osc=ctx.createOscillator(),g=ctx.createGain();osc.type="sawtooth";osc.frequency.setValueAtTime(200,ctx.currentTime);osc.frequency.linearRampToValueAtTime(150,ctx.currentTime+0.8);g.gain.setValueAtTime(0.2,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.8);osc.connect(g);g.connect(ctx.destination);osc.start();osc.stop(ctx.currentTime+0.8);
-        return;
-      }
-    }catch(e){console.log("SFX error:",e)}
-  };
-
+  // Web Speech API fallback for narration
   const speak=(text,emotion="calm")=>{
     if(typeof window==="undefined"||!window.speechSynthesis||!narratorOn)return;
     window.speechSynthesis.cancel();
@@ -897,11 +896,8 @@ export default function MovianxPlatform(){
       const voices=window.speechSynthesis.getVoices();
       const english=voices.filter(v=>v.lang.startsWith("en"));
       if(english.length>0)u.voice=english[0];
-      // Word-by-word highlight tracking
-      const words=text.split(/\s+/);
       u.onboundary=(e)=>{
         if(e.name==="word"){
-          // Estimate word index from char offset
           const spoken=text.substring(0,e.charIndex);
           const idx=spoken.split(/\s+/).length-1;
           setCurrentWordIdx(Math.max(0,idx));
@@ -1014,20 +1010,22 @@ export default function MovianxPlatform(){
   };
 
   // --- Effects ---
-  // Chapter load: narration + choice timing + telemetry
+  // Chapter load: full manifest-driven audio + narration + choice timing
   useEffect(()=>{
     if(pg!=="reading"||!ch.text)return;
     setTxt(ch.text);
     logEvent("scene_playback_started",{chapter:chIdx,title:ch.title,mode});
-    // Reader mode: text only, no audio at all
-    if(mode!=="Reader"&&ch.sound&&soundEffectsOn)setTimeout(()=>playSFX(ch.sound),500);
-    if(mode!=="Reader"&&ch.jumpScare&&soundEffectsOn)setTimeout(()=>playSFX("jumpscare"),3000);
-    // Mood-based ambient + narration in Cinematic + Immersive
-    if(mode==="Cinematic"||mode==="Immersive"){
-      startAmbient(ch.emotion||"calm");
+
+    // Cinematic + Immersive: play full manifest audio
+    if((mode==="Cinematic"||mode==="Immersive")&&audioEngine&&audioEngine.ctx&&sel){
+      playChapterAudio(sel.id,chIdx,mode);
+    }
+    // Cinematic without manifest match: Web Speech fallback
+    if(mode==="Cinematic"&&(!sel||!getManifest(sel.id))){
       speak(ch.text,ch.emotion||"calm");
     }
-    // Show choice after short read delay (fast for demo)
+
+    // Show choice after read delay
     const readDelay=ch.text?Math.min(ch.text.split(" ").length*200,8000):3000;
     const timer=setTimeout(()=>{
       if(ch.choice){
@@ -1038,8 +1036,15 @@ export default function MovianxPlatform(){
             speak(ch.choice.prompt,ch.choice.emotion||"calm");
           }
           if(ch.choice.prompt&&mode==="Immersive"){
-            speakImmersiveOptions(ch.choice);
-            setTimeout(()=>{setVoiceMode(true);startVoiceRec()},6000);
+            // For timed story: companion whispers the choice
+            const manifest=sel?getManifest(sel.id):null;
+            if(manifest?.companionScript?.[chIdx]?.choicePrompt){
+              speak(manifest.companionScript[chIdx].choicePrompt,"whispering");
+              setTimeout(()=>{setVoiceMode(true);startVoiceRec()},8000);
+            }else{
+              speakImmersiveOptions(ch.choice);
+              setTimeout(()=>{setVoiceMode(true);startVoiceRec()},6000);
+            }
           }
         },3000);
       }
@@ -1047,14 +1052,37 @@ export default function MovianxPlatform(){
     return()=>{clearTimeout(timer);stopAllAudio()};
   },[pg,chIdx,mode,narratorOn,soundEffectsOn]);
 
-  // Countdown timer
+  // Countdown timer with manifest-driven heartbeat intensity
   useEffect(()=>{
     if(!timerActive||timeRemaining===null)return;
     if(timeRemaining<=0){
-      if(ch.choice?.opts[0]){speak("Time's up.","panicked");setTimeout(()=>makeChoice(ch.choice.opts[0]),500)}
+      if(mode==="Immersive"&&sel?.id===3&&ch.choice?.opts[0]){
+        // Companion makes the choice desperately
+        speak("Okay, we're doing this!","panicked");
+        setTimeout(()=>makeChoice(ch.choice.opts[0]),1200);
+      }else if(ch.choice?.opts[0]){
+        speak("Time's up.","panicked");
+        setTimeout(()=>makeChoice(ch.choice.opts[0]),500);
+      }
       setTimerActive(false);return;
     }
-    if(timeRemaining<=3&&soundEffectsOn)playSFX("heartbeat");
+    // Manifest-driven heartbeat intensity
+    if(audioEngine&&audioEngine.ctx&&sel&&mode!=="Reader"){
+      const manifest=getManifest(sel.id);
+      const chManifest=manifest?.chapters?.[chIdx];
+      if(chManifest?.timerAudio?.heartbeatIntensity){
+        const intensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining];
+        if(intensity!==undefined){
+          // Find heartbeat gain node and adjust
+          const hbGain=audioEngine.labeledGains["your heartbeat"]||audioEngine.labeledGains["heartbeat"];
+          if(hbGain)audioEngine.fadeGain(hbGain,intensity,0.5);
+        }
+        // Blood rush at rushAt threshold
+        if(chManifest.timerAudio.rushAt&&timeRemaining===chManifest.timerAudio.rushAt){
+          audioEngine.playProcedural("rush",{volume:chManifest.timerAudio.rushVolume||0.2,label:"blood_rush"});
+        }
+      }
+    }
     const cd=setTimeout(()=>setTimeRemaining(timeRemaining-1),1000);
     return()=>clearTimeout(cd);
   },[timerActive,timeRemaining]);
@@ -1198,7 +1226,7 @@ export default function MovianxPlatform(){
             </div>
           </div>
           {/* Start Button */}
-          <button onClick={()=>{setChIdx(0);setChoices([]);setShowChoice(false);navigateTo("reading")}} style={{width:"100%",maxWidth:400,padding:"18px",borderRadius:14,border:"none",background:C.accent,color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",transition:"all 0.2s",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>
+          <button onClick={()=>{if(audioEngine&&mode!=="Reader")audioEngine.init();setChIdx(0);setChoices([]);setShowChoice(false);navigateTo("reading")}} style={{width:"100%",maxWidth:400,padding:"18px",borderRadius:14,border:"none",background:C.accent,color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",transition:"all 0.2s",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>
             Begin Reading →
           </button>
         </div>
