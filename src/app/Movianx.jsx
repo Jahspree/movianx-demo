@@ -546,10 +546,10 @@ const SAMPLE=[
 ];
 
 const TIMED=[
-  {title:"3:47 AM",text:"You wake up to glass breaking downstairs.\n\nYour wife Sarah is asleep beside you. Your two kids are down the hall. You reach for your phone: 3:47 AM.\n\nAnother crash. This time louder. Closer.\n\nFootsteps. More than one person.\n\nYou have a baseball bat in the closet. Your phone is at 4% battery. The home alarm panel is downstairs by the front door - where the sounds are coming from.\n\nSarah stirs. \"What was that?\"\n\nYou have 10 seconds to decide.",choice:{prompt:"Intruders are in your house. Your family is asleep. What do you do?",emotion:"terrified",timeLimit:10,opts:[{txt:"Grab the bat and go downstairs",next:1,consequence:"confront"},{txt:"Lock the bedroom door and call 911",next:1,consequence:"hide"},{txt:"Wake the kids and escape through the window",next:1,consequence:"escape"},{txt:"Grab Sarah and barricade in the bathroom",next:1,consequence:"barricade"}]},narrator:"You wake to the sound of intruders in your home.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
-  {title:"The Hallway",text:"[Based on your previous choice]\n\nYou can hear them ransacking the living room. Drawers being pulled out. Furniture overturned.\n\nThen a voice: \"Check upstairs.\"\n\nFootsteps on the stairs. Heavy. Deliberate.\n\nSarah grabs your arm. \"They're coming.\"\n\nYour daughter's room is three doors down. Your son's is across the hall. The stairs are between you and them.\n\nThe footsteps stop. They're on the landing now.\n\n\"I know someone's up here. Come out, and nobody gets hurt. We just want valuables.\"\n\nYou have 10 seconds.",choice:{prompt:"They're on the stairs. Your kids are down the hall. What now?",emotion:"panicked",timeLimit:10,opts:[{txt:"Rush them on the stairs - use surprise",next:2,consequence:"rush"},{txt:"Yell that police are on the way",next:2,consequence:"bluff"},{txt:"Stay silent and let them take what they want",next:2,consequence:"silent"},{txt:"Send Sarah to the kids while you distract them",next:2,consequence:"split"}]},narrator:"The intruders are coming upstairs.",emotion:"terrified",sound:"heartbeat"},
-  {title:"The Choice",text:"[Every previous decision has led to this moment]\n\nOne of them has a gun. You can see it in the dim light from the street.\n\nYour daughter is crying. She can hear everything.\n\n\"Last chance. Come out now.\"\n\nSarah whispers: \"Whatever you do, protect the kids.\"\n\nThe door handle turns.\n\nYou have 10 seconds. This is the choice that determines everything.",choice:{prompt:"The door is opening. Armed intruder. Your family behind you. Choose NOW.",emotion:"terrified",timeLimit:10,opts:[{txt:"Swing the bat as the door opens",next:3,consequence:"fight"},{txt:"Surrender - \"Take everything, just don't hurt my family\"",next:3,consequence:"surrender"},{txt:"Push your family into the bathroom, lock it, face them alone",next:3,consequence:"sacrifice"}]},narrator:"This is the moment that changes everything.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
-  {title:"Consequences",text:"[Your choices determined everything]\n\nThere was no good choice. Just the one you made in 10 seconds. And the one you'll live with forever.\n\nEvery path had a cost. Every decision left a scar.\n\nThis is what pressure feels like. This is what stakes mean.\n\nEvery choice in 10 seconds. Every consequence permanent.\n\nWelcome to Movianx.\n\n[END]"},
+  {title:"3:47 AM",text:"The clock on the nightstand reads 3:47 AM. Green numbers in the dark. The house is quiet the way houses are at night \u2014 not silent, but breathing. The refrigerator hums downstairs. A branch taps the window. Normal sounds. Safe sounds.\n\nYou were dreaming about something ordinary. A grocery store. A parking lot. Already fading.\n\nSarah shifts beside you, pulling the blanket. Her breathing is slow and steady. Down the hall, the kids are asleep. You checked on them before bed, the way you always do. Lily had kicked off her covers again. James had his arm around that stuffed dinosaur he says he\u2019s too old for.\n\nThe house settles. A creak from somewhere below. The sound old houses make when the temperature drops. You\u2019ve heard it a thousand times.\n\nYou close your eyes.\n\nThen you hear it.\n\nGlass. Breaking. Downstairs.\n\nNot a branch against a window. Not a glass knocked off a counter. This is a window \u2014 pushed in, shattered, pieces hitting the hardwood floor.\n\nYour eyes are open. Wide. Staring at the ceiling.\n\nSilence.\n\nYou don\u2019t breathe. You count the seconds. One. Two. Three. Four.\n\nMaybe it was nothing. Maybe a bird hit the window. Maybe\u2014\n\nA second sound. The crunch of glass under a shoe.\n\nSomeone is in your house.\n\nYou hear a drawer open. Then another. Hands moving through your things. Not careful. Not quiet. They don\u2019t know you\u2019re awake. Or they don\u2019t care.\n\nA voice. Low. Male. Words you can\u2019t make out. Then another voice responds. At least two of them.\n\nSarah\u2019s hand finds your arm in the dark. She\u2019s awake. She heard it too. Her fingernails dig into your skin. She doesn\u2019t say anything. She doesn\u2019t have to.\n\nThe baseball bat is in the closet. Three steps away. Your phone is on the nightstand \u2014 you grab it. 4% battery. The home alarm panel is downstairs, by the front door, right where the sounds are coming from.\n\nLily\u2019s room is three doors down on the left. James is across the hall from her. To get to them, you\u2019d have to pass the top of the stairs.\n\nA chair scrapes across the kitchen floor below you.\n\nSarah whispers, barely a breath: \u201CWhat do we do?\u201D\n\nYou have 10 seconds to decide.",choice:{prompt:"Intruders are in your house. Your family is asleep. What do you do?",emotion:"terrified",timeLimit:10,opts:[{txt:"Grab the bat and go downstairs",next:1,consequence:"confront"},{txt:"Lock the bedroom door and call 911",next:1,consequence:"hide"},{txt:"Wake the kids and escape through the window",next:1,consequence:"escape"},{txt:"Grab Sarah and barricade in the bathroom",next:1,consequence:"barricade"}]},narrator:"You wake to the sound of intruders in your home.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
+  {title:"The Hallway",text:"[Based on your previous choice]\n\nYou can hear them below you. Everything you own being touched by hands that don\u2019t belong here. A drawer pulled out so far it crashes to the floor. The sound of something glass \u2014 a vase, a picture frame \u2014 hitting the ground and shattering.\n\nThey\u2019re not being careful anymore.\n\nYou press your ear against the bedroom door. The wood is cold. Through it, the sounds are clearer. Cabinets opening. Something heavy being dragged. A laugh. Someone laughed. In your home, at nearly four in the morning, someone is laughing.\n\nYou open the door. One inch. The hallway is dark \u2014 the kind of dark where you know every shape but can\u2019t be sure of any of them. The nightlight in the bathroom casts a thin glow at the far end.\n\nLily\u2019s door has the butterfly sticker on it. You can just make it out. James\u2019s door is closed. They\u2019re quiet. Still sleeping. They don\u2019t know.\n\nThe stairs are fifteen feet ahead of you. The railing. The landing. Then down into whatever is happening below.\n\nYou take a step. The floor protests under your weight. You freeze.\n\nBelow, the sounds continue. They didn\u2019t hear. Or they\u2019re ignoring it.\n\nAnother step. You\u2019re passing the bathroom now. The mirror catches something \u2014 your own face, white and unfamiliar.\n\nThen a voice from downstairs. Clear this time. Loud enough to understand every word.\n\n\u201CCheck upstairs.\u201D\n\nEverything stops. Your heart. Your breathing. The world.\n\nFootsteps. On the first stair. A creak.\n\nSecond stair. Third. They\u2019re not rushing. They know they have time.\n\nSarah is behind you. She followed you out. She\u2019s shaking so badly you can feel it without touching her. She mouths something. \u201CThe kids.\u201D\n\nFifth stair. Sixth. Slow. Heavy.\n\nThen they stop.\n\nSilence. Nothing. Not a sound in the entire house.\n\nFive seconds pass. Ten.\n\nA voice from the stairs, conversational, almost friendly: \u201CI know someone\u2019s up here. I can smell the shampoo. Come on out. We just want your stuff. Nobody needs to get hurt.\u201D\n\nThe footsteps resume. They\u2019re on the landing now. Same level as you. Same air.\n\nYou have 10 seconds.",choice:{prompt:"They're on the stairs. Your kids are down the hall. What now?",emotion:"panicked",timeLimit:10,opts:[{txt:"Rush them on the stairs - use surprise",next:2,consequence:"rush"},{txt:"Yell that police are on the way",next:2,consequence:"bluff"},{txt:"Stay silent and let them take what they want",next:2,consequence:"silent"},{txt:"Send Sarah to the kids while you distract them",next:2,consequence:"split"}]},narrator:"The intruders are coming upstairs.",emotion:"terrified",sound:"heartbeat"},
+  {title:"The Choice",text:"[Every previous decision has led to this moment]\n\nThe hallway has never been this long. Every door is a choice. Every shadow could be hiding something. The only light comes from under Lily\u2019s door \u2014 she sleeps with the dinosaur nightlight, the one with the green glow.\n\nYou can see the bedroom door at the end of the hall. Your bedroom. Where this started. Where safety was, before the glass broke.\n\nThen you see it.\n\nA shadow. Under the door to the guest room. Two feet. Standing perfectly still. Waiting.\n\nHow long have they been there? Were they there when you walked past? A second intruder. Upstairs already. Patient.\n\nFrom behind Lily\u2019s door, a whimper. Small. Half-asleep. She\u2019s having a bad dream, or she\u2019s starting to wake up and sense that something is wrong. Children know. They always know.\n\nThe shadow under the guest room door shifts. They heard her too.\n\nYour hands are shaking. Not a tremor \u2014 a full, visible shake. You grip the bat tighter, or the phone tighter, or whatever you chose to carry with you into this hallway. It doesn\u2019t feel like enough.\n\nSarah presses against your back. Her breath is hot on your neck, coming in short, shallow gasps. She grabs a fistful of your shirt. \u201CHe has something,\u201D she breathes. \u201CI saw it. When the streetlight caught it.\u201D\n\nA gun. He has a gun.\n\nThe guest room door handle starts to turn. Not fast. Slow. Testing. Seeing if it\u2019s locked. It isn\u2019t. You never lock interior doors. Why would you? This is your home.\n\nFrom downstairs, the other voice: \u201CLast chance, friends. Come out now. I\u2019m getting bored and that makes me do stupid things.\u201D\n\nLily cries out. Not a whimper this time. A real cry. \u201CDaddy?\u201D\n\nThe handle stops turning. Everything is perfectly, horribly still.\n\nSarah whispers directly into your ear. Her voice breaks on every word. \u201CWhatever you do. Whatever happens. Protect the kids. Promise me. Promise me right now.\u201D\n\nThe handle turns all the way. The door begins to open.\n\nYou have 10 seconds. This is the choice that determines everything.",choice:{prompt:"The door is opening. Armed intruder. Your family behind you. Choose NOW.",emotion:"terrified",timeLimit:10,opts:[{txt:"Swing the bat as the door opens",next:3,consequence:"fight"},{txt:"Surrender - \"Take everything, just don't hurt my family\"",next:3,consequence:"surrender"},{txt:"Push your family into the bathroom, lock it, face them alone",next:3,consequence:"sacrifice"}]},narrator:"This is the moment that changes everything.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
+  {title:"Consequences",text:"[Your choices determined everything]\n\nThe sound hits you first. Not the sirens \u2014 those come later. First it\u2019s the quiet after everything stops. A ringing in your ears that isn\u2019t really there. Your own breathing, ragged, too fast, too loud.\n\nThen the sirens. Far away, then closer, then everywhere. Red and blue light pushes through the blinds and crawls across the ceiling in slow, repeating waves. The colors paint everything \u2014 the walls, the bed, Sarah\u2019s face, your hands.\n\nYour hands.\n\nSomeone is talking to you. A police officer. Young. Maybe twenty-five. He\u2019s saying words but they don\u2019t connect into sentences. \u201CSir... need you to... can you tell me...\u201D\n\nLily is in Sarah\u2019s arms. She hasn\u2019t stopped crying, but it\u2019s quieter now \u2014 a sound like she\u2019s run out of everything and is just going through the motions. James stands next to them in his dinosaur pajamas. He isn\u2019t crying. He\u2019s staring at a point on the wall and his face is perfectly blank. That\u2019s worse.\n\nA paramedic puts a blanket around your shoulders. It\u2019s rough and gray and smells like an ambulance. She asks you something about pain, about injuries. You say you\u2019re fine. You don\u2019t know if that\u2019s true.\n\nMore police arrive. Then more. The house fills with people who aren\u2019t your family. They put tape across the downstairs. They take photographs. They measure things and write in small notebooks and talk to each other in voices that are careful and practiced.\n\nSomeone brings coffee. You hold it but don\u2019t drink it.\n\nSarah won\u2019t look at you. Or she can\u2019t. She holds Lily and rocks back and forth in the kitchen chair and stares at a fixed point on the refrigerator. You put your hand on her shoulder and she flinches. Not away from you. Just flinches. At everything. At the world being a place where this can happen at 3:47 in the morning in a house with butterfly stickers on the doors.\n\nAn officer asks you to walk through what happened. You tell the story. Your voice sounds like someone else\u2019s. You get to the part where you made the choice \u2014 the choice \u2014 and you stop. You can\u2019t explain why you did what you did. You can\u2019t explain the ten seconds where everything collapsed into a single moment and you just acted.\n\n\u201CYou did the right thing,\u201D the officer says. But you can see in his eyes that he doesn\u2019t know if that\u2019s true. Nobody will ever know. There is no right thing at 3:47 AM with glass on your floor and strangers in your house and your children\u2019s names on your lips.\n\nDawn comes. Gray light through the windows they haven\u2019t taped over. The blue and red lights fade against the morning. The last police car pulls away. A detective hands you a card and says she\u2019ll be in touch.\n\nThe house is yours again. But it doesn\u2019t feel like yours. Every room is a crime scene. Every shadow is a memory. The broken window has plywood over it now but you can still feel the cold air.\n\nJames finally speaks. Just one sentence. Standing in the hallway, in his dinosaur pajamas, looking at the stairs.\n\n\u201CAre they going to come back?\u201D\n\nYou don\u2019t answer. Because you don\u2019t know. Because no answer will make this okay. Because some questions don\u2019t have good answers \u2014 just honest ones and dishonest ones, and you\u2019re too tired for either.\n\nThere was no good choice. Just the one you made in ten seconds. And the one you\u2019ll live with forever.\n\nEvery path had a cost. Every decision left a scar.\n\nYou\u2019ll fix the window. You\u2019ll change the locks. You\u2019ll install cameras and sensors and alarms that connect to your phone. You\u2019ll check the doors twice before bed, then three times, then four. Sarah will sleep with the light on for a while. Then longer than a while.\n\nLily will crawl into your bed at night for months. James won\u2019t talk about it at all, which worries you more than anything.\n\nAnd at 3:47 AM, for a long time, you\u2019ll be awake. Listening. Waiting for the sound that started everything.\n\nSilence.\n\nReal silence.\n\nThis is what ten seconds can do.\n\nWelcome to Movianx.\n\n[END]"},
 ];
 
 function getChapters(storyId){
@@ -731,6 +731,7 @@ export default function MovianxPlatform(){
   const[showMonetize,setShowMonetize]=useState(false);
   const[showBranchInfo,setShowBranchInfo]=useState(false);
   const[currentWordIdx,setCurrentWordIdx]=useState(-1); // word-by-word highlight
+  const[revealedWordCount,setRevealedWordCount]=useState(-1); // word-by-word reveal for Immersive timed
 
   const recognitionRef=useRef(null);
   const navLockRef=useRef(false); // P0: prevents double navigation
@@ -1014,6 +1015,7 @@ export default function MovianxPlatform(){
   useEffect(()=>{
     if(pg!=="reading"||!ch.text)return;
     setTxt(ch.text);
+    setRevealedWordCount(-1);
     logEvent("scene_playback_started",{chapter:chIdx,title:ch.title,mode});
 
     // Cinematic + Immersive: play full manifest audio
@@ -1025,31 +1027,90 @@ export default function MovianxPlatform(){
       speak(ch.text,ch.emotion||"calm");
     }
 
-    // Show choice after read delay
-    const readDelay=ch.text?Math.min(ch.text.split(" ").length*200,8000):3000;
-    const timer=setTimeout(()=>{
-      if(ch.choice){
+    const wordCount=ch.text?ch.text.split(/\s+/).length:0;
+    const isTimedStory=sel?.id===3;
+    const isImmersiveTimed=isTimedStory&&mode==="Immersive";
+
+    // Word-by-word reveal for Immersive timed stories
+    let revealInterval=null;
+    if(isImmersiveTimed){
+      setRevealedWordCount(0);
+      const msPerWord=400; // ~150 words/minute whispered narration
+      let wordIdx=0;
+      revealInterval=setInterval(()=>{
+        wordIdx++;
+        if(wordIdx>=wordCount){
+          setRevealedWordCount(wordCount);
+          clearInterval(revealInterval);
+          revealInterval=null;
+        }else{
+          setRevealedWordCount(wordIdx);
+        }
+      },msPerWord);
+    }
+
+    // Show choice after appropriate delay
+    // For Immersive timed: wait for narration to finish, then choice prompt, then timer
+    // For other modes: use readDelay based on text length
+    let timer;
+    if(isImmersiveTimed&&ch.choice){
+      const narrationDuration=wordCount*400; // ms for scene narration
+      const choiceBuffer=3000; // pause before choice prompt
+      // After narration finishes, show choice and speak prompt
+      timer=setTimeout(()=>{
         setShowChoice(true);
-        if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
-        setTimeout(()=>{
-          if(ch.choice.prompt&&mode==="Cinematic"){
-            speak(ch.choice.prompt,ch.choice.emotion||"calm");
+        const manifest=sel?getManifest(sel.id):null;
+        if(manifest?.companionScript?.[chIdx]?.choicePrompt){
+          speak(manifest.companionScript[chIdx].choicePrompt,"whispering");
+          // Timer starts after choice prompt is spoken (~8s for companion whisper)
+          setTimeout(()=>{
+            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+            setVoiceMode(true);startVoiceRec();
+          },8000);
+        }else{
+          speakImmersiveOptions(ch.choice);
+          setTimeout(()=>{
+            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+            setVoiceMode(true);startVoiceRec();
+          },6000);
+        }
+      },narrationDuration+choiceBuffer);
+    }else{
+      // Non-immersive or non-timed: original logic with longer readDelay for expanded text
+      const readDelay=ch.text?Math.min(wordCount*200,isTimedStory?wordCount*180:8000):3000;
+      timer=setTimeout(()=>{
+        if(ch.choice){
+          setShowChoice(true);
+          if(isTimedStory){
+            // For timed stories in Reader/Cinematic: show choices first, then start timer after brief pause
+            setTimeout(()=>{
+              if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+              if(ch.choice.prompt&&mode==="Cinematic"){
+                speak(ch.choice.prompt,ch.choice.emotion||"calm");
+              }
+            },2000);
+          }else{
+            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+            setTimeout(()=>{
+              if(ch.choice.prompt&&mode==="Cinematic"){
+                speak(ch.choice.prompt,ch.choice.emotion||"calm");
+              }
+              if(ch.choice.prompt&&mode==="Immersive"){
+                const manifest=sel?getManifest(sel.id):null;
+                if(manifest?.companionScript?.[chIdx]?.choicePrompt){
+                  speak(manifest.companionScript[chIdx].choicePrompt,"whispering");
+                  setTimeout(()=>{setVoiceMode(true);startVoiceRec()},8000);
+                }else{
+                  speakImmersiveOptions(ch.choice);
+                  setTimeout(()=>{setVoiceMode(true);startVoiceRec()},6000);
+                }
+              }
+            },3000);
           }
-          if(ch.choice.prompt&&mode==="Immersive"){
-            // For timed story: companion whispers the choice
-            const manifest=sel?getManifest(sel.id):null;
-            if(manifest?.companionScript?.[chIdx]?.choicePrompt){
-              speak(manifest.companionScript[chIdx].choicePrompt,"whispering");
-              setTimeout(()=>{setVoiceMode(true);startVoiceRec()},8000);
-            }else{
-              speakImmersiveOptions(ch.choice);
-              setTimeout(()=>{setVoiceMode(true);startVoiceRec()},6000);
-            }
-          }
-        },3000);
-      }
-    },readDelay);
-    return()=>{clearTimeout(timer);stopAllAudio()};
+        }
+      },readDelay);
+    }
+    return()=>{clearTimeout(timer);if(revealInterval)clearInterval(revealInterval);stopAllAudio()};
   },[pg,chIdx,mode,narratorOn,soundEffectsOn]);
 
   // Countdown timer with manifest-driven heartbeat intensity
@@ -1071,15 +1132,17 @@ export default function MovianxPlatform(){
       const manifest=getManifest(sel.id);
       const chManifest=manifest?.chapters?.[chIdx];
       if(chManifest?.timerAudio?.heartbeatIntensity){
+        // Start heartbeat when timer first begins (heartbeatStartAt: "timerStart")
+        if(chManifest.timerAudio.heartbeatStartAt==="timerStart"&&timeRemaining===(ch.choice?.timeLimit||10)){
+          const url="/audio/sfx/heartbeat.mp3";
+          const startIntensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining]||0.1;
+          audioEngine.playSpatial(url,startIntensity,{x:0,y:0,z:0},true,0,"your heartbeat");
+        }
         const intensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining];
         if(intensity!==undefined){
           // Find heartbeat gain node and adjust
           const hbGain=audioEngine.labeledGains["your heartbeat"]||audioEngine.labeledGains["heartbeat"];
           if(hbGain)audioEngine.fadeGain(hbGain,intensity,0.5);
-        }
-        // Blood rush at rushAt threshold
-        if(chManifest.timerAudio.rushAt&&timeRemaining===chManifest.timerAudio.rushAt){
-          audioEngine.playProcedural("rush",{volume:chManifest.timerAudio.rushVolume||0.2,label:"blood_rush"});
         }
       }
     }
@@ -1319,7 +1382,22 @@ export default function MovianxPlatform(){
               {/* Scene Illustration */}
               {sel&&<div style={{marginBottom:32,borderRadius:16,overflow:"hidden",border:`1px solid ${currentTheme.text}10`}}><SceneIllustration chapterIdx={chIdx} storyId={sel.id} theme={colorTheme}/></div>}
               <div style={{fontSize:fontSize,color:currentTheme.text,lineHeight:1.9,marginBottom:40,fontFamily:fontFamily}}>
-                {currentWordIdx>=0?
+                {revealedWordCount>=0?
+                  // Word-by-word reveal for Immersive timed stories
+                  txt.split(/(\s+)/).map((segment,i)=>{
+                    if(/^\s+$/.test(segment))return <span key={i}>{segment}</span>;
+                    const wordsBefore=txt.split(/(\s+)/).slice(0,i).filter(s=>!/^\s+$/.test(s)).length;
+                    const isRevealed=wordsBefore<revealedWordCount;
+                    const isActive=wordsBefore===revealedWordCount-1;
+                    return <span key={i} style={{
+                      opacity:isRevealed?1:0,
+                      background:isActive?`${C.red}15`:"transparent",
+                      borderRadius:isActive?3:0,
+                      padding:isActive?"1px 2px":0,
+                      transition:"opacity 0.3s ease, background 0.2s ease"
+                    }}>{segment}</span>;
+                  })
+                :currentWordIdx>=0?
                   txt.split(/(\s+)/).map((segment,i)=>{
                     // Split preserves whitespace as separate entries
                     if(/^\s+$/.test(segment))return <span key={i}>{segment}</span>;
