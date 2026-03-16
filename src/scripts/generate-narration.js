@@ -37,12 +37,33 @@ const TIMED_CHAPTERS = [
   "There was no good choice. Just the one you made in 10 seconds. And the one you'll live with forever. Every path had a cost. Every decision left a scar. This is what pressure feels like. This is what stakes mean. Every choice in 10 seconds. Every consequence permanent.",
 ];
 
-// --- 10 Seconds companion narration (whispered, intimate) ---
+// --- 10 Seconds: Per-chapter voice settings for emotional progression ---
+// Each chapter escalates emotionally, then drops to hollow emptiness
+const TIMED_STANDARD_SETTINGS = [
+  { stability: 0.25, similarity_boost: 0.9, style: 0.7 },   // Ch0: groggy → scared
+  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: full fear
+  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: absolute panic
+  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
+];
+
+// --- 10 Seconds companion narration with emotional stage directions ---
+// ElevenLabs interprets bracketed cues as emotional delivery guidance
 const TIMED_COMPANION = [
-  "Hey... hey, wake up. Did you hear that? Something just broke downstairs. Glass. That was definitely glass. There's someone in the house. Oh god, I think there's more than one. I can hear footsteps. What do we do? The bat's in the closet. My phone's almost dead. The alarm panel is downstairs where they are. We have ten seconds. Tell me what to do.",
-  "I can hear them. They're tearing the living room apart. Drawers, furniture, everything. Oh no. One of them just said 'check upstairs.' They're coming up the stairs. I can hear them. Heavy. Slow. They know we're here. The kids are three doors down. He's on the landing now. He just said 'I know someone's up here.' What do we do? Ten seconds.",
-  "He has a gun. I can see it. Our daughter is crying. She can hear everything. He said 'last chance, come out now.' Whatever you decide... protect the kids. That's all that matters. The door handle is turning. Right now. This is it. Tell me.",
-  "It's over. There was no good choice. Just the one we made in ten seconds. And the one we live with forever.",
+  // Ch0: Groggy → alert → scared → panicked
+  "Hmm? What... Wait. Wait, did you hear that? Oh god. Oh god that was glass. That was the window downstairs. Someone's in the house. There's more than one. I can hear them moving around down there. Footsteps. The bat's in the closet. My phone... my phone's almost dead. The alarm is downstairs. Right where they are. What do we do? The kids are asleep down the hall. Please. Tell me what to do.",
+  // Ch1: Terrified, voice shaking, breaths between words
+  "They're coming up. I can hear them on the stairs. One step... two... three... They stopped. No wait, they're moving again. The kids... the kids are right there. Three doors down. He just said... he said he knows someone's up here. He's on the landing. Same floor as us. Same air. I can't... I can't think. What do we do? Please.",
+  // Ch2: Hyperventilating, crying silently, absolute panic
+  "He has a gun. I can see it. Our baby is crying. She can hear everything. She's calling for us. He said last chance. Come out now. Whatever happens... whatever you decide... protect the kids. Promise me. Promise me right now. The handle. It's turning. Right now. Tell me what to do. Right now. Please. I can't... I can't decide this alone.",
+  // Ch3: Hollow, distant, numb
+  "It's done. There was no right answer. There never was. I keep hearing it. Over and over. The sound. The choices. The ten seconds. What did we become? What did we become in ten seconds?",
+];
+
+const TIMED_COMPANION_SETTINGS = [
+  { stability: 0.25, similarity_boost: 0.9, style: 0.7 },   // Ch0: confused → scared
+  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: shaking fear
+  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: panic, crying
+  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, empty
 ];
 
 // --- API helpers ---
@@ -102,8 +123,9 @@ async function addSharedVoice(voiceId) {
 }
 
 async function generateTTS(voiceId, text, settings, outPath) {
-  if (fs.existsSync(outPath)) {
-    console.log(`  SKIP ${path.basename(outPath)} (already exists)`);
+  const forceRegen = process.env.FORCE_REGEN === "1";
+  if (!forceRegen && fs.existsSync(outPath)) {
+    console.log(`  SKIP ${path.basename(outPath)} (already exists, set FORCE_REGEN=1 to overwrite)`);
     return true;
   }
 
@@ -149,7 +171,7 @@ async function main() {
     await new Promise((r) => setTimeout(r, 1000)); // Rate limit
   }
 
-  // --- 10 SECONDS: Standard ---
+  // --- 10 SECONDS: Standard (per-chapter emotional settings) ---
   console.log("\n3. Searching for 10 Seconds narrator voice...");
   let timedVoiceId = await searchVoice("male whisper urgent scared American");
   if (timedVoiceId) {
@@ -162,18 +184,20 @@ async function main() {
     console.log(`   Using fallback voice: Antoni (${timedVoiceId})`);
   }
 
-  const timedSettings = { stability: 0.35, similarity_boost: 0.85, style: 0.5 };
-  console.log(`\n4. Generating ${TIMED_CHAPTERS.length} standard 10 Seconds chapters...\n`);
+  console.log(`\n4. Generating ${TIMED_CHAPTERS.length} standard 10 Seconds chapters (per-chapter emotion)...\n`);
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {
-    await generateTTS(timedVoiceId, TIMED_CHAPTERS[i], timedSettings, path.join(TIMED_DIR, `ch${i}.mp3`));
+    const settings = TIMED_STANDARD_SETTINGS[i];
+    console.log(`   Ch${i} settings: stability=${settings.stability} style=${settings.style}`);
+    await generateTTS(timedVoiceId, TIMED_CHAPTERS[i], settings, path.join(TIMED_DIR, `ch${i}.mp3`));
     await new Promise((r) => setTimeout(r, 1000));
   }
 
-  // --- 10 SECONDS: Companion (whispered) ---
-  const companionSettings = { stability: 0.3, similarity_boost: 0.9, style: 0.6 };
-  console.log(`\n5. Generating ${TIMED_COMPANION.length} companion whisper chapters...\n`);
+  // --- 10 SECONDS: Companion (per-chapter emotional whisper) ---
+  console.log(`\n5. Generating ${TIMED_COMPANION.length} companion chapters (emotional progression)...\n`);
   for (let i = 0; i < TIMED_COMPANION.length; i++) {
-    await generateTTS(timedVoiceId, TIMED_COMPANION[i], companionSettings, path.join(TIMED_DIR, `ch${i}_companion.mp3`));
+    const settings = TIMED_COMPANION_SETTINGS[i];
+    console.log(`   Ch${i} companion: stability=${settings.stability} style=${settings.style}`);
+    await generateTTS(timedVoiceId, TIMED_COMPANION[i], settings, path.join(TIMED_DIR, `ch${i}_companion.mp3`));
     await new Promise((r) => setTimeout(r, 1000));
   }
 

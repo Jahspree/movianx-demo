@@ -17,24 +17,41 @@ const TIMED_HORROR_AUDIO = {
     // hiding next to you in the dark, mouth close to your ear
     voiceQuery: "male whisper urgent scared intimate American",
     model: "eleven_multilingual_v2",
+    // Default settings - overridden per chapter for emotional progression
     settings: { stability: 0.3, similarity_boost: 0.9, style: 0.6 },
   },
 
+  // Per-chapter voice settings for emotional progression
+  chapterVoiceSettings: {
+    // Ch0: Starts groggy/confused, ends scared. More unpredictable emotion.
+    0: { stability: 0.25, similarity_boost: 0.9, style: 0.7 },
+    // Ch1: Full fear, trying to stay quiet. Voice shakes.
+    1: { stability: 0.2, similarity_boost: 0.9, style: 0.8 },
+    // Ch2: Absolute panic barely contained. Maximum emotional variation.
+    2: { stability: 0.15, similarity_boost: 0.9, style: 0.9 },
+    // Ch3: Hollow, broken, empty. Numb, flat delivery.
+    3: { stability: 0.6, similarity_boost: 0.9, style: 0.3 },
+  },
+
   companionScript: {
+    // Ch0: Groggy → alert → scared → panicked
     0: {
-      text: "[whispered, urgent] Hey... hey, wake up. Did you hear that? Something just broke downstairs. Glass. That was definitely glass. [pause] There's someone in the house. [pause] Oh god, I think there's more than one. I can hear footsteps. [desperate whisper] What do we do? The bat's in the closet. My phone's almost dead. The alarm panel is downstairs where they are. [panicked breathing] We have ten seconds. Tell me what to do.",
-      choicePrompt: "[barely audible whisper] Please... tell me. Do we grab the bat and go down there? Do we lock the door and call 911? Do we get the kids and go out the window? Or do we barricade in the bathroom? [shaking] Ten seconds. What do we do?",
+      text: "[groggy, half-asleep] Hmm? What... [pause] [suddenly alert] Wait. Wait, did you hear that? [pause] [scared, whispering] Oh god. Oh god that was glass. That was the window downstairs. [breathing fast] Someone's in the house. [pause, listening] [panicked whisper] There's more than one. I can hear them moving around down there. Footsteps. [swallows hard] [desperate] The bat's in the closet. My phone... my phone's almost dead. The alarm is downstairs. Right where they are. [shaking breath] [barely audible] What do we do? The kids are asleep down the hall. [voice cracking] Please. Tell me what to do.",
+      choicePrompt: "[terrified whisper, voice trembling] Please... tell me. Do we grab the bat and go down there? Do we lock the door and call 911? Do we get the kids and go out the window? Or do we barricade in the bathroom? [gasping breath] Ten seconds. What do we do?",
     },
+    // Ch1: Terrified, trying to stay quiet. Voice shakes. Breaths between words.
     1: {
-      text: "[whispered, trembling] I can hear them. They're tearing the living room apart. Drawers, furniture, everything. [pause] Oh no. [long pause] One of them just said 'check upstairs.' [desperate grab of user's arm] They're coming up the stairs. I can hear them. Heavy. Slow. They know we're here. [voice breaking] The kids are three doors down. [pause] He's on the landing now. He just said 'I know someone's up here.' [barely breathing] What do we do? Ten seconds.",
-      choicePrompt: "[muffled whisper, almost inaudible] Do we rush them on the stairs? Do we yell that police are coming? Do we stay silent and let them take what they want? Or do you go to the kids while I distract them? [tears] Ten seconds. What do we do?",
+      text: "[trembling whisper] They're coming up. [swallows] I can hear them on the stairs. [breathing through teeth] One step... two... three... [long pause] They stopped. [silence] [barely audible] No wait, they're moving again. [voice breaking] The kids... the kids are right there. Three doors down. [pause] [sharp inhale] He just said... he said he knows someone's up here. [crying quietly, muffled] He's on the landing. Same floor as us. Same air. [gripping hard] [barely breathing] I can't... I can't think. What do we do? Please. [choking back tears]",
+      choicePrompt: "[muffled whisper, almost inaudible, shaking] Do we rush them on the stairs? Do we yell that police are coming? Do we stay silent and let them take what they want? Or do you go to the kids while I distract them? [suppressed sob] Ten seconds. What do we do?",
     },
+    // Ch2: Absolute panic. Hyperventilating. Crying silently.
     2: {
-      text: "[whispered, shaking violently] He has a gun. I can see it. [long silence] Our daughter is crying. She can hear everything. [pause] He said 'last chance, come out now.' [gripping user] Whatever you decide... protect the kids. That's all that matters. [pause] The door handle is turning. Right now. [voice barely audible] This is it. Tell me.",
-      choicePrompt: "[final whisper] Do we swing the bat when the door opens? Do we surrender and beg them not to hurt anyone? Or do we push everyone into the bathroom and face them alone? [silence] Ten seconds. What do we do?",
+      text: "[hyperventilating whisper] He has a gun. I can see it. [long shaking breath] [sobbing silently] Our baby is crying. She can hear everything. She's calling for us. [pause] [desperate, barely controlled] He said last chance. Come out now. [gripping so tight it hurts] [voice cracks completely] Whatever happens... whatever you decide... [gasping] protect the kids. Promise me. Promise me right now. [pause] [almost inaudible, shattered] The handle. It's turning. Right now. [silence] Tell me what to do. Right now. Please. I can't... I can't decide this alone.",
+      choicePrompt: "[final whisper, voice destroyed] Do we swing the bat when the door opens? Do we surrender and beg them not to hurt anyone? Or do we push everyone into the bathroom and face them alone? [long trembling silence] Now. Tell me now.",
     },
+    // Ch3: Hollow. Distant. The panic is gone. Just emptiness.
     3: {
-      text: "[quiet, hollow] It's over. [long pause] There was no good choice. Just the one we made in ten seconds. [pause] And the one we live with forever. [silence]",
+      text: "[hollow, distant] It's done. [long silence] [flat, disconnected] There was no right answer. There never was. [pause] [quiet, empty] I keep hearing it. Over and over. The sound. The choices. The ten seconds. [silence] [barely audible, numb] What did we become? [long pause] What did we become in ten seconds?",
       choicePrompt: null,
     },
   },
