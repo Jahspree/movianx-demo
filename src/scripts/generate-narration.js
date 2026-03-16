@@ -46,17 +46,18 @@ const TIMED_STANDARD_SETTINGS = [
   { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
 ];
 
-// --- 10 Seconds companion narration with emotional stage directions ---
-// ElevenLabs interprets bracketed cues as emotional delivery guidance
+// --- 10 Seconds companion narration with pauses and emotional delivery ---
+// ElevenLabs interprets [...] cues as pauses, breathing, and emotional shifts.
+// Real terror = short bursts of words separated by silence, freezing, listening.
 const TIMED_COMPANION = [
-  // Ch0: Groggy → alert → scared → panicked
-  "Hmm? What... Wait. Wait, did you hear that? Oh god. Oh god that was glass. That was the window downstairs. Someone's in the house. There's more than one. I can hear them moving around down there. Footsteps. The bat's in the closet. My phone... my phone's almost dead. The alarm is downstairs. Right where they are. What do we do? The kids are asleep down the hall. Please. Tell me what to do.",
-  // Ch1: Terrified, voice shaking, breaths between words
-  "They're coming up. I can hear them on the stairs. One step... two... three... They stopped. No wait, they're moving again. The kids... the kids are right there. Three doors down. He just said... he said he knows someone's up here. He's on the landing. Same floor as us. Same air. I can't... I can't think. What do we do? Please.",
-  // Ch2: Hyperventilating, crying silently, absolute panic
-  "He has a gun. I can see it. Our baby is crying. She can hear everything. She's calling for us. He said last chance. Come out now. Whatever happens... whatever you decide... protect the kids. Promise me. Promise me right now. The handle. It's turning. Right now. Tell me what to do. Right now. Please. I can't... I can't decide this alone.",
-  // Ch3: Hollow, distant, numb
-  "It's done. There was no right answer. There never was. I keep hearing it. Over and over. The sound. The choices. The ten seconds. What did we become? What did we become in ten seconds?",
+  // Ch0: Groggy → alert → scared → panicked. Lots of pauses - listening, freezing.
+  "[groggy, confused] Hmm... what... [3 second pause] [suddenly alert] Wait. [2 second pause] Did you hear that? [long pause] [whispering] That was glass. [pause] Downstairs. [long pause - listening] [faster, scared] There's someone in the house. [pause] [breathing] Oh god. [pause] I think... [pause] I think there's more than one. [pause] I can hear footsteps. [3 second pause - listening to the sounds below] [desperate whisper] What do we do? [long pause] The bat... [pause] it's in the closet. [pause] My phone is almost dead. [pause] The alarm is downstairs. [pause] Where they are. [long shaky breath] [3 second pause] The kids are down the hall. [pause] [voice cracking] We have ten seconds. [pause] Tell me what to do.",
+  // Ch1: Terrified, freezing between words. Counting footsteps in silence.
+  "[trembling whisper] They're coming up. [3 second pause - listening] [swallows] I can hear them on the stairs. [long pause] [breathing through teeth] One step... [pause] two... [pause] three... [3 second pause] They stopped. [long pause - silence] [barely audible] No wait. [pause] They're moving again. [long pause] [voice breaking] The kids... [pause] the kids are right there. [pause] Three doors down. [3 second pause] [sharp inhale] He just said... [pause] he said he knows someone's up here. [long pause] [crying quietly, muffled] He's on the landing. [pause] Same floor as us. [pause] Same air. [3 second pause] [barely breathing] I can't... [pause] I can't think. [long pause] What do we do? [pause] Please. [choking back tears]",
+  // Ch2: Absolute panic. Long dread-filled silences. Hyperventilating.
+  "[hyperventilating whisper] He has a gun. [long pause] I can see it. [3 second pause] [long shaking breath] [sobbing silently] Our baby is crying. [pause] She can hear everything. [pause] She's calling for us. [3 second pause - listening to daughter cry] [desperate, barely controlled] He said last chance. [long pause] Come out now. [3 second pause] [voice cracks completely] Whatever happens... [long pause] whatever you decide... [pause] [gasping] protect the kids. [pause] Promise me. [pause] Promise me right now. [3 second pause] [almost inaudible, shattered] The handle. [long pause] It's turning. [pause] Right now. [3 second pause - silence] Tell me what to do. [pause] Right now. [pause] Please. [long pause] I can't... [pause] I can't decide this alone.",
+  // Ch3: Hollow. Numb. Long empty silences between thoughts.
+  "[hollow, distant] It's done. [5 second pause] [flat, disconnected] There was no right answer. [long pause] There never was. [3 second pause] [quiet, empty] I keep hearing it. [long pause] Over and over. [pause] The sound. [pause] The choices. [pause] The ten seconds. [5 second pause] [barely audible, numb] What did we become? [3 second pause] What did we become... [long pause] in ten seconds?",
 ];
 
 const TIMED_COMPANION_SETTINGS = [
