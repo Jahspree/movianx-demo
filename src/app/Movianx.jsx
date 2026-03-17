@@ -2,12 +2,11 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
+// === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
 import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
 
-// ===========================================================================
-// DESIGN SYSTEM - White Frosted Glass with Dark Cinematic Red
-// ===========================================================================
+// === DESIGN SYSTEM ===
 const C = {
   accent: "#8B1A1A", dark: "#f8f9fa", surface: "rgba(255,255,255,0.7)",
   surface2: "rgba(255,255,255,0.5)", border: "rgba(0,0,0,0.06)",
@@ -53,9 +52,7 @@ const CSS = `
   @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 `;
 
-// ===========================================================================
-// SCENE ILLUSTRATIONS - Atmospheric SVG + CSS motion
-// ===========================================================================
+// === SCENE ILLUSTRATIONS ===
 function SceneIllustration({chapterIdx,storyId,theme}){
   // When cached images exist in the manifest, they'll be rendered by the main component
   // For now, use procedural SVG illustrations
@@ -259,9 +256,7 @@ function SceneIllustration({chapterIdx,storyId,theme}){
   return scenes[chapterIdx]||null;
 }
 
-// ===========================================================================
-// UTILITIES
-// ===========================================================================
+// === UTILITIES ===
 function useWinWidth(){const[w,setW]=useState(1024);useEffect(()=>{const u=()=>setW(window.innerWidth);u();window.addEventListener("resize",u);return()=>window.removeEventListener("resize",u)},[]);return w}
 
 function AnimCounter({end,duration=1800,prefix="",suffix=""}){
@@ -278,9 +273,7 @@ function Sparkline({data,color=C.accent,w=120,h=32}){
 }
 
 
-// ===========================================================================
-// CREATOR DASHBOARD
-// ===========================================================================
+// === HELPER COMPONENTS (EmailGate, DashSidebar, etc) ===
 function EmailGate({onSubmit}){
   const[email,setEmail]=useState("");const[name,setName]=useState("");const[role,setRole]=useState("");const[step,setStep]=useState(0);const[hover,setHover]=useState(false);
   const ok=email.includes("@")&&email.includes(".")&&name;
@@ -445,7 +438,7 @@ function DashStreaming(){
   );
 }
 
-// --- Monetization Simulator (NEW) ---
+// === MONETIZATION SIMULATOR ===
 function MonetizationSim({storyTitle,onClose}){
   const[readers,setReaders]=useState(10000);const[rate,setRate]=useState(12);const[show,setShow]=useState(false);
   const prem=Math.round(readers*(rate/100)),free=readers-prem;
@@ -495,6 +488,7 @@ function MonetizationSim({storyTitle,onClose}){
   );
 }
 
+// === CREATOR DASHBOARD ===
 function CreatorDashboard({onBack}){
   const[user,setUser]=useState(null);const[active,setActive]=useState("overview");const[menuOpen,setMenuOpen]=useState(false);
   const[showSim,setShowSim]=useState(false);
@@ -520,9 +514,7 @@ function CreatorDashboard({onBack}){
 }
 
 
-// ===========================================================================
-// STORY DATA
-// ===========================================================================
+// === STORY DATA ===
 const STORIES=[
   {id:1,title:"Frankenstein",author:"Mary Shelley",genre:"Gothic / Classic",cover:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=600&fit=crop",desc:"The timeless tale of ambition and creation. Your choices shape the tragic destinies of creator and creature.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"159K",chapters:10,isClassic:true},
   {id:2,title:"The Choice [Sample]",author:"Movianx Demo",genre:"Thriller / Interactive",cover:"https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&h=600&fit=crop",desc:"A quick 3-minute demo showing how choices branch the story.",immersions:["Reader","Cinematic","Immersive"],rating:4.7,reads:"Sample",chapters:4,isSample:true},
@@ -559,9 +551,7 @@ function getChapters(storyId){
   return FRANK;
 }
 
-// ===========================================================================
-// ASSET MANIFEST SYSTEM
-// ===========================================================================
+// === ASSET MANIFEST SYSTEM ===
 // Architecture: Pre-process once per story upload -> cache forever
 //
 // PIPELINE (runs once when creator uploads a story):
@@ -640,9 +630,7 @@ const FRANK_ASSETS = [
 
 // AUDIO_MOODS and getAssets removed — now handled by AudioEngine + manifests
 
-// ===========================================================================
-// generateStoryAssets() - CONNECT YOUR APIs HERE
-// ===========================================================================
+// === generateStoryAssets() - CONNECT YOUR APIs HERE ===
 // This function runs ONCE when a creator uploads a story.
 // It analyzes text, generates assets, and caches them.
 //
@@ -697,11 +685,9 @@ const FRANK_ASSETS = [
 
 
 
-// ===========================================================================
-// MAIN COMPONENT
-// ===========================================================================
+// === MAIN COMPONENT ===
 export default function MovianxPlatform(){
-  // --- State (FIXED: no duplicate declarations) ---
+  // === STATE ===
   const[pg,setPg]=useState("landing");
   const[sel,setSel]=useState(null);
   const[mode,setMode]=useState("Reader");
@@ -741,7 +727,7 @@ export default function MovianxPlatform(){
   const chaps=sel?getChapters(sel.id):FRANK;
   const ch=chaps[chIdx]||{};
 
-  // --- Branch Memory Engine (NEW) ---
+  // === BRANCH MEMORY ENGINE ===
   const branchPath=choices.map(c=>c.consequence).filter(Boolean);
   const getBranchLabel=()=>{
     if(branchPath.length===0)return null;
@@ -750,7 +736,7 @@ export default function MovianxPlatform(){
     return labels[last]||"Your Path";
   };
 
-  // --- Audio Engine (delegates to AudioEngine singleton) ---
+  // === AUDIO ENGINE INTEGRATION ===
   const stopAllAudio=useCallback(()=>{
     if(audioEngine)audioEngine.stopAll();
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
@@ -966,7 +952,7 @@ export default function MovianxPlatform(){
     rec.start();
   };
 
-  // --- Navigation Controller (P0: centralized, debounced, scroll-reset) ---
+  // === NAVIGATION CONTROLLER ===
   const navigateTo=(newPg)=>{
     if(navLockRef.current)return;
     navLockRef.current=true;
@@ -990,7 +976,7 @@ export default function MovianxPlatform(){
     },250);
   };
 
-  // --- Swipe Handler (P0: debounced, centralized through goChapter) ---
+  // === SWIPE HANDLER ===
   const onTouchStart=e=>setTouchStartX(e.touches[0].clientX);
   const onTouchMove=e=>setTouchEndX(e.touches[0].clientX);
   const onTouchEnd=()=>{
@@ -1001,7 +987,7 @@ export default function MovianxPlatform(){
     else goChapter(chIdx-1); // swipe right = prev
   };
 
-  // --- Choice Handler (P0: through centralized navigation) ---
+  // === CHOICE HANDLER ===
   const makeChoice=(opt)=>{
     logEvent("choice_made",{chapter:chIdx,choice:opt.txt,consequence:opt.consequence});
     setChoices(prev=>[...prev,{ch:chIdx,choice:opt.txt,consequence:opt.consequence}]);
@@ -1009,15 +995,14 @@ export default function MovianxPlatform(){
     if(opt.next<chaps.length)goChapter(opt.next);
   };
 
-  // --- Telemetry (P3: event logging for investor demo) ---
+  // === TELEMETRY ===
   const logEvent=(type,data={})=>{
     const evt={type,ts:Date.now(),storyId:sel?.id,...data};
     telemetryRef.current.push(evt);
     if(typeof window!=="undefined")console.log("[Movianx]",type,data);
   };
 
-  // --- Effects ---
-  // Chapter load: full manifest-driven audio + narration + choice timing
+  // === EFFECTS ===
   useEffect(()=>{
     if(pg!=="reading"||!ch.text)return;
     setTxt(ch.text);
@@ -1161,14 +1146,12 @@ export default function MovianxPlatform(){
   useEffect(()=>{if(pg!=="reading")stopAllAudio()},[pg]);
 
 
-  // ===========================================================================
-  // RENDER
-  // ===========================================================================
+  // === RENDER ===
 
-  // --- CREATOR DASHBOARD ---
+  // === CREATOR DASHBOARD (render) ===
   if(pg==="creator")return<CreatorDashboard onBack={()=>navigateTo("home")}/>;
 
-  // --- LANDING PAGE ---
+  // === LANDING PAGE ===
   if(pg==="landing"){
     return(
       <div style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
@@ -1196,7 +1179,7 @@ export default function MovianxPlatform(){
     );
   }
 
-  // --- HOME PAGE ---
+  // === HOME PAGE ===
   if(pg==="home"){
     return(
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,display:"flex",flexDirection:"column",position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
@@ -1237,7 +1220,7 @@ export default function MovianxPlatform(){
     );
   }
 
-  // --- LIBRARY PAGE ---
+  // === LIBRARY PAGE ===
   if(pg==="library"){
     return(
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,padding:"80px 5% 120px",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
@@ -1267,7 +1250,7 @@ export default function MovianxPlatform(){
     );
   }
 
-  // --- DETAIL PAGE ---
+  // === DETAIL PAGE ===
   if(pg==="detail"&&sel){
     return(
       <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
@@ -1305,9 +1288,7 @@ export default function MovianxPlatform(){
   }
 
 
-  // ===========================================================================
-  // READING EXPERIENCE
-  // ===========================================================================
+  // === READING VIEW ===
   if(pg==="reading"){
     return(
       <div style={{minHeight:"100vh",background:currentTheme.bg,fontFamily:FF,position:"relative",overflowY:"auto",WebkitOverflowScrolling:"touch"}}
@@ -1423,7 +1404,7 @@ export default function MovianxPlatform(){
             </>
           )}
 
-          {/* Choices */}
+          {/* === CHOICE UI === */}
           {!listenOnly&&showChoice&&ch.choice&&mode!=="Immersive"&&(
             <div style={{background:colorTheme==="night"?"#141419":"rgba(0,0,0,0.04)",borderRadius:16,border:`1px solid ${timerActive&&timeRemaining<=3?C.red:`${currentTheme.text}20`}`,padding:32,marginTop:40,animation:"fadeUp 0.4s ease both"}}>
               {timerActive&&timeRemaining!==null&&(
