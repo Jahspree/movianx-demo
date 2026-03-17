@@ -46,18 +46,18 @@ const TIMED_STANDARD_SETTINGS = [
   { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
 ];
 
-// --- 10 Seconds companion narration with pauses and emotional delivery ---
-// ElevenLabs interprets [...] cues as pauses, breathing, and emotional shifts.
-// Real terror = short bursts of words separated by silence, freezing, listening.
+// --- 10 Seconds companion narration ---
+// Short bursts. Fragments. "..." for hesitations. [pause] for silences. Periods for breath.
+// No sentence longer than 10 words without a break.
 const TIMED_COMPANION = [
-  // Ch0: Groggy → alert → scared → panicked. Lots of pauses - listening, freezing.
-  "[groggy, confused] Hmm... what... [3 second pause] [suddenly alert] Wait. [2 second pause] Did you hear that? [long pause] [whispering] That was glass. [pause] Downstairs. [long pause - listening] [faster, scared] There's someone in the house. [pause] [breathing] Oh god. [pause] I think... [pause] I think there's more than one. [pause] I can hear footsteps. [3 second pause - listening to the sounds below] [desperate whisper] What do we do? [long pause] The bat... [pause] it's in the closet. [pause] My phone is almost dead. [pause] The alarm is downstairs. [pause] Where they are. [long shaky breath] [3 second pause] The kids are down the hall. [pause] [voice cracking] We have ten seconds. [pause] Tell me what to do.",
-  // Ch1: Terrified, freezing between words. Counting footsteps in silence.
-  "[trembling whisper] They're coming up. [3 second pause - listening] [swallows] I can hear them on the stairs. [long pause] [breathing through teeth] One step... [pause] two... [pause] three... [3 second pause] They stopped. [long pause - silence] [barely audible] No wait. [pause] They're moving again. [long pause] [voice breaking] The kids... [pause] the kids are right there. [pause] Three doors down. [3 second pause] [sharp inhale] He just said... [pause] he said he knows someone's up here. [long pause] [crying quietly, muffled] He's on the landing. [pause] Same floor as us. [pause] Same air. [3 second pause] [barely breathing] I can't... [pause] I can't think. [long pause] What do we do? [pause] Please. [choking back tears]",
-  // Ch2: Absolute panic. Long dread-filled silences. Hyperventilating.
-  "[hyperventilating whisper] He has a gun. [long pause] I can see it. [3 second pause] [long shaking breath] [sobbing silently] Our baby is crying. [pause] She can hear everything. [pause] She's calling for us. [3 second pause - listening to daughter cry] [desperate, barely controlled] He said last chance. [long pause] Come out now. [3 second pause] [voice cracks completely] Whatever happens... [long pause] whatever you decide... [pause] [gasping] protect the kids. [pause] Promise me. [pause] Promise me right now. [3 second pause] [almost inaudible, shattered] The handle. [long pause] It's turning. [pause] Right now. [3 second pause - silence] Tell me what to do. [pause] Right now. [pause] Please. [long pause] I can't... [pause] I can't decide this alone.",
-  // Ch3: Hollow. Numb. Long empty silences between thoughts.
-  "[hollow, distant] It's done. [5 second pause] [flat, disconnected] There was no right answer. [long pause] There never was. [3 second pause] [quiet, empty] I keep hearing it. [long pause] Over and over. [pause] The sound. [pause] The choices. [pause] The ten seconds. [5 second pause] [barely audible, numb] What did we become? [3 second pause] What did we become... [long pause] in ten seconds?",
+  // Ch0: Confused then scared. Sentences shorten as fear builds.
+  "Hey... hey wake up. [pause] Did you hear that? ... That was glass. Downstairs. [pause] Someone's in the house. [pause] ... I can hear footsteps. More than one person. [pause] Oh god. [pause] The bat's in the closet. My phone... it's almost dead. [pause] The alarm... it's downstairs. Where they are. [pause] The kids are down the hall. [pause] ... What do we do? [pause] We have ten seconds. Tell me.",
+  // Ch1: Terrified. Mostly fragments. Long silences.
+  "They're coming up. [pause] ... The stairs. I can hear them. [pause] One step. [pause] Two. [pause] ... Three. [pause] They stopped. [pause] [pause] ... No. They're moving again. [pause] The kids. [pause] ... Right there. Three doors down. [pause] He said something. [pause] ... He knows we're here. [pause] He's on the landing now. [pause] Same floor. [pause] ... Same air. [pause] I can't think. [pause] What do we do? ... Please.",
+  // Ch2: Breaking. Can barely form words. Lots of pauses. Crying.
+  "He has a gun. [pause] ... I can see it. [pause] [pause] Our baby. [pause] She's crying. ... She can hear us. [pause] He said... last chance. [pause] [pause] ... Whatever happens. [pause] Protect the kids. [pause] ... Promise me. [pause] Promise me. [pause] [pause] The handle. [pause] ... It's turning. [pause] Right now. [pause] [pause] ... Tell me. [pause] Please. [pause] ... I can't do this alone.",
+  // Ch3: Hollow. Flat. Disconnected. Long gaps.
+  "It's done. [pause] [pause] [pause] There was no right answer. [pause] ... There never was. [pause] [pause] I keep hearing it. [pause] ... Over and over. [pause] The sound. The choices. [pause] ... The ten seconds. [pause] [pause] [pause] What did we become? [pause] [pause] ... What did we become in ten seconds?",
 ];
 
 const TIMED_COMPANION_SETTINGS = [
