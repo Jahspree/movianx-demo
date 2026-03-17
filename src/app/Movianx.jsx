@@ -50,6 +50,11 @@ const CSS = `
   @keyframes iceShift{0%{transform:translateX(0) translateY(0)}33%{transform:translateX(3px) translateY(-2px)}66%{transform:translateX(-2px) translateY(1px)}100%{transform:translateX(0) translateY(0)}}
   @keyframes lightning{0%,95%,100%{opacity:0}96%{opacity:0.8}97%{opacity:0}98%{opacity:0.5}}
   @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+  @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+  @keyframes immersePulse{0%,100%{opacity:1}50%{opacity:0.97}}
+  @keyframes timerShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px)}75%{transform:translateX(1.5px)}}
+  @keyframes chapterFadeOut{0%{opacity:1}100%{opacity:0;background:#000}}
+  @keyframes chapterFadeIn{0%{opacity:0}100%{opacity:1}}
 `;
 
 // === SCENE ILLUSTRATIONS ===
@@ -1154,7 +1159,7 @@ export default function MovianxPlatform(){
   // === LANDING PAGE ===
   if(pg==="landing"){
     return(
-      <div style={{minHeight:"100vh",background:C.bg,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
+      <div style={{minHeight:"100vh",background:"linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 25%, #f5f3f0 50%, #f0eff5 75%, #f8f9fa 100%)",backgroundSize:"300% 300%",animation:"gradientShift 15s ease infinite",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
         <div style={{position:"absolute",top:0,left:0,right:0,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"24px 5%",zIndex:10,animation:"fadeDown 0.6s ease both"}}>
           <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
           <div style={{display:"flex",gap:32,alignItems:"center"}}>
@@ -1229,7 +1234,7 @@ export default function MovianxPlatform(){
         <p style={{fontSize:18,color:C.text2,marginBottom:60}}>Choose your experience</p>
         <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:24,maxWidth:1200}}>
           {STORIES.map(story=>(
-            <div key={story.id} onClick={()=>{setSel(story);navigateTo("detail")}} style={{background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:16,overflow:"hidden",cursor:"pointer",transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow=C.shadow}}>
+            <div key={story.id} onClick={()=>{setSel(story);navigateTo("detail")}} style={{background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:16,overflow:"hidden",cursor:"pointer",transition:"all 0.3s",boxShadow:C.shadow,transformStyle:"preserve-3d"}} onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5;const y=(e.clientY-r.top)/r.height-0.5;e.currentTarget.style.transform=`perspective(600px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateY(-4px)`}} onMouseEnter={e=>{e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="perspective(600px) rotateY(0deg) rotateX(0deg) translateY(0)";e.currentTarget.style.boxShadow=C.shadow}}>
               <div style={{height:200,background:`url(${story.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}/>
               <div style={{padding:20}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
@@ -1291,7 +1296,7 @@ export default function MovianxPlatform(){
   // === READING VIEW ===
   if(pg==="reading"){
     return(
-      <div style={{minHeight:"100vh",background:currentTheme.bg,fontFamily:FF,position:"relative",overflowY:"auto",WebkitOverflowScrolling:"touch"}}
+      <div style={{minHeight:"100vh",background:timerActive&&timeRemaining!==null&&timeRemaining<=3?`color-mix(in srgb, ${currentTheme.bg} 92%, #000)`:currentTheme.bg,fontFamily:FF,position:"relative",overflowY:"auto",WebkitOverflowScrolling:"touch",animation:mode==="Immersive"&&!timerActive?"immersePulse 4s ease-in-out infinite":timerActive&&timeRemaining===1?"timerShake 0.15s ease infinite":"none",transition:"background 1s ease"}}
         onTouchStart={onTouchStart} onTouchMove={onTouchMove} onTouchEnd={onTouchEnd}>
 
         {/* Top Bar - Clean, no duplicate icons */}
@@ -1350,12 +1355,15 @@ export default function MovianxPlatform(){
           <div style={{height:"100%",width:`${((chIdx+1)/chaps.length)*100}%`,background:C.red,transition:"width 0.5s ease",borderRadius:"0 2px 2px 0"}}/>
         </div>
 
+        {/* Cinematic chapter fade overlay */}
+        {pageAnim==="out"&&<div style={{position:"fixed",inset:0,background:"#000",zIndex:200,animation:"fadeIn 0.3s ease both"}}/>}
+
         {/* Content */}
         <div style={{
           maxWidth:800,margin:"0 auto",padding:"100px 40px 200px",
-          opacity:pageAnim==="out"?0:1,
-          transform:pageAnim==="out"?"translateX(-30px)":pageAnim==="in"?"translateX(0)":"translateX(0)",
-          transition:"opacity 0.25s ease, transform 0.25s ease",
+          opacity:pageAnim==="out"?0:pageAnim==="in"?1:1,
+          transition:"opacity 0.3s ease",
+          animation:pageAnim==="in"?"chapterFadeIn 0.4s ease both":"none",
         }}>
           {listenOnly?(
             <div style={{textAlign:"center",paddingTop:60}}>
@@ -1409,8 +1417,8 @@ export default function MovianxPlatform(){
             <div style={{background:colorTheme==="night"?"#141419":"rgba(0,0,0,0.04)",borderRadius:16,border:`1px solid ${timerActive&&timeRemaining<=3?C.red:`${currentTheme.text}20`}`,padding:32,marginTop:40,animation:"fadeUp 0.4s ease both"}}>
               {timerActive&&timeRemaining!==null&&(
                 <div style={{textAlign:"center",marginBottom:20,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
-                  <div style={{fontSize:48,fontWeight:700,color:timeRemaining<=3?C.red:currentTheme.text,fontFamily:"monospace"}}>{timeRemaining}</div>
-                  <div style={{fontSize:12,color:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS REMAINING"}</div>
+                  <div style={{fontSize:48+(10-Math.min(timeRemaining,10))*2,fontWeight:700,color:timeRemaining<=3?C.red:timeRemaining<=5?`color-mix(in srgb, ${C.red} ${(5-timeRemaining)*25}%, ${currentTheme.text})`:currentTheme.text,fontFamily:"monospace",transition:"font-size 0.4s ease, color 0.4s ease"}}>{timeRemaining}</div>
+                  <div style={{fontSize:12,color:timeRemaining<=3?C.red:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2,transition:"color 0.4s ease"}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS REMAINING"}</div>
                 </div>
               )}
               <p style={{fontSize:18,fontWeight:600,color:currentTheme.text,marginBottom:20}}>{ch.choice.prompt}</p>
@@ -1429,8 +1437,8 @@ export default function MovianxPlatform(){
             <div style={{textAlign:"center",padding:"48px 20px",marginTop:40,animation:"fadeUp 0.4s ease both"}}>
               {timerActive&&timeRemaining!==null&&(
                 <div style={{marginBottom:24,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
-                  <div style={{fontSize:48,fontWeight:700,color:timeRemaining<=3?C.red:currentTheme.text,fontFamily:"monospace"}}>{timeRemaining}</div>
-                  <div style={{fontSize:12,color:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS"}</div>
+                  <div style={{fontSize:48+(10-Math.min(timeRemaining,10))*3,fontWeight:700,color:timeRemaining<=3?C.red:timeRemaining<=5?`color-mix(in srgb, ${C.red} ${(5-timeRemaining)*25}%, ${currentTheme.text})`:currentTheme.text,fontFamily:"monospace",transition:"font-size 0.4s ease, color 0.4s ease"}}>{timeRemaining}</div>
+                  <div style={{fontSize:12,color:timeRemaining<=3?C.red:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2,transition:"color 0.4s ease"}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS"}</div>
                 </div>
               )}
               <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:64,height:64,borderRadius:"50%",background:voiceActive?`${C.red}15`:`${currentTheme.text}08`,border:`2px solid ${voiceActive?C.red:`${currentTheme.text}20`}`,animation:voiceActive?"pulse 1.5s ease-in-out infinite":"breathe 3s ease-in-out infinite",transition:"all 0.3s"}}>
