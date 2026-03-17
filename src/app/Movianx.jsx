@@ -783,6 +783,12 @@ export default function MovianxPlatform(){
       });
     }
 
+    // 1b. Start music layer (loops underneath everything)
+    if(chManifest.music&&chManifest.music.file){
+      const m=chManifest.music;
+      audioEngine.playAmbient(assetResolver.resolveFile(m.file),m.volume||0.1,m.fadeIn||3,m.label||"chapter_music");
+    }
+
     // 2. Start spatial sounds with triggers
     if(chManifest.spatial){
       chManifest.spatial.forEach(sp=>{

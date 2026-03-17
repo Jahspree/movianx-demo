@@ -66,6 +66,7 @@ const TIMED_HORROR_AUDIO = {
       title: "3:47 AM",
       narration: "/audio/timed/ch0.mp3",
       narrationCompanion: "/audio/timed/ch0_companion.mp3",
+      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.08, fadeIn: 3, loop: true },
       emotion: "terrified",
 
       ambient: [],
@@ -154,6 +155,7 @@ const TIMED_HORROR_AUDIO = {
       title: "The Hallway",
       narration: "/audio/timed/ch1.mp3",
       narrationCompanion: "/audio/timed/ch1_companion.mp3",
+      music: { file: "/audio/music/timed_ch1.mp3", volume: 0.12, fadeIn: 2, loop: true },
       emotion: "panicked",
 
       ambient: [],
@@ -239,6 +241,7 @@ const TIMED_HORROR_AUDIO = {
       title: "The Choice",
       narration: "/audio/timed/ch2.mp3",
       narrationCompanion: "/audio/timed/ch2_companion.mp3",
+      music: { file: "/audio/music/timed_ch2.mp3", volume: 0.18, fadeIn: 1, loop: true },
       emotion: "terrified",
 
       ambient: [],
@@ -288,6 +291,7 @@ const TIMED_HORROR_AUDIO = {
       title: "Consequences",
       narration: "/audio/timed/ch3.mp3",
       narrationCompanion: "/audio/timed/ch3_companion.mp3",
+      music: { file: "/audio/music/timed_ch3.mp3", volume: 0.06, fadeIn: 5, loop: true },
       emotion: "devastated",
 
       ambient: [],
