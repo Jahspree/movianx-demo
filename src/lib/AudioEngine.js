@@ -16,6 +16,12 @@ class AudioEngine {
     this._silenceRestore = [];
   }
 
+  registerAudioElement(audio, role = "fx") {
+    const entry = { audio, role };
+    this.activeAudioElements.push(entry);
+    return entry;
+  }
+
   // --- Lifecycle -----------------------------------------------------------
 
   init() {
@@ -38,18 +44,23 @@ class AudioEngine {
     if (!ctx || !url) return null;
     const audio = new Audio(url);
     audio.crossOrigin = "anonymous";
-    this.activeAudioElements.push(audio);
+    audio.preload = "auto";
+    audio.playsInline = true;
+    this.registerAudioElement(audio, "narration");
+    audio.load();
     audio.play().catch(() => {});
     return audio;
   }
 
-  playAmbient(url, volume = 0.2, fadeIn = 0, label = null) {
+  playAmbient(url, volume = 0.2, fadeIn = 0, label = null, role = "ambient") {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
     const audio = new Audio(url);
     audio.crossOrigin = "anonymous";
+    audio.preload = "auto";
+    audio.playsInline = true;
     audio.loop = true;
-    this.activeAudioElements.push(audio);
+    this.registerAudioElement(audio, role);
 
     let source;
     try {
@@ -70,6 +81,7 @@ class AudioEngine {
     this.activeNodes.push(source, gain);
     this.ambientGains.push(gain);
     if (label) this.labeledGains[label] = gain;
+    audio.load();
     audio.play().catch(() => {});
     return { audio, gainNode: gain, sourceNode: source };
   }
@@ -79,8 +91,10 @@ class AudioEngine {
     if (!ctx || !url) return null;
     const audio = new Audio(url);
     audio.crossOrigin = "anonymous";
+    audio.preload = "auto";
+    audio.playsInline = true;
     audio.loop = loop;
-    this.activeAudioElements.push(audio);
+    this.registerAudioElement(audio, loop ? "loop-fx" : "fx");
 
     let source;
     try {
@@ -109,6 +123,7 @@ class AudioEngine {
     panner.connect(ctx.destination);
     this.activeNodes.push(source, gain, panner);
     if (label) this.labeledGains[label] = gain;
+    audio.load();
     audio.play().catch(() => {});
     return { audio, gainNode: gain, pannerNode: panner, sourceNode: source };
   }
@@ -118,8 +133,10 @@ class AudioEngine {
     if (!ctx || !url) return null;
     const audio = new Audio(url);
     audio.crossOrigin = "anonymous";
+    audio.preload = "auto";
+    audio.playsInline = true;
     audio.loop = loop;
-    this.activeAudioElements.push(audio);
+    this.registerAudioElement(audio, loop ? "loop-fx" : "fx");
 
     let source;
     try {
@@ -157,6 +174,7 @@ class AudioEngine {
     panner.connect(ctx.destination);
     this.activeNodes.push(source, gain, panner);
     if (label) this.labeledGains[label] = gain;
+    audio.load();
     audio.play().catch(() => {});
     return { audio, gainNode: gain, pannerNode: panner, sourceNode: source };
   }
@@ -333,18 +351,25 @@ class AudioEngine {
       g.gain.cancelScheduledValues(this.ctx.currentTime);
       g.gain.setValueAtTime(0.001, this.ctx.currentTime);
     });
-    // Also pause audio elements
-    this.activeAudioElements.forEach(a => {
-      if (!a.paused) a.volume = 0;
+    // Keep narration and score alive; only mute impact/support layers.
+    this.activeAudioElements.forEach(({ audio, role }) => {
+      if (role === "narration" || role === "music") return;
+      if (!audio.paused) {
+        this._silenceRestore.push({ audio, volume: audio.volume });
+        audio.volume = 0;
+      }
     });
     const tid = setTimeout(() => {
       if (!this._silenced) return;
-      this._silenceRestore.forEach(({ node, value }) => {
+      this._silenceRestore.forEach(({ node, value, audio, volume }) => {
+        if (audio) {
+          try { audio.volume = volume; } catch (e) {}
+          return;
+        }
         try {
           node.gain.setValueAtTime(value, this.ctx.currentTime);
         } catch (e) {}
       });
-      this.activeAudioElements.forEach(a => { a.volume = 1; });
       this._silenced = false;
       this._silenceRestore = [];
     }, duration);
@@ -373,8 +398,8 @@ class AudioEngine {
     this.activeTimers = [];
 
     // Stop and disconnect audio elements
-    this.activeAudioElements.forEach(a => {
-      try { a.pause(); a.currentTime = 0; a.src = ""; } catch (e) {}
+    this.activeAudioElements.forEach(({ audio }) => {
+      try { audio.pause(); audio.currentTime = 0; audio.src = ""; } catch (e) {}
     });
     this.activeAudioElements = [];
 

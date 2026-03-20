@@ -47,17 +47,17 @@ const TIMED_STANDARD_SETTINGS = [
 ];
 
 // --- 10 Seconds companion narration ---
-// Short bursts. Fragments. "..." for hesitations. [pause] for silences. Periods for breath.
-// No sentence longer than 10 words without a break.
+// Short bursts. Fragments. Use punctuation for pacing.
+// No literal control words or acting directions in spoken text.
 const TIMED_COMPANION = [
   // Ch0: Confused then scared. Sentences shorten as fear builds.
-  "Hey... hey wake up. [pause] Did you hear that? ... That was glass. Downstairs. [pause] Someone's in the house. [pause] ... I can hear footsteps. More than one person. [pause] Oh god. [pause] The bat's in the closet. My phone... it's almost dead. [pause] The alarm... it's downstairs. Where they are. [pause] The kids are down the hall. [pause] ... What do we do? [pause] We have ten seconds. Tell me.",
+  "Hey... hey, wake up. Did you hear that? Glass. Downstairs. Someone's in the house. I can hear footsteps. More than one. Oh God. The bat's in the closet. My phone's almost dead. The alarm is downstairs, where they are. The kids are down the hall. What do we do? We have ten seconds. Tell me.",
   // Ch1: Terrified. Mostly fragments. Long silences.
-  "They're coming up. [pause] ... The stairs. I can hear them. [pause] One step. [pause] Two. [pause] ... Three. [pause] They stopped. [pause] [pause] ... No. They're moving again. [pause] The kids. [pause] ... Right there. Three doors down. [pause] He said something. [pause] ... He knows we're here. [pause] He's on the landing now. [pause] Same floor. [pause] ... Same air. [pause] I can't think. [pause] What do we do? ... Please.",
+  "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped... No. They're moving again. The kids. Right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
   // Ch2: Breaking. Can barely form words. Lots of pauses. Crying.
-  "He has a gun. [pause] ... I can see it. [pause] [pause] Our baby. [pause] She's crying. ... She can hear us. [pause] He said... last chance. [pause] [pause] ... Whatever happens. [pause] Protect the kids. [pause] ... Promise me. [pause] Promise me. [pause] [pause] The handle. [pause] ... It's turning. [pause] Right now. [pause] [pause] ... Tell me. [pause] Please. [pause] ... I can't do this alone.",
+  "He has a gun. I can see it. Our baby... she's crying. She can hear us. He said, last chance. Whatever happens, protect the kids. Promise me. Promise me. The handle... it's turning. Right now. Tell me. Please. I can't do this alone.",
   // Ch3: Hollow. Flat. Disconnected. Long gaps.
-  "It's done. [pause] [pause] [pause] There was no right answer. [pause] ... There never was. [pause] [pause] I keep hearing it. [pause] ... Over and over. [pause] The sound. The choices. [pause] ... The ten seconds. [pause] [pause] [pause] What did we become? [pause] [pause] ... What did we become in ten seconds?",
+  "It's done. There was no right answer. There never was. I keep hearing it. Over and over. The sound. The choices. The ten seconds. What did we become? What did we become in ten seconds?",
 ];
 
 const TIMED_COMPANION_SETTINGS = [
@@ -125,7 +125,9 @@ async function addSharedVoice(voiceId) {
 
 async function generateTTS(voiceId, text, settings, outPath) {
   const forceRegen = process.env.FORCE_REGEN === "1";
-  if (!forceRegen && fs.existsSync(outPath)) {
+  const forcePattern = process.env.FORCE_REGEN_PATTERN ? new RegExp(process.env.FORCE_REGEN_PATTERN) : null;
+  const shouldOverwrite = forceRegen || (forcePattern && forcePattern.test(path.basename(outPath)));
+  if (!shouldOverwrite && fs.existsSync(outPath)) {
     console.log(`  SKIP ${path.basename(outPath)} (already exists, set FORCE_REGEN=1 to overwrite)`);
     return true;
   }

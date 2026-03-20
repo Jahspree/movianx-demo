@@ -5,57 +5,9 @@ import assetResolver from "../lib/AssetResolver";
 // === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
 import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
-
-// === DESIGN SYSTEM ===
-const C = {
-  accent: "#8B1A1A", dark: "#f8f9fa", surface: "rgba(255,255,255,0.7)",
-  surface2: "rgba(255,255,255,0.5)", border: "rgba(0,0,0,0.06)",
-  text: "#1a1a2e", text2: "rgba(26,26,46,0.55)", gold: "#B8860B",
-  green: "#16a34a", purple: "#6366f1", red: "#8B1A1A",
-  glass: "rgba(255,255,255,0.7)", glassBorder: "rgba(0,0,0,0.06)",
-  bg: "linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 50%, #f5f3f0 100%)",
-  bgSolid: "#f8f9fa",
-  cardBg: "rgba(255,255,255,0.6)",
-  pillBg: "rgba(0,0,0,0.04)",
-  shadow: "0 4px 24px rgba(0,0,0,0.06)",
-  shadowHover: "0 12px 40px rgba(139,26,26,0.12)",
-};
-const THEMES = {
-  cream: { bg: "#F5F1E8", text: "#2C2C2C", name: "Cream" },
-  eink: { bg: "#E5E5E5", text: "#1A1A1A", name: "E-Ink" },
-  night: { bg: "#121218", text: "#E5E5E5", name: "Night" },
-  sepia: { bg: "#F4ECD8", text: "#5C4B37", name: "Sepia" },
-};
-const FONTS = ["Georgia", "Merriweather", "Open Sans", "system-ui"];
-const FF = "'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif";
-const CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@400;600;700&display=swap');
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body,#__next{height:auto;overflow:auto;overflow-x:hidden}
-  ::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.12);border-radius:3px}
-  input::placeholder{color:rgba(0,0,0,0.3)}
-  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes fadeDown{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.05);opacity:0.8}}
-  @keyframes breathe{0%,100%{opacity:0.4}50%{opacity:1}}
-  @keyframes pageTurn{0%{opacity:1;transform:translateX(0)}100%{opacity:0;transform:translateX(-30px)}}
-  @keyframes pageEnter{0%{opacity:0;transform:translateX(30px)}100%{opacity:1;transform:translateX(0)}}
-  @keyframes driftFog{0%{transform:translateX(-5%)}50%{transform:translateX(5%)}100%{transform:translateX(-5%)}}
-  @keyframes flicker{0%,100%{opacity:0.6}20%{opacity:0.8}40%{opacity:0.5}60%{opacity:0.9}80%{opacity:0.55}}
-  @keyframes sway{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
-  @keyframes slowTurn{0%{transform:scaleX(1)}50%{transform:scaleX(1.02) translateX(2px)}100%{transform:scaleX(1)}}
-  @keyframes rise{0%{transform:translateY(0);opacity:0.3}50%{transform:translateY(-10px);opacity:0.7}100%{transform:translateY(-20px);opacity:0}}
-  @keyframes eyeGlow{0%,100%{filter:drop-shadow(0 0 4px rgba(200,180,50,0.3))}50%{filter:drop-shadow(0 0 12px rgba(200,180,50,0.8))}}
-  @keyframes iceShift{0%{transform:translateX(0) translateY(0)}33%{transform:translateX(3px) translateY(-2px)}66%{transform:translateX(-2px) translateY(1px)}100%{transform:translateX(0) translateY(0)}}
-  @keyframes lightning{0%,95%,100%{opacity:0}96%{opacity:0.8}97%{opacity:0}98%{opacity:0.5}}
-  @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-  @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-  @keyframes immersePulse{0%,100%{opacity:1}50%{opacity:0.97}}
-  @keyframes timerShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-1.5px)}75%{transform:translateX(1.5px)}}
-  @keyframes chapterFadeOut{0%{opacity:1}100%{opacity:0;background:#000}}
-  @keyframes chapterFadeIn{0%{opacity:0}100%{opacity:1}}
-`;
+import { STORIES, getChapters } from "../data/stories";
+import { C, THEMES, FONTS, FF, CSS, getSpeechProfile, estimateSpeechDurationMs } from "./movianx/config";
+import { LandingView, HomeView, LibraryView, DetailView } from "./movianx/views";
 
 // === SCENE ILLUSTRATIONS ===
 function SceneIllustration({chapterIdx,storyId,theme}){
@@ -519,43 +471,6 @@ function CreatorDashboard({onBack}){
 }
 
 
-// === STORY DATA ===
-const STORIES=[
-  {id:1,title:"Frankenstein",author:"Mary Shelley",genre:"Gothic / Classic",cover:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=600&fit=crop",desc:"The timeless tale of ambition and creation. Your choices shape the tragic destinies of creator and creature.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"159K",chapters:10,isClassic:true},
-  {id:2,title:"The Choice [Sample]",author:"Movianx Demo",genre:"Thriller / Interactive",cover:"https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&h=600&fit=crop",desc:"A quick 3-minute demo showing how choices branch the story.",immersions:["Reader","Cinematic","Immersive"],rating:4.7,reads:"Sample",chapters:4,isSample:true},
-  {id:3,title:"10 Seconds",author:"Movianx Original",genre:"Thriller / Survival Horror",cover:"https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&h=600&fit=crop",desc:"You have 10 seconds to decide. Every choice. Every time. ⏱️ TIMED CHOICES.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"New",chapters:4,isTimed:true},
-];
-
-const FRANK=[
-  {title:"Letter I - To Mrs. Saville, England",text:"St. Petersburgh, Dec. 11th, 17-.\n\nYou will rejoice to hear that no disaster has accompanied the commencement of an enterprise which you have regarded with such evil forebodings. I arrived here yesterday, and my first task is to assure my dear sister of my welfare and increasing confidence in the success of my undertaking.\n\nI am already far north of London, and as I walk in the streets of Petersburgh, I feel a cold northern breeze play upon my cheeks, which braces my nerves and fills me with delight. Do you understand this feeling? This breeze, which has travelled from the regions towards which I am advancing, gives me a foretaste of those icy climes.\n\nInspired by this wind of promise, my daydreams become more fervent and vivid. I try in vain to be persuaded that the pole is the seat of frost and desolation; it ever presents itself to my imagination as the region of beauty and delight.\n\nWhat may not be expected in a country of eternal light? I may there discover the wondrous power which attracts the needle and may regulate a thousand celestial observations.\n\nI shall satiate my ardent curiosity with the sight of a part of the world never before visited, and may tread a land never before imprinted by the foot of man. These are my enticements, and they are sufficient to conquer all fear of danger or death.",choice:{prompt:"As Captain Walton, should I share my deepest ambitions, or keep some doubts to myself?",emotion:"ambitious",opts:[{txt:"Share everything - my burning desire for glory",next:1,consequence:"honest"},{txt:"Express some caution about the dangers ahead",next:1,consequence:"cautious"}]},narrator:"Captain Robert Walton writes to his sister, filled with ambition for his Arctic expedition.",emotion:"calm"},
-  {title:"Letter IV - The Stranger",text:"August 5th, 17-.\n\nSo strange an accident has happened to us that I cannot forbear recording it.\n\nLast Monday we were nearly surrounded by ice, which closed in the ship on all sides. Our situation was somewhat dangerous, especially as we were compassed round by a very thick fog.\n\nAt about two o'clock the mist cleared away, and we beheld vast and irregular plains of ice. A strange sight suddenly attracted our attention.\n\nWe perceived a low carriage, fixed on a sledge and drawn by dogs, pass on towards the north; a being which had the shape of a man, but apparently of gigantic stature, sat in the sledge.\n\nThe next morning a traveller's sledge appeared. A European man addressed me: \"Before I come on board your vessel, will you have the kindness to inform me whither you are bound?\"\n\nHis limbs were nearly frozen, and his body dreadfully emaciated by fatigue and suffering. I never saw a man in so wretched a condition.",choice:{prompt:"This stranger carries a terrible burden. Should I press him for his story, or give him time?",emotion:"curious",opts:[{txt:"Ask him gently about his journey",next:2,consequence:"patient"},{txt:"Wait until he's ready to share",next:2,consequence:"respectful"}]},narrator:"Walton's crew encounters a mysterious figure on the ice.",emotion:"tense",sound:"ambient"},
-  {title:"Chapter I - Victor's Childhood",text:"I am by birth a Genevese, and my family is one of the most distinguished of that republic. My ancestors had been for many years counsellors and syndics.\n\nMy mother's tender caresses and my father's smile of benevolent pleasure while regarding me are my first recollections. I was their plaything and their idol, and something better-their child.\n\nWhen I was about five years old, they passed a week on the shores of the Lake of Como. On the evening of their return, my mother, accompanied by a young girl, entered our home. That young girl was Elizabeth Lavenza.\n\nShe became more than a sister to me. She was the living spirit of love to soften and attract.\n\nMy temper was sometimes violent, and my passions vehement; but by some law in my temperature they were turned not towards childish pursuits but to an eager desire to learn.",choice:{prompt:"Young Victor shows intense curiosity. Should I encourage unbounded knowledge, or counsel moderation?",emotion:"reflective",opts:[{txt:"Pursue knowledge with unbridled passion",next:3,consequence:"ambitious"},{txt:"Balance ambition with wisdom and caution",next:3,consequence:"measured"}]},narrator:"Victor recounts his idyllic childhood and his bond with Elizabeth.",emotion:"calm"},
-  {title:"Chapter IV - The Secret of Life",text:"It was on a dreary night of November that I beheld the accomplishment of my toils. With an anxiety that almost amounted to agony, I collected the instruments of life around me, that I might infuse a spark of being into the lifeless thing that lay at my feet.\n\nIt was already one in the morning; the rain pattered dismally against the panes, and my candle was nearly burnt out, when, by the glimmer of the half-extinguished light, I saw the dull yellow eye of the creature open; it breathed hard, and a convulsive motion agitated its limbs.\n\nHow can I describe my emotions at this catastrophe, or how delineate the wretch whom with such infinite pains and care I had endeavoured to form?\n\nHis yellow skin scarcely covered the work of muscles and arteries beneath; his hair was of a lustrous black, and flowing; his teeth of a pearly whiteness; but these luxuriances only formed a more horrid contrast with his watery eyes.\n\nI had worked hard for nearly two years, for the sole purpose of infusing life into an inanimate body. But now that I had finished, the beauty of the dream vanished, and breathless horror and disgust filled my heart.\n\nUnable to endure the aspect of the being I had created, I rushed out of the room.",choice:{prompt:"I have created life, but it fills me with horror. Should I face my creation, or flee?",emotion:"terrified",opts:[{txt:"Return to the laboratory and face what I've created",next:4,consequence:"responsibility"},{txt:"Abandon the creature and try to forget",next:4,consequence:"abandonment"}]},narrator:"Victor brings his creation to life, but is struck with horror.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
-  {title:"The Creature Speaks",text:"\"All men hate the wretched; how, then, must I be hated, who am miserable beyond all living things! Yet you, my creator, detest and spurn me, thy creature.\n\n\"You purpose to kill me. How dare you sport thus with life? Do your duty towards me, and I will do mine towards you and the rest of mankind.\"\n\n\"Be calm! I entreat you to hear me. Have I not suffered enough?\n\n\"Remember, thou hast made me more powerful than thyself. But I will not be tempted to set myself in opposition to thee. I am thy creature, and I will be even mild and docile to my natural lord.\n\n\"Oh, Frankenstein, remember that I am thy creature; I ought to be thy Adam, but I am rather the fallen angel. I was benevolent and good; misery made me a fiend. Make me happy, and I shall again be virtuous.\"",choice:{prompt:"The creature demands a companion. Should I grant this request, or refuse?",emotion:"anguished",opts:[{txt:"Agree to create a companion - perhaps it will bring peace",next:5,consequence:"agreement"},{txt:"Refuse - I cannot risk creating another monster",next:5,consequence:"refusal"}]},narrator:"The creature confronts Victor and makes a terrible demand.",emotion:"tense"},
-  {title:"Epilogue - The Cost of Ambition",text:"[Your choices have shaped Victor's fate]\n\n\"Farewell, Walton! Seek happiness in tranquillity and avoid ambition, even if it be only the apparently innocent one of distinguishing yourself in science and discoveries.\"\n\nHis voice became fainter as he spoke. The monster has disappeared, vanished into the darkness of the Arctic night.\n\nWhat lessons will you carry forward? That ambition unchecked leads to ruin? That we bear responsibility for what we create? That even monsters deserve compassion?\n\nThe icy wastes hold many secrets still. But some stories end not with triumph, but with the haunting question:\n\nWhat have we become in our pursuit to become gods?\n\n[END]\n\nYou have finished Frankenstein."},
-];
-
-const SAMPLE=[
-  {title:"The Message",text:"Your phone buzzes at 2 AM. Unknown number.\n\n\"Meet me at the old lighthouse. Come alone. You have one hour.\"\n\nYou've been investigating the disappearance of three journalists who were all working on the same story - something about the mayor's connection to offshore accounts. This could be the break you need.\n\nBut it could also be a trap.\n\nYour editor told you to drop it. Your partner told you to be careful. The threatening letter you got last week told you to stop digging.\n\nOne hour. The lighthouse.",choice:{prompt:"You have one hour to decide. Do you go alone, or call for backup?",emotion:"tense",opts:[{txt:"Go alone - this source won't talk if I bring anyone",next:1,consequence:"alone"},{txt:"Call my partner for backup first",next:2,consequence:"backup"}]},narrator:"You receive a mysterious message in the middle of the night.",emotion:"calm"},
-  {title:"The Lighthouse - Alone",text:"The lighthouse looms against the night sky. No lights. No cars.\n\nYou park a quarter mile away and approach on foot. The door is unlocked.\n\nInside, your flashlight catches files scattered everywhere. Financial records. Wire transfers. Photos.\n\nThen you hear footsteps on the spiral stairs above. Coming down.\n\n\"You came alone. Good. That means you're serious about the truth.\"\n\nYou recognize them - the mayor's chief of staff. They're holding a USB drive.\n\n\"Everything's on here. But if you take it, they'll know it was me. Or... you walk away, and I'll leak it anonymously. You get your story, I keep my life.\"",choice:{prompt:"Take the evidence yourself, or trust them to leak it anonymously?",emotion:"tense",opts:[{txt:"Take the USB drive - I need to verify this myself",next:3,consequence:"take"},{txt:"Let them leak it anonymously - protect the source",next:3,consequence:"trust"}]},narrator:"You arrive at the lighthouse and make a fateful choice.",emotion:"nervous",sound:"footsteps"},
-  {title:"The Lighthouse - With Backup",text:"Your partner arrives in an unmarked car. You approach the lighthouse together.\n\nFiles are scattered everywhere. But no one is here.\n\n\"This is too easy,\" your partner whispers. \"Something's wrong.\"\n\nThat's when you hear the click. A camera shutter. Then footsteps - multiple people, moving fast.\n\nLights flood the lighthouse. Cameras. Reporters.\n\n\"There they are! The journalists who fabricated evidence against the mayor!\"\n\nThe files on the floor - they're YOUR stories. But altered. Forged signatures. Fake timestamps.\n\nSomeone set you up.\n\nThe story breaks before sunrise: \"Journalists caught planting false evidence.\" Your source never existed. The real story is buried forever.",choice:{prompt:"You've been framed. Do you fight the narrative publicly, or go underground?",emotion:"panicked",opts:[{txt:"Fight publicly - hold a press conference immediately",next:3,consequence:"fight"},{txt:"Go underground - investigate who set us up",next:3,consequence:"underground"}]},narrator:"It was a trap. You've been framed.",emotion:"terrified"},
-  {title:"The Aftermath",text:"[Your choices determined everything]\n\nEvery path led somewhere different. Every decision mattered.\n\nThe journalist who went alone got the truth - but at what cost?\nThe one who brought backup was destroyed by lies.\nThe one who took the drive became a target.\nThe one who trusted the source... sometimes trust is all we have.\n\nThis is what Movianx does. Every story. Every choice. Every consequence.\n\nWelcome to the future of storytelling.\n\n[END]"},
-];
-
-const TIMED=[
-  {title:"3:47 AM",text:"The clock on the nightstand reads 3:47 AM. Green numbers in the dark. The house is quiet the way houses are at night \u2014 not silent, but breathing. The refrigerator hums downstairs. A branch taps the window. Normal sounds. Safe sounds.\n\nYou were dreaming about something ordinary. A grocery store. A parking lot. Already fading.\n\nSarah shifts beside you, pulling the blanket. Her breathing is slow and steady. Down the hall, the kids are asleep. You checked on them before bed, the way you always do. Lily had kicked off her covers again. James had his arm around that stuffed dinosaur he says he\u2019s too old for.\n\nThe house settles. A creak from somewhere below. The sound old houses make when the temperature drops. You\u2019ve heard it a thousand times.\n\nYou close your eyes.\n\nThen you hear it.\n\nGlass. Breaking. Downstairs.\n\nNot a branch against a window. Not a glass knocked off a counter. This is a window \u2014 pushed in, shattered, pieces hitting the hardwood floor.\n\nYour eyes are open. Wide. Staring at the ceiling.\n\nSilence.\n\nYou don\u2019t breathe. You count the seconds. One. Two. Three. Four.\n\nMaybe it was nothing. Maybe a bird hit the window. Maybe\u2014\n\nA second sound. The crunch of glass under a shoe.\n\nSomeone is in your house.\n\nYou hear a drawer open. Then another. Hands moving through your things. Not careful. Not quiet. They don\u2019t know you\u2019re awake. Or they don\u2019t care.\n\nA voice. Low. Male. Words you can\u2019t make out. Then another voice responds. At least two of them.\n\nSarah\u2019s hand finds your arm in the dark. She\u2019s awake. She heard it too. Her fingernails dig into your skin. She doesn\u2019t say anything. She doesn\u2019t have to.\n\nThe baseball bat is in the closet. Three steps away. Your phone is on the nightstand \u2014 you grab it. 4% battery. The home alarm panel is downstairs, by the front door, right where the sounds are coming from.\n\nLily\u2019s room is three doors down on the left. James is across the hall from her. To get to them, you\u2019d have to pass the top of the stairs.\n\nA chair scrapes across the kitchen floor below you.\n\nSarah whispers, barely a breath: \u201CWhat do we do?\u201D\n\nYou have 10 seconds to decide.",choice:{prompt:"Intruders are in your house. Your family is asleep. What do you do?",emotion:"terrified",timeLimit:10,opts:[{txt:"Grab the bat and go downstairs",next:1,consequence:"confront"},{txt:"Lock the bedroom door and call 911",next:1,consequence:"hide"},{txt:"Wake the kids and escape through the window",next:1,consequence:"escape"},{txt:"Grab Sarah and barricade in the bathroom",next:1,consequence:"barricade"}]},narrator:"You wake to the sound of intruders in your home.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
-  {title:"The Hallway",text:"[Based on your previous choice]\n\nYou can hear them below you. Everything you own being touched by hands that don\u2019t belong here. A drawer pulled out so far it crashes to the floor. The sound of something glass \u2014 a vase, a picture frame \u2014 hitting the ground and shattering.\n\nThey\u2019re not being careful anymore.\n\nYou press your ear against the bedroom door. The wood is cold. Through it, the sounds are clearer. Cabinets opening. Something heavy being dragged. A laugh. Someone laughed. In your home, at nearly four in the morning, someone is laughing.\n\nYou open the door. One inch. The hallway is dark \u2014 the kind of dark where you know every shape but can\u2019t be sure of any of them. The nightlight in the bathroom casts a thin glow at the far end.\n\nLily\u2019s door has the butterfly sticker on it. You can just make it out. James\u2019s door is closed. They\u2019re quiet. Still sleeping. They don\u2019t know.\n\nThe stairs are fifteen feet ahead of you. The railing. The landing. Then down into whatever is happening below.\n\nYou take a step. The floor protests under your weight. You freeze.\n\nBelow, the sounds continue. They didn\u2019t hear. Or they\u2019re ignoring it.\n\nAnother step. You\u2019re passing the bathroom now. The mirror catches something \u2014 your own face, white and unfamiliar.\n\nThen a voice from downstairs. Clear this time. Loud enough to understand every word.\n\n\u201CCheck upstairs.\u201D\n\nEverything stops. Your heart. Your breathing. The world.\n\nFootsteps. On the first stair. A creak.\n\nSecond stair. Third. They\u2019re not rushing. They know they have time.\n\nSarah is behind you. She followed you out. She\u2019s shaking so badly you can feel it without touching her. She mouths something. \u201CThe kids.\u201D\n\nFifth stair. Sixth. Slow. Heavy.\n\nThen they stop.\n\nSilence. Nothing. Not a sound in the entire house.\n\nFive seconds pass. Ten.\n\nA voice from the stairs, conversational, almost friendly: \u201CI know someone\u2019s up here. I can smell the shampoo. Come on out. We just want your stuff. Nobody needs to get hurt.\u201D\n\nThe footsteps resume. They\u2019re on the landing now. Same level as you. Same air.\n\nYou have 10 seconds.",choice:{prompt:"They're on the stairs. Your kids are down the hall. What now?",emotion:"panicked",timeLimit:10,opts:[{txt:"Rush them on the stairs - use surprise",next:2,consequence:"rush"},{txt:"Yell that police are on the way",next:2,consequence:"bluff"},{txt:"Stay silent and let them take what they want",next:2,consequence:"silent"},{txt:"Send Sarah to the kids while you distract them",next:2,consequence:"split"}]},narrator:"The intruders are coming upstairs.",emotion:"terrified",sound:"heartbeat"},
-  {title:"The Choice",text:"[Every previous decision has led to this moment]\n\nThe hallway has never been this long. Every door is a choice. Every shadow could be hiding something. The only light comes from under Lily\u2019s door \u2014 she sleeps with the dinosaur nightlight, the one with the green glow.\n\nYou can see the bedroom door at the end of the hall. Your bedroom. Where this started. Where safety was, before the glass broke.\n\nThen you see it.\n\nA shadow. Under the door to the guest room. Two feet. Standing perfectly still. Waiting.\n\nHow long have they been there? Were they there when you walked past? A second intruder. Upstairs already. Patient.\n\nFrom behind Lily\u2019s door, a whimper. Small. Half-asleep. She\u2019s having a bad dream, or she\u2019s starting to wake up and sense that something is wrong. Children know. They always know.\n\nThe shadow under the guest room door shifts. They heard her too.\n\nYour hands are shaking. Not a tremor \u2014 a full, visible shake. You grip the bat tighter, or the phone tighter, or whatever you chose to carry with you into this hallway. It doesn\u2019t feel like enough.\n\nSarah presses against your back. Her breath is hot on your neck, coming in short, shallow gasps. She grabs a fistful of your shirt. \u201CHe has something,\u201D she breathes. \u201CI saw it. When the streetlight caught it.\u201D\n\nA gun. He has a gun.\n\nThe guest room door handle starts to turn. Not fast. Slow. Testing. Seeing if it\u2019s locked. It isn\u2019t. You never lock interior doors. Why would you? This is your home.\n\nFrom downstairs, the other voice: \u201CLast chance, friends. Come out now. I\u2019m getting bored and that makes me do stupid things.\u201D\n\nLily cries out. Not a whimper this time. A real cry. \u201CDaddy?\u201D\n\nThe handle stops turning. Everything is perfectly, horribly still.\n\nSarah whispers directly into your ear. Her voice breaks on every word. \u201CWhatever you do. Whatever happens. Protect the kids. Promise me. Promise me right now.\u201D\n\nThe handle turns all the way. The door begins to open.\n\nYou have 10 seconds. This is the choice that determines everything.",choice:{prompt:"The door is opening. Armed intruder. Your family behind you. Choose NOW.",emotion:"terrified",timeLimit:10,opts:[{txt:"Swing the bat as the door opens",next:3,consequence:"fight"},{txt:"Surrender - \"Take everything, just don't hurt my family\"",next:3,consequence:"surrender"},{txt:"Push your family into the bathroom, lock it, face them alone",next:3,consequence:"sacrifice"}]},narrator:"This is the moment that changes everything.",emotion:"terrified",sound:"heartbeat",jumpScare:true},
-  {title:"Consequences",text:"[Your choices determined everything]\n\nThe sound hits you first. Not the sirens \u2014 those come later. First it\u2019s the quiet after everything stops. A ringing in your ears that isn\u2019t really there. Your own breathing, ragged, too fast, too loud.\n\nThen the sirens. Far away, then closer, then everywhere. Red and blue light pushes through the blinds and crawls across the ceiling in slow, repeating waves. The colors paint everything \u2014 the walls, the bed, Sarah\u2019s face, your hands.\n\nYour hands.\n\nSomeone is talking to you. A police officer. Young. Maybe twenty-five. He\u2019s saying words but they don\u2019t connect into sentences. \u201CSir... need you to... can you tell me...\u201D\n\nLily is in Sarah\u2019s arms. She hasn\u2019t stopped crying, but it\u2019s quieter now \u2014 a sound like she\u2019s run out of everything and is just going through the motions. James stands next to them in his dinosaur pajamas. He isn\u2019t crying. He\u2019s staring at a point on the wall and his face is perfectly blank. That\u2019s worse.\n\nA paramedic puts a blanket around your shoulders. It\u2019s rough and gray and smells like an ambulance. She asks you something about pain, about injuries. You say you\u2019re fine. You don\u2019t know if that\u2019s true.\n\nMore police arrive. Then more. The house fills with people who aren\u2019t your family. They put tape across the downstairs. They take photographs. They measure things and write in small notebooks and talk to each other in voices that are careful and practiced.\n\nSomeone brings coffee. You hold it but don\u2019t drink it.\n\nSarah won\u2019t look at you. Or she can\u2019t. She holds Lily and rocks back and forth in the kitchen chair and stares at a fixed point on the refrigerator. You put your hand on her shoulder and she flinches. Not away from you. Just flinches. At everything. At the world being a place where this can happen at 3:47 in the morning in a house with butterfly stickers on the doors.\n\nAn officer asks you to walk through what happened. You tell the story. Your voice sounds like someone else\u2019s. You get to the part where you made the choice \u2014 the choice \u2014 and you stop. You can\u2019t explain why you did what you did. You can\u2019t explain the ten seconds where everything collapsed into a single moment and you just acted.\n\n\u201CYou did the right thing,\u201D the officer says. But you can see in his eyes that he doesn\u2019t know if that\u2019s true. Nobody will ever know. There is no right thing at 3:47 AM with glass on your floor and strangers in your house and your children\u2019s names on your lips.\n\nDawn comes. Gray light through the windows they haven\u2019t taped over. The blue and red lights fade against the morning. The last police car pulls away. A detective hands you a card and says she\u2019ll be in touch.\n\nThe house is yours again. But it doesn\u2019t feel like yours. Every room is a crime scene. Every shadow is a memory. The broken window has plywood over it now but you can still feel the cold air.\n\nJames finally speaks. Just one sentence. Standing in the hallway, in his dinosaur pajamas, looking at the stairs.\n\n\u201CAre they going to come back?\u201D\n\nYou don\u2019t answer. Because you don\u2019t know. Because no answer will make this okay. Because some questions don\u2019t have good answers \u2014 just honest ones and dishonest ones, and you\u2019re too tired for either.\n\nThere was no good choice. Just the one you made in ten seconds. And the one you\u2019ll live with forever.\n\nEvery path had a cost. Every decision left a scar.\n\nYou\u2019ll fix the window. You\u2019ll change the locks. You\u2019ll install cameras and sensors and alarms that connect to your phone. You\u2019ll check the doors twice before bed, then three times, then four. Sarah will sleep with the light on for a while. Then longer than a while.\n\nLily will crawl into your bed at night for months. James won\u2019t talk about it at all, which worries you more than anything.\n\nAnd at 3:47 AM, for a long time, you\u2019ll be awake. Listening. Waiting for the sound that started everything.\n\nSilence.\n\nReal silence.\n\nThis is what ten seconds can do.\n\nWelcome to Movianx.\n\n[END]"},
-];
-
-function getChapters(storyId){
-  if(storyId===1)return FRANK;
-  if(storyId===2)return SAMPLE;
-  if(storyId===3)return TIMED;
-  return FRANK;
-}
-
 // === ASSET MANIFEST SYSTEM ===
 // Architecture: Pre-process once per story upload -> cache forever
 //
@@ -692,6 +607,7 @@ const FRANK_ASSETS = [
 
 // === MAIN COMPONENT ===
 export default function MovianxPlatform(){
+  const VIEW_TRANSITION_MS=400;
   // === STATE ===
   const[pg,setPg]=useState("landing");
   const[sel,setSel]=useState(null);
@@ -706,7 +622,7 @@ export default function MovianxPlatform(){
   const[voiceActive,setVoiceActive]=useState(false);
   const[narratorOn,setNarratorOn]=useState(true);
   const[soundEffectsOn,setSoundEffectsOn]=useState(true);
-  const[fadeOut,setFadeOut]=useState(false);
+  const[viewTransitionState,setViewTransitionState]=useState("entered");
   const[pageAnim,setPageAnim]=useState(""); // page turn animation
   const[fontSize,setFontSize]=useState(17);
   const[fontFamily,setFontFamily]=useState("Georgia");
@@ -727,9 +643,10 @@ export default function MovianxPlatform(){
   const recognitionRef=useRef(null);
   const navLockRef=useRef(false); // P0: prevents double navigation
   const telemetryRef=useRef([]); // P3: event logging
+  const narrationDurationCacheRef=useRef(new Map());
 
   const currentTheme=THEMES[colorTheme];
-  const chaps=sel?getChapters(sel.id):FRANK;
+  const chaps=sel?getChapters(sel.id):getChapters(1);
   const ch=chaps[chIdx]||{};
 
   // === BRANCH MEMORY ENGINE ===
@@ -755,6 +672,55 @@ export default function MovianxPlatform(){
     return null;
   };
 
+  const getStoryMeta=(storyId)=>STORIES.find(story=>story.id===storyId)||null;
+  const shouldUseCompanionScript=(storyId,currentMode)=>{
+    const manifest=getManifest(storyId);
+    const storyMeta=getStoryMeta(storyId);
+    return currentMode==="Immersive"&&Boolean(storyMeta?.isTimed&&manifest?.companionScript);
+  };
+
+  const companionChapter=sel&&shouldUseCompanionScript(sel.id,mode)
+    ?getManifest(sel.id)?.companionScript?.[chIdx]||null
+    :null;
+  const activeChapterText=companionChapter?.text||ch.text||"";
+  const activeChoicePrompt=companionChapter?.choicePrompt||ch.choice?.prompt||"";
+
+  const getNarrationDurationMs=useCallback((storyId,chapterIdx,currentMode,fallbackText,emotion="calm")=>{
+    if(typeof window==="undefined")return Promise.resolve(estimateSpeechDurationMs(fallbackText,emotion));
+    const manifest=getManifest(storyId);
+    const useCompanion=shouldUseCompanionScript(storyId,currentMode);
+    const narrationText=useCompanion
+      ?manifest?.companionScript?.[chapterIdx]?.text||fallbackText
+      :fallbackText;
+    const narrationUrl=useCompanion
+      ?assetResolver.getCompanionNarration(storyId,chapterIdx)
+      :assetResolver.getNarration(storyId,chapterIdx);
+
+    if(!narrationUrl){
+      return Promise.resolve(estimateSpeechDurationMs(narrationText,emotion));
+    }
+
+    const cached=narrationDurationCacheRef.current.get(narrationUrl);
+    if(cached)return Promise.resolve(cached);
+
+    return new Promise(resolve=>{
+      const probe=new Audio(narrationUrl);
+      probe.preload="metadata";
+      const finish=(durationMs)=>{
+        if(durationMs)narrationDurationCacheRef.current.set(narrationUrl,durationMs);
+        resolve(durationMs||estimateSpeechDurationMs(narrationText,emotion));
+      };
+      probe.addEventListener("loadedmetadata",()=>{
+        const durationMs=Number.isFinite(probe.duration)&&probe.duration>0
+          ? Math.round(probe.duration*1000)
+          : null;
+        finish(durationMs);
+      },{once:true});
+      probe.addEventListener("error",()=>finish(null),{once:true});
+      probe.load();
+    });
+  },[]);
+
   // Play full chapter audio from manifest
   const playChapterAudio=(storyId,chapIdx,currentMode)=>{
     if(!audioEngine||!audioEngine.ctx)return;
@@ -777,7 +743,7 @@ export default function MovianxPlatform(){
     // 1b. Start music layer (loops underneath everything)
     if(chManifest.music&&chManifest.music.file){
       const m=chManifest.music;
-      audioEngine.playAmbient(assetResolver.resolveFile(m.file),m.volume||0.1,m.fadeIn||3,m.label||"chapter_music");
+      audioEngine.playAmbient(assetResolver.resolveFile(m.file),m.volume||0.1,m.fadeIn||3,m.label||"chapter_music","music");
     }
 
     // 2. Start spatial sounds with triggers
@@ -851,7 +817,7 @@ export default function MovianxPlatform(){
     }
 
     // 4. Start narration
-    const useCompanion=currentMode==="Immersive"&&storyId===3;
+    const useCompanion=shouldUseCompanionScript(storyId,currentMode);
     const narrationUrl=useCompanion
       ?assetResolver.getCompanionNarration(storyId,chapIdx)
       :assetResolver.getNarration(storyId,chapIdx);
@@ -881,15 +847,7 @@ export default function MovianxPlatform(){
     setCurrentWordIdx(-1);
     const doSpeak=()=>{
       const u=new SpeechSynthesisUtterance(text);
-      const emotions={
-        terrified:{rate:1.3,pitch:1.15,volume:0.95},panicked:{rate:1.3,pitch:1.15,volume:0.95},
-        tense:{rate:1.0,pitch:1.05,volume:0.9},nervous:{rate:1.05,pitch:1.0,volume:0.9},
-        calm:{rate:0.9,pitch:0.95,volume:0.9},reflective:{rate:0.85,pitch:0.92,volume:0.85},
-        ambitious:{rate:0.95,pitch:1.0,volume:0.9},curious:{rate:0.95,pitch:1.0,volume:0.9},
-        anguished:{rate:0.9,pitch:1.1,volume:0.95},whispering:{rate:0.85,pitch:0.9,volume:0.5},
-        devastated:{rate:0.8,pitch:0.85,volume:0.8}
-      };
-      const em=emotions[emotion]||emotions.calm;
+      const em=getSpeechProfile(emotion);
       u.rate=em.rate;u.pitch=em.pitch;u.volume=em.volume;
       const voices=window.speechSynthesis.getVoices();
       const english=voices.filter(v=>v.lang.startsWith("en"));
@@ -963,8 +921,23 @@ export default function MovianxPlatform(){
     navLockRef.current=true;
     stopAllAudio();
     logEvent("navigate",{from:pg,to:newPg});
-    setFadeOut(true);
-    setTimeout(()=>{setPg(newPg);setFadeOut(false);if(typeof window!=="undefined")window.scrollTo(0,0);navLockRef.current=false},250);
+    setViewTransitionState("exiting");
+    setTimeout(()=>{
+      setPg(newPg);
+      setViewTransitionState("pre-enter");
+      if(typeof window!=="undefined"){
+        window.scrollTo(0,0);
+        window.requestAnimationFrame(()=>{
+          window.requestAnimationFrame(()=>{
+            setViewTransitionState("entered");
+            navLockRef.current=false;
+          });
+        });
+        return;
+      }
+      setViewTransitionState("entered");
+      navLockRef.current=false;
+    },VIEW_TRANSITION_MS);
   };
 
   const goChapter=(idx)=>{
@@ -1009,8 +982,8 @@ export default function MovianxPlatform(){
 
   // === EFFECTS ===
   useEffect(()=>{
-    if(pg!=="reading"||!ch.text)return;
-    setTxt(ch.text);
+    if(pg!=="reading"||!activeChapterText)return;
+    setTxt(activeChapterText);
     setRevealedWordCount(-1);
     logEvent("scene_playback_started",{chapter:chIdx,title:ch.title,mode});
 
@@ -1020,11 +993,11 @@ export default function MovianxPlatform(){
     }
     // Cinematic without manifest match: Web Speech fallback
     if(mode==="Cinematic"&&(!sel||!getManifest(sel.id))){
-      speak(ch.text,ch.emotion||"calm");
+      speak(activeChapterText,ch.emotion||"calm");
     }
 
-    const wordCount=ch.text?ch.text.split(/\s+/).length:0;
-    const isTimedStory=sel?.id===3;
+    const wordCount=activeChapterText?activeChapterText.split(/\s+/).length:0;
+    const isTimedStory=Boolean(sel?.isTimed);
     const isImmersiveTimed=isTimedStory&&mode==="Immersive";
 
     // Word-by-word reveal for Immersive timed stories
@@ -1045,75 +1018,101 @@ export default function MovianxPlatform(){
       },msPerWord);
     }
 
-    // Show choice after appropriate delay
-    // For Immersive timed: wait for narration to finish, then choice prompt, then timer
-    // For other modes: use readDelay based on text length
-    let timer;
-    if(isImmersiveTimed&&ch.choice){
-      const narrationDuration=wordCount*400; // ms for scene narration
-      const choiceBuffer=3000; // pause before choice prompt
-      // After narration finishes, show choice and speak prompt
-      timer=setTimeout(()=>{
-        setShowChoice(true);
-        const manifest=sel?getManifest(sel.id):null;
-        if(manifest?.companionScript?.[chIdx]?.choicePrompt){
-          speak(manifest.companionScript[chIdx].choicePrompt,"whispering");
-          // Timer starts after choice prompt is spoken (~8s for companion whisper)
-          setTimeout(()=>{
-            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
-            setVoiceMode(true);startVoiceRec();
-          },8000);
-        }else{
-          speakImmersiveOptions(ch.choice);
-          setTimeout(()=>{
-            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
-            setVoiceMode(true);startVoiceRec();
-          },6000);
-        }
-      },narrationDuration+choiceBuffer);
-    }else{
-      // Non-immersive or non-timed: original logic with longer readDelay for expanded text
-      const readDelay=ch.text?Math.min(wordCount*200,isTimedStory?wordCount*180:8000):3000;
-      timer=setTimeout(()=>{
-        if(ch.choice){
+    // Show choice after actual narration length when possible instead of hardcoded text timing.
+    const localTimers=[];
+    const addLocalTimer=(fn,delay)=>{
+      const id=setTimeout(fn,delay);
+      localTimers.push(id);
+      return id;
+    };
+    const fallbackReadDelay=activeChapterText?Math.min(wordCount*200,isTimedStory?wordCount*180:8000):3000;
+    let cancelled=false;
+
+    const scheduleChoiceFlow=async()=>{
+      const narrationDuration=(narratorOn&&mode!=="Reader"&&sel)
+        ?await getNarrationDurationMs(sel.id,chIdx,mode,activeChapterText,ch.emotion||"calm")
+        :fallbackReadDelay;
+      if(cancelled)return;
+
+      if(isImmersiveTimed&&ch.choice){
+        addLocalTimer(()=>{
           setShowChoice(true);
-          if(isTimedStory){
-            // For timed stories in Reader/Cinematic: show choices first, then start timer after brief pause
-            setTimeout(()=>{
+          const manifest=sel?getManifest(sel.id):null;
+          if(manifest?.companionScript?.[chIdx]?.choicePrompt){
+            const prompt=manifest.companionScript[chIdx].choicePrompt;
+            const promptDelay=estimateSpeechDurationMs(prompt,"whispering");
+            speak(prompt,"whispering");
+            addLocalTimer(()=>{
               if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
-              if(ch.choice.prompt&&mode==="Cinematic"){
-                speak(ch.choice.prompt,ch.choice.emotion||"calm");
-              }
-            },2000);
+              setVoiceMode(true);startVoiceRec();
+            },promptDelay+300);
           }else{
-            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
-            setTimeout(()=>{
-              if(ch.choice.prompt&&mode==="Cinematic"){
-                speak(ch.choice.prompt,ch.choice.emotion||"calm");
-              }
-              if(ch.choice.prompt&&mode==="Immersive"){
-                const manifest=sel?getManifest(sel.id):null;
-                if(manifest?.companionScript?.[chIdx]?.choicePrompt){
-                  speak(manifest.companionScript[chIdx].choicePrompt,"whispering");
-                  setTimeout(()=>{setVoiceMode(true);startVoiceRec()},8000);
-                }else{
-                  speakImmersiveOptions(ch.choice);
-                  setTimeout(()=>{setVoiceMode(true);startVoiceRec()},6000);
-                }
-              }
-            },3000);
+            const promptDelay=estimateSpeechDurationMs(
+              `${ch.choice.prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
+              ch.choice.emotion||"calm"
+            );
+            speakImmersiveOptions(ch.choice);
+            addLocalTimer(()=>{
+              if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+              setVoiceMode(true);startVoiceRec();
+            },promptDelay+300);
           }
+        },narrationDuration+1200);
+        return;
+      }
+
+      addLocalTimer(()=>{
+        if(!ch.choice)return;
+        setShowChoice(true);
+        if(isTimedStory){
+          addLocalTimer(()=>{
+            if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+            if(ch.choice.prompt&&mode==="Cinematic"){
+              speak(ch.choice.prompt,ch.choice.emotion||"calm");
+            }
+          },2000);
+          return;
         }
-      },readDelay);
-    }
-    return()=>{clearTimeout(timer);if(revealInterval)clearInterval(revealInterval);stopAllAudio()};
-  },[pg,chIdx,mode,narratorOn,soundEffectsOn]);
+
+        if(ch.choice.timeLimit){setTimeRemaining(ch.choice.timeLimit);setTimerActive(true)}
+        addLocalTimer(()=>{
+          if(ch.choice.prompt&&mode==="Cinematic"){
+            speak(ch.choice.prompt,ch.choice.emotion||"calm");
+          }
+          if(ch.choice.prompt&&mode==="Immersive"){
+            const manifest=sel?getManifest(sel.id):null;
+            if(manifest?.companionScript?.[chIdx]?.choicePrompt){
+              const prompt=manifest.companionScript[chIdx].choicePrompt;
+              const promptDelay=estimateSpeechDurationMs(prompt,"whispering");
+              speak(prompt,"whispering");
+              addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+300);
+            }else{
+              const promptDelay=estimateSpeechDurationMs(
+                `${ch.choice.prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
+                ch.choice.emotion||"calm"
+              );
+              speakImmersiveOptions(ch.choice);
+              addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+300);
+            }
+          }
+        },3000);
+      },Math.max(fallbackReadDelay,narrationDuration));
+    };
+
+    scheduleChoiceFlow();
+    return()=>{
+      cancelled=true;
+      localTimers.forEach(clearTimeout);
+      if(revealInterval)clearInterval(revealInterval);
+      stopAllAudio();
+    };
+  },[pg,chIdx,mode,narratorOn,soundEffectsOn,activeChapterText]);
 
   // Countdown timer with manifest-driven heartbeat intensity
   useEffect(()=>{
     if(!timerActive||timeRemaining===null)return;
     if(timeRemaining<=0){
-      if(mode==="Immersive"&&sel?.id===3&&ch.choice?.opts[0]){
+      if(mode==="Immersive"&&sel?.isTimed&&ch.choice?.opts[0]){
         // Companion makes the choice desperately
         speak("Okay, we're doing this!","panicked");
         setTimeout(()=>makeChoice(ch.choice.opts[0]),1200);
@@ -1130,7 +1129,7 @@ export default function MovianxPlatform(){
       if(chManifest?.timerAudio?.heartbeatIntensity){
         // Start heartbeat when timer first begins (heartbeatStartAt: "timerStart")
         if(chManifest.timerAudio.heartbeatStartAt==="timerStart"&&timeRemaining===(ch.choice?.timeLimit||10)){
-          const url="/audio/sfx/heartbeat.mp3";
+          const url=assetResolver.getAudio("heartbeat");
           const startIntensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining]||0.1;
           audioEngine.playSpatial(url,startIntensity,{x:0,y:0,z:0},true,0,"your heartbeat");
         }
@@ -1158,137 +1157,49 @@ export default function MovianxPlatform(){
 
   // === LANDING PAGE ===
   if(pg==="landing"){
-    return(
-      <div style={{minHeight:"100vh",background:"linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 25%, #f5f3f0 50%, #f0eff5 75%, #f8f9fa 100%)",backgroundSize:"300% 300%",animation:"gradientShift 15s ease infinite",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
-        <div style={{position:"absolute",top:0,left:0,right:0,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"24px 5%",zIndex:10,animation:"fadeDown 0.6s ease both"}}>
-          <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
-          <div style={{display:"flex",gap:32,alignItems:"center"}}>
-            <button onClick={()=>navigateTo("creator")} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Sign In</button>
-            <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
-          </div>
-        </div>
-        <div style={{textAlign:"center",maxWidth:900,zIndex:1,marginTop:60}}>
-          <h1 style={{fontSize:"clamp(42px,8vw,72px)",fontWeight:700,color:C.text,marginBottom:20,letterSpacing:"-2px",lineHeight:1.1,animation:"fadeUp 0.8s ease both 0.2s",opacity:0}}>What do you want to experience?</h1>
-          <p style={{fontSize:18,color:C.text2,marginBottom:50,lineHeight:1.6,animation:"fadeUp 0.8s ease both 0.3s",opacity:0}}>Books that adapt to you. Stories that listen. Worlds you shape with every choice.</p>
-          <div style={{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap",marginBottom:60,animation:"fadeUp 0.8s ease both 0.4s",opacity:0}}>
-            <button onClick={()=>navigateTo("home")} style={{padding:"18px 36px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:16,fontWeight:600,cursor:"pointer",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>Get Started</button>
-          </div>
-          <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",animation:"fadeUp 0.8s ease both 0.5s",opacity:0}}>
-            {["Choice-Driven Narratives","AI Narration","Adaptive Soundscapes","Immersive Visuals"].map(f=>(
-              <div key={f} style={{padding:"8px 16px",borderRadius:20,background:C.pillBg,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${C.glassBorder}`,color:C.text,fontSize:13,fontWeight:500}}>{f}</div>
-            ))}
-          </div>
-        </div>
-        <style>{CSS}</style>
-      </div>
-    );
+    return <LandingView C={C} FF={FF} CSS={CSS} transitionState={viewTransitionState} navigateTo={navigateTo} />;
   }
 
   // === HOME PAGE ===
   if(pg==="home"){
-    return(
-      <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,display:"flex",flexDirection:"column",position:"relative",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 5%",borderBottom:`1px solid ${C.border}`,animation:"fadeDown 0.6s ease both"}}>
-          <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
-          <div style={{display:"flex",gap:24,alignItems:"center"}}>
-            <button onClick={()=>navigateTo("creator")} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Creator Studio</button>
-            <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
-          </div>
-        </div>
-        <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"32px 5% 60px"}}>
-          <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:700,color:C.text,marginBottom:8,textAlign:"center",letterSpacing:"-1px",animation:"fadeUp 0.8s ease both 0.1s",opacity:0}}>Choose Your Experience</h1>
-          <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:500,animation:"fadeUp 0.8s ease both 0.2s",opacity:0}}>Explore interactive stories, cinematic adaptations, and connect with creators.</p>
-          <div style={{display:"flex",gap:16,width:"100%",maxWidth:900,justifyContent:"center",flexWrap:"wrap",paddingBottom:40}}>
-            {/* Stories Tile - Active */}
-            <button onClick={()=>navigateTo("library")} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:"20px 20px 52px 20px",cursor:"pointer",textAlign:"left",position:"relative",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.3s",opacity:0,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
-              <div style={{fontSize:36,marginBottom:8}}>📚</div>
-              <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Stories</h3>
-              <p style={{fontSize:14,color:C.text2,margin:0}}>Interactive fiction</p>
-              <div style={{position:"absolute",bottom:12,right:12,width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16}}>→</div>
-            </button>
-            {/* Cinema - Coming Soon */}
-            <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.4s",opacity:0,boxShadow:C.shadow}}>
-              <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎬</div>
-              <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Cinema</h3>
-              <div style={{display:"inline-block",padding:"4px 10px",borderRadius:12,background:C.pillBg,fontSize:10,fontWeight:600,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Coming Soon</div>
-            </div>
-            {/* Artists - Coming Soon */}
-            <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:"fadeUp 0.8s ease both 0.5s",opacity:0,boxShadow:C.shadow}}>
-              <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎨</div>
-              <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Artists</h3>
-              <div style={{display:"inline-block",padding:"4px 10px",borderRadius:12,background:C.pillBg,fontSize:10,fontWeight:600,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Coming Soon</div>
-            </div>
-          </div>
-        </div>
-        <style>{CSS}</style>
-      </div>
-    );
+    return <HomeView C={C} FF={FF} CSS={CSS} transitionState={viewTransitionState} navigateTo={navigateTo} />;
   }
 
   // === LIBRARY PAGE ===
   if(pg==="library"){
-    return(
-      <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,padding:"80px 5% 120px",opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
-        <button onClick={()=>navigateTo("home")} style={{background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,color:C.text,padding:"12px 24px",borderRadius:8,fontSize:14,cursor:"pointer",marginBottom:40,fontFamily:FF,boxShadow:C.shadow}}>← Back</button>
-        <h1 style={{fontSize:48,fontWeight:700,color:C.text,marginBottom:16}}>Story Library</h1>
-        <p style={{fontSize:18,color:C.text2,marginBottom:60}}>Choose your experience</p>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:24,maxWidth:1200}}>
-          {STORIES.map(story=>(
-            <div key={story.id} onClick={()=>{setSel(story);navigateTo("detail")}} style={{background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:16,overflow:"hidden",cursor:"pointer",transition:"all 0.3s",boxShadow:C.shadow,transformStyle:"preserve-3d"}} onMouseMove={e=>{const r=e.currentTarget.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-0.5;const y=(e.clientY-r.top)/r.height-0.5;e.currentTarget.style.transform=`perspective(600px) rotateY(${x*6}deg) rotateX(${-y*6}deg) translateY(-4px)`}} onMouseEnter={e=>{e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="perspective(600px) rotateY(0deg) rotateX(0deg) translateY(0)";e.currentTarget.style.boxShadow=C.shadow}}>
-              <div style={{height:200,background:`url(${story.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}/>
-              <div style={{padding:20}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:8}}>
-                  <h3 style={{fontSize:20,fontWeight:700,color:C.text,margin:0}}>{story.title}</h3>
-                  {story.isTimed&&<span style={{fontSize:20}}>⏱️</span>}
-                </div>
-                <p style={{fontSize:13,color:C.text2,marginBottom:12}}>{story.author} * {story.genre}</p>
-                <p style={{fontSize:14,color:C.text2,lineHeight:1.6,marginBottom:16}}>{story.desc}</p>
-                <div style={{display:"flex",gap:16,fontSize:12,color:C.text2}}>
-                  <span>⭐ {story.rating}</span><span>📖 {story.chapters} chapters</span><span>👁️ {story.reads}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        <style>{CSS}</style>
-      </div>
+    return (
+      <LibraryView
+        C={C}
+        FF={FF}
+        CSS={CSS}
+        transitionState={viewTransitionState}
+        navigateTo={navigateTo}
+        stories={STORIES}
+        onSelectStory={(story)=>{setSel(story);navigateTo("detail")}}
+      />
     );
   }
 
   // === DETAIL PAGE ===
   if(pg==="detail"&&sel){
-    return(
-      <div style={{minHeight:"100vh",background:C.bg,fontFamily:FF,opacity:fadeOut?0:1,transition:"opacity 0.25s"}}>
-        <div style={{position:"relative",height:360,background:`url(${sel.cover})`,backgroundSize:"cover",backgroundPosition:"center"}}>
-          <div style={{position:"absolute",inset:0,background:"linear-gradient(transparent 30%, rgba(248,249,250,0.8) 70%, #f8f9fa 100%)"}}/>
-          <button onClick={()=>navigateTo("library")} style={{position:"absolute",top:24,left:24,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,padding:"10px 20px",borderRadius:8,fontSize:14,cursor:"pointer",zIndex:2,fontFamily:FF,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",boxShadow:C.shadow}}>← Back</button>
-        </div>
-        <div style={{maxWidth:800,margin:"-80px auto 0",padding:"0 24px 60px",position:"relative",zIndex:2}}>
-          <h1 style={{fontSize:40,fontWeight:700,color:C.text,marginBottom:8,letterSpacing:"-1px"}}>{sel.title}</h1>
-          <p style={{fontSize:16,color:C.text2,marginBottom:20}}>{sel.author} * {sel.genre}</p>
-          <p style={{fontSize:16,color:C.text2,lineHeight:1.8,marginBottom:32}}>{sel.desc}</p>
-          <div style={{display:"flex",gap:12,marginBottom:32,flexWrap:"wrap"}}>
-            <span style={{padding:"6px 14px",borderRadius:20,background:C.pillBg,color:C.text2,fontSize:13}}>⭐ {sel.rating}</span>
-            <span style={{padding:"6px 14px",borderRadius:20,background:C.pillBg,color:C.text2,fontSize:13}}>📖 {sel.chapters} chapters</span>
-            <span style={{padding:"6px 14px",borderRadius:20,background:C.pillBg,color:C.text2,fontSize:13}}>👁️ {sel.reads}</span>
-            {sel.isTimed&&<span style={{padding:"6px 14px",borderRadius:20,background:"rgba(232,54,79,0.2)",color:C.red,fontSize:13,fontWeight:600}}>⏱️ Timed Choices</span>}
-          </div>
-          {/* Mode Selection */}
-          <div style={{marginBottom:32}}>
-            <p style={{fontSize:12,color:C.text2,textTransform:"uppercase",letterSpacing:"1.5px",marginBottom:12}}>Experience Mode</p>
-            <div style={{display:"flex",gap:10}}>
-              {sel.immersions.map(m=>(
-                <button key={m} onClick={()=>setMode(m)} style={{padding:"12px 24px",borderRadius:12,border:`1px solid ${mode===m?C.accent:C.border}`,background:mode===m?C.accent:"transparent",color:mode===m?"#fff":C.text2,fontSize:14,fontWeight:mode===m?600:400,cursor:"pointer",transition:"all 0.2s",fontFamily:FF}}>{m==="Reader"?"📖":""}  {m==="Cinematic"?"🎬":""} {m==="Immersive"?"🌐":""} {m}</button>
-              ))}
-            </div>
-          </div>
-          {/* Start Button */}
-          <button onClick={()=>{if(audioEngine&&mode!=="Reader")audioEngine.init();setChIdx(0);setChoices([]);setShowChoice(false);navigateTo("reading")}} style={{width:"100%",maxWidth:400,padding:"18px",borderRadius:14,border:"none",background:C.accent,color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",transition:"all 0.2s",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>
-            Begin Reading →
-          </button>
-        </div>
-        <style>{CSS}</style>
-      </div>
+    return (
+      <DetailView
+        C={C}
+        FF={FF}
+        CSS={CSS}
+        transitionState={viewTransitionState}
+        navigateTo={navigateTo}
+        story={sel}
+        mode={mode}
+        setMode={setMode}
+        onStartReading={()=>{
+          if(audioEngine&&mode!=="Reader")audioEngine.init();
+          setChIdx(0);
+          setChoices([]);
+          setShowChoice(false);
+          navigateTo("reading");
+        }}
+      />
     );
   }
 
@@ -1313,7 +1224,7 @@ export default function MovianxPlatform(){
             <button onClick={()=>{
               const next=!narratorOn;setNarratorOn(next);
               logEvent("narration_toggled",{enabled:next,chapter:chIdx});
-              if(next&&ch.text)setTimeout(()=>speak(ch.text,ch.emotion||"calm"),100);
+              if(next&&activeChapterText)setTimeout(()=>speak(activeChapterText,ch.emotion||"calm"),100);
               else if(typeof window!=="undefined"&&window.speechSynthesis){window.speechSynthesis.cancel();setCurrentWordIdx(-1)}
             }} style={{padding:"5px 10px",borderRadius:6,background:narratorOn?`${C.red}15`:"transparent",border:`1px solid ${narratorOn?C.red:`${currentTheme.text}15`}`,color:narratorOn?C.red:`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>{narratorOn?"🔊":"🔇"}</button>
             {mode==="Immersive"&&<button onClick={()=>{setVoiceMode(!voiceMode);if(!voiceMode)startVoiceRec()}} style={{padding:"5px 10px",borderRadius:6,background:voiceActive?C.red:"transparent",border:`1px solid ${voiceActive?C.red:`${currentTheme.text}15`}`,color:voiceActive?"#fff":`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>🎤</button>}
@@ -1435,6 +1346,11 @@ export default function MovianxPlatform(){
           {/* Immersive Choice - voice only, no clickable buttons */}
           {showChoice&&ch.choice&&mode==="Immersive"&&(
             <div style={{textAlign:"center",padding:"48px 20px",marginTop:40,animation:"fadeUp 0.4s ease both"}}>
+              {activeChoicePrompt&&(
+                <p style={{maxWidth:560,margin:"0 auto 24px",fontSize:18,fontWeight:600,lineHeight:1.6,color:currentTheme.text}}>
+                  {activeChoicePrompt}
+                </p>
+              )}
               {timerActive&&timeRemaining!==null&&(
                 <div style={{marginBottom:24,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
                   <div style={{fontSize:48+(10-Math.min(timeRemaining,10))*3,fontWeight:700,color:timeRemaining<=3?C.red:timeRemaining<=5?`color-mix(in srgb, ${C.red} ${(5-timeRemaining)*25}%, ${currentTheme.text})`:currentTheme.text,fontFamily:"monospace",transition:"font-size 0.4s ease, color 0.4s ease"}}>{timeRemaining}</div>

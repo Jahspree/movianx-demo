@@ -36,22 +36,22 @@ const TIMED_HORROR_AUDIO = {
   companionScript: {
     // Ch0: Confused → scared. Sentences get shorter as fear builds.
     0: {
-      text: "Hey... hey wake up. [pause] Did you hear that? ... That was glass. Downstairs. [pause] Someone's in the house. [pause] ... I can hear footsteps. More than one person. [pause] Oh god. [pause] The bat's in the closet. My phone... it's almost dead. [pause] The alarm... it's downstairs. Where they are. [pause] The kids are down the hall. [pause] ... What do we do? [pause] We have ten seconds. Tell me.",
-      choicePrompt: "Please... tell me. [pause] Do we grab the bat? ... Or call 911? [pause] Do we get the kids... go out the window? [pause] Or barricade in the bathroom? [pause] ... Ten seconds. What do we do?",
+      text: "Hey... hey, wake up. Did you hear that? Glass. Downstairs. Someone's in the house. I can hear footsteps. More than one. Oh God. The bat's in the closet. My phone's almost dead. The alarm is downstairs, where they are. The kids are down the hall. What do we do? We have ten seconds. Tell me.",
+      choicePrompt: "Please. Tell me. Do we grab the bat? Or call 911? Do we get the kids and go out the window? Or barricade in the bathroom? Ten seconds. What do we do?",
     },
     // Ch1: Terrified. Mostly fragments. Long silences where they're listening.
     1: {
-      text: "They're coming up. [pause] ... The stairs. I can hear them. [pause] One step. [pause] Two. [pause] ... Three. [pause] They stopped. [pause] [pause] ... No. They're moving again. [pause] The kids. [pause] ... Right there. Three doors down. [pause] He said something. [pause] ... He knows we're here. [pause] He's on the landing now. [pause] Same floor. [pause] ... Same air. [pause] I can't think. [pause] What do we do? ... Please.",
-      choicePrompt: "Do we rush them? [pause] ... Yell that police are coming? [pause] Stay silent? [pause] Or... you go to the kids. I'll distract them. [pause] ... Ten seconds. What do we do?",
+      text: "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped... No. They're moving again. The kids. Right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
+      choicePrompt: "Do we rush them? Yell that police are coming? Stay silent? Or you go to the kids and I distract them? Ten seconds. What do we do?",
     },
     // Ch2: Breaking. Can barely form words. Lots of pauses. Crying.
     2: {
-      text: "He has a gun. [pause] ... I can see it. [pause] [pause] Our baby. [pause] She's crying. ... She can hear us. [pause] He said... last chance. [pause] [pause] ... Whatever happens. [pause] Protect the kids. [pause] ... Promise me. [pause] Promise me. [pause] [pause] The handle. [pause] ... It's turning. [pause] Right now. [pause] [pause] ... Tell me. [pause] Please. [pause] ... I can't do this alone.",
-      choicePrompt: "Do we swing? [pause] ... When the door opens? [pause] Do we surrender? [pause] ... Or push them in the bathroom. Face them alone. [pause] [pause] ... Now. Tell me now.",
+      text: "He has a gun. I can see it. Our baby... she's crying. She can hear us. He said, last chance. Whatever happens, protect the kids. Promise me. Promise me. The handle... it's turning. Right now. Tell me. Please. I can't do this alone.",
+      choicePrompt: "Do we swing when the door opens? Do we surrender? Or do we push them in the bathroom and face this alone? Now. Tell me now.",
     },
     // Ch3: Hollow. Flat. Disconnected. Long gaps between thoughts.
     3: {
-      text: "It's done. [pause] [pause] [pause] There was no right answer. [pause] ... There never was. [pause] [pause] I keep hearing it. [pause] ... Over and over. [pause] The sound. The choices. [pause] ... The ten seconds. [pause] [pause] [pause] What did we become? [pause] [pause] ... What did we become in ten seconds?",
+      text: "It's done. There was no right answer. There never was. I keep hearing it. Over and over. The sound. The choices. The ten seconds. What did we become? What did we become in ten seconds?",
       choicePrompt: null,
     },
   },
@@ -66,10 +66,13 @@ const TIMED_HORROR_AUDIO = {
       title: "3:47 AM",
       narration: "/audio/timed/ch0.mp3",
       narrationCompanion: "/audio/timed/ch0_companion.mp3",
-      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.08, fadeIn: 3, loop: true },
+      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.16, fadeIn: 2.2, loop: true },
       emotion: "terrified",
 
-      ambient: [],
+      ambient: [
+        { type: "procedural", sound: "room_tone", volume: 0.018, frequency: 46, waveform: "sine", fadeIn: 2, label: "timed_ch0_room_tone" },
+        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.035, fadeIn: 2.5, label: "timed_ch0_house_hum" },
+      ],
 
       timedSequence: [
         // 2s: GLASS BREAKING - downstairs, below and in front
@@ -88,6 +91,22 @@ const TIMED_HORROR_AUDIO = {
           action: "silence",
           duration: 1500,
           label: "frozen moment after glass breaks",
+        },
+        {
+          time: 3200,
+          action: "fadeGain",
+          target: "timed_ch0_house_hum",
+          toVolume: 0.012,
+          duration: 2,
+          label: "house power feels distant after the break",
+        },
+        {
+          time: 3200,
+          action: "fadeGain",
+          target: "timed_ch0_room_tone",
+          toVolume: 0.008,
+          duration: 2,
+          label: "safe domestic tone falls away",
         },
 
         // 4.5s: Second crash - louder, closer
@@ -123,7 +142,15 @@ const TIMED_HORROR_AUDIO = {
         // NO heartbeat here - heartbeat starts when timer begins
       ],
 
-      spatial: [],
+      spatial: [
+        {
+          file: "/audio/sfx/floor_creak.mp3",
+          volume: 0.12,
+          position: { x: -2, y: 0, z: -2 },
+          trigger: { type: "random", minDelay: 12000, maxDelay: 18000 },
+          label: "house settling",
+        },
+      ],
 
       timerAudio: {
         heartbeatStartAt: "timerStart",
@@ -155,10 +182,13 @@ const TIMED_HORROR_AUDIO = {
       title: "The Hallway",
       narration: "/audio/timed/ch1.mp3",
       narrationCompanion: "/audio/timed/ch1_companion.mp3",
-      music: { file: "/audio/music/timed_ch1.mp3", volume: 0.12, fadeIn: 2, loop: true },
+      music: { file: "/audio/music/timed_ch1.mp3", volume: 0.18, fadeIn: 1.8, loop: true },
       emotion: "panicked",
 
-      ambient: [],
+      ambient: [
+        { type: "procedural", sound: "room_tone", volume: 0.014, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
+        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.025, fadeIn: 1.5, label: "timed_ch1_hall_hum" },
+      ],
 
       timedSequence: [
         // 0s: Distant ransacking sounds
@@ -203,6 +233,14 @@ const TIMED_HORROR_AUDIO = {
           duration: 1500,
           label: "they stopped moving - they're listening",
         },
+        {
+          time: 8500,
+          action: "fadeGain",
+          target: "timed_ch1_hall_hum",
+          toVolume: 0.008,
+          duration: 1,
+          label: "hall hum thins when they reach the landing",
+        },
 
         // 10s: Floor creak right outside the door
         {
@@ -215,7 +253,15 @@ const TIMED_HORROR_AUDIO = {
         },
       ],
 
-      spatial: [],
+      spatial: [
+        {
+          file: "/audio/sfx/floor_creak.mp3",
+          volume: 0.1,
+          position: { x: 1, y: 0, z: -1 },
+          trigger: { type: "random", minDelay: 11000, maxDelay: 17000 },
+          label: "hall floor settling",
+        },
+      ],
 
       timerAudio: {
         heartbeatStartAt: "timerStart",
@@ -241,10 +287,12 @@ const TIMED_HORROR_AUDIO = {
       title: "The Choice",
       narration: "/audio/timed/ch2.mp3",
       narrationCompanion: "/audio/timed/ch2_companion.mp3",
-      music: { file: "/audio/music/timed_ch2.mp3", volume: 0.18, fadeIn: 1, loop: true },
+      music: { file: "/audio/music/timed_ch2.mp3", volume: 0.22, fadeIn: 1, loop: true },
       emotion: "terrified",
 
-      ambient: [],
+      ambient: [
+        { type: "procedural", sound: "room_tone", volume: 0.012, frequency: 38, waveform: "sine", fadeIn: 1, label: "timed_ch2_room_tone" },
+      ],
 
       timedSequence: [
         // 3s: Door handle turning - directly in front, close
@@ -264,9 +312,25 @@ const TIMED_HORROR_AUDIO = {
           duration: 800,
           label: "the moment before the question",
         },
+        {
+          time: 3000,
+          action: "fadeGain",
+          target: "timed_ch2_room_tone",
+          toVolume: 0.004,
+          duration: 1.5,
+          label: "room tone drains when the handle turns",
+        },
       ],
 
-      spatial: [],
+      spatial: [
+        {
+          file: "/audio/sfx/floor_creak.mp3",
+          volume: 0.09,
+          position: { x: 0, y: 0, z: -1 },
+          trigger: { type: "timed", delay: 1800 },
+          label: "weight shifts outside the door",
+        },
+      ],
 
       timerAudio: {
         heartbeatStartAt: "timerStart",
@@ -291,7 +355,7 @@ const TIMED_HORROR_AUDIO = {
       title: "Consequences",
       narration: "/audio/timed/ch3.mp3",
       narrationCompanion: "/audio/timed/ch3_companion.mp3",
-      music: { file: "/audio/music/timed_ch3.mp3", volume: 0.06, fadeIn: 5, loop: true },
+      music: { file: "/audio/music/timed_ch3.mp3", volume: 0.12, fadeIn: 3, loop: true },
       emotion: "devastated",
 
       ambient: [],
