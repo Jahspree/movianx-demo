@@ -14,6 +14,8 @@ function SceneIllustration({chapterIdx,storyId,theme}){
   // When cached images exist in the manifest, they'll be rendered by the main component
   // For now, use procedural SVG illustrations
   if(storyId!==1)return null;
+  // Deterministic pseudo-random for SSR hydration safety
+  const seed=(i,ch=0)=>{const v=(i*2654435761+ch*40503)>>>0;return(v%10000)/10000;};
   const dark=theme==="night"||theme==="sepia";
   const fg=dark?"#c8c8c8":"#1a1a1a";
   const mg=dark?"#888":"#555";
@@ -31,7 +33,7 @@ function SceneIllustration({chapterIdx,storyId,theme}){
         </defs>
         <rect width="800" height="350" fill="url(#sky0)"/>
         {/* Stars */}
-        {[...Array(30)].map((_,i)=><circle key={i} cx={Math.random()*800} cy={Math.random()*150} r={Math.random()*1.5+0.5} fill="#fff" opacity={Math.random()*0.6+0.2} style={{animation:`breathe ${3+Math.random()*4}s infinite ${Math.random()*3}s`}}/>)}
+        {[...Array(30)].map((_,i)=><circle key={i} cx={seed(i,0)*800} cy={seed(i+30,0)*150} r={seed(i+60,0)*1.5+0.5} fill="#fff" opacity={seed(i+90,0)*0.6+0.2} style={{animation:`breathe ${3+seed(i+120,0)*4}s infinite ${seed(i+150,0)*3}s`}}/>)}
         {/* Northern lights */}
         <ellipse cx="400" cy="80" rx="300" ry="60" fill="none" stroke={accent} strokeWidth="1.5" opacity="0.15" style={{animation:"breathe 8s infinite"}}/>
         <ellipse cx="350" cy="60" rx="200" ry="40" fill="none" stroke="#4a8" strokeWidth="1" opacity="0.1" style={{animation:"breathe 6s infinite 1s"}}/>
@@ -80,7 +82,7 @@ function SceneIllustration({chapterIdx,storyId,theme}){
         {/* Fog */}
         <ellipse cx="400" cy="260" rx="350" ry="50" fill={bg2} opacity="0.3" filter="url(#fog1)" style={{animation:"driftFog 18s ease-in-out infinite"}}/>
         {/* Falling snow */}
-        {[...Array(25)].map((_,i)=><circle key={i} cx={Math.random()*800} cy={Math.random()*300} r={Math.random()*2+0.5} fill="#fff" opacity={Math.random()*0.4+0.1} style={{animation:`rise ${4+Math.random()*6}s linear infinite ${Math.random()*5}s`}}/>)}
+        {[...Array(25)].map((_,i)=><circle key={i} cx={seed(i,1)*800} cy={seed(i+25,1)*300} r={seed(i+50,1)*2+0.5} fill="#fff" opacity={seed(i+75,1)*0.4+0.1} style={{animation:`rise ${4+seed(i+100,1)*6}s linear infinite ${seed(i+125,1)*5}s`}}/>)}
       </svg>
     ),
     // Chapter 2: Victor's childhood - lake, mountains, warmth
@@ -149,7 +151,7 @@ function SceneIllustration({chapterIdx,storyId,theme}){
           <path d="M120,198 L118,230 M112,208 L95,220 M128,208 L140,200" stroke={fg} strokeWidth="2.5" opacity="0.7" strokeLinecap="round"/>
         </g>
         {/* Smoke/steam rising */}
-        {[300,350,400,450,500].map((x,i)=><circle key={i} cx={x} cy={200-i*8} r={3+Math.random()*3} fill={mg} opacity="0.15" style={{animation:`rise ${5+i}s linear infinite ${i*0.8}s`}}/>)}
+        {[300,350,400,450,500].map((x,i)=><circle key={i} cx={x} cy={200-i*8} r={3+seed(i,3)*3} fill={mg} opacity="0.15" style={{animation:`rise ${5+i}s linear infinite ${i*0.8}s`}}/>)}
       </svg>
     ),
     // Chapter 4: Creature speaks - confrontation, two figures, anguish
@@ -195,7 +197,7 @@ function SceneIllustration({chapterIdx,storyId,theme}){
         </defs>
         <rect width="800" height="350" fill="url(#sky5)"/>
         {/* Stars */}
-        {[...Array(40)].map((_,i)=><circle key={i} cx={Math.random()*800} cy={Math.random()*200} r={Math.random()*1.2+0.3} fill="#fff" opacity={Math.random()*0.5+0.2} style={{animation:`breathe ${3+Math.random()*5}s infinite ${Math.random()*3}s`}}/>)}
+        {[...Array(40)].map((_,i)=><circle key={i} cx={seed(i,5)*800} cy={seed(i+40,5)*200} r={seed(i+80,5)*1.2+0.3} fill="#fff" opacity={seed(i+120,5)*0.5+0.2} style={{animation:`breathe ${3+seed(i+160,5)*5}s infinite ${seed(i+200,5)*3}s`}}/>)}
         {/* Vast ice */}
         <path d="M0,230 L200,225 L400,235 L600,220 L800,230 L800,350 L0,350Z" fill={bg2} opacity="0.4"/>
         {/* Single figure walking away - disappearing into darkness */}
@@ -825,9 +827,10 @@ export default function MovianxPlatform(){
     // Try to load audio file; fall back to Web Speech API
     if(narrationUrl){
       const testAudio=new Audio(narrationUrl);
+      const narrationVolume=storyId===3?1.4:1.0; // 10 Seconds narration boosted
       testAudio.addEventListener("canplaythrough",()=>{
         testAudio.pause();
-        audioEngine.playNarration(narrationUrl);
+        audioEngine.playNarration(narrationUrl,narrationVolume);
       },{once:true});
       testAudio.addEventListener("error",()=>{
         // File doesn't exist or is empty — fall back to Web Speech
@@ -950,8 +953,8 @@ export default function MovianxPlatform(){
       setChIdx(idx);setShowChoice(false);setTimerActive(false);setTimeRemaining(null);
       setPageAnim("in");
       if(typeof window!=="undefined")window.scrollTo(0,0);
-      setTimeout(()=>{setPageAnim("");navLockRef.current=false},350);
-    },250);
+      setTimeout(()=>{setPageAnim("");navLockRef.current=false},400);
+    },300);
   };
 
   // === SWIPE HANDLER ===
@@ -1095,7 +1098,7 @@ export default function MovianxPlatform(){
               addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+300);
             }
           }
-        },3000);
+        },2000);
       },Math.max(fallbackReadDelay,narrationDuration));
     };
 
@@ -1137,7 +1140,7 @@ export default function MovianxPlatform(){
         if(intensity!==undefined){
           // Find heartbeat gain node and adjust
           const hbGain=audioEngine.labeledGains["your heartbeat"]||audioEngine.labeledGains["heartbeat"];
-          if(hbGain)audioEngine.fadeGain(hbGain,intensity,0.5);
+          if(hbGain)audioEngine.fadeGain(hbGain,intensity,0.8);
         }
       }
     }
@@ -1272,8 +1275,8 @@ export default function MovianxPlatform(){
         {/* Content */}
         <div style={{
           maxWidth:800,margin:"0 auto",padding:"100px 40px 200px",
-          opacity:pageAnim==="out"?0:pageAnim==="in"?1:1,
-          transition:"opacity 0.3s ease",
+          opacity:pageAnim==="out"?0:1,
+          transition:pageAnim==="out"?"opacity 0.3s ease":"none",
           animation:pageAnim==="in"?"chapterFadeIn 0.4s ease both":"none",
         }}>
           {listenOnly?(
@@ -1286,7 +1289,7 @@ export default function MovianxPlatform(){
             <>
               <h2 style={{fontSize:28,fontWeight:700,color:currentTheme.text,marginBottom:30,letterSpacing:"-0.5px"}}>{ch.title}</h2>
               {/* Scene Illustration */}
-              {sel&&<div style={{marginBottom:32,borderRadius:16,overflow:"hidden",border:`1px solid ${currentTheme.text}10`}}><SceneIllustration chapterIdx={chIdx} storyId={sel.id} theme={colorTheme}/></div>}
+              {sel&&<div key={`scene-${chIdx}`} style={{marginBottom:32,borderRadius:16,overflow:"hidden",border:`1px solid ${currentTheme.text}18`}}><SceneIllustration chapterIdx={chIdx} storyId={sel.id} theme={colorTheme}/></div>}
               <div style={{fontSize:fontSize,color:currentTheme.text,lineHeight:1.9,marginBottom:40,fontFamily:fontFamily}}>
                 {revealedWordCount>=0?
                   // Word-by-word reveal for Immersive timed stories
@@ -1353,8 +1356,8 @@ export default function MovianxPlatform(){
               )}
               {timerActive&&timeRemaining!==null&&(
                 <div style={{marginBottom:24,animation:timeRemaining<=3?"pulse 0.5s infinite":"none"}}>
-                  <div style={{fontSize:48+(10-Math.min(timeRemaining,10))*3,fontWeight:700,color:timeRemaining<=3?C.red:timeRemaining<=5?`color-mix(in srgb, ${C.red} ${(5-timeRemaining)*25}%, ${currentTheme.text})`:currentTheme.text,fontFamily:"monospace",transition:"font-size 0.4s ease, color 0.4s ease"}}>{timeRemaining}</div>
-                  <div style={{fontSize:12,color:timeRemaining<=3?C.red:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2,transition:"color 0.4s ease"}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS"}</div>
+                  <div style={{fontSize:48+(10-Math.min(timeRemaining,10))*2,fontWeight:700,color:timeRemaining<=3?C.red:timeRemaining<=5?`color-mix(in srgb, ${C.red} ${(5-timeRemaining)*25}%, ${currentTheme.text})`:currentTheme.text,fontFamily:"monospace",transition:"font-size 0.4s ease, color 0.4s ease"}}>{timeRemaining}</div>
+                  <div style={{fontSize:12,color:timeRemaining<=3?C.red:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2,transition:"color 0.4s ease"}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS REMAINING"}</div>
                 </div>
               )}
               <div style={{display:"inline-flex",alignItems:"center",justifyContent:"center",width:64,height:64,borderRadius:"50%",background:voiceActive?`${C.red}15`:`${currentTheme.text}08`,border:`2px solid ${voiceActive?C.red:`${currentTheme.text}20`}`,animation:voiceActive?"pulse 1.5s ease-in-out infinite":"breathe 3s ease-in-out infinite",transition:"all 0.3s"}}>
@@ -1366,9 +1369,9 @@ export default function MovianxPlatform(){
 
           {/* Chapter Navigation */}
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginTop:60,paddingTop:20,borderTop:`1px solid ${currentTheme.text}15`}}>
-            <button disabled={chIdx===0} onClick={()=>goChapter(chIdx-1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx===0?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx===0?"not-allowed":"pointer",fontFamily:FF}}>← Previous</button>
+            <button disabled={chIdx===0} onClick={()=>goChapter(chIdx-1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx===0?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx===0?"not-allowed":"pointer",fontFamily:FF,transition:"all 0.2s"}} onMouseEnter={e=>{if(chIdx>0){e.target.style.borderColor=C.accent;e.target.style.color=C.accent}}} onMouseLeave={e=>{e.target.style.borderColor=`${currentTheme.text}20`;e.target.style.color=chIdx===0?`${currentTheme.text}30`:currentTheme.text}}>← Previous</button>
             <span style={{fontSize:12,color:`${currentTheme.text}50`}}>{chIdx+1} / {chaps.length}</span>
-            <button disabled={chIdx>=chaps.length-1} onClick={()=>goChapter(chIdx+1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx>=chaps.length-1?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx>=chaps.length-1?"not-allowed":"pointer",fontFamily:FF}}>Next →</button>
+            <button disabled={chIdx>=chaps.length-1} onClick={()=>goChapter(chIdx+1)} style={{padding:"12px 24px",borderRadius:10,border:`1px solid ${currentTheme.text}20`,background:"transparent",color:chIdx>=chaps.length-1?`${currentTheme.text}30`:currentTheme.text,fontSize:13,cursor:chIdx>=chaps.length-1?"not-allowed":"pointer",fontFamily:FF,transition:"all 0.2s"}} onMouseEnter={e=>{if(chIdx<chaps.length-1){e.target.style.borderColor=C.accent;e.target.style.color=C.accent}}} onMouseLeave={e=>{e.target.style.borderColor=`${currentTheme.text}20`;e.target.style.color=chIdx>=chaps.length-1?`${currentTheme.text}30`:currentTheme.text}}>Next →</button>
           </div>
 
           {/* Branch Memory Display */}

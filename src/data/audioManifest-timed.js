@@ -66,12 +66,12 @@ const TIMED_HORROR_AUDIO = {
       title: "3:47 AM",
       narration: "/audio/timed/ch0.mp3",
       narrationCompanion: "/audio/timed/ch0_companion.mp3",
-      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.16, fadeIn: 2.2, loop: true },
+      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.18, fadeIn: 3, loop: true },
       emotion: "terrified",
 
       ambient: [
-        { type: "procedural", sound: "room_tone", volume: 0.018, frequency: 46, waveform: "sine", fadeIn: 2, label: "timed_ch0_room_tone" },
-        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.035, fadeIn: 2.5, label: "timed_ch0_house_hum" },
+        { type: "procedural", sound: "room_tone", volume: 0.01, frequency: 46, waveform: "sine", fadeIn: 2, label: "timed_ch0_room_tone" },
+        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.018, fadeIn: 3, label: "timed_ch0_house_hum" },
       ],
 
       timedSequence: [
@@ -145,9 +145,9 @@ const TIMED_HORROR_AUDIO = {
       spatial: [
         {
           file: "/audio/sfx/floor_creak.mp3",
-          volume: 0.12,
+          volume: 0.07,
           position: { x: -2, y: 0, z: -2 },
-          trigger: { type: "random", minDelay: 12000, maxDelay: 18000 },
+          trigger: { type: "random", minDelay: 14000, maxDelay: 22000 },
           label: "house settling",
         },
       ],
@@ -182,12 +182,12 @@ const TIMED_HORROR_AUDIO = {
       title: "The Hallway",
       narration: "/audio/timed/ch1.mp3",
       narrationCompanion: "/audio/timed/ch1_companion.mp3",
-      music: { file: "/audio/music/timed_ch1.mp3", volume: 0.18, fadeIn: 1.8, loop: true },
+      music: { file: "/audio/music/timed_ch1.mp3", volume: 0.20, fadeIn: 2.5, loop: true },
       emotion: "panicked",
 
       ambient: [
-        { type: "procedural", sound: "room_tone", volume: 0.014, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
-        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.025, fadeIn: 1.5, label: "timed_ch1_hall_hum" },
+        { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
+        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.015, fadeIn: 2, label: "timed_ch1_hall_hum" },
       ],
 
       timedSequence: [
@@ -256,9 +256,9 @@ const TIMED_HORROR_AUDIO = {
       spatial: [
         {
           file: "/audio/sfx/floor_creak.mp3",
-          volume: 0.1,
+          volume: 0.06,
           position: { x: 1, y: 0, z: -1 },
-          trigger: { type: "random", minDelay: 11000, maxDelay: 17000 },
+          trigger: { type: "random", minDelay: 13000, maxDelay: 20000 },
           label: "hall floor settling",
         },
       ],
@@ -287,11 +287,11 @@ const TIMED_HORROR_AUDIO = {
       title: "The Choice",
       narration: "/audio/timed/ch2.mp3",
       narrationCompanion: "/audio/timed/ch2_companion.mp3",
-      music: { file: "/audio/music/timed_ch2.mp3", volume: 0.22, fadeIn: 1, loop: true },
+      music: { file: "/audio/music/timed_ch2.mp3", volume: 0.25, fadeIn: 1.5, loop: true },
       emotion: "terrified",
 
       ambient: [
-        { type: "procedural", sound: "room_tone", volume: 0.012, frequency: 38, waveform: "sine", fadeIn: 1, label: "timed_ch2_room_tone" },
+        { type: "procedural", sound: "room_tone", volume: 0.006, frequency: 38, waveform: "sine", fadeIn: 1, label: "timed_ch2_room_tone" },
       ],
 
       timedSequence: [
@@ -325,7 +325,7 @@ const TIMED_HORROR_AUDIO = {
       spatial: [
         {
           file: "/audio/sfx/floor_creak.mp3",
-          volume: 0.09,
+          volume: 0.05,
           position: { x: 0, y: 0, z: -1 },
           trigger: { type: "timed", delay: 1800 },
           label: "weight shifts outside the door",
@@ -355,7 +355,7 @@ const TIMED_HORROR_AUDIO = {
       title: "Consequences",
       narration: "/audio/timed/ch3.mp3",
       narrationCompanion: "/audio/timed/ch3_companion.mp3",
-      music: { file: "/audio/music/timed_ch3.mp3", volume: 0.12, fadeIn: 3, loop: true },
+      music: { file: "/audio/music/timed_ch3.mp3", volume: 0.15, fadeIn: 4, loop: true },
       emotion: "devastated",
 
       ambient: [],

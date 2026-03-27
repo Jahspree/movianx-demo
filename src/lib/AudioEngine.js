@@ -12,6 +12,7 @@ class AudioEngine {
     this.activeTimers = [];
     this.labeledGains = {};   // label -> GainNode for timedSequence fadeGain targets
     this.ambientGains = [];   // all ambient gain nodes for fadeAllAmbient
+    this.musicGains = [];     // music gain nodes — protected from silence() and fadeAllAmbient()
     this._silenced = false;
     this._silenceRestore = [];
   }
@@ -39,7 +40,7 @@ class AudioEngine {
 
   // --- File-based playback -------------------------------------------------
 
-  playNarration(url) {
+  playNarration(url, volume = 1.0) {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
     const audio = new Audio(url);
@@ -47,6 +48,21 @@ class AudioEngine {
     audio.preload = "auto";
     audio.playsInline = true;
     this.registerAudioElement(audio, "narration");
+
+    // Route through gain node for volume control above 1.0
+    if (volume !== 1.0) {
+      try {
+        const source = ctx.createMediaElementSource(audio);
+        const gain = ctx.createGain();
+        gain.gain.setValueAtTime(volume, ctx.currentTime);
+        source.connect(gain);
+        gain.connect(ctx.destination);
+        this.activeNodes.push(source, gain);
+      } catch (e) {
+        audio.volume = Math.min(volume, 1.0);
+      }
+    }
+
     audio.load();
     audio.play().catch(() => {});
     return audio;
@@ -79,7 +95,11 @@ class AudioEngine {
     source.connect(gain);
     gain.connect(ctx.destination);
     this.activeNodes.push(source, gain);
-    this.ambientGains.push(gain);
+    if (role === "music") {
+      this.musicGains.push(gain);
+    } else {
+      this.ambientGains.push(gain);
+    }
     if (label) this.labeledGains[label] = gain;
     audio.load();
     audio.play().catch(() => {});
@@ -413,6 +433,7 @@ class AudioEngine {
     // Clear labels
     this.labeledGains = {};
     this.ambientGains = [];
+    this.musicGains = [];
     this._silenced = false;
     this._silenceRestore = [];
 
