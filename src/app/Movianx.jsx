@@ -1007,7 +1007,7 @@ export default function MovianxPlatform(){
     let revealInterval=null;
     if(isImmersiveTimed){
       setRevealedWordCount(0);
-      const msPerWord=400; // ~150 words/minute whispered narration
+      const msPerWord=550; // ~110 words/minute — slow whisper with uncomfortable pauses
       let wordIdx=0;
       revealInterval=setInterval(()=>{
         wordIdx++;

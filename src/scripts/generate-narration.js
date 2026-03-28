@@ -31,7 +31,7 @@ const FRANK_CHAPTERS = [
 
 // --- 10 Seconds standard narration ---
 const TIMED_CHAPTERS = [
-  "You wake up to glass breaking downstairs. Your wife Sarah is asleep beside you. Your two kids are down the hall. You reach for your phone: 3:47 AM. Another crash. This time louder. Closer. Footsteps. More than one person. You have a baseball bat in the closet. Your phone is at 4% battery. The home alarm panel is downstairs. Sarah stirs. 'What was that?' You have 10 seconds to decide.",
+  "3:47 AM. You open your eyes. Something woke you. You don't know what. The house is quiet... Sarah is breathing beside you. The kids are down the hall... Then you hear it. Glass. Downstairs. Not a branch. Not a glass falling off a counter. A window... pushed in. Silence. You count. One. Two. Three... Then the crunch of glass under a shoe. Someone is in your house. A voice. Low. Then another voice. At least two of them. Sarah's hand finds your arm. Her nails dig in. The bat is in the closet. Your phone says four percent. The alarm is downstairs... where they are. You have ten seconds.",
   "You can hear them ransacking the living room. Drawers being pulled out. Furniture overturned. Then a voice: 'Check upstairs.' Footsteps on the stairs. Heavy. Deliberate. Sarah grabs your arm. 'They're coming.' Your daughter's room is three doors down. The footsteps stop. They're on the landing now. 'I know someone's up here. Come out, and nobody gets hurt.' You have 10 seconds.",
   "One of them has a gun. You can see it in the dim light from the street. Your daughter is crying. She can hear everything. 'Last chance. Come out now.' Sarah whispers: 'Whatever you do, protect the kids.' The door handle turns. You have 10 seconds. This is the choice that determines everything.",
   "There was no good choice. Just the one you made in 10 seconds. And the one you'll live with forever. Every path had a cost. Every decision left a scar. This is what pressure feels like. This is what stakes mean. Every choice in 10 seconds. Every consequence permanent.",
@@ -50,8 +50,8 @@ const TIMED_STANDARD_SETTINGS = [
 // Short bursts. Fragments. Use punctuation for pacing.
 // No literal control words or acting directions in spoken text.
 const TIMED_COMPANION = [
-  // Ch0: Confused then scared. Sentences shorten as fear builds.
-  "Hey... hey, wake up. Did you hear that? Glass. Downstairs. Someone's in the house. I can hear footsteps. More than one. Oh God. The bat's in the closet. My phone's almost dead. The alarm is downstairs, where they are. The kids are down the hall. What do we do? We have ten seconds. Tell me.",
+  // Ch0: Groggy → confused → terrified. Each line is its own breath.
+  "Hey... wake up... did you hear that?... no... listen... that wasn't nothing... someone's in the house... I heard glass... downstairs... oh god... they're inside... I can hear them moving... more than one... the bat's in the closet... my phone's dead... the kids are down the hall... what do we do?",
   // Ch1: Terrified. Mostly fragments. Long silences.
   "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped... No. They're moving again. The kids. Right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
   // Ch2: Breaking. Can barely form words. Lots of pauses. Crying.

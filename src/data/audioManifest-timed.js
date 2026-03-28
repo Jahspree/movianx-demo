@@ -23,8 +23,8 @@ const TIMED_HORROR_AUDIO = {
 
   // Per-chapter voice settings for emotional progression
   chapterVoiceSettings: {
-    // Ch0: Starts groggy/confused, ends scared. More unpredictable emotion.
-    0: { stability: 0.25, similarity_boost: 0.9, style: 0.7 },
+    // Ch0: Barely awake. Whisper. Slow. Pauses between every thought.
+    0: { stability: 0.2, similarity_boost: 0.95, style: 0.5 },
     // Ch1: Full fear, trying to stay quiet. Voice shakes.
     1: { stability: 0.2, similarity_boost: 0.9, style: 0.8 },
     // Ch2: Absolute panic barely contained. Maximum emotional variation.
@@ -34,10 +34,10 @@ const TIMED_HORROR_AUDIO = {
   },
 
   companionScript: {
-    // Ch0: Confused → scared. Sentences get shorter as fear builds.
+    // Ch0: Groggy → confused → terrified. Each line is its own breath.
     0: {
-      text: "Hey... hey, wake up. Did you hear that? Glass. Downstairs. Someone's in the house. I can hear footsteps. More than one. Oh God. The bat's in the closet. My phone's almost dead. The alarm is downstairs, where they are. The kids are down the hall. What do we do? We have ten seconds. Tell me.",
-      choicePrompt: "Please. Tell me. Do we grab the bat? Or call 911? Do we get the kids and go out the window? Or barricade in the bathroom? Ten seconds. What do we do?",
+      text: "Hey... wake up... did you hear that?... no... listen... that wasn't nothing... someone's in the house... I heard glass... downstairs... oh god... they're inside... I can hear them moving... more than one... the bat's in the closet... my phone's dead... the kids are down the hall... what do we do?",
+      choicePrompt: "Tell me. Bat... or 911... or the window with the kids... or we hide. Ten seconds. Tell me.",
     },
     // Ch1: Terrified. Mostly fragments. Long silences where they're listening.
     1: {
@@ -66,91 +66,66 @@ const TIMED_HORROR_AUDIO = {
       title: "3:47 AM",
       narration: "/audio/timed/ch0.mp3",
       narrationCompanion: "/audio/timed/ch0_companion.mp3",
-      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.18, fadeIn: 3, loop: true },
+      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.10, fadeIn: 4, loop: true },
       emotion: "terrified",
 
+      // ONE low drone. No buzzing. No electrical hum. Just presence.
       ambient: [
-        { type: "procedural", sound: "room_tone", volume: 0.01, frequency: 46, waveform: "sine", fadeIn: 2, label: "timed_ch0_room_tone" },
-        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.018, fadeIn: 3, label: "timed_ch0_house_hum" },
+        { type: "procedural", sound: "drone", volume: 0.025, frequency: 36, waveform: "sine", fadeIn: 4, label: "timed_ch0_drone" },
       ],
 
       timedSequence: [
-        // 2s: GLASS BREAKING - downstairs, below and in front
+        // 6s: Glass break. Late. After the narrator has been whispering.
+        // The listener has settled into silence. Then this.
         {
-          time: 2000,
+          time: 6000,
           action: "play",
           file: "/audio/sfx/ice_crack.mp3",
-          volume: 0.7,
+          volume: 0.6,
           position: { x: 0, y: -1, z: -4 },
           label: "glass breaking downstairs",
         },
 
-        // 3s: Brief silence after the break
+        // 7s: Total silence. Let the glass ring in their ears.
         {
-          time: 3000,
+          time: 7000,
           action: "silence",
-          duration: 1500,
-          label: "frozen moment after glass breaks",
-        },
-        {
-          time: 3200,
-          action: "fadeGain",
-          target: "timed_ch0_house_hum",
-          toVolume: 0.012,
-          duration: 2,
-          label: "house power feels distant after the break",
-        },
-        {
-          time: 3200,
-          action: "fadeGain",
-          target: "timed_ch0_room_tone",
-          toVolume: 0.008,
-          duration: 2,
-          label: "safe domestic tone falls away",
+          duration: 2500,
+          label: "frozen — did that just happen",
         },
 
-        // 4.5s: Second crash - louder, closer
+        // 12s: Single footstep below. Just one.
         {
-          time: 4500,
-          action: "play",
-          file: "/audio/sfx/ice_crack.mp3",
-          volume: 0.85,
-          position: { x: 1, y: -1, z: -3 },
-          label: "second crash closer",
-        },
-
-        // 5.5s: Footsteps downstairs - multiple people, below
-        {
-          time: 5500,
+          time: 12000,
           action: "play",
           file: "/audio/sfx/footsteps_stone.mp3",
-          volume: 0.3,
-          loop: true,
+          volume: 0.2,
           position: { x: -1, y: -1, z: -3 },
-          label: "intruder footsteps below",
+          label: "single footstep below",
         },
+
+        // 15s: Second footstep. Confirming. It's real.
         {
-          time: 5800,
+          time: 15000,
           action: "play",
           file: "/audio/sfx/footsteps_stone.mp3",
           volume: 0.25,
-          loop: true,
-          position: { x: 2, y: -1, z: -4 },
-          label: "second intruder below",
+          position: { x: 1, y: -1, z: -4 },
+          label: "second footstep confirming",
         },
 
-        // NO heartbeat here - heartbeat starts when timer begins
-      ],
-
-      spatial: [
+        // 18s: Floor creak directly below. They're moving through the house.
         {
+          time: 18000,
+          action: "play",
           file: "/audio/sfx/floor_creak.mp3",
-          volume: 0.07,
-          position: { x: -2, y: 0, z: -2 },
-          trigger: { type: "random", minDelay: 14000, maxDelay: 22000 },
-          label: "house settling",
+          volume: 0.15,
+          position: { x: 0, y: -1, z: -2 },
+          label: "creak below — they are moving",
         },
       ],
+
+      spatial: [],
 
       timerAudio: {
         heartbeatStartAt: "timerStart",
@@ -169,7 +144,7 @@ const TIMED_HORROR_AUDIO = {
       },
 
       silenceMoments: [
-        { time: 3000, duration: 1500, reason: "The moment after glass breaks. User processes what just happened." },
+        { time: 7000, duration: 2500, reason: "Glass just broke. You are frozen. Counting seconds in the dark." },
       ],
     },
 
