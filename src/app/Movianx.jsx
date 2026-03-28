@@ -1004,21 +1004,32 @@ export default function MovianxPlatform(){
     const isImmersiveTimed=isTimedStory&&mode==="Immersive";
 
     // Word-by-word reveal for Immersive timed stories
+    // Synced to actual narration duration so highlight tracks the voice
     let revealInterval=null;
     if(isImmersiveTimed){
       setRevealedWordCount(0);
-      const msPerWord=550; // ~110 words/minute — slow whisper with uncomfortable pauses
-      let wordIdx=0;
-      revealInterval=setInterval(()=>{
-        wordIdx++;
-        if(wordIdx>=wordCount){
-          setRevealedWordCount(wordCount);
-          clearInterval(revealInterval);
-          revealInterval=null;
-        }else{
-          setRevealedWordCount(wordIdx);
-        }
-      },msPerWord);
+      const startReveal=(durationMs)=>{
+        // Lead slightly: use 92% of duration so highlight arrives just before the voice
+        const msPerWord=Math.max(200,Math.floor((durationMs*0.92)/wordCount));
+        let wordIdx=0;
+        revealInterval=setInterval(()=>{
+          wordIdx++;
+          if(wordIdx>=wordCount){
+            setRevealedWordCount(wordCount);
+            clearInterval(revealInterval);
+            revealInterval=null;
+          }else{
+            setRevealedWordCount(wordIdx);
+          }
+        },msPerWord);
+      };
+      // Try to get actual MP3 duration, else estimate
+      if(sel){
+        getNarrationDurationMs(sel.id,chIdx,mode,activeChapterText,ch.emotion||"calm")
+          .then(dur=>{if(!cancelled)startReveal(dur)});
+      }else{
+        startReveal(estimateSpeechDurationMs(activeChapterText,ch.emotion||"calm"));
+      }
     }
 
     // Show choice after actual narration length when possible instead of hardcoded text timing.

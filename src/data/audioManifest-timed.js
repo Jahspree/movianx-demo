@@ -23,8 +23,8 @@ const TIMED_HORROR_AUDIO = {
 
   // Per-chapter voice settings for emotional progression
   chapterVoiceSettings: {
-    // Ch0: Barely awake. Whisper. Slow. Pauses between every thought.
-    0: { stability: 0.2, similarity_boost: 0.95, style: 0.5 },
+    // Ch0: Trembling whisper. Scared. Shaky breath. Unstable.
+    0: { stability: 0.15, similarity_boost: 0.85, style: 0.75 },
     // Ch1: Full fear, trying to stay quiet. Voice shakes.
     1: { stability: 0.2, similarity_boost: 0.9, style: 0.8 },
     // Ch2: Absolute panic barely contained. Maximum emotional variation.
@@ -66,12 +66,12 @@ const TIMED_HORROR_AUDIO = {
       title: "3:47 AM",
       narration: "/audio/timed/ch0.mp3",
       narrationCompanion: "/audio/timed/ch0_companion.mp3",
-      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.10, fadeIn: 4, loop: true },
+      music: { file: "/audio/music/timed_ch0.mp3", volume: 0.22, fadeIn: 3, loop: true },
       emotion: "terrified",
 
-      // ONE low drone. No buzzing. No electrical hum. Just presence.
+      // ONE low drone underneath. Cinematic pulse. Clearly present but narrator dominant.
       ambient: [
-        { type: "procedural", sound: "drone", volume: 0.025, frequency: 36, waveform: "sine", fadeIn: 4, label: "timed_ch0_drone" },
+        { type: "procedural", sound: "drone", volume: 0.06, frequency: 36, waveform: "sine", fadeIn: 3, label: "timed_ch0_drone" },
       ],
 
       timedSequence: [

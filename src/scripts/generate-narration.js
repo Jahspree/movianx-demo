@@ -40,7 +40,7 @@ const TIMED_CHAPTERS = [
 // --- 10 Seconds: Per-chapter voice settings for emotional progression ---
 // Each chapter escalates emotionally, then drops to hollow emptiness
 const TIMED_STANDARD_SETTINGS = [
-  { stability: 0.25, similarity_boost: 0.9, style: 0.7 },   // Ch0: groggy → scared
+  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
   { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: full fear
   { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: absolute panic
   { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
@@ -61,7 +61,7 @@ const TIMED_COMPANION = [
 ];
 
 const TIMED_COMPANION_SETTINGS = [
-  { stability: 0.25, similarity_boost: 0.9, style: 0.7 },   // Ch0: confused → scared
+  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
   { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: shaking fear
   { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: panic, crying
   { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, empty
