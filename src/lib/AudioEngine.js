@@ -13,6 +13,7 @@ class AudioEngine {
     this.labeledGains = {};   // label -> GainNode for timedSequence fadeGain targets
     this.ambientGains = [];   // all ambient gain nodes for fadeAllAmbient
     this.musicGains = [];     // music gain nodes — protected from silence() and fadeAllAmbient()
+    this.tensionGains = [];   // priority SFX/heartbeat/tension layers protected from silence()
     this._silenced = false;
     this._silenceRestore = [];
   }
@@ -97,6 +98,8 @@ class AudioEngine {
     this.activeNodes.push(source, gain);
     if (role === "music") {
       this.musicGains.push(gain);
+    } else if (role === "tension") {
+      this.tensionGains.push(gain);
     } else {
       this.ambientGains.push(gain);
     }
@@ -106,7 +109,7 @@ class AudioEngine {
     return { audio, gainNode: gain, sourceNode: source };
   }
 
-  playSpatial(url, volume = 0.2, position = { x: 0, y: 0, z: 0 }, loop = false, fadeIn = 0, label = null) {
+  playSpatial(url, volume = 0.2, position = { x: 0, y: 0, z: 0 }, loop = false, fadeIn = 0, label = null, role = "tension") {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
     const audio = new Audio(url);
@@ -114,7 +117,7 @@ class AudioEngine {
     audio.preload = "auto";
     audio.playsInline = true;
     audio.loop = loop;
-    this.registerAudioElement(audio, loop ? "loop-fx" : "fx");
+    this.registerAudioElement(audio, role);
 
     let source;
     try {
@@ -143,12 +146,13 @@ class AudioEngine {
     panner.connect(ctx.destination);
     this.activeNodes.push(source, gain, panner);
     if (label) this.labeledGains[label] = gain;
+    if (role === "tension") this.tensionGains.push(gain);
     audio.load();
     audio.play().catch(() => {});
     return { audio, gainNode: gain, pannerNode: panner, sourceNode: source };
   }
 
-  playSpatialMoving(url, volume, from, to, duration, loop = false, fadeWithDistance = false, label = null) {
+  playSpatialMoving(url, volume, from, to, duration, loop = false, fadeWithDistance = false, label = null, role = "tension") {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
     const audio = new Audio(url);
@@ -156,7 +160,7 @@ class AudioEngine {
     audio.preload = "auto";
     audio.playsInline = true;
     audio.loop = loop;
-    this.registerAudioElement(audio, loop ? "loop-fx" : "fx");
+    this.registerAudioElement(audio, role);
 
     let source;
     try {
@@ -194,6 +198,7 @@ class AudioEngine {
     panner.connect(ctx.destination);
     this.activeNodes.push(source, gain, panner);
     if (label) this.labeledGains[label] = gain;
+    if (role === "tension") this.tensionGains.push(gain);
     audio.load();
     audio.play().catch(() => {});
     return { audio, gainNode: gain, pannerNode: panner, sourceNode: source };
@@ -204,7 +209,7 @@ class AudioEngine {
   playProcedural(type, params = {}) {
     const ctx = this.ctx;
     if (!ctx) return null;
-    const { volume = 0.05, frequency, waveform = "sine", position, label, fadeIn = 0 } = params;
+    const { volume = 0.05, frequency, waveform = "sine", position, label, fadeIn = 0, role = "ambient" } = params;
 
     const masterGain = ctx.createGain();
     masterGain.gain.setValueAtTime(fadeIn > 0 ? 0.001 : volume, ctx.currentTime);
@@ -232,7 +237,9 @@ class AudioEngine {
 
     this.activeNodes.push(masterGain);
     if (label) this.labeledGains[label] = masterGain;
-    this.ambientGains.push(masterGain);
+    if (role === "tension") this.tensionGains.push(masterGain);
+    else if (role === "music") this.musicGains.push(masterGain);
+    else this.ambientGains.push(masterGain);
 
     const nodes = [];
 
@@ -359,21 +366,23 @@ class AudioEngine {
     this.ambientGains.forEach(g => this.fadeGain(g, toValue, duration));
   }
 
-  silence(duration) {
+  silence(duration, options = {}) {
     if (!this.ctx || this._silenced) return;
     this._silenced = true;
-    // Store current gains, set all to 0
+    const floor = Math.max(0.001, options.floor ?? 0.025);
+    const includeTension = Boolean(options.includeTension);
+    // Store current ambient gains, duck to a low bed instead of killing the room.
     this._silenceRestore = this.ambientGains.map(g => ({
       node: g,
       value: g.gain.value,
     }));
     this.ambientGains.forEach(g => {
       g.gain.cancelScheduledValues(this.ctx.currentTime);
-      g.gain.setValueAtTime(0.001, this.ctx.currentTime);
+      g.gain.setValueAtTime(floor, this.ctx.currentTime);
     });
-    // Keep narration and score alive; only mute impact/support layers.
+    // Keep narration, score, and tension layers alive; only mute unclassified support layers.
     this.activeAudioElements.forEach(({ audio, role }) => {
-      if (role === "narration" || role === "music") return;
+      if (role === "narration" || role === "music" || (!includeTension && role === "tension")) return;
       if (!audio.paused) {
         this._silenceRestore.push({ audio, volume: audio.volume });
         audio.volume = 0;
@@ -434,6 +443,7 @@ class AudioEngine {
     this.labeledGains = {};
     this.ambientGains = [];
     this.musicGains = [];
+    this.tensionGains = [];
     this._silenced = false;
     this._silenceRestore = [];
 

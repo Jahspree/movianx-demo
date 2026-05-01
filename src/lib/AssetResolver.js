@@ -10,9 +10,9 @@ class AssetResolver {
     this.sfxBase = "/audio/sfx";
     this.frankBase = "/audio/frankenstein";
     this.timedBase = "/audio/timed";
-    this.audioVersion = "20260320-livefix-2";
-    this.timedCompanionVersion = "20260320-companion-2";
-    this.musicVersion = "20260320-music-2";
+    this.audioVersion = "20260501-launch-audio-1";
+    this.timedCompanionVersion = "20260501-companion-truth-1";
+    this.musicVersion = "20260501-score-persistent-1";
   }
 
   withVersion(url, version = this.audioVersion) {
@@ -28,17 +28,20 @@ class AssetResolver {
     return this.withVersion(`${this.sfxBase}/${clean}.mp3`);
   }
 
-  // Get narration URL for a story chapter
-  getNarration(storyId, chapterIdx) {
-    if (storyId === 1) return this.withVersion(`${this.frankBase}/ch${chapterIdx}.mp3`);
-    if (storyId === 3) return this.withVersion(`${this.timedBase}/ch${chapterIdx}.mp3`);
-    return null;
+  resolveNarrationFile(filePath, { companion = false } = {}) {
+    if (!filePath) return null;
+    const version = companion || filePath.includes("_companion")
+      ? this.timedCompanionVersion
+      : this.audioVersion;
+    return this.withVersion(filePath, version);
   }
 
-  // Get companion narration (for timed story immersive mode)
-  getCompanionNarration(storyId, chapterIdx) {
-    if (storyId === 3) return this.withVersion(`${this.timedBase}/ch${chapterIdx}_companion.mp3`, this.timedCompanionVersion);
-    return null;
+  getNarrationFromManifest(manifest, chapterIdx) {
+    return this.resolveNarrationFile(manifest?.chapters?.[chapterIdx]?.narration);
+  }
+
+  getCompanionNarrationFromManifest(manifest, chapterIdx) {
+    return this.resolveNarrationFile(manifest?.chapters?.[chapterIdx]?.narrationCompanion, { companion: true });
   }
 
   // Resolve a manifest file path — could be absolute or a key

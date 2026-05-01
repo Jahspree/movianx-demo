@@ -11,7 +11,18 @@
 
 const TIMED_HORROR_AUDIO = {
   storyId: 3,
+  isTimedExperience: true,
+  assetVersion: "20260501-launch-audio-1",
   title: "10 Seconds",
+  timeline: {
+    revealLeadRatio: 0.92,
+    minMsPerWord: 200,
+    choiceRevealBufferMs: 1200,
+    promptToTimerBufferMs: 300,
+    cinematicTimedChoiceDelayMs: 2000,
+    defaultTimeLimit: 10,
+    silenceFloor: 0.025,
+  },
   narrator: {
     // Voice should be: whispered, urgent, scared, intimate - like someone
     // hiding next to you in the dark, mouth close to your ear

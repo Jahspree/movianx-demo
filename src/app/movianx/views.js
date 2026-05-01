@@ -1,19 +1,20 @@
 "use client";
 
 function getViewOpacity(transitionState) {
-  return transitionState === "entered" ? 1 : 0;
+  return transitionState === "idle" ? 1 : 0;
 }
 
 function getViewTransition(transitionState) {
   return {
     opacity: getViewOpacity(transitionState),
-    transition: "opacity 0.4s ease",
+    transition: "opacity 0.42s ease",
     willChange: "opacity",
+    pointerEvents: transitionState === "idle" ? "auto" : "none",
   };
 }
 
 function getEntryAnimation(transitionState, animation) {
-  return transitionState === "entered" ? animation : "none";
+  return transitionState === "idle" ? animation : "none";
 }
 
 export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
@@ -47,7 +48,6 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
 export function HomeView({ C, FF, CSS, transitionState, navigateTo }) {
   return (
     <div style={{minHeight:"100vh",background:"linear-gradient(135deg, #eef0ff 0%, #e8e8f2 50%, #f0ebe6 100%)",fontFamily:FF,display:"flex",flexDirection:"column",position:"relative",...getViewTransition(transitionState)}}>
-      <div style={{background:"#8B1A1A",color:"#fff",textAlign:"center",padding:"8px 0",fontSize:13,fontWeight:700,letterSpacing:"2px"}}>BUILD TEST ACTIVE</div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 5%",borderBottom:`1px solid ${C.border}`,animation:getEntryAnimation(transitionState,"fadeDown 0.6s ease both")}}>
         <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
         <div style={{display:"flex",gap:24,alignItems:"center"}}>
