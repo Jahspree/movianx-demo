@@ -236,6 +236,59 @@ function Sparkline({data,color=C.accent,w=120,h=32}){
   return(<svg width={w} height={h} style={{display:"block"}}><defs><linearGradient id={gid} x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.3"/><stop offset="100%" stopColor={color} stopOpacity="0"/></linearGradient></defs><polyline fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" points={pts}/><polygon fill={`url(#${gid})`} points={`0,${h} ${pts} ${w},${h}`}/></svg>)
 }
 
+function analyzeScene(sceneText=""){
+  const text=sceneText.toLowerCase();
+  const horrorWords=["blood","gun","scream","intruder","monster","horror","dead","kill","panic","terrified","dark","shadow","door handle"];
+  const suspenseWords=["silence","footsteps","whisper","creak","listen","waiting","stairs","behind","unknown","glass"];
+  const calmWords=["lake","childhood","warm","sun","gentle","memory","peace","delight"];
+  const forestWords=["forest","trees","leaves","wolf","wind","ice","arctic"];
+  const cityWords=["street","police","sirens","car","city","apartment"];
+  const indoorWords=["house","room","door","stairs","hall","window","kitchen","bedroom","laboratory"];
+  const score=(words)=>words.reduce((sum,word)=>sum+(text.includes(word)?1:0),0);
+  const horrorScore=score(horrorWords);
+  const suspenseScore=score(suspenseWords);
+  const calmScore=score(calmWords);
+  const mood=horrorScore>=2?"fear":suspenseScore>=2?"suspense":calmScore>=2?"calm":"suspense";
+  const tension=Math.max(0.15,Math.min(1,(horrorScore*0.18)+(suspenseScore*0.1)+(mood==="fear"?0.28:0)+(mood==="suspense"?0.18:0)));
+  const environment=score(indoorWords)>=2?"indoor":score(forestWords)>=1?"outdoor":score(cityWords)>=1?"urban":"void";
+  const pacing=tension>0.72?"intense":tension>0.42?"moderate":"slow";
+  return { mood, tension, environment, pacing };
+}
+
+function getAutoAmbient(sceneAnalysis){
+  const env=sceneAnalysis?.environment||"void";
+  if(env==="forest"||env==="outdoor")return [{file:"/audio/sfx/wind_loop.mp3",volume:0.14,fadeIn:3,label:"auto outdoor wind"}];
+  if(env==="city"||env==="urban")return [{file:"/audio/sfx/electrical_hum.mp3",volume:0.03,fadeIn:2,label:"auto urban hum"}];
+  if(env==="indoor")return [{file:"/audio/sfx/electrical_hum.mp3",volume:0.012,fadeIn:2,label:"auto indoor room tone"}];
+  return [{type:"procedural",sound:"room_tone",volume:0.006,frequency:34,waveform:"sine",fadeIn:2,label:"auto void tone"}];
+}
+
+function getAutoEnvironmentEvents(sceneAnalysis){
+  if(!sceneAnalysis)return [];
+  const events=[];
+  if(sceneAnalysis.tension>=0.45){
+    events.push({sound:"/audio/sfx/floor_creak.mp3",position:[1,0,-2],movement:"behind",duration:1600,delay:4200,volume:0.08,label:"scene-aware floor shift"});
+  }
+  if(sceneAnalysis.tension>=0.72){
+    events.push({sound:"/audio/sfx/heartbeat.mp3",position:[0,0,0],movement:"fixed",duration:8000,delay:6500,volume:0.18,loop:true,label:"scene-aware heartbeat"});
+  }
+  return events;
+}
+
+function getChoiceDialogue(manifest,chapterIdx,choice){
+  const scripted=manifest?.characterDialogue?.[chapterIdx]?.line||manifest?.characterDialogue?.[chapterIdx]?.choicePrompt||manifest?.companionScript?.[chapterIdx]?.choicePrompt;
+  if(scripted)return typeof scripted==="string"?scripted:scripted.text||"";
+  if(!choice)return "";
+  return choice.characterPrompt||choice.internalPrompt||choice.prompt||"";
+}
+
+function getChoiceLine(manifest,chapterIdx,choice){
+  const scripted=manifest?.characterDialogue?.[chapterIdx]?.line||manifest?.characterDialogue?.[chapterIdx]?.choicePrompt||manifest?.companionScript?.[chapterIdx]?.choicePrompt;
+  if(scripted&&typeof scripted==="object")return scripted;
+  const text=typeof scripted==="string"?scripted:getChoiceDialogue(manifest,chapterIdx,choice);
+  return text?{text,breathLevel:0.4,tremble:0.45,whisper:true,pacing:"hesitant"}:null;
+}
+
 
 // === HELPER COMPONENTS (EmailGate, DashSidebar, etc) ===
 function EmailGate({onSubmit}){
@@ -708,7 +761,7 @@ export default function MovianxPlatform(){
     ?getManifest(sel.id)?.companionScript?.[chIdx]||null
     :null;
   const activeChapterText=companionChapter?.text||ch.text||"";
-  const activeChoicePrompt=companionChapter?.choicePrompt||ch.choice?.prompt||"";
+  const activeChoicePrompt=sel?getChoiceDialogue(getManifest(sel.id),chIdx,ch.choice):ch.choice?.prompt||"";
 
   const getNarrationDurationMs=useCallback((storyId,chapterIdx,currentMode,fallbackText,emotion="calm")=>{
     if(typeof window==="undefined")return Promise.resolve(estimateSpeechDurationMs(fallbackText,emotion));
@@ -746,6 +799,61 @@ export default function MovianxPlatform(){
     });
   },[]);
 
+  const toPosition=(value,fallback={x:0,y:0,z:0})=>{
+    if(Array.isArray(value))return {x:value[0]||0,y:value[1]||0,z:value[2]||0};
+    return value||fallback;
+  };
+
+  const movementToPath=(event)=>{
+    const start=toPosition(event.startPosition||event.position,{x:0,y:0,z:-3});
+    if(event.endPosition)return {from:start,to:toPosition(event.endPosition,start)};
+    if(event.movement==="approaching")return {from:start,to:{x:start.x,y:start.y,z:Math.min(-0.8,start.z+3)}};
+    if(event.movement==="retreating")return {from:start,to:{x:start.x,y:start.y,z:start.z-5}};
+    if(event.movement==="leftToRight")return {from:{x:-4,y:start.y,z:start.z},to:{x:4,y:start.y,z:start.z}};
+    if(event.movement==="rightToLeft")return {from:{x:4,y:start.y,z:start.z},to:{x:-4,y:start.y,z:start.z}};
+    if(event.movement==="behind")return {from:{x:start.x,y:start.y,z:-1},to:{x:start.x,y:start.y,z:-5}};
+    return {from:start,to:start};
+  };
+
+  const eventPressure=(event,from,to)=>{
+    const fromDistance=Math.sqrt(from.x**2+from.y**2+from.z**2);
+    const toDistance=Math.sqrt(to.x**2+to.y**2+to.z**2);
+    const approaching=toDistance<fromDistance;
+    const behind=from.z<0||to.z<0;
+    return {
+      tension: Math.max(0,event.triggerTension||0)+(behind?0.08:0)+(approaching?Math.min(0.18,(fromDistance-toDistance)*0.035):0),
+      presence: Math.min(0.35,(approaching?0.18:0.05)+(toDistance<1.2?0.15:0)),
+      uncertainty: event.unsourced?0.16:(behind?0.08:0),
+    };
+  };
+
+  const playEnvironmentEvent=(event)=>{
+    if(!audioEngine||!event)return;
+    const {from,to}=movementToPath(event);
+    audioEngine.addExperienceImpulse(eventPressure(event,from,to));
+    if(event.type==="procedural"){
+      audioEngine.playProcedural(event.sound,{volume:event.volume||0.05,position:from,label:event.label,role:event.role||"tension"});
+      return;
+    }
+    const url=assetResolver.resolveFile(event.sound||event.file);
+    if(!url)return;
+    const durationSec=(event.duration||1000)/1000;
+    if(event.movement&&event.movement!=="fixed"){
+      audioEngine.playSpatialMoving(url,event.volume||0.12,from,to,durationSec,event.loop||false,true,event.label||event.sound||event.file,event.role||"tension");
+    }else{
+      audioEngine.playSpatial(url,event.volume||0.12,from,event.loop||false,event.fadeIn||0,event.label||event.sound||event.file,event.role||"event");
+    }
+    if(event.voiceReaction){
+      const reactionDelay=Math.max(250,Math.min(event.duration||1200,1800));
+      audioEngine.addTimeout(()=>speak(event.voiceReaction,event.voiceEmotion||"whispering"),reactionDelay);
+    }
+    if(event.silenceAfter||Math.random()<0.18){
+      const after=(event.duration||1000)+(350+Math.random()*900);
+      const duration=event.silenceAfter?.duration||Math.round(500+Math.random()*1200);
+      audioEngine.addTimeout(()=>audioEngine.silence(duration),after);
+    }
+  };
+
   // Play full chapter audio from manifest
   const playChapterAudio=(storyId,chapIdx,currentMode)=>{
     if(!audioEngine||!audioEngine.ctx)return;
@@ -753,10 +861,24 @@ export default function MovianxPlatform(){
     if(!manifest)return;
     const chManifest=manifest.chapters[chapIdx];
     if(!chManifest)return;
+    const sceneAnalysis=chManifest.sceneAnalysis||analyzeScene(chaps[chapIdx]?.text||chManifest.title||"");
+    const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:sceneAnalysis.tension;
+    audioEngine.setFearAssets({
+      heartbeat: assetResolver.getAudio("heartbeat"),
+      breath: assetResolver.getAudio("breathing_raspy"),
+    });
+    audioEngine.updateExperienceState({
+      tension: tensionLevel,
+      immersion: mode==="Immersive"?0.78:0.48,
+      presence: tensionLevel>0.7?0.42:0.22,
+      uncertainty: sceneAnalysis.mood==="suspense"||sceneAnalysis.mood==="fear"||sceneAnalysis.mood==="horror"?0.5:0.18,
+      control: 0,
+    });
 
     // 1. Start ambient sounds
-    if(chManifest.ambient){
-      chManifest.ambient.forEach(amb=>{
+    const ambientLayers=(chManifest.ambient&&chManifest.ambient.length?chManifest.ambient:getAutoAmbient(sceneAnalysis));
+    if(ambientLayers){
+      ambientLayers.forEach(amb=>{
         if(amb.type==="procedural"){
           audioEngine.playProcedural(amb.sound,{volume:amb.volume,frequency:amb.frequency,waveform:amb.waveform,label:amb.label,fadeIn:amb.fadeIn||0,role:"ambient"});
         }else if(amb.file){
@@ -770,6 +892,23 @@ export default function MovianxPlatform(){
       const m=chManifest.music;
       audioEngine.playAmbient(assetResolver.resolveFile(m.file),m.volume||0.1,m.fadeIn||3,m.label||"chapter_music","music");
     }
+
+    const environmentEvents=[...(chManifest.environmentEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
+    const scheduleExperienceEvent=(fn,baseDelay=0,pressure=0)=>{
+      const state=audioEngine.getExperienceState?.()||{};
+      const uncertainty=state.uncertainty??sceneAnalysis.tension??0;
+      const jitter=Math.round((Math.random()*2-1)*(250+uncertainty*900));
+      const silenceBefore=pressure>0.16||uncertainty>0.65?Math.random()*500:0;
+      audioEngine.addTimeout(()=>{
+        if(silenceBefore)audioEngine.silence(Math.round(250+silenceBefore));
+        audioEngine.addTimeout(fn,Math.round(silenceBefore));
+      },Math.max(0,baseDelay+jitter));
+    };
+
+    environmentEvents.forEach(event=>{
+      const pressure=event.triggerTension||sceneAnalysis.tension*0.12;
+      scheduleExperienceEvent(()=>playEnvironmentEvent(event),event.delay||event.time||0,pressure);
+    });
 
     // 2. Start spatial sounds with triggers
     if(chManifest.spatial){
@@ -798,14 +937,14 @@ export default function MovianxPlatform(){
         if(!sp.trigger||sp.trigger.type==="immediate"){
           playIt();
         }else if(sp.trigger.type==="timed"){
-          audioEngine.addTimeout(playIt,sp.trigger.delay);
+          scheduleExperienceEvent(playIt,sp.trigger.delay,sceneAnalysis.tension*0.08);
         }else if(sp.trigger.type==="random"){
           const scheduleRandom=()=>{
             const delay=sp.trigger.minDelay+Math.random()*(sp.trigger.maxDelay-sp.trigger.minDelay);
-            audioEngine.addTimeout(()=>{
+            scheduleExperienceEvent(()=>{
               playIt();
               scheduleRandom();
-            },delay);
+            },delay,sceneAnalysis.tension*0.06);
           };
           scheduleRandom();
         }
@@ -815,7 +954,8 @@ export default function MovianxPlatform(){
     // 3. Execute timed sequence
     if(chManifest.timedSequence){
       chManifest.timedSequence.forEach(cue=>{
-        audioEngine.addTimeout(()=>{
+        scheduleExperienceEvent(()=>{
+          if(cue.triggerTension)audioEngine.addExperienceImpulse({tension:cue.triggerTension,presence:cue.presence||0.05,uncertainty:cue.uncertainty||0.02});
           if(cue.action==="play"){
             if(cue.type==="procedural"){
               audioEngine.playProcedural(cue.sound,{volume:cue.volume,position:cue.position,label:cue.label,role:cue.role||"tension"});
@@ -830,14 +970,15 @@ export default function MovianxPlatform(){
               }
             }
           }else if(cue.action==="silence"){
-            audioEngine.silence(cue.duration,{floor:getTimeline(storyId).silenceFloor});
+            const silenceJitter=Math.round(Math.random()*450);
+            audioEngine.silence((cue.duration||600)+silenceJitter,{floor:getTimeline(storyId).silenceFloor});
           }else if(cue.action==="fadeGain"){
             const targetGain=audioEngine.labeledGains[cue.target];
             if(targetGain)audioEngine.fadeGain(targetGain,cue.toVolume,cue.duration);
           }else if(cue.action==="fadeAllAmbient"){
             audioEngine.fadeAllAmbient(cue.toVolume,cue.duration);
           }
-        },cue.time);
+        },cue.time,sceneAnalysis.tension*0.08);
       });
     }
 
@@ -869,18 +1010,28 @@ export default function MovianxPlatform(){
   // Web Speech API fallback for narration
   const speak=(text,emotion="calm")=>{
     if(typeof window==="undefined"||!window.speechSynthesis||!narratorOn)return;
+    const line=typeof text==="object"?text:null;
+    const rawText=line?.text||text||"";
+    if(!rawText)return;
     window.speechSynthesis.cancel();
     setCurrentWordIdx(-1);
     const doSpeak=()=>{
-    const u=new SpeechSynthesisUtterance(sanitizeSpeechText(text));
+    const u=new SpeechSynthesisUtterance(sanitizeSpeechText(rawText));
       const em=getSpeechProfile(emotion);
-      u.rate=em.rate;u.pitch=em.pitch;u.volume=em.volume;
+      const pacing=line?.pacing;
+      const rateMul=pacing==="rushed"?1.12:pacing==="broken"?0.76:pacing==="hesitant"?0.86:1;
+      const tremble=Number(line?.tremble||0);
+      const breathLevel=Number(line?.breathLevel||0);
+      u.rate=Math.max(0.55,Math.min(1.25,em.rate*rateMul-(breathLevel*0.08)));
+      u.pitch=Math.max(0.45,Math.min(1.6,em.pitch+(line?.whisper?-0.08:0)+(Math.random()*0.08-0.04)*tremble));
+      u.volume=Math.max(0.18,Math.min(1,em.volume*(line?.whisper?0.72:1)+(breathLevel*0.08)));
+      if(line&&audioEngine?.ctx)audioEngine.addExperienceImpulse({presence:line.whisper?0.16:0.04,tension:tremble*0.12,uncertainty:pacing==="broken"?0.08:0});
       const voices=window.speechSynthesis.getVoices();
       const english=voices.filter(v=>v.lang.startsWith("en"));
       if(english.length>0)u.voice=english[0];
       u.onboundary=(e)=>{
         if(e.name==="word"){
-          const spoken=text.substring(0,e.charIndex);
+          const spoken=rawText.substring(0,e.charIndex);
           const idx=spoken.split(/\s+/).length-1;
           setCurrentWordIdx(Math.max(0,idx));
         }
@@ -892,10 +1043,12 @@ export default function MovianxPlatform(){
     else{window.speechSynthesis.onvoiceschanged=()=>{setTimeout(doSpeak,50)}}
   };
 
-  const speakImmersiveOptions=(choice)=>{
+  const speakImmersiveOptions=(choice,dialogueOverride=null)=>{
     if(!choice||!choice.opts)return;
+    const prompt=dialogueOverride||getChoiceDialogue(sel?getManifest(sel.id):null,chIdx,choice);
     const optLines=choice.opts.map((opt,i)=>`Say "option ${i+1}" for: ${opt.txt}`).join(". Or, ");
-    speak(`${choice.prompt}. ${optLines}.`,choice.emotion||"calm");
+    const promptText=typeof prompt==="object"?prompt.text:prompt;
+    speak({text:`${promptText}. ${optLines}.`,breathLevel:0.35,tremble:0.35,whisper:true,pacing:"hesitant"},choice.emotion||"calm");
   };
 
   const startVoiceRec=()=>{
@@ -998,6 +1151,7 @@ export default function MovianxPlatform(){
     logEvent("choice_made",{chapter:chIdx,choice:opt.txt,consequence:opt.consequence});
     setChoices(prev=>[...prev,{ch:chIdx,choice:opt.txt,consequence:opt.consequence}]);
     setShowChoice(false);setTimerActive(false);setTimeRemaining(null);
+    audioEngine?.updateExperienceState({control:0.05,presence:0.28});
     if(opt.next<chaps.length)goChapter(opt.next);
   };
 
@@ -1077,10 +1231,13 @@ export default function MovianxPlatform(){
       if(isImmersiveTimed&&ch.choice){
         addLocalTimer(()=>{
           setShowChoice(true);
+          audioEngine?.updateExperienceState({control:0.92,presence:0.72,uncertainty:0.68});
           const manifest=sel?getManifest(sel.id):null;
-          if(manifest?.companionScript?.[chIdx]?.choicePrompt){
-            const prompt=manifest.companionScript[chIdx].choicePrompt;
-            const promptDelay=estimateSpeechDurationMs(prompt,"whispering");
+          const characterLine=getChoiceLine(manifest,chIdx,ch.choice);
+          const characterPrompt=characterLine?.text||getChoiceDialogue(manifest,chIdx,ch.choice);
+          if(characterPrompt){
+            const prompt=characterLine||{text:characterPrompt,breathLevel:0.55,tremble:0.65,whisper:true,pacing:"broken"};
+            const promptDelay=estimateSpeechDurationMs(prompt.text||prompt,"whispering");
             speak(prompt,"whispering");
             addLocalTimer(()=>{
               const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
@@ -1088,11 +1245,12 @@ export default function MovianxPlatform(){
               setVoiceMode(true);startVoiceRec();
             },promptDelay+timeline.promptToTimerBufferMs);
           }else{
+            const prompt=getChoiceDialogue(manifest,chIdx,ch.choice);
             const promptDelay=estimateSpeechDurationMs(
-              `${ch.choice.prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
+              `${prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
               ch.choice.emotion||"calm"
             );
-            speakImmersiveOptions(ch.choice);
+            speakImmersiveOptions(ch.choice,prompt);
             addLocalTimer(()=>{
               const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
               if(limit){setTimeRemaining(limit);setTimerActive(true)}
@@ -1106,12 +1264,13 @@ export default function MovianxPlatform(){
       addLocalTimer(()=>{
         if(!ch.choice)return;
         setShowChoice(true);
+        audioEngine?.updateExperienceState({control:isTimedStory?0.82:0.46,presence:isTimedStory?0.6:0.3,uncertainty:isTimedStory?0.58:0.24});
         if(isTimedStory){
           addLocalTimer(()=>{
             const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
             if(limit){setTimeRemaining(limit);setTimerActive(true)}
-            if(ch.choice.prompt&&mode==="Cinematic"){
-              speak(ch.choice.prompt,ch.choice.emotion||"calm");
+            if(mode==="Cinematic"){
+              speak(getChoiceLine(getManifest(sel?.id),chIdx,ch.choice)||getChoiceDialogue(getManifest(sel?.id),chIdx,ch.choice),ch.choice.emotion||"calm");
             }
           },timeline.cinematicTimedChoiceDelayMs);
           return;
@@ -1120,22 +1279,25 @@ export default function MovianxPlatform(){
         const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
         if(limit){setTimeRemaining(limit);setTimerActive(true)}
         addLocalTimer(()=>{
-          if(ch.choice.prompt&&mode==="Cinematic"){
-            speak(ch.choice.prompt,ch.choice.emotion||"calm");
+          if(mode==="Cinematic"){
+            speak(getChoiceLine(getManifest(sel?.id),chIdx,ch.choice)||getChoiceDialogue(getManifest(sel?.id),chIdx,ch.choice),ch.choice.emotion||"calm");
           }
-          if(ch.choice.prompt&&mode==="Immersive"){
+          if(mode==="Immersive"){
             const manifest=sel?getManifest(sel.id):null;
-            if(manifest?.companionScript?.[chIdx]?.choicePrompt){
-              const prompt=manifest.companionScript[chIdx].choicePrompt;
-              const promptDelay=estimateSpeechDurationMs(prompt,"whispering");
+            const characterLine=getChoiceLine(manifest,chIdx,ch.choice);
+            const characterPrompt=characterLine?.text||getChoiceDialogue(manifest,chIdx,ch.choice);
+            if(characterPrompt){
+              const prompt=characterLine||{text:characterPrompt,breathLevel:0.35,tremble:0.35,whisper:true,pacing:"hesitant"};
+              const promptDelay=estimateSpeechDurationMs(prompt.text||prompt,"whispering");
               speak(prompt,"whispering");
               addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+timeline.promptToTimerBufferMs);
             }else{
+              const prompt=getChoiceDialogue(manifest,chIdx,ch.choice);
               const promptDelay=estimateSpeechDurationMs(
-                `${ch.choice.prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
+                `${prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
                 ch.choice.emotion||"calm"
               );
-              speakImmersiveOptions(ch.choice);
+              speakImmersiveOptions(ch.choice,prompt);
               addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+timeline.promptToTimerBufferMs);
             }
           }
@@ -1168,11 +1330,13 @@ export default function MovianxPlatform(){
     }
     // Manifest-driven heartbeat intensity
     if(audioEngine&&audioEngine.ctx&&sel&&mode!=="Reader"){
+      const limit=ch.choice?.timeLimit||getTimeline(sel.id).defaultTimeLimit;
+      const pressure=limit?Math.max(0,Math.min(1,1-(timeRemaining/limit))):0;
+      audioEngine.updateExperienceState({control:Math.max(0.35,pressure),tension:Math.max(audioEngine.currentTension||0,0.45+pressure*0.45),presence:0.45+pressure*0.35});
       const manifest=getManifest(sel.id);
       const chManifest=manifest?.chapters?.[chIdx];
       if(chManifest?.timerAudio?.heartbeatIntensity){
         // Start heartbeat when timer first begins (heartbeatStartAt: "timerStart")
-        const limit=ch.choice?.timeLimit||getTimeline(sel.id).defaultTimeLimit;
         if(chManifest.timerAudio.heartbeatStartAt==="timerStart"&&timeRemaining===limit){
           const url=assetResolver.getAudio("heartbeat");
           const startIntensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining]||0.1;
@@ -1180,6 +1344,7 @@ export default function MovianxPlatform(){
         }
         const intensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining];
         if(intensity!==undefined){
+          audioEngine.updateTension(Math.max(chManifest.tension||0,intensity));
           // Find heartbeat gain node and adjust
           const hbGain=audioEngine.labeledGains["your heartbeat"]||audioEngine.labeledGains["heartbeat"];
           if(hbGain)audioEngine.fadeGain(hbGain,intensity,0.8);
@@ -1377,7 +1542,7 @@ export default function MovianxPlatform(){
                   <div style={{fontSize:12,color:timeRemaining<=3?C.red:`${currentTheme.text}60`,textTransform:"uppercase",letterSpacing:2,transition:"color 0.4s ease"}}>{timeRemaining<=3?"DECIDE NOW!":"SECONDS REMAINING"}</div>
                 </div>
               )}
-              <p style={{fontSize:18,fontWeight:600,color:currentTheme.text,marginBottom:20}}>{ch.choice.prompt}</p>
+              <p style={{fontSize:18,fontWeight:600,color:currentTheme.text,marginBottom:20}}>{activeChoicePrompt}</p>
               <div style={{display:"flex",flexDirection:"column",gap:12}}>
                 {ch.choice.opts.map((opt,i)=>(
                   <button key={i} onClick={()=>makeChoice(opt)} style={{padding:"16px 20px",borderRadius:12,background:colorTheme==="night"?"#1C1C24":"rgba(255,255,255,0.8)",border:`1px solid ${currentTheme.text}20`,color:currentTheme.text,fontSize:15,textAlign:"left",cursor:"pointer",transition:"all 0.2s",fontFamily:FF,boxShadow:"0 2px 8px rgba(0,0,0,0.04)"}} onMouseEnter={e=>{e.target.style.background=`${C.red}15`;e.target.style.borderColor=C.red;e.target.style.boxShadow="0 4px 16px rgba(139,26,26,0.1)"}} onMouseLeave={e=>{e.target.style.background=colorTheme==="night"?"#1C1C24":"rgba(255,255,255,0.8)";e.target.style.borderColor=`${currentTheme.text}20`;e.target.style.boxShadow="0 2px 8px rgba(0,0,0,0.04)"}}>

@@ -14,6 +14,13 @@ const FRANKENSTEIN_AUDIO = {
     model: "eleven_multilingual_v2",
     settings: { stability: 0.5, similarity_boost: 0.8, style: 0.3 },
   },
+  characterDialogue: {
+    0: { speaker: "Walton", line: { text: "Sister, tell me honestly: do I confess the full fire of my ambition, or spare you the worst of it?", breathLevel: 0.16, tremble: 0.12, whisper: false, pacing: "stable" } },
+    1: { speaker: "Walton", line: { text: "He is nearly frozen, but his eyes are full of warning. Do I ask for the truth now, or give him silence?", breathLevel: 0.24, tremble: 0.28, whisper: true, pacing: "hesitant" } },
+    2: { speaker: "Victor", line: { text: "If this hunger for knowledge is already inside me, should I feed it or learn to master it?", breathLevel: 0.18, tremble: 0.2, whisper: false, pacing: "stable" } },
+    3: { speaker: "Victor", line: { text: "The eye is open. It is breathing. Do I face what I made, or run before it knows my name?", breathLevel: 0.72, tremble: 0.86, whisper: true, pacing: "broken" } },
+    4: { speaker: "Creature", line: { text: "You made me alone. Will you answer for me, or will you deny me again?", breathLevel: 0.35, tremble: 0.48, whisper: false, pacing: "broken" } },
+  },
 
   chapters: [
     // =====================================================================
@@ -26,9 +33,14 @@ const FRANKENSTEIN_AUDIO = {
       title: "Letter I - To Mrs. Saville, England",
       narration: "/audio/frankenstein/ch0.mp3",
       emotion: "calm",
+      sceneAnalysis: { mood: "dark", tension: 0.28, environment: "forest" },
+      tension: 0.28,
 
       ambient: [
         { file: "/audio/sfx/wind_loop.mp3", volume: 0.2, loop: true, fadeIn: 3 },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/wind_loop.mp3", position: [-4, 0, 2], movement: "leftToRight", duration: 9000, delay: 0, volume: 0.12, loop: true, label: "arctic wind crossing the deck" },
       ],
 
       spatial: [
@@ -75,9 +87,14 @@ const FRANKENSTEIN_AUDIO = {
       title: "Letter IV - The Stranger",
       narration: "/audio/frankenstein/ch1.mp3",
       emotion: "tense",
+      sceneAnalysis: { mood: "suspense", tension: 0.54, environment: "forest" },
+      tension: 0.54,
 
       ambient: [
         { file: "/audio/sfx/wind_loop.mp3", volume: 0.4, loop: true, fadeIn: 2 },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/footsteps_dirt.mp3", startPosition: [0, 0, -12], endPosition: [0, 0, -3], movement: "approaching", duration: 9000, delay: 4500, volume: 0.18, triggerTension: 0.16, unsourced: true, label: "sled steps approaching over ice" },
       ],
 
       spatial: [
@@ -119,9 +136,14 @@ const FRANKENSTEIN_AUDIO = {
       title: "Chapter I - Victor's Childhood",
       narration: "/audio/frankenstein/ch2.mp3",
       emotion: "reflective",
+      sceneAnalysis: { mood: "calm", tension: 0.18, environment: "forest" },
+      tension: 0.18,
 
       ambient: [
         { file: "/audio/sfx/water_lapping.mp3", volume: 0.15, loop: true, fadeIn: 4 },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/leaves_rustle.mp3", position: [-2, 1, -3], movement: "fixed", duration: 14000, delay: 0, volume: 0.08, loop: true, label: "memory leaves at the lake" },
       ],
 
       spatial: [
@@ -165,6 +187,8 @@ const FRANKENSTEIN_AUDIO = {
       title: "Chapter IV - The Secret of Life",
       narration: "/audio/frankenstein/ch3.mp3",
       emotion: "terrified",
+      sceneAnalysis: { mood: "horror", tension: 0.92, environment: "indoor" },
+      tension: 0.92,
 
       ambient: [
         // Deep oppressive sub-bass drone
@@ -176,6 +200,10 @@ const FRANKENSTEIN_AUDIO = {
           volume: 0.08,
           fadeIn: 3,
         },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/rain_loop.mp3", position: [3, 1, 4], movement: "fixed", duration: 30000, delay: 0, volume: 0.18, loop: true, label: "rain high on the laboratory window" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", startPosition: [0.6, 0, -0.9], movement: "fixed", duration: 5000, delay: 8500, volume: 0.22, triggerTension: 0.2, silenceAfter: { duration: 1200 }, voiceReaction: "No. No, what have I done?", label: "creature first breath in front of you" },
       ],
 
       // This chapter uses a TIMED SEQUENCE instead of random triggers
@@ -335,9 +363,14 @@ const FRANKENSTEIN_AUDIO = {
       title: "The Creature Speaks",
       narration: "/audio/frankenstein/ch4.mp3",
       emotion: "anguished",
+      sceneAnalysis: { mood: "horror", tension: 0.78, environment: "forest" },
+      tension: 0.78,
 
       ambient: [
         { file: "/audio/sfx/wind_loop.mp3", volume: 0.25, loop: true, fadeIn: 3 },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/footsteps_stone.mp3", position: [0, 0, -10], movement: "approaching", duration: 10000, delay: 2500, volume: 0.28, label: "creature mass moving toward you" },
       ],
 
       spatial: [
@@ -379,10 +412,15 @@ const FRANKENSTEIN_AUDIO = {
       title: "Epilogue - The Cost of Ambition",
       narration: "/audio/frankenstein/ch5.mp3",
       emotion: "devastated",
+      sceneAnalysis: { mood: "dark", tension: 0.22, environment: "forest" },
+      tension: 0.22,
 
       ambient: [
         // Near silence - vast emptiness
         { file: "/audio/sfx/wind_loop.mp3", volume: 0.04, loop: true, fadeIn: 5 },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/footsteps_dirt.mp3", position: [0, 0, -2], movement: "retreating", duration: 24000, delay: 5000, volume: 0.2, label: "creature disappearing into the ice" },
       ],
 
       spatial: [

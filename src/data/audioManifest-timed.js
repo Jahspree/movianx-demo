@@ -66,6 +66,12 @@ const TIMED_HORROR_AUDIO = {
       choicePrompt: null,
     },
   },
+  characterDialogue: {
+    0: { speaker: "Sarah", line: { text: "Tell me. Bat... or 911... or the window with the kids... or we hide. Ten seconds. Tell me.", breathLevel: 0.62, tremble: 0.68, whisper: true, pacing: "broken" } },
+    1: { speaker: "Sarah", line: { text: "Do we rush them? Yell that police are coming? Stay silent? Or you go to the kids and I distract them? Ten seconds. What do we do?", breathLevel: 0.74, tremble: 0.82, whisper: true, pacing: "rushed" } },
+    2: { speaker: "Sarah", line: { text: "Do we swing when the door opens? Do we surrender? Or do we push them in the bathroom and face this alone? Now. Tell me now.", breathLevel: 0.9, tremble: 0.95, whisper: true, pacing: "broken" } },
+    3: { speaker: "Internal", line: null },
+  },
 
   chapters: [
     // =====================================================================
@@ -79,10 +85,16 @@ const TIMED_HORROR_AUDIO = {
       narrationCompanion: "/audio/timed/ch0_companion.mp3",
       music: { file: "/audio/music/timed_ch0.mp3", volume: 0.22, fadeIn: 3, loop: true },
       emotion: "terrified",
+      sceneAnalysis: { mood: "horror", tension: 0.72, environment: "indoor" },
+      tension: 0.72,
 
       // ONE low drone underneath. Cinematic pulse. Clearly present but narrator dominant.
       ambient: [
         { type: "procedural", sound: "drone", volume: 0.06, frequency: 36, waveform: "sine", fadeIn: 3, label: "timed_ch0_drone" },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -1, -6], endPosition: [0, -0.4, -1.2], movement: "approaching", duration: 5200, delay: 11500, volume: 0.18, triggerTension: 0.22, unsourced: true, voiceReaction: "Don't move. Don't even breathe.", label: "intruder footsteps approaching from downstairs" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", startPosition: [0.18, 0, -0.12], movement: "fixed", duration: 4000, delay: 22000, volume: 0.09, loop: true, triggerTension: 0.1, label: "Sarah whisper breath in right ear" },
       ],
 
       timedSequence: [
@@ -170,10 +182,16 @@ const TIMED_HORROR_AUDIO = {
       narrationCompanion: "/audio/timed/ch1_companion.mp3",
       music: { file: "/audio/music/timed_ch1.mp3", volume: 0.20, fadeIn: 2.5, loop: true },
       emotion: "panicked",
+      sceneAnalysis: { mood: "horror", tension: 0.84, environment: "indoor" },
+      tension: 0.84,
 
       ambient: [
         { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
         { file: "/audio/sfx/electrical_hum.mp3", volume: 0.015, fadeIn: 2, label: "timed_ch1_hall_hum" },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -2, -7], endPosition: [0, -0.3, -1], movement: "approaching", duration: 6500, delay: 2800, volume: 0.34, triggerTension: 0.28, unsourced: true, voiceReaction: "They're on the stairs.", label: "heavy footsteps climbing behind the wall" },
+        { sound: "/audio/sfx/door_creak.mp3", startPosition: [-2, 0, 4], movement: "fixed", duration: 1200, delay: 11200, volume: 0.16, triggerTension: 0.12, silenceAfter: { duration: 900 }, label: "distant door below" },
       ],
 
       timedSequence: [
@@ -275,9 +293,15 @@ const TIMED_HORROR_AUDIO = {
       narrationCompanion: "/audio/timed/ch2_companion.mp3",
       music: { file: "/audio/music/timed_ch2.mp3", volume: 0.25, fadeIn: 1.5, loop: true },
       emotion: "terrified",
+      sceneAnalysis: { mood: "horror", tension: 0.96, environment: "indoor" },
+      tension: 0.96,
 
       ambient: [
         { type: "procedural", sound: "room_tone", volume: 0.006, frequency: 38, waveform: "sine", fadeIn: 1, label: "timed_ch2_room_tone" },
+      ],
+      environmentEvents: [
+        { sound: "/audio/sfx/door_creak.mp3", position: [0, 0, -0.7], movement: "fixed", duration: 1200, delay: 2600, volume: 0.55, label: "door handle directly ahead" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", position: [1.2, 0, -0.25], movement: "fixed", duration: 6000, delay: 6200, volume: 0.13, loop: true, label: "Sarah breath breaking in right ear" },
       ],
 
       timedSequence: [
@@ -343,8 +367,13 @@ const TIMED_HORROR_AUDIO = {
       narrationCompanion: "/audio/timed/ch3_companion.mp3",
       music: { file: "/audio/music/timed_ch3.mp3", volume: 0.15, fadeIn: 4, loop: true },
       emotion: "devastated",
+      sceneAnalysis: { mood: "dark", tension: 0.35, environment: "indoor" },
+      tension: 0.35,
 
       ambient: [],
+      environmentEvents: [
+        { sound: "/audio/sfx/electrical_hum.mp3", position: [0, 0, 5], movement: "fixed", duration: 12000, delay: 0, volume: 0.018, loop: true, label: "aftermath room tone ahead" },
+      ],
 
       timedSequence: [
         // 0-5s: Heartbeat slowly fading
