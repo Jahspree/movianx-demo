@@ -10,9 +10,9 @@ class AssetResolver {
     this.sfxBase = "/audio/sfx";
     this.frankBase = "/audio/frankenstein";
     this.timedBase = "/audio/timed";
-    this.audioVersion = "20260501-launch-audio-1";
-    this.timedCompanionVersion = "20260501-companion-truth-1";
-    this.musicVersion = "20260501-score-persistent-1";
+    this.audioVersion = "20260502-adaptive-scene-1";
+    this.timedCompanionVersion = "20260502-emotion-v3-ready-1";
+    this.musicVersion = "20260502-evolving-beds-1";
   }
 
   withVersion(url, version = this.audioVersion) {

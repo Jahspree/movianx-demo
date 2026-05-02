@@ -413,17 +413,50 @@ class AudioEngine {
 
     const nodes = [];
 
-    if (type === "drone" || type === "room_tone") {
+    if (type === "drone" || type === "room_tone" || type === "wind_bed") {
       const freq = frequency || (type === "room_tone" ? 50 : 40);
       const osc = ctx.createOscillator();
       osc.type = waveform;
       osc.frequency.setValueAtTime(freq, ctx.currentTime);
-      osc.frequency.linearRampToValueAtTime(freq * 0.95, ctx.currentTime + 5);
-      osc.frequency.linearRampToValueAtTime(freq * 1.02, ctx.currentTime + 10);
-      osc.frequency.linearRampToValueAtTime(freq, ctx.currentTime + 15);
+      osc.frequency.linearRampToValueAtTime(freq * 0.92, ctx.currentTime + 11);
+      osc.frequency.linearRampToValueAtTime(freq * 1.06, ctx.currentTime + 29);
+      osc.frequency.linearRampToValueAtTime(freq * 0.97, ctx.currentTime + 47);
+      if (type === "wind_bed") {
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        lfo.frequency.setValueAtTime(0.045, ctx.currentTime);
+        lfoGain.gain.setValueAtTime(freq * 0.18, ctx.currentTime);
+        lfo.connect(lfoGain);
+        lfoGain.connect(osc.frequency);
+        lfo.start();
+        nodes.push(lfo);
+        this.activeNodes.push(lfoGain);
+      }
       osc.connect(masterGain);
       osc.start();
       nodes.push(osc);
+    }
+
+    if (type === "insects") {
+      [3100, 4200, 5300].forEach((base, i) => {
+        const osc = ctx.createOscillator();
+        const lfo = ctx.createOscillator();
+        const lfoGain = ctx.createGain();
+        const ig = ctx.createGain();
+        osc.type = "square";
+        osc.frequency.setValueAtTime(base + Math.random() * 400, ctx.currentTime);
+        lfo.frequency.setValueAtTime(5 + i * 2.7, ctx.currentTime);
+        lfoGain.gain.setValueAtTime(0.015 + i * 0.004, ctx.currentTime);
+        ig.gain.setValueAtTime(volume * (0.16 + i * 0.08), ctx.currentTime);
+        lfo.connect(lfoGain);
+        lfoGain.connect(ig.gain);
+        osc.connect(ig);
+        ig.connect(masterGain);
+        osc.start();
+        lfo.start();
+        nodes.push(osc, lfo);
+        this.activeNodes.push(lfoGain, ig);
+      });
     }
 
     if (type === "tinnitus") {

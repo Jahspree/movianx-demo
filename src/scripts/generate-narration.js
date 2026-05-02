@@ -9,6 +9,7 @@ const path = require("path");
 const https = require("https");
 
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
+const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_multilingual_v2";
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -67,6 +68,29 @@ const TIMED_COMPANION_SETTINGS = [
   { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, empty
 ];
 
+const FRANK_DIRECTIONS = [
+  "cinematic gothic narrator, intimate wonder, cold air in the voice",
+  "low suspenseful dread, exhausted awe, careful pauses",
+  "reflective warmth, romantic softness, gentle timing",
+  "terrified realization, shaking breath, horror held back until it breaks",
+  "grief filled creature voice, wounded dignity, near tears",
+  "desolate farewell, low energy, final silence between thoughts",
+];
+
+const TIMED_STANDARD_DIRECTIONS = [
+  "terrified whisper, shaking breath, hesitant pauses, fear starting immediately",
+  "panicked urgency, clipped breath, listening between phrases",
+  "near tears, broken pacing, breath catching before the choice",
+  "hollow aftermath, grief filled delivery, numb and quiet",
+];
+
+const TIMED_COMPANION_DIRECTIONS = [
+  "terrified whisper, shaking breath, mouth close to the listener's ear, panic rising",
+  "panicked whisper, interrupted breathing, urgent but trying not to be heard",
+  "crying or near tears, broken words, desperate and breathless",
+  "hollow shock, grief filled delivery, disconnected and quiet",
+];
+
 // --- API helpers ---
 
 function apiRequest(urlPath, method, body) {
@@ -123,6 +147,11 @@ async function addSharedVoice(voiceId) {
   return voiceId; // Fallback: try using the public ID directly
 }
 
+function withVoiceDirection(text, direction) {
+  if (!direction) return text;
+  return `[${direction}]\n${text}`;
+}
+
 async function generateTTS(voiceId, text, settings, outPath) {
   const forceRegen = process.env.FORCE_REGEN === "1";
   const forcePattern = process.env.FORCE_REGEN_PATTERN ? new RegExp(process.env.FORCE_REGEN_PATTERN) : null;
@@ -134,7 +163,7 @@ async function generateTTS(voiceId, text, settings, outPath) {
 
   const body = JSON.stringify({
     text: text,
-    model_id: "eleven_multilingual_v2",
+    model_id: TTS_MODEL_ID,
     voice_settings: settings,
   });
 
@@ -170,7 +199,7 @@ async function main() {
   const frankSettings = { stability: 0.5, similarity_boost: 0.8, style: 0.3 };
   console.log(`\n2. Generating ${FRANK_CHAPTERS.length} Frankenstein chapters...\n`);
   for (let i = 0; i < FRANK_CHAPTERS.length; i++) {
-    await generateTTS(frankVoiceId, FRANK_CHAPTERS[i], frankSettings, path.join(FRANK_DIR, `ch${i}.mp3`));
+    await generateTTS(frankVoiceId, withVoiceDirection(FRANK_CHAPTERS[i], FRANK_DIRECTIONS[i]), frankSettings, path.join(FRANK_DIR, `ch${i}.mp3`));
     await new Promise((r) => setTimeout(r, 1000)); // Rate limit
   }
 
@@ -191,7 +220,7 @@ async function main() {
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {
     const settings = TIMED_STANDARD_SETTINGS[i];
     console.log(`   Ch${i} settings: stability=${settings.stability} style=${settings.style}`);
-    await generateTTS(timedVoiceId, TIMED_CHAPTERS[i], settings, path.join(TIMED_DIR, `ch${i}.mp3`));
+    await generateTTS(timedVoiceId, withVoiceDirection(TIMED_CHAPTERS[i], TIMED_STANDARD_DIRECTIONS[i]), settings, path.join(TIMED_DIR, `ch${i}.mp3`));
     await new Promise((r) => setTimeout(r, 1000));
   }
 
@@ -200,7 +229,7 @@ async function main() {
   for (let i = 0; i < TIMED_COMPANION.length; i++) {
     const settings = TIMED_COMPANION_SETTINGS[i];
     console.log(`   Ch${i} companion: stability=${settings.stability} style=${settings.style}`);
-    await generateTTS(timedVoiceId, TIMED_COMPANION[i], settings, path.join(TIMED_DIR, `ch${i}_companion.mp3`));
+    await generateTTS(timedVoiceId, withVoiceDirection(TIMED_COMPANION[i], TIMED_COMPANION_DIRECTIONS[i]), settings, path.join(TIMED_DIR, `ch${i}_companion.mp3`));
     await new Promise((r) => setTimeout(r, 1000));
   }
 

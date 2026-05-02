@@ -2,9 +2,13 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
+import { toNarrationLine } from "../lib/AudioSceneAnalyzer";
+import { buildAdaptiveAudioPlan } from "../lib/AdaptiveAudioDirector";
+import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 // === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
 import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
+import { getAudioSceneProfile } from "../data/audioSceneProfiles";
 import { STORIES, getChapters } from "../data/stories";
 import { C, THEMES, FONTS, FF, CSS, getSpeechProfile, estimateSpeechDurationMs } from "./movianx/config";
 import { LandingView, HomeView, LibraryView, DetailView } from "./movianx/views";
@@ -858,25 +862,32 @@ export default function MovianxPlatform(){
   const playChapterAudio=(storyId,chapIdx,currentMode)=>{
     if(!audioEngine||!audioEngine.ctx)return;
     const manifest=getManifest(storyId);
-    if(!manifest)return;
-    const chManifest=manifest.chapters[chapIdx];
-    if(!chManifest)return;
-    const sceneAnalysis=chManifest.sceneAnalysis||analyzeScene(chaps[chapIdx]?.text||chManifest.title||"");
-    const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:sceneAnalysis.tension;
+    const chData=chaps[chapIdx]||{};
+    const storyMeta=getStoryMeta(storyId)||{};
+    const chManifest=manifest?.chapters?.[chapIdx]||{};
+    const audioSceneProfile=getAudioSceneProfile(storyId,chapIdx,chData,storyMeta);
+    const sceneAnalysis=chManifest.sceneAnalysis||{
+      mood: audioSceneProfile.mood,
+      tension: audioSceneProfile.dangerLevel,
+      environment: audioSceneProfile.location,
+      pacing: audioSceneProfile.pace,
+    };
+    const audioPlan=buildAdaptiveAudioPlan(audioSceneProfile,chManifest);
+    const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:audioPlan.tension;
     audioEngine.setFearAssets({
       heartbeat: assetResolver.getAudio("heartbeat"),
       breath: assetResolver.getAudio("breathing_raspy"),
     });
     audioEngine.updateExperienceState({
       tension: tensionLevel,
-      immersion: mode==="Immersive"?0.78:0.48,
+      immersion: currentMode==="Immersive"?0.78:0.48,
       presence: tensionLevel>0.7?0.42:0.22,
       uncertainty: sceneAnalysis.mood==="suspense"||sceneAnalysis.mood==="fear"||sceneAnalysis.mood==="horror"?0.5:0.18,
       control: 0,
     });
 
     // 1. Start ambient sounds
-    const ambientLayers=(chManifest.ambient&&chManifest.ambient.length?chManifest.ambient:getAutoAmbient(sceneAnalysis));
+    const ambientLayers=(audioPlan.ambience&&audioPlan.ambience.length?audioPlan.ambience:getAutoAmbient(sceneAnalysis));
     if(ambientLayers){
       ambientLayers.forEach(amb=>{
         if(amb.type==="procedural"){
@@ -888,12 +899,16 @@ export default function MovianxPlatform(){
     }
 
     // 1b. Start music layer (loops underneath everything)
-    if(chManifest.music&&chManifest.music.file){
-      const m=chManifest.music;
+    if(audioPlan.musicBed){
+      const m=audioPlan.musicBed;
+      if(m.type==="procedural"){
+        audioEngine.playProcedural(m.sound,{volume:m.volume,frequency:m.frequency,waveform:m.waveform,label:m.label,fadeIn:m.fadeIn||0,role:"music"});
+      }else if(m.file){
       audioEngine.playAmbient(assetResolver.resolveFile(m.file),m.volume||0.1,m.fadeIn||3,m.label||"chapter_music","music");
+      }
     }
 
-    const environmentEvents=[...(chManifest.environmentEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
+    const environmentEvents=[...(audioPlan.spatialEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
     const scheduleExperienceEvent=(fn,baseDelay=0,pressure=0)=>{
       const state=audioEngine.getExperienceState?.()||{};
       const uncertainty=state.uncertainty??sceneAnalysis.tension??0;
@@ -905,9 +920,10 @@ export default function MovianxPlatform(){
       },Math.max(0,baseDelay+jitter));
     };
 
+    const scheduler=new SpatialEventScheduler(audioEngine,playEnvironmentEvent,{uncertainty:audioSceneProfile.emotionalIntensity});
     environmentEvents.forEach(event=>{
       const pressure=event.triggerTension||sceneAnalysis.tension*0.12;
-      scheduleExperienceEvent(()=>playEnvironmentEvent(event),event.delay||event.time||0,pressure);
+      scheduler.schedule(event,event.delay||event.time||0,pressure);
     });
 
     // 2. Start spatial sounds with triggers
@@ -987,6 +1003,9 @@ export default function MovianxPlatform(){
     const narrationUrl=useCompanion
       ?assetResolver.getCompanionNarrationFromManifest(manifest,chapIdx)
       :assetResolver.getNarrationFromManifest(manifest,chapIdx);
+    const fallbackText=useCompanion&&manifest?.companionScript?.[chapIdx]?.text
+      ||chData.text
+      ||"";
 
     // Try to load audio file; fall back to Web Speech API
     if(narrationUrl){
@@ -998,12 +1017,11 @@ export default function MovianxPlatform(){
       },{once:true});
       testAudio.addEventListener("error",()=>{
         // File doesn't exist or is empty — fall back to Web Speech
-        const chData=chManifest;
-        const textForSpeech=useCompanion&&manifest.companionScript?.[chapIdx]?.text
-          ||chaps[chapIdx]?.text||"";
-        if(textForSpeech)speak(textForSpeech,chData.emotion||"calm");
+        if(fallbackText)speak(toNarrationLine(fallbackText,audioSceneProfile),chManifest.emotion||chData.emotion||audioSceneProfile.mood);
       },{once:true});
       testAudio.load();
+    }else if(fallbackText&&currentMode!=="Reader"){
+      speak(toNarrationLine(fallbackText,audioSceneProfile),chManifest.emotion||chData.emotion||audioSceneProfile.mood);
     }
   };
 
