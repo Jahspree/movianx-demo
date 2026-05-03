@@ -93,10 +93,38 @@ export function toNarrationLine(text, profile) {
   const danger = profile?.dangerLevel || 0;
   const intensity = profile?.emotionalIntensity || danger;
   return {
-    text,
+    text: performNarrationText(text, profile),
     breathLevel: Math.min(1, danger * 0.85),
     tremble: Math.min(1, danger * 0.9),
     whisper: danger > 0.5 || profile?.narrationStyle?.includes("whisper"),
     pacing: danger > 0.82 ? "broken" : danger > 0.62 ? "rushed" : intensity > 0.42 ? "hesitant" : "stable",
   };
+}
+
+export function performNarrationText(text = "", profile = {}) {
+  const danger = profile?.dangerLevel || 0;
+  const style = `${profile?.requiredVoiceDirection || ""} ${profile?.narrationStyle || ""}`.toLowerCase();
+  const normalized = String(text).replace(/\s+/g, " ").trim();
+  if (!normalized) return "";
+
+  if (danger > 0.78 || style.includes("terrified")) {
+    return `(whispering) ${normalized
+      .replace(/([.!?])\s+/g, "$1... ")
+      .replace(/\bNo\b/g, "No—no—")
+      .replace(/\blisten\b/gi, "listen...")
+      .replace(/\bwhat\b/gi, "...what")}`;
+  }
+  if (danger > 0.58 || style.includes("panic")) {
+    return normalized
+      .replace(/([.!?])\s+/g, "$1... ")
+      .replace(/\bnow\b/gi, "now—")
+      .replace(/\bPlease\b/g, "Please...");
+  }
+  if (style.includes("grief")) {
+    return normalized.replace(/([.!?])\s+/g, "$1... ").replace(/\bFarewell\b/g, "Farewell...");
+  }
+  if (style.includes("softness") || style.includes("warmth")) {
+    return normalized.replace(/([.!?])\s+/g, "$1... ");
+  }
+  return normalized.replace(/([.!?])\s+/g, "$1... ");
 }

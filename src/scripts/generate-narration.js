@@ -9,7 +9,7 @@ const path = require("path");
 const https = require("https");
 
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
-const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_multilingual_v2";
+const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_v3";
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -148,8 +148,45 @@ async function addSharedVoice(voiceId) {
 }
 
 function withVoiceDirection(text, direction) {
-  if (!direction) return text;
-  return `[${direction}]\n${text}`;
+  const performed = shapePerformanceText(text, direction);
+  if (!direction) return performed;
+  return `[${direction}]\n${performed}`;
+}
+
+function shapePerformanceText(text, direction = "") {
+  const style = String(direction).toLowerCase();
+  let output = String(text || "").replace(/\s+/g, " ").trim();
+  if (!output) return "";
+
+  if (style.includes("terrified") || style.includes("panic") || style.includes("crying")) {
+    output = output
+      .replace(/([.!?])\s+/g, "$1... ")
+      .replace(/\bNo\b/g, "No—no—no")
+      .replace(/\bwhat\b/gi, "...what")
+      .replace(/\blisten\b/gi, "listen...")
+      .replace(/\bPlease\b/g, "Please...");
+    return `[breathing] [whispering]\n${output}`;
+  }
+
+  if (style.includes("dread") || style.includes("horror")) {
+    output = output
+      .replace(/([.!?])\s+/g, "$1... ")
+      .replace(/\bI saw\b/g, "I saw...")
+      .replace(/\bSilence\b/g, "Silence...");
+    return `[low suspense] [hesitant]\n${output}`;
+  }
+
+  if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) {
+    output = output.replace(/([.!?])\s+/g, "$1... ").replace(/\bFarewell\b/g, "Farewell...");
+    return `[near tears] [soft]\n${output}`;
+  }
+
+  if (style.includes("warmth") || style.includes("softness")) {
+    output = output.replace(/([.!?])\s+/g, "$1... ");
+    return `[warm] [gentle]\n${output}`;
+  }
+
+  return `[cinematic] [intimate]\n${output.replace(/([.!?])\s+/g, "$1... ")}`;
 }
 
 async function generateTTS(voiceId, text, settings, outPath) {

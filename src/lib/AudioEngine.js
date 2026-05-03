@@ -20,12 +20,15 @@ class SpatialSound {
       coneInnerAngle = 360,
       coneOuterAngle = 360,
       coneOuterGain = 0.25,
+      randomStart = false,
+      volumeVariation = 0,
     } = options;
 
     this.engine = engine;
     this.ctx = engine.ctx;
     this.url = url;
-    this.baseVolume = volume;
+    const variation = volumeVariation ? 1 + ((Math.random() * 2 - 1) * volumeVariation) : 1;
+    this.baseVolume = Math.max(0.001, volume * variation);
     this.role = role;
     this.label = label;
     this.position = { ...position };
@@ -36,6 +39,13 @@ class SpatialSound {
     audio.preload = "auto";
     audio.playsInline = true;
     audio.loop = loop;
+    if (randomStart) {
+      audio.addEventListener("loadedmetadata", () => {
+        if (Number.isFinite(audio.duration) && audio.duration > 1.2) {
+          audio.currentTime = Math.random() * Math.max(0, audio.duration - 0.6);
+        }
+      }, { once: true });
+    }
 
     const source = ctx.createMediaElementSource(audio);
     const gain = ctx.createGain();
@@ -130,6 +140,7 @@ class AudioEngine {
   constructor() {
     this.ctx = null;
     this.activeAudioElements = [];
+    this.activeProceduralLayers = [];
     this.activeNodes = [];
     this.activeTimers = [];
     this.spatialSounds = [];
@@ -310,7 +321,7 @@ class AudioEngine {
     return audio;
   }
 
-  playAmbient(url, volume = 0.2, fadeIn = 0, label = null, role = "ambient") {
+  playAmbient(url, volume = 0.2, fadeIn = 0, label = null, role = "ambient", options = {}) {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
     if (role === "ambient" || role === "music" || role === "tension") {
@@ -324,6 +335,8 @@ class AudioEngine {
         refDistance: 2,
         maxDistance: 80,
         rolloffFactor: 0.8,
+        randomStart: options.randomStart,
+        volumeVariation: options.volumeVariation,
       });
       return { audio: spatial.audio, gainNode: spatial.gainNode, sourceNode: spatial.sourceNode, pannerNode: spatial.pannerNode, spatial };
     }
@@ -355,6 +368,47 @@ class AudioEngine {
     audio.load();
     audio.play().catch(() => {});
     return { audio, gainNode: gain, sourceNode: source };
+  }
+
+  playEvolvingAmbient(url, options = {}) {
+    const {
+      volume = 0.08,
+      fadeIn = 2,
+      label = "evolving ambience",
+      role = "ambient",
+      layers = 3,
+      positions = [
+        { x: -3, y: 0, z: 5 },
+        { x: 3, y: 0, z: 6 },
+        { x: 0, y: 1, z: -4 },
+      ],
+    } = options;
+    if (!this.ctx || !url) return [];
+    const count = Math.max(2, Math.min(3, layers));
+    const created = [];
+    for (let i = 0; i < count; i++) {
+      const spatial = new SpatialSound(this, url, {
+        volume: volume * (i === 0 ? 1 : 0.58),
+        position: positions[i % positions.length],
+        loop: true,
+        fadeIn: fadeIn + i * 0.8,
+        label: `${label} layer ${i + 1}`,
+        role,
+        refDistance: 2,
+        maxDistance: 90,
+        rolloffFactor: 0.75,
+        randomStart: true,
+        volumeVariation: 0.1,
+      });
+      created.push({ audio: spatial.audio, gainNode: spatial.gainNode, pannerNode: spatial.pannerNode, spatial });
+    }
+    this.addInterval(() => {
+      created.forEach((entry, idx) => {
+        const target = volume * (idx === 0 ? 0.88 : 0.42 + Math.random() * 0.22);
+        this.fadeGain(entry.gainNode, target, 4 + Math.random() * 3);
+      });
+    }, 9000 + Math.random() * 4000);
+    return created;
   }
 
   playSpatial(url, volume = 0.2, position = { x: 0, y: 0, z: 0 }, loop = false, fadeIn = 0, label = null, role = "tension") {
@@ -410,6 +464,7 @@ class AudioEngine {
 
     this.activeNodes.push(masterGain);
     this.registerLayerGain(masterGain, role, label);
+    this.activeProceduralLayers.push({ role, label: label || type, type });
 
     const nodes = [];
 
@@ -672,6 +727,7 @@ class AudioEngine {
       try { audio.pause(); audio.currentTime = 0; audio.src = ""; } catch (e) {}
     });
     this.activeAudioElements = [];
+    this.activeProceduralLayers = [];
 
     // Stop oscillators, disconnect nodes
     this.activeNodes.forEach(n => {
@@ -699,10 +755,23 @@ class AudioEngine {
     this._silenced = false;
     this._silenceRestore = [];
 
-    // Cancel speech synthesis
-    if (typeof window !== "undefined" && window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+  }
+
+  getActiveLayers() {
+    const byRole = {};
+    this.activeAudioElements.forEach(({ audio, role }) => {
+      if (!byRole[role]) byRole[role] = [];
+      byRole[role].push({
+        src: audio.currentSrc || audio.src || "procedural",
+        paused: audio.paused,
+        loop: audio.loop,
+      });
+    });
+    this.activeProceduralLayers.forEach(({ role, label, type }) => {
+      if (!byRole[role]) byRole[role] = [];
+      byRole[role].push({ src: `procedural:${type}`, label, paused: false, loop: true });
+    });
+    return byRole;
   }
 
   cleanup() {

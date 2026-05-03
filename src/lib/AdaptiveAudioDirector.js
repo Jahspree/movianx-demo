@@ -68,16 +68,17 @@ export function buildAdaptiveAudioPlan(profile, manifestChapter = null) {
   const bedKey = profile?.requiredAmbience || "urban_thriller";
   const library = BED_LIBRARY[bedKey] || BED_LIBRARY.urban_thriller;
   const danger = profile?.dangerLevel || manifestChapter?.tension || 0.2;
+  const intensityLevel = getIntensityLevel(profile || manifestChapter || {});
   const ambience = [
     ...(library.ambienceBed || []),
     ...((manifestChapter?.ambient || []).filter(layer => !layer.file || !library.ambienceBed?.some(existing => existing.file === layer.file))),
   ];
-  const spatialEvents = [
+  const spatialEvents = ensureImmediateSpatialEvents([
     ...(library.details || []),
     ...(manifestChapter?.environmentEvents || []),
-  ];
+  ], profile, intensityLevel);
   const musicBed = manifestChapter?.music && danger > 0.62
-    ? manifestChapter.music
+    ? { ...manifestChapter.music, volume: scaleMusicVolume(manifestChapter.music.volume || 0.1, intensityLevel) }
     : createAdaptiveMusicBed(profile);
 
   return {
@@ -87,7 +88,44 @@ export function buildAdaptiveAudioPlan(profile, manifestChapter = null) {
     spatialEvents,
     tension: Math.max(danger, manifestChapter?.tension || 0),
     physiological: danger > 0.68,
+    intensityLevel,
   };
+}
+
+export function getIntensityLevel(scene = {}) {
+  const danger = Number(scene.dangerLevel ?? scene.tension ?? scene.emotionalIntensity ?? 0);
+  const mood = String(scene.mood || scene.characterEmotion || "").toLowerCase();
+  if (danger >= 0.82 || mood.includes("panic") || mood.includes("terror")) return 3;
+  if (danger >= 0.62 || mood.includes("fear") || mood.includes("horror")) return 2;
+  if (danger >= 0.34 || mood.includes("suspense") || mood.includes("dread")) return 1;
+  return 0;
+}
+
+function scaleMusicVolume(baseVolume, intensityLevel) {
+  const scale = [0.55, 0.85, 1.1, 1.35][intensityLevel] || 0.85;
+  return Math.max(0.008, Math.min(0.32, baseVolume * scale));
+}
+
+function ensureImmediateSpatialEvents(events, profile, intensityLevel) {
+  const hasImmediate = events.some(event => Number(event.delay ?? event.time ?? 9999) <= 3000);
+  if (hasImmediate) return events;
+  const horror = intensityLevel >= 2 || (profile?.requiredAmbience || "").includes("horror");
+  const sound = horror ? "/audio/sfx/floor_creak.mp3" : "/audio/sfx/wind_loop.mp3";
+  return [
+    {
+      sound,
+      startPosition: horror ? [0.7, 0, -2.4] : [-3, 1, -4],
+      endPosition: horror ? [0.3, 0, -1.3] : [2, 1, -2],
+      movement: horror ? "approaching" : "leftToRight",
+      duration: horror ? 1800 : 3200,
+      delay: 650,
+      volume: horror ? 0.11 : 0.045,
+      triggerTension: horror ? 0.1 : 0.03,
+      unsourced: true,
+      label: "first-frame spatial presence",
+    },
+    ...events,
+  ];
 }
 
 function createAdaptiveMusicBed(profile) {

@@ -2,15 +2,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
-import { toNarrationLine } from "../lib/AudioSceneAnalyzer";
-import { buildAdaptiveAudioPlan } from "../lib/AdaptiveAudioDirector";
+import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioDirector";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 // === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
 import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
 import { getAudioSceneProfile } from "../data/audioSceneProfiles";
 import { STORIES, getChapters } from "../data/stories";
-import { C, THEMES, FONTS, FF, CSS, getSpeechProfile, estimateSpeechDurationMs } from "./movianx/config";
+import { C, THEMES, FONTS, FF, CSS, estimateSpeechDurationMs } from "./movianx/config";
 import { LandingView, HomeView, LibraryView, DetailView } from "./movianx/views";
 
 const AUDIO_MANIFESTS_BY_STORY = {
@@ -704,6 +703,7 @@ export default function MovianxPlatform(){
   const[showBranchInfo,setShowBranchInfo]=useState(false);
   const[currentWordIdx,setCurrentWordIdx]=useState(-1); // word-by-word highlight
   const[revealedWordCount,setRevealedWordCount]=useState(-1); // word-by-word reveal for Immersive timed
+  const[narrationStatus,setNarrationStatus]=useState("ready");
 
   const recognitionRef=useRef(null);
   const navLockRef=useRef(false); // P0: prevents double navigation
@@ -757,10 +757,6 @@ export default function MovianxPlatform(){
     const manifest=getManifest(storyId);
     return currentMode==="Immersive"&&Boolean(isTimedExperience(storyId)&&manifest?.companionScript);
   };
-  const sanitizeSpeechText=(text="")=>text
-    .replace(/\[(?:pause|silence)(?::[^\]]+)?\]/gi,"...")
-    .replace(/<break\s+time=["'][^"']+["']\s*\/?>/gi,"...");
-
   const companionChapter=sel&&shouldUseCompanionScript(sel.id,mode)
     ?getManifest(sel.id)?.companionScript?.[chIdx]||null
     :null;
@@ -849,7 +845,7 @@ export default function MovianxPlatform(){
     }
     if(event.voiceReaction){
       const reactionDelay=Math.max(250,Math.min(event.duration||1200,1800));
-      audioEngine.addTimeout(()=>speak(event.voiceReaction,event.voiceEmotion||"whispering"),reactionDelay);
+      audioEngine.addTimeout(()=>console.log("CHARACTER REACTION:",event.voiceReaction,event.voiceEmotion||"whispering"),reactionDelay);
     }
     if(event.silenceAfter||Math.random()<0.18){
       const after=(event.duration||1000)+(350+Math.random()*900);
@@ -876,7 +872,11 @@ export default function MovianxPlatform(){
       pacing: audioSceneProfile.pace,
     };
     const audioPlan=buildAdaptiveAudioPlan(audioSceneProfile,chManifest);
+    const intensityLevel=audioPlan.intensityLevel ?? getIntensityLevel(audioSceneProfile);
     const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:audioPlan.tension;
+    setNarrationStatus("ready");
+    console.log("SCENE PROFILE:",audioSceneProfile);
+    console.log("INTENSITY LEVEL:",intensityLevel);
     audioEngine.setFearAssets({
       heartbeat: assetResolver.getAudio("heartbeat"),
       breath: assetResolver.getAudio("breathing_raspy"),
@@ -896,7 +896,13 @@ export default function MovianxPlatform(){
         if(amb.type==="procedural"){
           audioEngine.playProcedural(amb.sound,{volume:amb.volume,frequency:amb.frequency,waveform:amb.waveform,label:amb.label,fadeIn:amb.fadeIn||0,role:"ambient"});
         }else if(amb.file){
-          audioEngine.playAmbient(assetResolver.resolveFile(amb.file),amb.volume,amb.fadeIn||0,amb.label||null);
+          audioEngine.playEvolvingAmbient(assetResolver.resolveFile(amb.file),{
+            volume:amb.volume,
+            fadeIn:amb.fadeIn||0,
+            label:amb.label||"scene ambience",
+            role:"ambient",
+            layers:amb.layers||3,
+          });
         }
       });
     }
@@ -907,8 +913,21 @@ export default function MovianxPlatform(){
       if(m.type==="procedural"){
         audioEngine.playProcedural(m.sound,{volume:m.volume,frequency:m.frequency,waveform:m.waveform,label:m.label,fadeIn:m.fadeIn||0,role:"music"});
       }else if(m.file){
-      audioEngine.playAmbient(assetResolver.resolveFile(m.file),m.volume||0.1,m.fadeIn||3,m.label||"chapter_music","music");
+      audioEngine.playEvolvingAmbient(assetResolver.resolveFile(m.file),{
+        volume:m.volume||0.1,
+        fadeIn:m.fadeIn||3,
+        label:m.label||"chapter_music",
+        role:"music",
+        layers:2,
+      });
       }
+    }
+
+    if(intensityLevel>=2){
+      audioEngine.playSpatial(assetResolver.getAudio("heartbeat"),0.05+(intensityLevel*0.045),{x:0,y:0,z:0},true,1.2,"intensity heartbeat","tension");
+    }
+    if(intensityLevel>=3){
+      audioEngine.playSpatial(assetResolver.getAudio("breathing_raspy"),0.12,{x:0.18,y:0,z:-0.18},true,0.4,"panic breath close right","event");
     }
 
     const environmentEvents=[...(audioPlan.spatialEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
@@ -1010,66 +1029,43 @@ export default function MovianxPlatform(){
       ||chData.text
       ||"";
 
-    // Try to load audio file; fall back to Web Speech API
+    // Try to load audio file; if missing, block generated narration instead of using browser speech.
     if(narrationUrl){
       const testAudio=new Audio(narrationUrl);
       const narrationVolume=isTimedExperience(storyId)?1.4:1.0; // timed companion narration is intentionally close and dominant
       testAudio.addEventListener("canplaythrough",()=>{
         testAudio.pause();
+        setNarrationStatus("playing");
         audioEngine.playNarration(narrationUrl,narrationVolume);
       },{once:true});
       testAudio.addEventListener("error",()=>{
-        // File doesn't exist or is empty — fall back to Web Speech
-        if(fallbackText)speak(toNarrationLine(fallbackText,audioSceneProfile),chManifest.emotion||chData.emotion||audioSceneProfile.mood);
+        setNarrationStatus("generating");
+        console.warn("MISSING NARRATION AUDIO:",narrationUrl,{storyId,chapIdx,currentMode});
       },{once:true});
       testAudio.load();
     }else if(fallbackText&&currentMode!=="Reader"){
-      speak(toNarrationLine(fallbackText,audioSceneProfile),chManifest.emotion||chData.emotion||audioSceneProfile.mood);
+      setNarrationStatus("generating");
+      console.warn("MISSING NARRATION AUDIO:",{storyId,chapIdx,currentMode});
     }
+    audioEngine.addTimeout(()=>console.log("ACTIVE LAYERS:",audioEngine.getActiveLayers?.()||{}),500);
+    audioEngine.addTimeout(()=>console.log("ACTIVE LAYERS:",audioEngine.getActiveLayers?.()||{}),2200);
   };
 
-  // Web Speech API fallback for narration
-  const speak=(text,emotion="calm")=>{
-    if(typeof window==="undefined"||!window.speechSynthesis||!narratorOn)return;
-    const line=typeof text==="object"?text:null;
-    const rawText=line?.text||text||"";
-    if(!rawText)return;
-    window.speechSynthesis.cancel();
+  // Browser speech is intentionally disabled. Immersive audio must come from
+  // generated assets or remain in a generation/blocking state.
+  const markNarrationMissing=(text,emotion="calm")=>{
+    const rawText=typeof text==="object"?text?.text:text;
+    if(rawText)console.warn("NARRATION AUDIO REQUIRED:",{text:rawText,emotion});
+    setNarrationStatus("generating");
     setCurrentWordIdx(-1);
-    const doSpeak=()=>{
-    const u=new SpeechSynthesisUtterance(sanitizeSpeechText(rawText));
-      const em=getSpeechProfile(emotion);
-      const pacing=line?.pacing;
-      const rateMul=pacing==="rushed"?1.12:pacing==="broken"?0.76:pacing==="hesitant"?0.86:1;
-      const tremble=Number(line?.tremble||0);
-      const breathLevel=Number(line?.breathLevel||0);
-      u.rate=Math.max(0.55,Math.min(1.25,em.rate*rateMul-(breathLevel*0.08)));
-      u.pitch=Math.max(0.45,Math.min(1.6,em.pitch+(line?.whisper?-0.08:0)+(Math.random()*0.08-0.04)*tremble));
-      u.volume=Math.max(0.18,Math.min(1,em.volume*(line?.whisper?0.72:1)+(breathLevel*0.08)));
-      if(line&&audioEngine?.ctx)audioEngine.addExperienceImpulse({presence:line.whisper?0.16:0.04,tension:tremble*0.12,uncertainty:pacing==="broken"?0.08:0});
-      const voices=window.speechSynthesis.getVoices();
-      const english=voices.filter(v=>v.lang.startsWith("en"));
-      if(english.length>0)u.voice=english[0];
-      u.onboundary=(e)=>{
-        if(e.name==="word"){
-          const spoken=rawText.substring(0,e.charIndex);
-          const idx=spoken.split(/\s+/).length-1;
-          setCurrentWordIdx(Math.max(0,idx));
-        }
-      };
-      u.onend=()=>setCurrentWordIdx(-1);
-      window.speechSynthesis.speak(u);
-    };
-    if(window.speechSynthesis.getVoices().length>0){setTimeout(doSpeak,50)}
-    else{window.speechSynthesis.onvoiceschanged=()=>{setTimeout(doSpeak,50)}}
   };
 
-  const speakImmersiveOptions=(choice,dialogueOverride=null)=>{
+  const queueMissingChoiceAudio=(choice,dialogueOverride=null)=>{
     if(!choice||!choice.opts)return;
     const prompt=dialogueOverride||getChoiceDialogue(sel?getManifest(sel.id):null,chIdx,choice);
-    const optLines=choice.opts.map((opt,i)=>`Say "option ${i+1}" for: ${opt.txt}`).join(". Or, ");
     const promptText=typeof prompt==="object"?prompt.text:prompt;
-    speak({text:`${promptText}. ${optLines}.`,breathLevel:0.35,tremble:0.35,whisper:true,pacing:"hesitant"},choice.emotion||"calm");
+    console.warn("CHOICE VOICE AUDIO REQUIRED:",{prompt:promptText,chapter:chIdx});
+    setNarrationStatus("generating");
   };
 
   const startVoiceRec=()=>{
@@ -1087,7 +1083,7 @@ export default function MovianxPlatform(){
       const numMatch=t.match(/option\s*(\d)/);
       if(numMatch){
         const idx=parseInt(numMatch[1])-1;
-        if(idx>=0&&idx<choice.opts.length){speak("Got it.");setTimeout(()=>makeChoice(choice.opts[idx]),800);return}
+        if(idx>=0&&idx<choice.opts.length){console.log("VOICE CHOICE ACCEPTED:",idx+1);setTimeout(()=>makeChoice(choice.opts[idx]),800);return}
       }
       // Fallback: fuzzy match against option text
       let best=null,hi=0;
@@ -1096,11 +1092,11 @@ export default function MovianxPlatform(){
         let score=0;words.forEach(w=>{if(t.includes(w))score++;if(w.length>3&&t.includes(w.substring(0,4)))score+=0.5});
         if(score>hi){hi=score;best=opt}
       });
-      if(best&&hi>0.5){speak("Got it.");setTimeout(()=>makeChoice(best),800)}
+      if(best&&hi>0.5){console.log("VOICE CHOICE ACCEPTED:",best.txt);setTimeout(()=>makeChoice(best),800)}
       else{
         // Re-read options and listen again
-        speak("I didn't catch that. Let me repeat your choices.");
-        setTimeout(()=>{speakImmersiveOptions(choice);setTimeout(()=>startVoiceRec(),6000)},2000);
+        console.log("VOICE CHOICE MISHEARD");
+        setTimeout(()=>{queueMissingChoiceAudio(choice);setTimeout(()=>startVoiceRec(),6000)},2000);
       }
     };
     rec.onerror=()=>{
@@ -1108,7 +1104,7 @@ export default function MovianxPlatform(){
       // Retry after error in immersive mode
       if(voiceMode&&showChoice){
         const choice=chaps[chIdx].choice;
-        if(choice){speak("Let me repeat your choices.");setTimeout(()=>{speakImmersiveOptions(choice);setTimeout(()=>startVoiceRec(),6000)},1500)}
+        if(choice){setTimeout(()=>{queueMissingChoiceAudio(choice);setTimeout(()=>startVoiceRec(),6000)},1500)}
       }
     };
     rec.onend=()=>{setVoiceActive(false);if(voiceMode&&showChoice)setTimeout(()=>startVoiceRec(),500)};
@@ -1194,9 +1190,9 @@ export default function MovianxPlatform(){
     if((mode==="Cinematic"||mode==="Immersive")&&audioEngine&&audioEngine.ctx&&sel){
       playChapterAudio(sel.id,chIdx,mode);
     }
-    // Cinematic without manifest match: Web Speech fallback
+    // Cinematic without generated narration blocks instead of using browser speech.
     if(mode==="Cinematic"&&(!sel||!getManifest(sel.id))){
-      speak(activeChapterText,ch.emotion||"calm");
+      markNarrationMissing(activeChapterText,ch.emotion||"calm");
     }
 
     const wordCount=activeChapterText?activeChapterText.split(/\s+/).length:0;
@@ -1259,7 +1255,7 @@ export default function MovianxPlatform(){
           if(characterPrompt){
             const prompt=characterLine||{text:characterPrompt,breathLevel:0.55,tremble:0.65,whisper:true,pacing:"broken"};
             const promptDelay=estimateSpeechDurationMs(prompt.text||prompt,"whispering");
-            speak(prompt,"whispering");
+            console.warn("CHOICE VOICE AUDIO REQUIRED:",{prompt:prompt.text||prompt,chapter:chIdx});
             addLocalTimer(()=>{
               const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
               if(limit){setTimeRemaining(limit);setTimerActive(true)}
@@ -1271,7 +1267,7 @@ export default function MovianxPlatform(){
               `${prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
               ch.choice.emotion||"calm"
             );
-            speakImmersiveOptions(ch.choice,prompt);
+            queueMissingChoiceAudio(ch.choice,prompt);
             addLocalTimer(()=>{
               const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
               if(limit){setTimeRemaining(limit);setTimerActive(true)}
@@ -1291,7 +1287,7 @@ export default function MovianxPlatform(){
             const limit=ch.choice.timeLimit||timeline.defaultTimeLimit;
             if(limit){setTimeRemaining(limit);setTimerActive(true)}
             if(mode==="Cinematic"){
-              speak(getChoiceLine(getManifest(sel?.id),chIdx,ch.choice)||getChoiceDialogue(getManifest(sel?.id),chIdx,ch.choice),ch.choice.emotion||"calm");
+              queueMissingChoiceAudio(ch.choice,getChoiceLine(getManifest(sel?.id),chIdx,ch.choice)||getChoiceDialogue(getManifest(sel?.id),chIdx,ch.choice));
             }
           },timeline.cinematicTimedChoiceDelayMs);
           return;
@@ -1301,7 +1297,7 @@ export default function MovianxPlatform(){
         if(limit){setTimeRemaining(limit);setTimerActive(true)}
         addLocalTimer(()=>{
           if(mode==="Cinematic"){
-            speak(getChoiceLine(getManifest(sel?.id),chIdx,ch.choice)||getChoiceDialogue(getManifest(sel?.id),chIdx,ch.choice),ch.choice.emotion||"calm");
+            queueMissingChoiceAudio(ch.choice,getChoiceLine(getManifest(sel?.id),chIdx,ch.choice)||getChoiceDialogue(getManifest(sel?.id),chIdx,ch.choice));
           }
           if(mode==="Immersive"){
             const manifest=sel?getManifest(sel.id):null;
@@ -1310,7 +1306,7 @@ export default function MovianxPlatform(){
             if(characterPrompt){
               const prompt=characterLine||{text:characterPrompt,breathLevel:0.35,tremble:0.35,whisper:true,pacing:"hesitant"};
               const promptDelay=estimateSpeechDurationMs(prompt.text||prompt,"whispering");
-              speak(prompt,"whispering");
+              console.warn("CHOICE VOICE AUDIO REQUIRED:",{prompt:prompt.text||prompt,chapter:chIdx});
               addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+timeline.promptToTimerBufferMs);
             }else{
               const prompt=getChoiceDialogue(manifest,chIdx,ch.choice);
@@ -1318,7 +1314,7 @@ export default function MovianxPlatform(){
                 `${prompt}. ${ch.choice.opts.map((opt,i)=>`Say option ${i+1} for ${opt.txt}`).join(". ")}`,
                 ch.choice.emotion||"calm"
               );
-              speakImmersiveOptions(ch.choice,prompt);
+              queueMissingChoiceAudio(ch.choice,prompt);
               addLocalTimer(()=>{setVoiceMode(true);startVoiceRec()},promptDelay+timeline.promptToTimerBufferMs);
             }
           }
@@ -1341,10 +1337,10 @@ export default function MovianxPlatform(){
     if(timeRemaining<=0){
       if(mode==="Immersive"&&sel&&isTimedExperience(sel.id)&&ch.choice?.opts[0]){
         // Companion makes the choice desperately
-        speak("Okay, we're doing this!","panicked");
+        console.log("TIMER AUTO-CHOICE:",ch.choice.opts[0].txt);
         setTimeout(()=>makeChoice(ch.choice.opts[0]),1200);
       }else if(ch.choice?.opts[0]){
-        speak("Time's up.","panicked");
+        console.log("TIMER AUTO-CHOICE:",ch.choice.opts[0].txt);
         setTimeout(()=>makeChoice(ch.choice.opts[0]),500);
       }
       setTimerActive(false);return;
@@ -1455,8 +1451,8 @@ export default function MovianxPlatform(){
             <button onClick={()=>{
               const next=!narratorOn;setNarratorOn(next);
               logEvent("narration_toggled",{enabled:next,chapter:chIdx});
-              if(next&&activeChapterText)setTimeout(()=>speak(activeChapterText,ch.emotion||"calm"),100);
-              else if(typeof window!=="undefined"&&window.speechSynthesis){window.speechSynthesis.cancel();setCurrentWordIdx(-1)}
+              if(next&&activeChapterText&&mode!=="Reader"&&sel)setTimeout(()=>playChapterAudio(sel.id,chIdx,mode),100);
+              else setCurrentWordIdx(-1);
             }} style={{padding:"5px 10px",borderRadius:6,background:narratorOn?`${C.red}15`:"transparent",border:`1px solid ${narratorOn?C.red:`${currentTheme.text}15`}`,color:narratorOn?C.red:`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>{narratorOn?"🔊":"🔇"}</button>
             {mode==="Immersive"&&<button onClick={()=>{setVoiceMode(!voiceMode);if(!voiceMode)startVoiceRec()}} style={{padding:"5px 10px",borderRadius:6,background:voiceActive?C.red:"transparent",border:`1px solid ${voiceActive?C.red:`${currentTheme.text}15`}`,color:voiceActive?"#fff":`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>🎤</button>}
           </div>
@@ -1516,6 +1512,11 @@ export default function MovianxPlatform(){
           ):(
             <>
               <h2 style={{fontSize:28,fontWeight:700,color:currentTheme.text,marginBottom:30,letterSpacing:"-0.5px"}}>{ch.title}</h2>
+              {narrationStatus==="generating"&&mode!=="Reader"&&(
+                <div style={{marginBottom:24,padding:"14px 16px",borderRadius:8,border:`1px solid ${C.red}35`,background:`${C.red}10`,color:currentTheme.text,fontSize:13,lineHeight:1.5}}>
+                  Generating narration...
+                </div>
+              )}
               {/* Scene Illustration */}
               {sel&&<div key={`scene-${chIdx}`} style={{marginBottom:32,borderRadius:16,overflow:"hidden",border:`1px solid ${currentTheme.text}18`}}><SceneIllustration chapterIdx={chIdx} storyId={sel.id} theme={colorTheme}/></div>}
               <div style={{fontSize:fontSize,color:currentTheme.text,lineHeight:1.9,marginBottom:40,fontFamily:fontFamily}}>
