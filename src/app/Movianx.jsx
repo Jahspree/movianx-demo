@@ -866,6 +866,9 @@ export default function MovianxPlatform(){
     const storyMeta=getStoryMeta(storyId)||{};
     const chManifest=manifest?.chapters?.[chapIdx]||{};
     const audioSceneProfile=getAudioSceneProfile(storyId,chapIdx,chData,storyMeta);
+    if(typeof window!=="undefined"){
+      window.audioSceneProfile=audioSceneProfile;
+    }
     const sceneAnalysis=chManifest.sceneAnalysis||{
       mood: audioSceneProfile.mood,
       tension: audioSceneProfile.dangerLevel,
