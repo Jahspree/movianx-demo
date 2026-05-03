@@ -14,7 +14,7 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const OUT_DIR = path.join(__dirname, "../../public/audio/sfx");
+const OUT_DIR = path.join(__dirname, "../../public/audio/v3/sfx");
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 // Deduplicated SFX from both manifests

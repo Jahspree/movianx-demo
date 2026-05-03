@@ -15,8 +15,8 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const FRANK_DIR = path.join(__dirname, "../../public/audio/frankenstein");
-const TIMED_DIR = path.join(__dirname, "../../public/audio/timed");
+const FRANK_DIR = path.join(__dirname, "../../public/audio/v3/frankenstein");
+const TIMED_DIR = path.join(__dirname, "../../public/audio/v3/timed");
 fs.mkdirSync(FRANK_DIR, { recursive: true });
 fs.mkdirSync(TIMED_DIR, { recursive: true });
 

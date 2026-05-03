@@ -1,39 +1,19 @@
-// ===========================================================================
-// ASSET RESOLVER
-// Maps logical audio keys to URLs. Currently local paths.
-// Later: signed GCS URLs, CDN, etc. The engine never knows where files live.
-// ===========================================================================
+const VERSION = "v3";
+
+export function resolveAudio(path) {
+  const clean = String(path || "").replace(/^\/?audio\/(?:v\d+\/)?/, "");
+  return `/audio/${VERSION}/${clean}`;
+}
 
 class AssetResolver {
-  constructor() {
-    // Base paths - swap these to GCS/CDN later
-    this.sfxBase = "/audio/sfx";
-    this.frankBase = "/audio/frankenstein";
-    this.timedBase = "/audio/timed";
-    this.audioVersion = "20260502-adaptive-scene-1";
-    this.timedCompanionVersion = "20260502-emotion-v3-ready-1";
-    this.musicVersion = "20260502-evolving-beds-1";
-  }
-
-  withVersion(url, version = this.audioVersion) {
-    if (!url) return null;
-    const joiner = url.includes("?") ? "&" : "?";
-    return `${url}${joiner}v=${version}`;
-  }
-
-  // Get SFX URL by key (e.g. "wind_loop" -> "/audio/sfx/wind_loop.mp3")
   getAudio(key) {
-    // Strip extension if provided, normalize
-    const clean = key.replace(/\.mp3$/, "");
-    return this.withVersion(`${this.sfxBase}/${clean}.mp3`);
+    const clean = String(key || "").replace(/\.mp3$/, "");
+    return resolveAudio(`sfx/${clean}.mp3`);
   }
 
-  resolveNarrationFile(filePath, { companion = false } = {}) {
+  resolveNarrationFile(filePath) {
     if (!filePath) return null;
-    const version = companion || filePath.includes("_companion")
-      ? this.timedCompanionVersion
-      : this.audioVersion;
-    return this.withVersion(filePath, version);
+    return this.resolveFile(filePath);
   }
 
   getNarrationFromManifest(manifest, chapterIdx) {
@@ -41,16 +21,12 @@ class AssetResolver {
   }
 
   getCompanionNarrationFromManifest(manifest, chapterIdx) {
-    return this.resolveNarrationFile(manifest?.chapters?.[chapterIdx]?.narrationCompanion, { companion: true });
+    return this.resolveNarrationFile(manifest?.chapters?.[chapterIdx]?.narrationCompanion);
   }
 
-  // Resolve a manifest file path — could be absolute or a key
   resolveFile(filePath) {
     if (!filePath) return null;
-    // If it's already a full path, return it
-    if (filePath.startsWith("/audio/music/")) return this.withVersion(filePath, this.musicVersion);
-    if (filePath.startsWith("/audio/")) return this.withVersion(filePath);
-    // Otherwise treat as SFX key
+    if (filePath.startsWith("/audio/")) return resolveAudio(filePath);
     return this.getAudio(filePath);
   }
 }

@@ -14,7 +14,7 @@ if (!API_KEY) {
   process.exit(1);
 }
 
-const MUSIC_DIR = path.join(__dirname, "../../public/audio/music");
+const MUSIC_DIR = path.join(__dirname, "../../public/audio/v3/music");
 fs.mkdirSync(MUSIC_DIR, { recursive: true });
 
 // Each chapter gets a distinct mood of suspense music
