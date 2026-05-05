@@ -10,6 +10,7 @@ const https = require("https");
 
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
 const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_turbo_v2";
+const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -153,19 +154,37 @@ function withVoiceDirection(text, direction) {
   return `[${direction}]\n${performed}`;
 }
 
+function fragmentWhisperText(text) {
+  const cleaned = String(text || "")
+    .toLowerCase()
+    .replace(/[“”]/g, "\"")
+    .replace(/[’]/g, "'")
+    .replace(/[;:]/g, ",")
+    .replace(/[.!]+/g, "...")
+    .replace(/\?+/g, "?...")
+    .replace(/[—-]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const words = cleaned.split(" ").filter(Boolean);
+  const chunks = [];
+  for (let i = 0; i < words.length;) {
+    const size = chunks.length % 2 === 0 ? 4 : 6;
+    const part = words.slice(i, i + size).join(" ").replace(/,+$/g, "");
+    if (part) chunks.push(`...${part}...`);
+    i += size;
+  }
+
+  return chunks.join("\n");
+}
+
 function shapePerformanceText(text, direction = "") {
   const style = String(direction).toLowerCase();
   let output = String(text || "").replace(/\s+/g, " ").trim();
   if (!output) return "";
 
   if (style.includes("terrified") || style.includes("panic") || style.includes("crying")) {
-    output = output
-      .replace(/([.!?])\s+/g, "$1... ")
-      .replace(/\bNo\b/g, "No—no—no")
-      .replace(/\bwhat\b/gi, "...what")
-      .replace(/\blisten\b/gi, "listen...")
-      .replace(/\bPlease\b/g, "Please...");
-    return `[breathing] [whispering]\n${output}`;
+    return `[breathing] [whispering] [hesitant]\n${fragmentWhisperText(output)}`;
   }
 
   if (style.includes("dread") || style.includes("horror")) {
@@ -202,10 +221,9 @@ async function generateTTS(voiceId, text, settings, outPath) {
     text: text,
     model_id: TTS_MODEL_ID,
     voice_settings: {
-      ...settings,
-      stability: 0.35,
-      similarity_boost: 0.75,
-      style: 0.9,
+      stability: 0.2,
+      similarity_boost: 0.85,
+      style: 1.0,
       use_speaker_boost: true,
     },
   });
@@ -247,17 +265,8 @@ async function main() {
   }
 
   // --- 10 SECONDS: Standard (per-chapter emotional settings) ---
-  console.log("\n3. Searching for 10 Seconds narrator voice...");
-  let timedVoiceId = await searchVoice("male whisper urgent scared American");
-  if (timedVoiceId) {
-    console.log("   Adding voice to library...");
-    timedVoiceId = await addSharedVoice(timedVoiceId);
-  }
-  if (!timedVoiceId) {
-    // Fallback
-    timedVoiceId = "ErXwobaYiN019PkySvjV";
-    console.log(`   Using fallback voice: Antoni (${timedVoiceId})`);
-  }
+  console.log("\n3. Using premium 10 Seconds voice: Rachel...");
+  let timedVoiceId = RACHEL_VOICE_ID;
 
   console.log(`\n4. Generating ${TIMED_CHAPTERS.length} standard 10 Seconds chapters (per-chapter emotion)...\n`);
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {
