@@ -94,7 +94,7 @@ const TIMED_HORROR_AUDIO = {
       ],
       environmentEvents: [
         { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -1, -6], endPosition: [0, -0.4, -1.2], movement: "approaching", duration: 5200, delay: 11500, volume: 0.18, triggerTension: 0.22, unsourced: true, voiceReaction: "Don't move. Don't even breathe.", label: "intruder footsteps approaching from downstairs" },
-        { sound: "/audio/sfx/breathing_raspy.mp3", startPosition: [0.18, 0, -0.12], movement: "fixed", duration: 4000, delay: 22000, volume: 0.09, loop: true, triggerTension: 0.1, label: "Sarah whisper breath in right ear" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", startPosition: [0.18, 0, -0.12], movement: "fixed", duration: 1400, delay: 22000, volume: 0.075, loop: false, triggerTension: 0.1, label: "Sarah single breath in right ear" },
       ],
 
       timedSequence: [
@@ -301,7 +301,7 @@ const TIMED_HORROR_AUDIO = {
       ],
       environmentEvents: [
         { sound: "/audio/sfx/door_creak.mp3", position: [0, 0, -0.7], movement: "fixed", duration: 1200, delay: 2600, volume: 0.55, label: "door handle directly ahead" },
-        { sound: "/audio/sfx/breathing_raspy.mp3", position: [1.2, 0, -0.25], movement: "fixed", duration: 6000, delay: 6200, volume: 0.13, loop: true, label: "Sarah breath breaking in right ear" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", position: [1.2, 0, -0.25], movement: "fixed", duration: 1600, delay: 6200, volume: 0.09, loop: false, label: "Sarah single breath breaking in right ear" },
       ],
 
       timedSequence: [

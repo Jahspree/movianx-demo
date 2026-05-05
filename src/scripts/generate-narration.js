@@ -149,63 +149,51 @@ async function addSharedVoice(voiceId) {
 }
 
 function withVoiceDirection(text, direction) {
-  const performed = shapePerformanceText(text, direction);
-  if (!direction) return performed;
-  return `[${direction}]\n${performed}`;
+  return shapePerformanceText(text, direction);
 }
 
-function fragmentWhisperText(text) {
-  const cleaned = String(text || "")
-    .toLowerCase()
-    .replace(/[“”]/g, "\"")
-    .replace(/[’]/g, "'")
-    .replace(/[;:]/g, ",")
-    .replace(/[.!]+/g, "...")
-    .replace(/\?+/g, "?...")
-    .replace(/[—-]/g, " ")
+function cleanNarrationText(text) {
+  return String(text || "")
+    .replace(/\[(?:breathing|whispering|hesitant|pause|short pause|long pause|softly)[^\]]*\]\s*/gi, "")
+    .replace(/\((?:breathing|whispering|hesitant|pause|softly)[^)]*\)\s*/gi, "")
+    .replace(/\.{2,}/g, ".")
+    .replace(/\?\.|\!\./g, match => match[0])
     .replace(/\s+/g, " ")
     .trim();
+}
 
-  const words = cleaned.split(" ").filter(Boolean);
-  const chunks = [];
-  for (let i = 0; i < words.length;) {
-    const size = chunks.length % 2 === 0 ? 4 : 6;
-    const part = words.slice(i, i + size).join(" ").replace(/,+$/g, "");
-    if (part) chunks.push(`...${part}...`);
-    i += size;
-  }
+function escapeSsml(text) {
+  return String(text || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
 
-  return chunks.join("\n");
+function sentencePause(sentence, direction = "") {
+  const style = String(direction).toLowerCase();
+  const trimmed = sentence.trim();
+  if (trimmed.endsWith("?")) return "600ms";
+  if (style.includes("terrified") || style.includes("panic") || style.includes("dread") || style.includes("horror")) return "450ms";
+  if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) return "650ms";
+  return "350ms";
+}
+
+function buildSsml(text, direction = "") {
+  const clean = cleanNarrationText(text);
+  if (!clean) return "<speak></speak>";
+  const sentences = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
+  const body = sentences
+    .map(sentence => sentence.trim())
+    .filter(Boolean)
+    .map(sentence => `${escapeSsml(sentence)}\n<break time="${sentencePause(sentence, direction)}"/>`)
+    .join("\n");
+
+  return `<speak>\n${body}\n</speak>`;
 }
 
 function shapePerformanceText(text, direction = "") {
-  const style = String(direction).toLowerCase();
-  let output = String(text || "").replace(/\s+/g, " ").trim();
-  if (!output) return "";
-
-  if (style.includes("terrified") || style.includes("panic") || style.includes("crying")) {
-    return `[breathing] [whispering] [hesitant]\n${fragmentWhisperText(output)}`;
-  }
-
-  if (style.includes("dread") || style.includes("horror")) {
-    output = output
-      .replace(/([.!?])\s+/g, "$1... ")
-      .replace(/\bI saw\b/g, "I saw...")
-      .replace(/\bSilence\b/g, "Silence...");
-    return `[low suspense] [hesitant]\n${output}`;
-  }
-
-  if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) {
-    output = output.replace(/([.!?])\s+/g, "$1... ").replace(/\bFarewell\b/g, "Farewell...");
-    return `[near tears] [soft]\n${output}`;
-  }
-
-  if (style.includes("warmth") || style.includes("softness")) {
-    output = output.replace(/([.!?])\s+/g, "$1... ");
-    return `[warm] [gentle]\n${output}`;
-  }
-
-  return `[cinematic] [intimate]\n${output.replace(/([.!?])\s+/g, "$1... ")}`;
+  return buildSsml(text, direction);
 }
 
 async function generateTTS(voiceId, text, settings, outPath) {
@@ -221,15 +209,15 @@ async function generateTTS(voiceId, text, settings, outPath) {
     text: text,
     model_id: TTS_MODEL_ID,
     voice_settings: {
-      stability: 0.2,
+      stability: 0.45,
       similarity_boost: 0.85,
-      style: 1.0,
+      style: 0.7,
       use_speaker_boost: true,
     },
   });
 
   console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars)`);
-  const res = await apiRequest(`/v1/text-to-speech/${voiceId}`, "POST", body);
+  const res = await apiRequest(`/v1/text-to-speech/${voiceId}?enable_ssml_parsing=true`, "POST", body);
 
   if (res.audio && res.status === 200) {
     fs.writeFileSync(outPath, res.audio);

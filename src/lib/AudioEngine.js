@@ -667,11 +667,11 @@ class AudioEngine {
     }
     if (tension > 0.85 && this.fearAssets.breath && typeof window !== "undefined") {
       const now = performance.now();
-      const breathGap = 850 + Math.random() * 900 - tension * 320 + presence * 180;
+      const breathGap = 5000 + Math.random() * 3000;
       if (now - this.physiology.lastBreathAt > breathGap) {
         this.physiology.lastBreathAt = now;
         const side = Math.random() > 0.5 ? 1 : -1;
-        this.playSpatial(this.fearAssets.breath, 0.045 + tension * 0.08, { x: side * (0.12 + presence * 0.18), y: 0, z: -0.2 }, false, 0, "irregular fear breath", "event");
+        this.playSpatial(this.fearAssets.breath, 0.04 + tension * 0.05, { x: side * (0.12 + presence * 0.18), y: 0, z: -0.2 }, false, 0, "single fear breath after pause", "event");
       }
     }
   }

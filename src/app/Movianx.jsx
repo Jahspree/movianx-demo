@@ -934,7 +934,9 @@ export default function MovianxPlatform(){
       audioEngine.playSpatial(assetResolver.getAudio("heartbeat"),0.05+(intensityLevel*0.045),{x:0,y:0,z:0},true,1.2,"intensity heartbeat","tension");
     }
     if(intensityLevel>=3){
-      audioEngine.playSpatial(assetResolver.getAudio("breathing_raspy"),0.12,{x:0.18,y:0,z:-0.18},true,0.4,"panic breath close right","event");
+      audioEngine.addTimeout(()=>{
+        audioEngine.playSpatial(assetResolver.getAudio("breathing_raspy"),0.08,{x:0.18,y:0,z:-0.18},false,0,"single panic breath close right","event");
+      },1200);
     }
 
     const environmentEvents=[...(audioPlan.spatialEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
