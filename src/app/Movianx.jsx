@@ -875,6 +875,7 @@ export default function MovianxPlatform(){
     const intensityLevel=audioPlan.intensityLevel ?? getIntensityLevel(audioSceneProfile);
     const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:audioPlan.tension;
     setNarrationStatus("ready");
+    console.log("EMOTION:",audioSceneProfile.emotionLabel||audioSceneProfile.characterEmotion||audioSceneProfile.mood);
     console.log("SCENE PROFILE:",audioSceneProfile);
     console.log("INTENSITY LEVEL:",intensityLevel);
     audioEngine.setFearAssets({

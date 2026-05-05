@@ -51,6 +51,7 @@ export function analyzeAudioScene({ storyId, chapterId, pageId = chapterId, titl
   );
   const emotionalIntensity = Math.max(0.12, Math.min(1, dangerLevel + grief * 0.08 + warmth * 0.04));
   const mood = dangerLevel > 0.78 ? "terror" : dangerLevel > 0.5 ? "suspense" : grief > warmth ? "grief" : warmth > 1 ? "tender" : "dread";
+  const emotionLabel = dangerLevel > 0.5 ? "fear" : grief > warmth ? "sadness" : warmth > 1 ? "joy" : "neutral";
   const pace = action > 1 || dangerLevel > 0.75 ? "fast" : dangerLevel > 0.42 ? "measured" : "slow";
   const weather = source.includes("rain") ? "rain" : source.includes("ice") || source.includes("frozen") ? "cold wind" : source.includes("night") ? "night air" : "still air";
   const timeOfDay = source.includes("3:47") || source.includes("2 am") || source.includes("night") || source.includes("morning") ? "night" : "day";
@@ -65,6 +66,7 @@ export function analyzeAudioScene({ storyId, chapterId, pageId = chapterId, titl
     timeOfDay,
     weather,
     mood,
+    emotionLabel,
     characterEmotion: emotion || mood,
     emotionalIntensity,
     dangerLevel,

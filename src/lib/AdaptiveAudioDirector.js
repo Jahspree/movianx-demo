@@ -1,3 +1,5 @@
+import { inferEmotionFromScene, mapEmotionToIntensity } from "./EmotionMapper";
+
 const BED_LIBRARY = {
   arctic_exterior: {
     ambienceBed: [
@@ -93,6 +95,9 @@ export function buildAdaptiveAudioPlan(profile, manifestChapter = null) {
 }
 
 export function getIntensityLevel(scene = {}) {
+  const emotion = scene.emotionLabel || inferEmotionFromScene(scene);
+  const emotionIntensity = mapEmotionToIntensity(emotion);
+  if (emotionIntensity > 0) return emotionIntensity;
   const danger = Number(scene.dangerLevel ?? scene.tension ?? scene.emotionalIntensity ?? 0);
   const mood = String(scene.mood || scene.characterEmotion || "").toLowerCase();
   if (danger >= 0.82 || mood.includes("panic") || mood.includes("terror")) return 3;

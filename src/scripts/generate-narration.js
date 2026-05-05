@@ -9,7 +9,7 @@ const path = require("path");
 const https = require("https");
 
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
-const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_v3";
+const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_turbo_v2";
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -201,7 +201,13 @@ async function generateTTS(voiceId, text, settings, outPath) {
   const body = JSON.stringify({
     text: text,
     model_id: TTS_MODEL_ID,
-    voice_settings: settings,
+    voice_settings: {
+      ...settings,
+      stability: 0.35,
+      similarity_boost: 0.75,
+      style: 0.9,
+      use_speaker_boost: true,
+    },
   });
 
   console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars)`);
