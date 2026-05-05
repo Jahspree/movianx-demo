@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
+import { performNarrationText } from "../lib/AudioSceneAnalyzer";
 import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioDirector";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 // === AUDIO MANIFESTS ===
@@ -862,9 +863,6 @@ export default function MovianxPlatform(){
     const storyMeta=getStoryMeta(storyId)||{};
     const chManifest=manifest?.chapters?.[chapIdx]||{};
     const audioSceneProfile=getAudioSceneProfile(storyId,chapIdx,chData,storyMeta);
-    if(typeof window!=="undefined"){
-      window.audioSceneProfile=audioSceneProfile;
-    }
     const sceneAnalysis=chManifest.sceneAnalysis||{
       mood: audioSceneProfile.mood,
       tension: audioSceneProfile.dangerLevel,
@@ -873,6 +871,14 @@ export default function MovianxPlatform(){
     };
     const audioPlan=buildAdaptiveAudioPlan(audioSceneProfile,chManifest);
     const intensityLevel=audioPlan.intensityLevel ?? getIntensityLevel(audioSceneProfile);
+    const exposedSceneProfile={
+      ...audioSceneProfile,
+      intensity: intensityLevel,
+      emotionLabel: audioSceneProfile.emotionLabel,
+    };
+    if(typeof window!=="undefined"){
+      window.audioSceneProfile=exposedSceneProfile;
+    }
     const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:audioPlan.tension;
     setNarrationStatus("ready");
     console.log("EMOTION:",audioSceneProfile.emotionLabel||audioSceneProfile.characterEmotion||audioSceneProfile.mood);
@@ -1029,6 +1035,9 @@ export default function MovianxPlatform(){
     const fallbackText=useCompanion&&manifest?.companionScript?.[chapIdx]?.text
       ||chData.text
       ||"";
+    if(typeof window!=="undefined"){
+      window.lastNarrationText=performNarrationText(fallbackText,exposedSceneProfile);
+    }
 
     // Try to load audio file; if missing, block generated narration instead of using browser speech.
     if(narrationUrl){

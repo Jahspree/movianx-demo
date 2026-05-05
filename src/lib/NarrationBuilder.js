@@ -7,10 +7,12 @@ export async function buildNarration(text) {
 
   let processed = style.transform(text);
   processed = style.prefix + processed;
+  if (typeof window !== "undefined") {
+    window.lastNarrationText = processed;
+  }
 
   console.log("EMOTION:", emotionResult.label);
   console.log("FINAL NARRATION:", processed);
 
   return processed;
 }
-

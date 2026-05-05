@@ -771,6 +771,9 @@ class AudioEngine {
       if (!byRole[role]) byRole[role] = [];
       byRole[role].push({ src: `procedural:${type}`, label, paused: false, loop: true });
     });
+    if (typeof window !== "undefined") {
+      window.activeAudioLayers = byRole;
+    }
     return byRole;
   }
 
