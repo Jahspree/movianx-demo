@@ -108,10 +108,10 @@ const FRANKENSTEIN_AUDIO = {
         // Stranger's labored breathing - fades in from the right
         {
           file: "/audio/sfx/breathing_raspy.mp3",
-          volume: 0.3,
-          loop: true,
+          volume: 0.18,
+          loop: false,
           position: { x: 1, y: 0, z: -2 },
-          trigger: { type: "timed", delay: 10000, fadeIn: 5 },
+          trigger: { type: "timed", delay: 10000, fadeIn: 0 },
         },
         // Ice cracking beneath
         {

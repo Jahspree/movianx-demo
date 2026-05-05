@@ -168,6 +168,7 @@ class AudioEngine {
       heartbeat: null,
       breathTimer: null,
       lastBreathAt: 0,
+      lastBreathTension: 0,
     };
     this._silenced = false;
     this._silenceRestore = [];
@@ -667,13 +668,16 @@ class AudioEngine {
     }
     if (tension > 0.85 && this.fearAssets.breath && typeof window !== "undefined") {
       const now = performance.now();
-      const breathGap = 5000 + Math.random() * 3000;
-      if (now - this.physiology.lastBreathAt > breathGap) {
+      const cooldownMs = 10000;
+      const crossedHighIntensity = this.physiology.lastBreathTension <= 0.85;
+      const intensitySpike = tension - this.physiology.lastBreathTension >= 0.08;
+      if ((crossedHighIntensity || intensitySpike) && now - this.physiology.lastBreathAt >= cooldownMs) {
         this.physiology.lastBreathAt = now;
         const side = Math.random() > 0.5 ? 1 : -1;
         this.playSpatial(this.fearAssets.breath, 0.04 + tension * 0.05, { x: side * (0.12 + presence * 0.18), y: 0, z: -0.2 }, false, 0, "single fear breath after pause", "event");
       }
     }
+    this.physiology.lastBreathTension = tension;
   }
 
   silence(duration, options = {}) {
@@ -751,7 +755,7 @@ class AudioEngine {
     this.experienceLoop = null;
     this.experienceState = { tension: 0, presence: 0, immersion: 0, uncertainty: 0, control: 0 };
     this.experienceTargets = { ...this.experienceState };
-    this.physiology = { heartbeat: null, breathTimer: null, lastBreathAt: 0 };
+    this.physiology = { heartbeat: null, breathTimer: null, lastBreathAt: 0, lastBreathTension: 0 };
     this._silenced = false;
     this._silenceRestore = [];
 

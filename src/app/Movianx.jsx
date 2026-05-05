@@ -1038,7 +1038,16 @@ export default function MovianxPlatform(){
       ||chData.text
       ||"";
     if(typeof window!=="undefined"){
-      window.lastNarrationText=performNarrationText(fallbackText,exposedSceneProfile);
+      const spokenText=performNarrationText(fallbackText,exposedSceneProfile);
+      window.lastNarrationText=spokenText;
+      window.lastNarrationPayload={
+        spokenText,
+        sceneMetadata:{
+          emotion:exposedSceneProfile.emotionLabel||exposedSceneProfile.characterEmotion||exposedSceneProfile.mood,
+          environment:exposedSceneProfile.location||sceneAnalysis.environment,
+          intensity:exposedSceneProfile.intensity,
+        },
+      };
     }
 
     // Try to load audio file; if missing, block generated narration instead of using browser speech.

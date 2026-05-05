@@ -28,20 +28,15 @@ const TIMED_HORROR_AUDIO = {
     // hiding next to you in the dark, mouth close to your ear
     voiceQuery: "male whisper urgent scared intimate American",
     model: "eleven_multilingual_v2",
-    // Default settings - overridden per chapter for emotional progression
-    settings: { stability: 0.3, similarity_boost: 0.9, style: 0.6 },
+    settings: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
   },
 
-  // Per-chapter voice settings for emotional progression
+  // Keep generation stable; emotion comes from acting direction and scene context.
   chapterVoiceSettings: {
-    // Ch0: Trembling whisper. Scared. Shaky breath. Unstable.
-    0: { stability: 0.15, similarity_boost: 0.85, style: 0.75 },
-    // Ch1: Full fear, trying to stay quiet. Voice shakes.
-    1: { stability: 0.2, similarity_boost: 0.9, style: 0.8 },
-    // Ch2: Absolute panic barely contained. Maximum emotional variation.
-    2: { stability: 0.15, similarity_boost: 0.9, style: 0.9 },
-    // Ch3: Hollow, broken, empty. Numb, flat delivery.
-    3: { stability: 0.6, similarity_boost: 0.9, style: 0.3 },
+    0: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+    1: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+    2: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+    3: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
   },
 
   companionScript: {

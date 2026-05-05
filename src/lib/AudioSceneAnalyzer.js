@@ -108,8 +108,17 @@ export function performNarrationText(text = "", profile = {}) {
   if (!normalized) return "";
 
   return normalized
+    .replace(/\byou feel\b/gi, "")
+    .replace(/\bfear\b/gi, "")
+    .replace(/\bemotion\b/gi, "")
+    .replace(/\bscene\b/gi, "")
+    .replace(/\bmusic\b/gi, "")
+    .replace(/\bambience\b/gi, "")
+    .replace(/\bthe room is dark\b/gi, "")
     .replace(/\[(?:breathing|whispering|hesitant|pause|short pause|long pause|softly)[^\]]*\]\s*/gi, "")
     .replace(/\((?:breathing|whispering|hesitant|pause|softly)[^)]*\)\s*/gi, "")
+    .replace(/\.{2,}/g, ".")
+    .replace(/\s+([,.!?])/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
 }

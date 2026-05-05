@@ -11,6 +11,7 @@ const https = require("https");
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
 const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_turbo_v2";
 const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
+const NARRATION_QUALITY = process.env.NARRATION_QUALITY || "final";
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -42,10 +43,10 @@ const TIMED_CHAPTERS = [
 // --- 10 Seconds: Per-chapter voice settings for emotional progression ---
 // Each chapter escalates emotionally, then drops to hollow emptiness
 const TIMED_STANDARD_SETTINGS = [
-  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
-  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: full fear
-  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: absolute panic
-  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
 ];
 
 // --- 10 Seconds companion narration ---
@@ -63,10 +64,10 @@ const TIMED_COMPANION = [
 ];
 
 const TIMED_COMPANION_SETTINGS = [
-  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
-  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: shaking fear
-  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: panic, crying
-  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, empty
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
 ];
 
 const FRANK_DIRECTIONS = [
@@ -152,12 +153,24 @@ function withVoiceDirection(text, direction) {
   return shapePerformanceText(text, direction);
 }
 
-function cleanNarrationText(text) {
+function stripMetadataLanguage(text) {
   return String(text || "")
+    .replace(/\byou feel\b/gi, "")
+    .replace(/\bfear\b/gi, "")
+    .replace(/\bemotion\b/gi, "")
+    .replace(/\bscene\b/gi, "")
+    .replace(/\bmusic\b/gi, "")
+    .replace(/\bambience\b/gi, "")
+    .replace(/\bthe room is dark\b/gi, "");
+}
+
+function cleanNarrationText(text) {
+  return stripMetadataLanguage(text)
     .replace(/\[(?:breathing|whispering|hesitant|pause|short pause|long pause|softly)[^\]]*\]\s*/gi, "")
     .replace(/\((?:breathing|whispering|hesitant|pause|softly)[^)]*\)\s*/gi, "")
     .replace(/\.{2,}/g, ".")
     .replace(/\?\.|\!\./g, match => match[0])
+    .replace(/\s+([,.!?])/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -173,8 +186,9 @@ function escapeSsml(text) {
 function sentencePause(sentence, direction = "") {
   const style = String(direction).toLowerCase();
   const trimmed = sentence.trim();
-  if (trimmed.endsWith("?")) return "600ms";
-  if (style.includes("terrified") || style.includes("panic") || style.includes("dread") || style.includes("horror")) return "450ms";
+  const urgent = style.includes("terrified") || style.includes("panic") || style.includes("dread") || style.includes("horror");
+  if (urgent) return trimmed.endsWith("?") ? "360ms" : "240ms";
+  if (trimmed.endsWith("?")) return "520ms";
   if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) return "650ms";
   return "350ms";
 }
@@ -196,7 +210,27 @@ function shapePerformanceText(text, direction = "") {
   return buildSsml(text, direction);
 }
 
-async function generateTTS(voiceId, text, settings, outPath) {
+function getElevenVoiceSettings(quality = NARRATION_QUALITY) {
+  if (quality === "preview") {
+    return {
+      stability: 0.45,
+      similarity_boost: 0.75,
+      style: 0.2,
+      speed: 0.98,
+      use_speaker_boost: true,
+    };
+  }
+
+  return {
+    stability: 0.4,
+    similarity_boost: 0.85,
+    style: 0.35,
+    speed: 0.95,
+    use_speaker_boost: true,
+  };
+}
+
+async function generateTTS(voiceId, text, settings, outPath, context = {}) {
   const forceRegen = process.env.FORCE_REGEN === "1";
   const forcePattern = process.env.FORCE_REGEN_PATTERN ? new RegExp(process.env.FORCE_REGEN_PATTERN) : null;
   const shouldOverwrite = forceRegen || (forcePattern && forcePattern.test(path.basename(outPath)));
@@ -205,16 +239,15 @@ async function generateTTS(voiceId, text, settings, outPath) {
     return true;
   }
 
-  const body = JSON.stringify({
+  const request = {
     text: text,
     model_id: TTS_MODEL_ID,
-    voice_settings: {
-      stability: 0.45,
-      similarity_boost: 0.85,
-      style: 0.7,
-      use_speaker_boost: true,
-    },
-  });
+    voice_settings: getElevenVoiceSettings(),
+  };
+  if (context.previous_text) request.previous_text = cleanNarrationText(context.previous_text);
+  if (context.next_text) request.next_text = cleanNarrationText(context.next_text);
+
+  const body = JSON.stringify(request);
 
   console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars)`);
   const res = await apiRequest(`/v1/text-to-speech/${voiceId}?enable_ssml_parsing=true`, "POST", body);
@@ -248,7 +281,13 @@ async function main() {
   const frankSettings = { stability: 0.5, similarity_boost: 0.8, style: 0.3 };
   console.log(`\n2. Generating ${FRANK_CHAPTERS.length} Frankenstein chapters...\n`);
   for (let i = 0; i < FRANK_CHAPTERS.length; i++) {
-    await generateTTS(frankVoiceId, withVoiceDirection(FRANK_CHAPTERS[i], FRANK_DIRECTIONS[i]), frankSettings, path.join(FRANK_DIR, `ch${i}.mp3`));
+    await generateTTS(
+      frankVoiceId,
+      withVoiceDirection(FRANK_CHAPTERS[i], FRANK_DIRECTIONS[i]),
+      frankSettings,
+      path.join(FRANK_DIR, `ch${i}.mp3`),
+      { previous_text: FRANK_CHAPTERS[i - 1], next_text: FRANK_CHAPTERS[i + 1] }
+    );
     await new Promise((r) => setTimeout(r, 1000)); // Rate limit
   }
 
@@ -260,7 +299,13 @@ async function main() {
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {
     const settings = TIMED_STANDARD_SETTINGS[i];
     console.log(`   Ch${i} settings: stability=${settings.stability} style=${settings.style}`);
-    await generateTTS(timedVoiceId, withVoiceDirection(TIMED_CHAPTERS[i], TIMED_STANDARD_DIRECTIONS[i]), settings, path.join(TIMED_DIR, `ch${i}.mp3`));
+    await generateTTS(
+      timedVoiceId,
+      withVoiceDirection(TIMED_CHAPTERS[i], TIMED_STANDARD_DIRECTIONS[i]),
+      settings,
+      path.join(TIMED_DIR, `ch${i}.mp3`),
+      { previous_text: TIMED_CHAPTERS[i - 1], next_text: TIMED_CHAPTERS[i + 1] }
+    );
     await new Promise((r) => setTimeout(r, 1000));
   }
 
@@ -269,7 +314,13 @@ async function main() {
   for (let i = 0; i < TIMED_COMPANION.length; i++) {
     const settings = TIMED_COMPANION_SETTINGS[i];
     console.log(`   Ch${i} companion: stability=${settings.stability} style=${settings.style}`);
-    await generateTTS(timedVoiceId, withVoiceDirection(TIMED_COMPANION[i], TIMED_COMPANION_DIRECTIONS[i]), settings, path.join(TIMED_DIR, `ch${i}_companion.mp3`));
+    await generateTTS(
+      timedVoiceId,
+      withVoiceDirection(TIMED_COMPANION[i], TIMED_COMPANION_DIRECTIONS[i]),
+      settings,
+      path.join(TIMED_DIR, `ch${i}_companion.mp3`),
+      { previous_text: TIMED_COMPANION[i - 1], next_text: TIMED_COMPANION[i + 1] }
+    );
     await new Promise((r) => setTimeout(r, 1000));
   }
 
