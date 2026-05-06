@@ -10,6 +10,11 @@ import {
   getProximityProfile,
 } from "../src/lib/HollywoodModeEngine.js";
 import { createValidationCache } from "../src/lib/ValidationCache.js";
+import {
+  buildDirectedSsml,
+  buildElevenLabsRequest,
+  buildVoiceDelivery,
+} from "../src/lib/VoiceDirector.js";
 
 const FORBIDDEN_SPOKEN = /\b(?:you feel|the scene|emotion|ambience|music)\b/i;
 
@@ -219,4 +224,83 @@ test("Hollywood spatial cues move instead of remaining static", () => {
 
   assert.ok(moving.length >= 2);
   moving.forEach(phase => assert.notDeepEqual(phase.startPosition, phase.endPosition));
+});
+
+test("Voice Director creates irregular fear micro-pauses", () => {
+  const delivery = buildVoiceDelivery(
+    "The glass breaks downstairs. Footsteps stop. The handle turns. Someone is inside.",
+    { emotionLabel: "fear", intensity: 3, storyId: 3, chapterId: 0 },
+    "terrified whisper"
+  );
+
+  assert.equal(delivery.emotion, "fear");
+  assert.equal(delivery.cadence, "irregular");
+  assert.ok(new Set(delivery.pauses).size > 1);
+  assert.ok(delivery.maxWordsPerLine <= 7);
+});
+
+test("Voice Director gives sadness longer pauses than fear", () => {
+  const sadness = buildVoiceDelivery(
+    "It is over now. There was nothing left to hold onto. We stayed there in the quiet.",
+    { emotionLabel: "sadness", intensity: 2 },
+    "grief filled delivery"
+  );
+  const fear = buildVoiceDelivery(
+    "Stay down. Do not move. Someone is outside.",
+    { emotionLabel: "fear", intensity: 3 },
+    "terrified whisper"
+  );
+  const avg = values => values.reduce((sum, value) => sum + value, 0) / values.length;
+
+  assert.ok(avg(sadness.pauses) > avg(fear.pauses));
+});
+
+test("Voice Director keeps breath as non-looping cue metadata, not spoken text", () => {
+  const delivery = buildVoiceDelivery(
+    "Something moved behind us. I can hear it. Do not turn around.",
+    { emotionLabel: "fear", intensity: 3, storyId: 3, chapterId: 1 },
+    "panic rising"
+  );
+  const ssml = buildDirectedSsml("Something moved behind us. I can hear it. Do not turn around.", delivery);
+
+  delivery.imperfectionCues.forEach(cue => assert.equal(cue.loop, false));
+  assert.doesNotMatch(ssml, /\(breathing\)|\[breathing\]|short_breath|held_breath/i);
+});
+
+test("Voice Director maps energy curve into ElevenLabs settings", () => {
+  const low = buildElevenLabsRequest({
+    text: "The morning is quiet. We can move slowly.",
+    sceneProfile: { emotionLabel: "joy", intensity: 1 },
+    direction: "warm relief",
+    voiceSettings: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  });
+  const high = buildElevenLabsRequest({
+    text: "The lock breaks. They are inside. Run now.",
+    sceneProfile: { emotionLabel: "fear", intensity: 3 },
+    direction: "terrified panic",
+    voiceSettings: { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  });
+
+  assert.ok(high.delivery.energy > low.delivery.energy);
+  assert.ok(high.request.voice_settings.style > low.request.voice_settings.style);
+  assert.ok(high.request.voice_settings.stability < low.request.voice_settings.stability);
+});
+
+test("Voice Director builds ElevenLabs SSML without robotic uniform timing", () => {
+  const { request, delivery, spokenText } = buildElevenLabsRequest({
+    text: "What was that? Stay quiet. The door is moving.",
+    sceneProfile: { emotionLabel: "fear", intensity: 3 },
+    direction: "terrified whisper",
+    modelId: "eleven_turbo_v2",
+    previousText: "The house had gone still.",
+    nextText: "The footsteps reached the landing.",
+  });
+
+  assert.equal(request.model_id, "eleven_turbo_v2");
+  assert.match(request.text, /^<speak>/);
+  assert.match(request.text, /<break time="\d+ms"\/>/);
+  assert.ok(new Set(delivery.pauses).size > 1);
+  assert.equal(spokenText.includes("(breathing)"), false);
+  assert.equal(request.previous_text.includes("<speak>"), false);
+  assert.equal(request.next_text.includes("<speak>"), false);
 });

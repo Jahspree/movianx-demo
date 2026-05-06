@@ -93,6 +93,15 @@ const TIMED_COMPANION_DIRECTIONS = [
   "hollow shock, grief filled delivery, disconnected and quiet",
 ];
 
+let voiceDirectorPromise;
+
+function getVoiceDirector() {
+  if (!voiceDirectorPromise) {
+    voiceDirectorPromise = import("../lib/VoiceDirector.js");
+  }
+  return voiceDirectorPromise;
+}
+
 // --- API helpers ---
 
 function apiRequest(urlPath, method, body) {
@@ -150,7 +159,7 @@ async function addSharedVoice(voiceId) {
 }
 
 function withVoiceDirection(text, direction) {
-  return shapePerformanceText(text, direction);
+  return cleanNarrationText(text);
 }
 
 function stripMetadataLanguage(text) {
@@ -183,31 +192,8 @@ function escapeSsml(text) {
     .replace(/"/g, "&quot;");
 }
 
-function sentencePause(sentence, direction = "") {
-  const style = String(direction).toLowerCase();
-  const trimmed = sentence.trim();
-  const urgent = style.includes("terrified") || style.includes("panic") || style.includes("dread") || style.includes("horror");
-  if (urgent) return trimmed.endsWith("?") ? "360ms" : "240ms";
-  if (trimmed.endsWith("?")) return "520ms";
-  if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) return "650ms";
-  return "350ms";
-}
-
-function buildSsml(text, direction = "") {
-  const clean = cleanNarrationText(text);
-  if (!clean) return "<speak></speak>";
-  const sentences = clean.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [clean];
-  const body = sentences
-    .map(sentence => sentence.trim())
-    .filter(Boolean)
-    .map(sentence => `${escapeSsml(sentence)}\n<break time="${sentencePause(sentence, direction)}"/>`)
-    .join("\n");
-
-  return `<speak>\n${body}\n</speak>`;
-}
-
 function shapePerformanceText(text, direction = "") {
-  return buildSsml(text, direction);
+  return cleanNarrationText(text);
 }
 
 function getElevenVoiceSettings(quality = NARRATION_QUALITY) {
@@ -230,6 +216,26 @@ function getElevenVoiceSettings(quality = NARRATION_QUALITY) {
   };
 }
 
+function sceneProfileForDirection(direction = "", fallback = {}) {
+  const source = String(direction).toLowerCase();
+  let emotionLabel = "neutral";
+  if (/terrified|terror|panic|dread|horror|fear/.test(source)) emotionLabel = "fear";
+  else if (/grief|farewell|hollow|crying|tears|desolate/.test(source)) emotionLabel = "sadness";
+  else if (/romantic|warmth|delight|relief/.test(source)) emotionLabel = "joy";
+  else if (/anger|rage|defiant/.test(source)) emotionLabel = "anger";
+  else if (/suspense|careful|uneasy/.test(source)) emotionLabel = "suspense";
+
+  const intense = /panic|terrified|horror|gun|desperate|breaks/.test(source);
+  const moderate = /dread|grief|crying|suspense|near tears|hollow/.test(source);
+  const intensity = intense ? 3 : moderate ? 2 : 1;
+
+  return {
+    emotionLabel,
+    intensity,
+    ...fallback,
+  };
+}
+
 async function generateTTS(voiceId, text, settings, outPath, context = {}) {
   const forceRegen = process.env.FORCE_REGEN === "1";
   const forcePattern = process.env.FORCE_REGEN_PATTERN ? new RegExp(process.env.FORCE_REGEN_PATTERN) : null;
@@ -239,17 +245,21 @@ async function generateTTS(voiceId, text, settings, outPath, context = {}) {
     return true;
   }
 
-  const request = {
-    text: text,
-    model_id: TTS_MODEL_ID,
-    voice_settings: getElevenVoiceSettings(),
-  };
-  if (context.previous_text) request.previous_text = cleanNarrationText(context.previous_text);
-  if (context.next_text) request.next_text = cleanNarrationText(context.next_text);
+  const { buildElevenLabsRequest } = await getVoiceDirector();
+  const { request, delivery } = buildElevenLabsRequest({
+    text,
+    direction: context.direction || "",
+    sceneProfile: context.sceneProfile || {},
+    modelId: TTS_MODEL_ID,
+    quality: NARRATION_QUALITY,
+    voiceSettings: settings || getElevenVoiceSettings(),
+    previousText: context.previous_text,
+    nextText: context.next_text,
+  });
 
   const body = JSON.stringify(request);
 
-  console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars)`);
+  console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars, ${delivery.emotion}, intensity ${delivery.intensity}, ${delivery.cadence})`);
   const res = await apiRequest(`/v1/text-to-speech/${voiceId}?enable_ssml_parsing=true`, "POST", body);
 
   if (res.audio && res.status === 200) {
@@ -286,7 +296,12 @@ async function main() {
       withVoiceDirection(FRANK_CHAPTERS[i], FRANK_DIRECTIONS[i]),
       frankSettings,
       path.join(FRANK_DIR, `ch${i}.mp3`),
-      { previous_text: FRANK_CHAPTERS[i - 1], next_text: FRANK_CHAPTERS[i + 1] }
+      {
+        previous_text: FRANK_CHAPTERS[i - 1],
+        next_text: FRANK_CHAPTERS[i + 1],
+        direction: FRANK_DIRECTIONS[i],
+        sceneProfile: sceneProfileForDirection(FRANK_DIRECTIONS[i], { storyId: 1, chapterId: i }),
+      }
     );
     await new Promise((r) => setTimeout(r, 1000)); // Rate limit
   }
@@ -304,7 +319,12 @@ async function main() {
       withVoiceDirection(TIMED_CHAPTERS[i], TIMED_STANDARD_DIRECTIONS[i]),
       settings,
       path.join(TIMED_DIR, `ch${i}.mp3`),
-      { previous_text: TIMED_CHAPTERS[i - 1], next_text: TIMED_CHAPTERS[i + 1] }
+      {
+        previous_text: TIMED_CHAPTERS[i - 1],
+        next_text: TIMED_CHAPTERS[i + 1],
+        direction: TIMED_STANDARD_DIRECTIONS[i],
+        sceneProfile: sceneProfileForDirection(TIMED_STANDARD_DIRECTIONS[i], { storyId: 3, chapterId: i }),
+      }
     );
     await new Promise((r) => setTimeout(r, 1000));
   }
@@ -319,7 +339,12 @@ async function main() {
       withVoiceDirection(TIMED_COMPANION[i], TIMED_COMPANION_DIRECTIONS[i]),
       settings,
       path.join(TIMED_DIR, `ch${i}_companion.mp3`),
-      { previous_text: TIMED_COMPANION[i - 1], next_text: TIMED_COMPANION[i + 1] }
+      {
+        previous_text: TIMED_COMPANION[i - 1],
+        next_text: TIMED_COMPANION[i + 1],
+        direction: TIMED_COMPANION_DIRECTIONS[i],
+        sceneProfile: sceneProfileForDirection(TIMED_COMPANION_DIRECTIONS[i], { storyId: 3, chapterId: i }),
+      }
     );
     await new Promise((r) => setTimeout(r, 1000));
   }
