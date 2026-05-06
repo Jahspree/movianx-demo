@@ -156,7 +156,7 @@ export function analyzeStoryEmotion(rawText, options = {}) {
     : assertSafeStoryInput(rawText, { maxChars: options.maxInputChars || MAX_INPUT_CHARS });
   const tokens = tokenize(sanitized);
   const sentences = splitSentences(sanitized);
-  const punctuationCount = (sanitized.match(/[.!?;:,-]/g) || []).length;
+  const punctuationCount = (sanitized.match(/[!?;:—-]/g) || []).length + ((sanitized.match(/,/g) || []).length * 0.5);
   const punctuationDensity = tokens.length ? punctuationCount / tokens.length : 0;
   const actionDensity = tokens.length ? countMatches(tokens, ACTION_VERBS) / tokens.length : 0;
   const ruleDistribution = scoreKeywordBank(tokens, EMOTION_KEYWORDS, EMOTIONS);
