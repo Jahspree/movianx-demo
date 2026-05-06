@@ -166,6 +166,8 @@ class AudioEngine {
     this.fearAssets = {};
     this.physiology = {
       heartbeat: null,
+      lastHeartbeatAt: 0,
+      lastHeartbeatTension: 0,
       breathTimer: null,
       lastBreathAt: 0,
       lastBreathTension: 0,
@@ -419,6 +421,20 @@ class AudioEngine {
     return { audio: spatial.audio, gainNode: spatial.gainNode, pannerNode: spatial.pannerNode, sourceNode: spatial.sourceNode, spatial };
   }
 
+  playSpatialBurst(url, volume = 0.2, position = { x: 0, y: 0, z: 0 }, durationMs = 1400, label = null, role = "event") {
+    const playback = this.playSpatial(url, volume, position, false, 0, label, role);
+    if (playback?.audio) {
+      const stopAfter = Math.max(250, durationMs);
+      this.addTimeout(() => {
+        try {
+          playback.audio.pause();
+          playback.audio.currentTime = 0;
+        } catch (e) {}
+      }, stopAfter);
+    }
+    return playback;
+  }
+
   playSpatialMoving(url, volume, from, to, duration, loop = false, fadeWithDistance = false, label = null, role = "tension") {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
@@ -658,13 +674,14 @@ class AudioEngine {
   updatePhysiology(state) {
     const tension = this.clamp01(state.tension);
     const presence = this.clamp01(state.presence);
-    if (tension > 0.7 && this.fearAssets.heartbeat && !this.physiology.heartbeat) {
-      this.physiology.heartbeat = this.playSpatial(this.fearAssets.heartbeat, 0.08, { x: 0, y: 0, z: 0 }, true, 1.5, "physiology heartbeat", "tension");
-    }
-    const hbGain = this.physiology.heartbeat?.gainNode;
-    if (hbGain) {
-      const target = tension > 0.7 ? Math.min(0.65, 0.08 + (tension - 0.7) * 1.9) : 0.001;
-      this.fadeGain(hbGain, target, 0.5);
+    if (tension > 0.78 && this.fearAssets.heartbeat && typeof window !== "undefined") {
+      const now = performance.now();
+      const crossedHeartbeat = this.physiology.lastHeartbeatTension <= 0.78;
+      const heartbeatSpike = tension - this.physiology.lastHeartbeatTension >= 0.1;
+      if ((crossedHeartbeat || heartbeatSpike) && now - this.physiology.lastHeartbeatAt >= 9000) {
+        this.physiology.lastHeartbeatAt = now;
+        this.physiology.heartbeat = this.playSpatialBurst(this.fearAssets.heartbeat, 0.08 + tension * 0.05, { x: 0, y: 0, z: 0 }, 1800, "physiology heartbeat burst", "tension");
+      }
     }
     if (tension > 0.85 && this.fearAssets.breath && typeof window !== "undefined") {
       const now = performance.now();
@@ -674,9 +691,10 @@ class AudioEngine {
       if ((crossedHighIntensity || intensitySpike) && now - this.physiology.lastBreathAt >= cooldownMs) {
         this.physiology.lastBreathAt = now;
         const side = Math.random() > 0.5 ? 1 : -1;
-        this.playSpatial(this.fearAssets.breath, 0.04 + tension * 0.05, { x: side * (0.12 + presence * 0.18), y: 0, z: -0.2 }, false, 0, "single fear breath after pause", "event");
+        this.playSpatialBurst(this.fearAssets.breath, 0.04 + tension * 0.05, { x: side * (0.12 + presence * 0.18), y: 0, z: -0.2 }, 1200, "single fear breath after pause", "event");
       }
     }
+    this.physiology.lastHeartbeatTension = tension;
     this.physiology.lastBreathTension = tension;
   }
 
@@ -755,7 +773,7 @@ class AudioEngine {
     this.experienceLoop = null;
     this.experienceState = { tension: 0, presence: 0, immersion: 0, uncertainty: 0, control: 0 };
     this.experienceTargets = { ...this.experienceState };
-    this.physiology = { heartbeat: null, breathTimer: null, lastBreathAt: 0, lastBreathTension: 0 };
+    this.physiology = { heartbeat: null, lastHeartbeatAt: 0, lastHeartbeatTension: 0, breathTimer: null, lastBreathAt: 0, lastBreathTension: 0 };
     this._silenced = false;
     this._silenceRestore = [];
 

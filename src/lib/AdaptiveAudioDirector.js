@@ -1,4 +1,5 @@
 import { inferEmotionFromScene, mapEmotionToIntensity } from "./EmotionMapper";
+import { buildAudioOrchestration } from "./AudioOrchestrationEngine";
 
 const BED_LIBRARY = {
   arctic_exterior: {
@@ -67,6 +68,7 @@ const BED_LIBRARY = {
 };
 
 export function buildAdaptiveAudioPlan(profile, manifestChapter = null) {
+  const orchestration = buildAudioOrchestration(profile || manifestChapter || {});
   const bedKey = profile?.requiredAmbience || "urban_thriller";
   const library = BED_LIBRARY[bedKey] || BED_LIBRARY.urban_thriller;
   const danger = profile?.dangerLevel || manifestChapter?.tension || 0.2;
@@ -75,7 +77,19 @@ export function buildAdaptiveAudioPlan(profile, manifestChapter = null) {
     ...(library.ambienceBed || []),
     ...((manifestChapter?.ambient || []).filter(layer => !layer.file || !library.ambienceBed?.some(existing => existing.file === layer.file))),
   ];
+  const orchestrationEvents = orchestration.sfxTriggers.map(trigger => ({
+    sound: trigger.sound,
+    startPosition: trigger.position,
+    movement: trigger.id?.includes("heartbeat") || trigger.id?.includes("breath") ? "fixed" : "intermittent",
+    duration: trigger.durationMs || 1200,
+    delay: trigger.delayMs,
+    volume: trigger.volume,
+    loop: false,
+    cooldownMs: trigger.cooldownMs,
+    label: trigger.cue || trigger.id,
+  }));
   const spatialEvents = ensureImmediateSpatialEvents([
+    ...orchestrationEvents,
     ...(library.details || []),
     ...(manifestChapter?.environmentEvents || []),
   ], profile, intensityLevel);
@@ -91,6 +105,7 @@ export function buildAdaptiveAudioPlan(profile, manifestChapter = null) {
     tension: Math.max(danger, manifestChapter?.tension || 0),
     physiological: danger > 0.68,
     intensityLevel,
+    orchestration,
   };
 }
 

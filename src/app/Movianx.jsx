@@ -274,7 +274,7 @@ function getAutoEnvironmentEvents(sceneAnalysis){
     events.push({sound:"/audio/sfx/floor_creak.mp3",position:[1,0,-2],movement:"behind",duration:1600,delay:4200,volume:0.08,label:"scene-aware floor shift"});
   }
   if(sceneAnalysis.tension>=0.72){
-    events.push({sound:"/audio/sfx/heartbeat.mp3",position:[0,0,0],movement:"fixed",duration:8000,delay:6500,volume:0.18,loop:true,label:"scene-aware heartbeat"});
+    events.push({sound:"/audio/sfx/heartbeat.mp3",position:[0,0,0],movement:"fixed",duration:1800,delay:6500,volume:0.12,loop:false,label:"scene-aware heartbeat burst"});
   }
   return events;
 }
@@ -839,8 +839,11 @@ export default function MovianxPlatform(){
     const url=assetResolver.resolveFile(event.sound||event.file);
     if(!url)return;
     const durationSec=(event.duration||1000)/1000;
+    const isPhysiology=String(event.sound||event.file||"").includes("heartbeat")||String(event.sound||event.file||"").includes("breathing_raspy");
     if(event.movement&&event.movement!=="fixed"){
       audioEngine.playSpatialMoving(url,event.volume||0.12,from,to,durationSec,event.loop||false,true,event.label||event.sound||event.file,event.role||"tension");
+    }else if(isPhysiology){
+      audioEngine.playSpatialBurst(url,event.volume||0.12,from,event.duration||1400,event.label||event.sound||event.file,event.role||"event");
     }else{
       audioEngine.playSpatial(url,event.volume||0.12,from,event.loop||false,event.fadeIn||0,event.label||event.sound||event.file,event.role||"event");
     }
@@ -931,11 +934,11 @@ export default function MovianxPlatform(){
     }
 
     if(intensityLevel>=2){
-      audioEngine.playSpatial(assetResolver.getAudio("heartbeat"),0.05+(intensityLevel*0.045),{x:0,y:0,z:0},true,1.2,"intensity heartbeat","tension");
+      audioEngine.playSpatialBurst(assetResolver.getAudio("heartbeat"),0.05+(intensityLevel*0.035),{x:0,y:0,z:0},1800,"intensity heartbeat burst","tension");
     }
     if(intensityLevel>=3){
       audioEngine.addTimeout(()=>{
-        audioEngine.playSpatial(assetResolver.getAudio("breathing_raspy"),0.08,{x:0.18,y:0,z:-0.18},false,0,"single panic breath close right","event");
+        audioEngine.playSpatialBurst(assetResolver.getAudio("breathing_raspy"),0.08,{x:0.18,y:0,z:-0.18},1200,"single panic breath close right","event");
       },1200);
     }
 
@@ -1378,13 +1381,13 @@ export default function MovianxPlatform(){
         if(chManifest.timerAudio.heartbeatStartAt==="timerStart"&&timeRemaining===limit){
           const url=assetResolver.getAudio("heartbeat");
           const startIntensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining]||0.1;
-          audioEngine.playSpatial(url,startIntensity,{x:0,y:0,z:0},true,0,"your heartbeat","tension");
+          audioEngine.playSpatialBurst(url,startIntensity,{x:0,y:0,z:0},1800,"your heartbeat burst","tension");
         }
         const intensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining];
         if(intensity!==undefined){
           audioEngine.updateTension(Math.max(chManifest.tension||0,intensity));
           // Find heartbeat gain node and adjust
-          const hbGain=audioEngine.labeledGains["your heartbeat"]||audioEngine.labeledGains["heartbeat"];
+          const hbGain=audioEngine.labeledGains["your heartbeat burst"]||audioEngine.labeledGains["your heartbeat"]||audioEngine.labeledGains["heartbeat"];
           if(hbGain)audioEngine.fadeGain(hbGain,intensity,0.8);
         }
       }
