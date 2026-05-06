@@ -1,3 +1,5 @@
+import { validateNarrationOutput } from "./SecurityLayer.js";
+
 const FORBIDDEN_PATTERNS = [
   /\byou feel\b/i,
   /\bthe scene\b/i,
@@ -162,7 +164,11 @@ export function buildNarration(sceneText, sceneProfile = {}) {
   else lines = selectNeutralLines(cues);
 
   const spokenText = hardFilter(styleLines(lines, emotion, intensity).join(" "));
-  return { spokenText };
+  const output = { spokenText };
+  if (!validateNarrationOutput(output)) {
+    throw new Error("Invalid narration output schema");
+  }
+  return output;
 }
 
 export default buildNarration;

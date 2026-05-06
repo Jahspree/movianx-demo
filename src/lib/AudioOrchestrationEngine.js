@@ -1,3 +1,5 @@
+import { validateAudioOrchestrationOutput } from "./SecurityLayer.js";
+
 const EMOTIONS = ["fear", "sadness", "joy", "anger", "suspense", "neutral"];
 const GENRES = ["horror", "thriller", "drama", "romance", "action"];
 
@@ -254,13 +256,17 @@ export function buildAudioOrchestration(sceneProfile = {}) {
     ...buildPhysiologicalBursts({ emotion, intensity }),
   ].slice(0, intensity === 1 ? 2 : intensity === 2 ? 3 : 4);
 
-  return {
+  const output = {
     narrationStyle: buildNarrationStyle({ emotion, intensity, pacing }),
     musicLayer: buildMusicLayer({ emotion, intensity }),
     ambienceLayer: buildAmbienceLayer({ location, intensity }),
     sfxTriggers,
     spatialBehavior: buildSpatialBehavior({ emotion, intensity }),
   };
+  if (!validateAudioOrchestrationOutput(output)) {
+    throw new Error("Invalid audio orchestration output schema");
+  }
+  return output;
 }
 
 export function toStrictAudioOrchestrationJson(sceneProfile = {}) {

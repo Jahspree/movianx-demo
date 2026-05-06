@@ -1,3 +1,5 @@
+import { assertSafeStoryInput, sanitizeUntrustedText, validateEmotionAnalysisOutput } from "./SecurityLayer.js";
+
 const MAX_INPUT_CHARS = 20000;
 
 const EMOTIONS = ["fear", "sadness", "joy", "anger", "suspense"];
@@ -36,12 +38,7 @@ function round(value) {
 }
 
 export function sanitizeStoryInput(rawText, maxChars = MAX_INPUT_CHARS) {
-  return String(rawText ?? "")
-    .normalize("NFKC")
-    .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ")
-    .slice(0, maxChars)
-    .replace(/\s+/g, " ")
-    .trim();
+  return sanitizeUntrustedText(rawText, maxChars);
 }
 
 function tokenize(text) {
@@ -154,7 +151,9 @@ function calculateIntensity({ emotionLabel, threatScore, pacing }) {
 }
 
 export function analyzeStoryEmotion(rawText, options = {}) {
-  const sanitized = sanitizeStoryInput(rawText, options.maxInputChars);
+  const sanitized = options.sanitizeOnly
+    ? sanitizeStoryInput(rawText, options.maxInputChars)
+    : assertSafeStoryInput(rawText, { maxChars: options.maxInputChars || MAX_INPUT_CHARS });
   const tokens = tokenize(sanitized);
   const sentences = splitSentences(sanitized);
   const punctuationCount = (sanitized.match(/[.!?;:,-]/g) || []).length;
@@ -169,7 +168,7 @@ export function analyzeStoryEmotion(rawText, options = {}) {
   const threatScore = calculateThreatScore(tokens, punctuationDensity);
   const intensity = calculateIntensity({ emotionLabel, threatScore, pacing });
 
-  return {
+  const output = {
     emotionLabel,
     emotionDistribution,
     genre,
@@ -178,6 +177,10 @@ export function analyzeStoryEmotion(rawText, options = {}) {
     pov,
     threatScore,
   };
+  if (!validateEmotionAnalysisOutput(output)) {
+    throw new Error("Invalid emotion analysis output schema");
+  }
+  return output;
 }
 
 export function toStrictEmotionJson(rawText, options = {}) {
