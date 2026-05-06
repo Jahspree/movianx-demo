@@ -4,6 +4,7 @@ import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
 import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioDirector";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
+import RuntimeManager from "../lib/runtime/RuntimeManager";
 // === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
 import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
@@ -709,6 +710,13 @@ export default function MovianxPlatform(){
   const navLockRef=useRef(false); // P0: prevents double navigation
   const telemetryRef=useRef([]); // P3: event logging
   const narrationDurationCacheRef=useRef(new Map());
+  const runtimeRef=useRef(null);
+
+  if(!runtimeRef.current){
+    runtimeRef.current=new RuntimeManager({logger:console});
+    runtimeRef.current.initializePlugins?.().catch(error=>console.error("[MovianxRuntime]",{type:"plugin:init-failed",error:error?.message||String(error)}));
+    if(typeof window!=="undefined")window.movianxRuntime=runtimeRef.current;
+  }
 
   const currentTheme=THEMES[colorTheme];
   const chaps=sel?getChapters(sel.id):getChapters(1);
@@ -725,6 +733,7 @@ export default function MovianxPlatform(){
 
   // === AUDIO ENGINE INTEGRATION ===
   const stopAllAudio=useCallback(()=>{
+    runtimeRef.current?.playbackManager?.stopScene?.();
     if(audioEngine)audioEngine.stopAll();
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
     setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
@@ -1032,20 +1041,27 @@ export default function MovianxPlatform(){
 
     // Try to load audio file; if missing, keep story flow alive and report the asset.
     if(narrationUrl){
-      const testAudio=new Audio(narrationUrl);
       const narrationVolume=isTimedExperience(storyId)?1.4:1.0; // timed companion narration is intentionally close and dominant
-      testAudio.addEventListener("canplaythrough",()=>{
-        testAudio.pause();
-        setNarrationStatus("playing");
-        audioEngine.playNarration(narrationUrl,narrationVolume);
-      },{once:true});
-      testAudio.addEventListener("error",()=>{
+      const narrationPlayback=runtimeRef.current?.playbackManager?.playNarration({
+        url:narrationUrl,
+        volume:narrationVolume,
+        sceneKey:`${storyId}:${chapIdx}:${currentMode}`,
+        timeoutMs:4500,
+        onStatus:setNarrationStatus,
+        play:(url,volume)=>audioEngine.playNarration(url,volume),
+      });
+      narrationPlayback?.then(result=>{
+        if(!result?.ok)console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode,error:result?.error||result?.status});
+      }).catch(error=>{
         setNarrationStatus("unavailable");
-        console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode});
-      },{once:true});
-      testAudio.load();
+        console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode,error:error?.message||String(error)});
+      });
     }else if(fallbackText&&currentMode!=="Reader"){
-      setNarrationStatus("unavailable");
+      runtimeRef.current?.playbackManager?.playNarration({
+        url:null,
+        sceneKey:`${storyId}:${chapIdx}:${currentMode}`,
+        onStatus:setNarrationStatus,
+      });
       console.error("AUDIO UNAVAILABLE:",{storyId,chapIdx,currentMode});
     }
     audioEngine.addTimeout(()=>console.log("ACTIVE LAYERS:",audioEngine.getActiveLayers?.()||{}),500);
@@ -1117,6 +1133,7 @@ export default function MovianxPlatform(){
     if(navLockRef.current)return;
     navLockRef.current=true;
     stopAllAudio();
+    runtimeRef.current?.navigate({from:pg,to:newPg,kind:"view"});
     logEvent("navigate",{from:pg,to:newPg});
     setViewTransitionState("exiting");
     setTimeout(()=>{
@@ -1143,6 +1160,7 @@ export default function MovianxPlatform(){
     if(navLockRef.current||idx<0||idx>=chaps.length)return;
     navLockRef.current=true;
     stopAllAudio();
+    runtimeRef.current?.navigate({from:chIdx,to:idx,kind:"chapter"});
     logEvent("page_view",{chapter:idx,title:chaps[idx]?.title});
     setPageAnim("out");
     setTimeout(()=>{
@@ -1186,6 +1204,13 @@ export default function MovianxPlatform(){
     setTxt(activeChapterText);
     setRevealedWordCount(-1);
     logEvent("scene_playback_started",{chapter:chIdx,title:ch.title,mode});
+    runtimeRef.current?.startScene({
+      storyId:sel?.id,
+      chapterIdx:chIdx,
+      mode,
+      title:ch.title,
+      text:activeChapterText,
+    });
 
     // Cinematic + Immersive: play full manifest audio
     if((mode==="Cinematic"||mode==="Immersive")&&audioEngine&&audioEngine.ctx&&sel){
@@ -1328,6 +1353,7 @@ export default function MovianxPlatform(){
       cancelled=true;
       localTimers.forEach(clearTimeout);
       if(revealInterval)clearInterval(revealInterval);
+      runtimeRef.current?.stopScene?.();
       stopAllAudio();
     };
   },[pg,chIdx,mode,narratorOn,soundEffectsOn,activeChapterText]);
