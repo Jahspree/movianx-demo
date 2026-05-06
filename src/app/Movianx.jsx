@@ -4,6 +4,7 @@ import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
 import { performNarrationText } from "../lib/AudioSceneAnalyzer";
 import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioDirector";
+import { createHollywoodModeSequence, runHollywoodMode } from "../lib/HollywoodModeEngine";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 // === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
@@ -1051,6 +1052,22 @@ export default function MovianxPlatform(){
           intensity:exposedSceneProfile.intensity,
         },
       };
+    }
+
+    if(currentMode==="Immersive"){
+      const hollywoodSequence=createHollywoodModeSequence(exposedSceneProfile,fallbackText,{storyId,chapterId:chapIdx});
+      if(typeof window!=="undefined"){
+        window.hollywoodModeSequence=hollywoodSequence;
+      }
+      runHollywoodMode({
+        audioEngine,
+        sequence:hollywoodSequence,
+        resolveFile:(file)=>assetResolver.resolveFile(file),
+        onReaction:({spokenText})=>{
+          console.log("HOLLYWOOD REACTION:",spokenText);
+        },
+      });
+      console.log("HOLLYWOOD MODE:",hollywoodSequence);
     }
 
     // Try to load audio file; if missing, block generated narration instead of using browser speech.

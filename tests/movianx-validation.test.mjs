@@ -4,6 +4,11 @@ import assert from "node:assert/strict";
 import { buildNarration } from "../src/lib/NarrationBuilder.js";
 import { buildAudioOrchestration } from "../src/lib/AudioOrchestrationEngine.js";
 import { analyzeStoryEmotion } from "../src/lib/EmotionAnalysisEngine.js";
+import {
+  createHollywoodModeSequence,
+  getHollywoodSilenceDuration,
+  getProximityProfile,
+} from "../src/lib/HollywoodModeEngine.js";
 import { createValidationCache } from "../src/lib/ValidationCache.js";
 
 const FORBIDDEN_SPOKEN = /\b(?:you feel|the scene|emotion|ambience|music)\b/i;
@@ -153,4 +158,65 @@ test("performance guard: validation cache prevents repeated work", () => {
   assert.equal(second.cacheHit, true);
   assert.equal(producerCalls, 1);
   assert.deepEqual(second.value, first.value);
+});
+
+test("Hollywood Mode sequences buildup, silence, event, and reaction in order", () => {
+  const sequence = createHollywoodModeSequence(
+    { emotionLabel: "fear", intensity: 3, location: "horror hallway" },
+    "Footsteps stop outside the door. The handle turns.",
+    { storyId: 3, chapterId: 0 }
+  );
+  const phases = sequence.phases.map(phase => phase.phase);
+  const event = sequence.phases.find(phase => phase.phase === "event");
+  const reaction = sequence.phases.find(phase => phase.phase === "reaction");
+
+  assert.deepEqual(phases, ["presence", "tension", "silence", "event", "reaction"]);
+  assert.ok(event.delayMs >= sequence.minMajorEventSpacingMs);
+  assert.ok(reaction.delayMs > event.delayMs);
+  assert.ok(reaction.reactionDelayMs >= 200);
+  assert.ok(reaction.reactionDelayMs <= 600);
+});
+
+test("Hollywood Mode never creates constant looping cues", () => {
+  const sequence = createHollywoodModeSequence(
+    { emotionLabel: "suspense", intensity: 2, location: "farm" },
+    "The barn settles. Something shifts behind the boards.",
+    { storyId: 1, chapterId: 2 }
+  );
+
+  assert.equal(sequence.noConstantAudio, true);
+  sequence.phases.forEach(phase => assert.equal(phase.loop, false));
+});
+
+test("Hollywood silence duration follows intensity bands", () => {
+  const low = getHollywoodSilenceDuration(1, "same");
+  const mid = getHollywoodSilenceDuration(2, "same");
+  const high = getHollywoodSilenceDuration(3, "same");
+
+  assert.ok(low >= 1000 && low <= 2000);
+  assert.ok(mid >= 2000 && mid <= 4000);
+  assert.ok(high >= 3000 && high <= 6000);
+});
+
+test("Hollywood proximity makes close sounds clearer and nearer than far sounds", () => {
+  const far = getProximityProfile("far");
+  const close = getProximityProfile("close");
+  const farDistance = Math.sqrt(far.position.x ** 2 + far.position.y ** 2 + far.position.z ** 2);
+  const closeDistance = Math.sqrt(close.position.x ** 2 + close.position.y ** 2 + close.position.z ** 2);
+
+  assert.ok(closeDistance < farDistance);
+  assert.ok(close.volume > far.volume);
+  assert.ok(close.reverbAmount < far.reverbAmount);
+});
+
+test("Hollywood spatial cues move instead of remaining static", () => {
+  const sequence = createHollywoodModeSequence(
+    { emotionLabel: "fear", intensity: 3, location: "indoor" },
+    "Glass breaks downstairs. Someone is inside.",
+    { storyId: 3, chapterId: 0 }
+  );
+  const moving = sequence.phases.filter(phase => phase.startPosition && phase.endPosition);
+
+  assert.ok(moving.length >= 2);
+  moving.forEach(phase => assert.notDeepEqual(phase.startPosition, phase.endPosition));
 });
