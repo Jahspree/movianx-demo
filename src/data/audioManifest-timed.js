@@ -29,17 +29,17 @@ const TIMED_HORROR_AUDIO = {
     voiceQuery: "male whisper urgent scared intimate American",
     model: "eleven_multilingual_v2",
     // Default settings - overridden per chapter for emotional progression
-    settings: { stability: 0.3, similarity_boost: 0.9, style: 0.6 },
+    settings: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
   },
 
   // Per-chapter voice settings for emotional progression
   chapterVoiceSettings: {
     // Ch0: Trembling whisper. Scared. Shaky breath. Unstable.
-    0: { stability: 0.15, similarity_boost: 0.85, style: 0.75 },
+    0: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
     // Ch1: Full fear, trying to stay quiet. Voice shakes.
-    1: { stability: 0.2, similarity_boost: 0.9, style: 0.8 },
+    1: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
     // Ch2: Absolute panic barely contained. Maximum emotional variation.
-    2: { stability: 0.15, similarity_boost: 0.9, style: 0.9 },
+    2: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
     // Ch3: Hollow, broken, empty. Numb, flat delivery.
     3: { stability: 0.6, similarity_boost: 0.9, style: 0.3 },
   },
@@ -47,17 +47,17 @@ const TIMED_HORROR_AUDIO = {
   companionScript: {
     // Ch0: Groggy → confused → terrified. Each line is its own breath.
     0: {
-      text: "Hey... wake up... did you hear that?... no... listen... that wasn't nothing... someone's in the house... I heard glass... downstairs... oh god... they're inside... I can hear them moving... more than one... the bat's in the closet... my phone's dead... the kids are down the hall... what do we do?",
+      text: "Hey. Wake up. Did you hear that? No. Listen. That wasn't nothing. Someone's in the house. I heard glass downstairs. They're inside. I can hear them moving. More than one. The bat's in the closet. My phone's dead. The kids are down the hall. What do we do?",
       choicePrompt: "Tell me. Bat... or 911... or the window with the kids... or we hide. Ten seconds. Tell me.",
     },
     // Ch1: Terrified. Mostly fragments. Long silences where they're listening.
     1: {
-      text: "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped... No. They're moving again. The kids. Right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
+      text: "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped. No. They're moving again. The kids are right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
       choicePrompt: "Do we rush them? Yell that police are coming? Stay silent? Or you go to the kids and I distract them? Ten seconds. What do we do?",
     },
     // Ch2: Breaking. Can barely form words. Lots of pauses. Crying.
     2: {
-      text: "He has a gun. I can see it. Our baby... she's crying. She can hear us. He said, last chance. Whatever happens, protect the kids. Promise me. Promise me. The handle... it's turning. Right now. Tell me. Please. I can't do this alone.",
+      text: "He has a gun. I can see it. Our baby is crying. She can hear us. He said last chance. Whatever happens, protect the kids. Promise me. Promise me. The handle is turning. Right now. Tell me. Please. I can't do this alone.",
       choicePrompt: "Do we swing when the door opens? Do we surrender? Or do we push them in the bathroom and face this alone? Now. Tell me now.",
     },
     // Ch3: Hollow. Flat. Disconnected. Long gaps between thoughts.

@@ -5,7 +5,7 @@ export async function buildNarration(text) {
   const emotionResult = await analyzeEmotion(text);
   const style = mapEmotionToStyle(emotionResult.label);
 
-  let processed = style.transform(text);
+  let processed = style.transform(String(text || "").replace(/\s+/g, " ").trim());
   processed = style.prefix + processed;
 
   console.log("EMOTION:", emotionResult.label);
@@ -13,4 +13,3 @@ export async function buildNarration(text) {
 
   return processed;
 }
-

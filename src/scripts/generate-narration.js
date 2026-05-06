@@ -10,6 +10,13 @@ const https = require("https");
 
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
 const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_turbo_v2";
+const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
+const WHISPER_SETTINGS = {
+  stability: 0.38,
+  similarity_boost: 0.88,
+  style: 0.55,
+  use_speaker_boost: true,
+};
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -41,10 +48,10 @@ const TIMED_CHAPTERS = [
 // --- 10 Seconds: Per-chapter voice settings for emotional progression ---
 // Each chapter escalates emotionally, then drops to hollow emptiness
 const TIMED_STANDARD_SETTINGS = [
-  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
-  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: full fear
-  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: absolute panic
-  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
+  WHISPER_SETTINGS,
+  WHISPER_SETTINGS,
+  WHISPER_SETTINGS,
+  { stability: 0.44, similarity_boost: 0.88, style: 0.42, use_speaker_boost: true },
 ];
 
 // --- 10 Seconds companion narration ---
@@ -52,20 +59,20 @@ const TIMED_STANDARD_SETTINGS = [
 // No literal control words or acting directions in spoken text.
 const TIMED_COMPANION = [
   // Ch0: Groggy → confused → terrified. Each line is its own breath.
-  "Hey... wake up... did you hear that?... no... listen... that wasn't nothing... someone's in the house... I heard glass... downstairs... oh god... they're inside... I can hear them moving... more than one... the bat's in the closet... my phone's dead... the kids are down the hall... what do we do?",
+  "Hey. Wake up. Did you hear that? No. Listen. That wasn't nothing. Someone's in the house. I heard glass downstairs. They're inside. I can hear them moving. More than one. The bat's in the closet. My phone's dead. The kids are down the hall. What do we do?",
   // Ch1: Terrified. Mostly fragments. Long silences.
-  "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped... No. They're moving again. The kids. Right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
+  "They're coming up. The stairs. I can hear them. One step. Two. Three. They stopped. No. They're moving again. The kids are right there. Three doors down. He said something. He knows we're here. He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
   // Ch2: Breaking. Can barely form words. Lots of pauses. Crying.
-  "He has a gun. I can see it. Our baby... she's crying. She can hear us. He said, last chance. Whatever happens, protect the kids. Promise me. Promise me. The handle... it's turning. Right now. Tell me. Please. I can't do this alone.",
+  "He has a gun. I can see it. Our baby is crying. She can hear us. He said last chance. Whatever happens, protect the kids. Promise me. Promise me. The handle is turning. Right now. Tell me. Please. I can't do this alone.",
   // Ch3: Hollow. Flat. Disconnected. Long gaps.
   "It's done. There was no right answer. There never was. I keep hearing it. Over and over. The sound. The choices. The ten seconds. What did we become? What did we become in ten seconds?",
 ];
 
 const TIMED_COMPANION_SETTINGS = [
-  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
-  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: shaking fear
-  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: panic, crying
-  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, empty
+  WHISPER_SETTINGS,
+  WHISPER_SETTINGS,
+  WHISPER_SETTINGS,
+  { stability: 0.44, similarity_boost: 0.88, style: 0.42, use_speaker_boost: true },
 ];
 
 const FRANK_DIRECTIONS = [
@@ -148,9 +155,7 @@ async function addSharedVoice(voiceId) {
 }
 
 function withVoiceDirection(text, direction) {
-  const performed = shapePerformanceText(text, direction);
-  if (!direction) return performed;
-  return `[${direction}]\n${performed}`;
+  return shapePerformanceText(text, direction);
 }
 
 function shapePerformanceText(text, direction = "") {
@@ -159,34 +164,22 @@ function shapePerformanceText(text, direction = "") {
   if (!output) return "";
 
   if (style.includes("terrified") || style.includes("panic") || style.includes("crying")) {
-    output = output
-      .replace(/([.!?])\s+/g, "$1... ")
-      .replace(/\bNo\b/g, "No—no—no")
-      .replace(/\bwhat\b/gi, "...what")
-      .replace(/\blisten\b/gi, "listen...")
-      .replace(/\bPlease\b/g, "Please...");
-    return `[breathing] [whispering]\n${output}`;
+    return output;
   }
 
   if (style.includes("dread") || style.includes("horror")) {
-    output = output
-      .replace(/([.!?])\s+/g, "$1... ")
-      .replace(/\bI saw\b/g, "I saw...")
-      .replace(/\bSilence\b/g, "Silence...");
-    return `[low suspense] [hesitant]\n${output}`;
+    return output;
   }
 
   if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) {
-    output = output.replace(/([.!?])\s+/g, "$1... ").replace(/\bFarewell\b/g, "Farewell...");
-    return `[near tears] [soft]\n${output}`;
+    return output;
   }
 
   if (style.includes("warmth") || style.includes("softness")) {
-    output = output.replace(/([.!?])\s+/g, "$1... ");
-    return `[warm] [gentle]\n${output}`;
+    return output;
   }
 
-  return `[cinematic] [intimate]\n${output.replace(/([.!?])\s+/g, "$1... ")}`;
+  return output;
 }
 
 async function generateTTS(voiceId, text, settings, outPath) {
@@ -203,9 +196,6 @@ async function generateTTS(voiceId, text, settings, outPath) {
     model_id: TTS_MODEL_ID,
     voice_settings: {
       ...settings,
-      stability: 0.35,
-      similarity_boost: 0.75,
-      style: 0.9,
       use_speaker_boost: true,
     },
   });
@@ -247,17 +237,9 @@ async function main() {
   }
 
   // --- 10 SECONDS: Standard (per-chapter emotional settings) ---
-  console.log("\n3. Searching for 10 Seconds narrator voice...");
-  let timedVoiceId = await searchVoice("male whisper urgent scared American");
-  if (timedVoiceId) {
-    console.log("   Adding voice to library...");
-    timedVoiceId = await addSharedVoice(timedVoiceId);
-  }
-  if (!timedVoiceId) {
-    // Fallback
-    timedVoiceId = "ErXwobaYiN019PkySvjV";
-    console.log(`   Using fallback voice: Antoni (${timedVoiceId})`);
-  }
+  console.log("\n3. Using Rachel voice for 10 Seconds whisper realism...");
+  let timedVoiceId = process.env.TIMED_VOICE_ID || RACHEL_VOICE_ID;
+  console.log(`   Voice: ${timedVoiceId}`);
 
   console.log(`\n4. Generating ${TIMED_CHAPTERS.length} standard 10 Seconds chapters (per-chapter emotion)...\n`);
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {

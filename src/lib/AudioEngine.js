@@ -169,6 +169,15 @@ class AudioEngine {
       breathTimer: null,
       lastBreathAt: 0,
     };
+    this.narrationManager = {
+      currentAudio: null,
+      currentUrl: null,
+      startedAt: 0,
+      duration: 0,
+      completed: true,
+      gainNode: null,
+      nodes: [],
+    };
     this._silenced = false;
     this._silenceRestore = [];
   }
@@ -299,26 +308,112 @@ class AudioEngine {
   playNarration(url, volume = 1.0) {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
+    const current = this.narrationManager.currentAudio;
+    if (current && !this.narrationManager.completed && !current.paused && !current.ended) {
+      console.log("narration_interrupted", {
+        interruption_reason: current.currentSrc === url || current.src === url ? "duplicate_play_ignored" : "new_narration_ignored_while_active",
+        activeUrl: this.narrationManager.currentUrl,
+        requestedUrl: url,
+      });
+      return current;
+    }
+
     const audio = new Audio(url);
     audio.crossOrigin = "anonymous";
     audio.preload = "auto";
     audio.playsInline = true;
+    audio.loop = false;
+
+    const isWhisperAsset = /\/timed\//.test(url);
+    const deliveryVolume = isWhisperAsset ? Math.min(volume * 0.58, 0.82) : volume;
+    this.narrationManager = {
+      currentAudio: audio,
+      currentUrl: url,
+      startedAt: typeof performance !== "undefined" ? performance.now() : Date.now(),
+      duration: 0,
+      completed: false,
+      gainNode: null,
+      nodes: [],
+    };
+
+    audio.addEventListener("loadedmetadata", () => {
+      this.narrationManager.duration = Number.isFinite(audio.duration) ? audio.duration * 1000 : 0;
+    }, { once: true });
+    audio.addEventListener("ended", () => {
+      this.narrationManager.completed = true;
+      console.log("narration_completed", {
+        url,
+        elapsedMs: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - this.narrationManager.startedAt),
+        durationMs: Math.round(this.narrationManager.duration || 0),
+      });
+    }, { once: true });
+    audio.addEventListener("pause", () => {
+      if (!this.narrationManager.completed && !audio.ended) {
+        console.log("narration_interrupted", {
+          interruption_reason: "audio_paused_before_completion",
+          url,
+          currentTime: audio.currentTime,
+        });
+      }
+    });
+
     this.registerAudioElement(audio, "narration");
     try {
       const source = ctx.createMediaElementSource(audio);
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(isWhisperAsset ? 7200 : 12000, ctx.currentTime);
+      filter.Q.setValueAtTime(0.18, ctx.currentTime);
       const gain = ctx.createGain();
-      gain.gain.setValueAtTime(volume, ctx.currentTime);
-      source.connect(gain);
+      gain.gain.setValueAtTime(deliveryVolume, ctx.currentTime);
+      source.connect(filter);
+      filter.connect(gain);
+      if (isWhisperAsset) {
+        const wetGain = ctx.createGain();
+        wetGain.gain.setValueAtTime(0.045, ctx.currentTime);
+        const reverb = ctx.createConvolver();
+        reverb.buffer = this.createCloseRoomImpulse(0.18, 0.32);
+        filter.connect(reverb);
+        reverb.connect(wetGain);
+        wetGain.connect(this.getLayerDestination("narration"));
+        this.activeNodes.push(reverb, wetGain);
+        this.narrationManager.nodes.push(reverb, wetGain);
+      }
       gain.connect(this.getLayerDestination("narration"));
-      this.activeNodes.push(source, gain);
+      this.activeNodes.push(source, filter, gain);
       this.registerLayerGain(gain, "narration");
+      this.narrationManager.gainNode = gain;
+      this.narrationManager.nodes.push(source, filter, gain);
     } catch (e) {
-      audio.volume = Math.min(volume, 1.0);
+      audio.volume = Math.min(deliveryVolume, 1.0);
     }
 
     audio.load();
-    audio.play().catch(() => {});
+    audio.play()
+      .then(() => console.log("narration_started", { url, volume: deliveryVolume }))
+      .catch(error => {
+        this.narrationManager.completed = true;
+        console.log("narration_interrupted", {
+          interruption_reason: "play_rejected",
+          url,
+          error: error?.message || String(error),
+        });
+      });
     return audio;
+  }
+
+  createCloseRoomImpulse(duration = 0.18, decay = 0.32) {
+    const rate = this.ctx.sampleRate;
+    const length = Math.max(1, Math.floor(rate * duration));
+    const impulse = this.ctx.createBuffer(2, length, rate);
+    for (let channel = 0; channel < 2; channel++) {
+      const data = impulse.getChannelData(channel);
+      for (let i = 0; i < length; i++) {
+        const t = i / length;
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - t, decay) * 0.18;
+      }
+    }
+    return impulse;
   }
 
   playAmbient(url, volume = 0.2, fadeIn = 0, label = null, role = "ambient", options = {}) {
@@ -678,6 +773,14 @@ class AudioEngine {
 
   silence(duration, options = {}) {
     if (!this.ctx || this._silenced) return;
+    if (this.narrationManager.currentAudio && !this.narrationManager.completed && !this.narrationManager.currentAudio.ended) {
+      console.log("narration_interrupted", {
+        interruption_reason: "silence_skipped_for_active_narration",
+        url: this.narrationManager.currentUrl,
+        requestedSilenceMs: duration,
+      });
+      return;
+    }
     this._silenced = true;
     // Silence is a dramatic narration beat only. Ambient and tension remain alive.
     this._silenceRestore = this.narrationGains.map(g => ({
@@ -718,6 +821,15 @@ class AudioEngine {
   // --- Cleanup -------------------------------------------------------------
 
   stopAll() {
+    const narration = this.narrationManager.currentAudio;
+    if (narration && !this.narrationManager.completed && !narration.ended) {
+      console.log("narration_interrupted", {
+        interruption_reason: "stopAll",
+        url: this.narrationManager.currentUrl,
+        currentTime: narration.currentTime,
+      });
+      this.narrationManager.completed = true;
+    }
     // Clear timers
     this.activeTimers.forEach(id => { clearTimeout(id); clearInterval(id); });
     this.activeTimers = [];
@@ -752,6 +864,15 @@ class AudioEngine {
     this.experienceState = { tension: 0, presence: 0, immersion: 0, uncertainty: 0, control: 0 };
     this.experienceTargets = { ...this.experienceState };
     this.physiology = { heartbeat: null, breathTimer: null, lastBreathAt: 0 };
+    this.narrationManager = {
+      currentAudio: null,
+      currentUrl: null,
+      startedAt: 0,
+      duration: 0,
+      completed: true,
+      gainNode: null,
+      nodes: [],
+    };
     this._silenced = false;
     this._silenceRestore = [];
 
