@@ -10,8 +10,6 @@ const https = require("https");
 
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
 const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_turbo_v2";
-const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
-const NARRATION_QUALITY = process.env.NARRATION_QUALITY || "final";
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -43,10 +41,10 @@ const TIMED_CHAPTERS = [
 // --- 10 Seconds: Per-chapter voice settings for emotional progression ---
 // Each chapter escalates emotionally, then drops to hollow emptiness
 const TIMED_STANDARD_SETTINGS = [
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
+  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: full fear
+  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: absolute panic
+  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, numb
 ];
 
 // --- 10 Seconds companion narration ---
@@ -64,10 +62,10 @@ const TIMED_COMPANION = [
 ];
 
 const TIMED_COMPANION_SETTINGS = [
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
-  { stability: 0.4, similarity_boost: 0.85, style: 0.35, speed: 0.95 },
+  { stability: 0.15, similarity_boost: 0.85, style: 0.75 },  // Ch0: trembling whisper, scared
+  { stability: 0.2, similarity_boost: 0.9, style: 0.8 },    // Ch1: shaking fear
+  { stability: 0.15, similarity_boost: 0.9, style: 0.9 },   // Ch2: panic, crying
+  { stability: 0.6, similarity_boost: 0.9, style: 0.3 },    // Ch3: hollow, empty
 ];
 
 const FRANK_DIRECTIONS = [
@@ -92,15 +90,6 @@ const TIMED_COMPANION_DIRECTIONS = [
   "crying or near tears, broken words, desperate and breathless",
   "hollow shock, grief filled delivery, disconnected and quiet",
 ];
-
-let voiceDirectorPromise;
-
-function getVoiceDirector() {
-  if (!voiceDirectorPromise) {
-    voiceDirectorPromise = import("../lib/VoiceDirector.js");
-  }
-  return voiceDirectorPromise;
-}
 
 // --- API helpers ---
 
@@ -159,84 +148,48 @@ async function addSharedVoice(voiceId) {
 }
 
 function withVoiceDirection(text, direction) {
-  return cleanNarrationText(text);
-}
-
-function stripMetadataLanguage(text) {
-  return String(text || "")
-    .replace(/\byou feel\b/gi, "")
-    .replace(/\bfear\b/gi, "")
-    .replace(/\bemotion\b/gi, "")
-    .replace(/\bscene\b/gi, "")
-    .replace(/\bmusic\b/gi, "")
-    .replace(/\bambience\b/gi, "")
-    .replace(/\bthe room is dark\b/gi, "");
-}
-
-function cleanNarrationText(text) {
-  return stripMetadataLanguage(text)
-    .replace(/\[(?:breathing|whispering|hesitant|pause|short pause|long pause|softly)[^\]]*\]\s*/gi, "")
-    .replace(/\((?:breathing|whispering|hesitant|pause|softly)[^)]*\)\s*/gi, "")
-    .replace(/\.{2,}/g, ".")
-    .replace(/\?\.|\!\./g, match => match[0])
-    .replace(/\s+([,.!?])/g, "$1")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function escapeSsml(text) {
-  return String(text || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
+  const performed = shapePerformanceText(text, direction);
+  if (!direction) return performed;
+  return `[${direction}]\n${performed}`;
 }
 
 function shapePerformanceText(text, direction = "") {
-  return cleanNarrationText(text);
-}
+  const style = String(direction).toLowerCase();
+  let output = String(text || "").replace(/\s+/g, " ").trim();
+  if (!output) return "";
 
-function getElevenVoiceSettings(quality = NARRATION_QUALITY) {
-  if (quality === "preview") {
-    return {
-      stability: 0.45,
-      similarity_boost: 0.75,
-      style: 0.2,
-      speed: 0.98,
-      use_speaker_boost: true,
-    };
+  if (style.includes("terrified") || style.includes("panic") || style.includes("crying")) {
+    output = output
+      .replace(/([.!?])\s+/g, "$1... ")
+      .replace(/\bNo\b/g, "No—no—no")
+      .replace(/\bwhat\b/gi, "...what")
+      .replace(/\blisten\b/gi, "listen...")
+      .replace(/\bPlease\b/g, "Please...");
+    return `[breathing] [whispering]\n${output}`;
   }
 
-  return {
-    stability: 0.4,
-    similarity_boost: 0.85,
-    style: 0.35,
-    speed: 0.95,
-    use_speaker_boost: true,
-  };
+  if (style.includes("dread") || style.includes("horror")) {
+    output = output
+      .replace(/([.!?])\s+/g, "$1... ")
+      .replace(/\bI saw\b/g, "I saw...")
+      .replace(/\bSilence\b/g, "Silence...");
+    return `[low suspense] [hesitant]\n${output}`;
+  }
+
+  if (style.includes("grief") || style.includes("farewell") || style.includes("hollow")) {
+    output = output.replace(/([.!?])\s+/g, "$1... ").replace(/\bFarewell\b/g, "Farewell...");
+    return `[near tears] [soft]\n${output}`;
+  }
+
+  if (style.includes("warmth") || style.includes("softness")) {
+    output = output.replace(/([.!?])\s+/g, "$1... ");
+    return `[warm] [gentle]\n${output}`;
+  }
+
+  return `[cinematic] [intimate]\n${output.replace(/([.!?])\s+/g, "$1... ")}`;
 }
 
-function sceneProfileForDirection(direction = "", fallback = {}) {
-  const source = String(direction).toLowerCase();
-  let emotionLabel = "neutral";
-  if (/terrified|terror|panic|dread|horror|fear/.test(source)) emotionLabel = "fear";
-  else if (/grief|farewell|hollow|crying|tears|desolate/.test(source)) emotionLabel = "sadness";
-  else if (/romantic|warmth|delight|relief/.test(source)) emotionLabel = "joy";
-  else if (/anger|rage|defiant/.test(source)) emotionLabel = "anger";
-  else if (/suspense|careful|uneasy/.test(source)) emotionLabel = "suspense";
-
-  const intense = /panic|terrified|horror|gun|desperate|breaks/.test(source);
-  const moderate = /dread|grief|crying|suspense|near tears|hollow/.test(source);
-  const intensity = intense ? 3 : moderate ? 2 : 1;
-
-  return {
-    emotionLabel,
-    intensity,
-    ...fallback,
-  };
-}
-
-async function generateTTS(voiceId, text, settings, outPath, context = {}) {
+async function generateTTS(voiceId, text, settings, outPath) {
   const forceRegen = process.env.FORCE_REGEN === "1";
   const forcePattern = process.env.FORCE_REGEN_PATTERN ? new RegExp(process.env.FORCE_REGEN_PATTERN) : null;
   const shouldOverwrite = forceRegen || (forcePattern && forcePattern.test(path.basename(outPath)));
@@ -245,22 +198,20 @@ async function generateTTS(voiceId, text, settings, outPath, context = {}) {
     return true;
   }
 
-  const { buildElevenLabsRequest } = await getVoiceDirector();
-  const { request, delivery } = buildElevenLabsRequest({
-    text,
-    direction: context.direction || "",
-    sceneProfile: context.sceneProfile || {},
-    modelId: TTS_MODEL_ID,
-    quality: NARRATION_QUALITY,
-    voiceSettings: settings || getElevenVoiceSettings(),
-    previousText: context.previous_text,
-    nextText: context.next_text,
+  const body = JSON.stringify({
+    text: text,
+    model_id: TTS_MODEL_ID,
+    voice_settings: {
+      ...settings,
+      stability: 0.35,
+      similarity_boost: 0.75,
+      style: 0.9,
+      use_speaker_boost: true,
+    },
   });
 
-  const body = JSON.stringify(request);
-
-  console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars, ${delivery.emotion}, intensity ${delivery.intensity}, ${delivery.cadence})`);
-  const res = await apiRequest(`/v1/text-to-speech/${voiceId}?enable_ssml_parsing=true`, "POST", body);
+  console.log(`  GEN  ${path.basename(outPath)} (${text.length} chars)`);
+  const res = await apiRequest(`/v1/text-to-speech/${voiceId}`, "POST", body);
 
   if (res.audio && res.status === 200) {
     fs.writeFileSync(outPath, res.audio);
@@ -291,41 +242,28 @@ async function main() {
   const frankSettings = { stability: 0.5, similarity_boost: 0.8, style: 0.3 };
   console.log(`\n2. Generating ${FRANK_CHAPTERS.length} Frankenstein chapters...\n`);
   for (let i = 0; i < FRANK_CHAPTERS.length; i++) {
-    await generateTTS(
-      frankVoiceId,
-      withVoiceDirection(FRANK_CHAPTERS[i], FRANK_DIRECTIONS[i]),
-      frankSettings,
-      path.join(FRANK_DIR, `ch${i}.mp3`),
-      {
-        previous_text: FRANK_CHAPTERS[i - 1],
-        next_text: FRANK_CHAPTERS[i + 1],
-        direction: FRANK_DIRECTIONS[i],
-        sceneProfile: sceneProfileForDirection(FRANK_DIRECTIONS[i], { storyId: 1, chapterId: i }),
-      }
-    );
+    await generateTTS(frankVoiceId, withVoiceDirection(FRANK_CHAPTERS[i], FRANK_DIRECTIONS[i]), frankSettings, path.join(FRANK_DIR, `ch${i}.mp3`));
     await new Promise((r) => setTimeout(r, 1000)); // Rate limit
   }
 
   // --- 10 SECONDS: Standard (per-chapter emotional settings) ---
-  console.log("\n3. Using premium 10 Seconds voice: Rachel...");
-  let timedVoiceId = RACHEL_VOICE_ID;
+  console.log("\n3. Searching for 10 Seconds narrator voice...");
+  let timedVoiceId = await searchVoice("male whisper urgent scared American");
+  if (timedVoiceId) {
+    console.log("   Adding voice to library...");
+    timedVoiceId = await addSharedVoice(timedVoiceId);
+  }
+  if (!timedVoiceId) {
+    // Fallback
+    timedVoiceId = "ErXwobaYiN019PkySvjV";
+    console.log(`   Using fallback voice: Antoni (${timedVoiceId})`);
+  }
 
   console.log(`\n4. Generating ${TIMED_CHAPTERS.length} standard 10 Seconds chapters (per-chapter emotion)...\n`);
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {
     const settings = TIMED_STANDARD_SETTINGS[i];
     console.log(`   Ch${i} settings: stability=${settings.stability} style=${settings.style}`);
-    await generateTTS(
-      timedVoiceId,
-      withVoiceDirection(TIMED_CHAPTERS[i], TIMED_STANDARD_DIRECTIONS[i]),
-      settings,
-      path.join(TIMED_DIR, `ch${i}.mp3`),
-      {
-        previous_text: TIMED_CHAPTERS[i - 1],
-        next_text: TIMED_CHAPTERS[i + 1],
-        direction: TIMED_STANDARD_DIRECTIONS[i],
-        sceneProfile: sceneProfileForDirection(TIMED_STANDARD_DIRECTIONS[i], { storyId: 3, chapterId: i }),
-      }
-    );
+    await generateTTS(timedVoiceId, withVoiceDirection(TIMED_CHAPTERS[i], TIMED_STANDARD_DIRECTIONS[i]), settings, path.join(TIMED_DIR, `ch${i}.mp3`));
     await new Promise((r) => setTimeout(r, 1000));
   }
 
@@ -334,18 +272,7 @@ async function main() {
   for (let i = 0; i < TIMED_COMPANION.length; i++) {
     const settings = TIMED_COMPANION_SETTINGS[i];
     console.log(`   Ch${i} companion: stability=${settings.stability} style=${settings.style}`);
-    await generateTTS(
-      timedVoiceId,
-      withVoiceDirection(TIMED_COMPANION[i], TIMED_COMPANION_DIRECTIONS[i]),
-      settings,
-      path.join(TIMED_DIR, `ch${i}_companion.mp3`),
-      {
-        previous_text: TIMED_COMPANION[i - 1],
-        next_text: TIMED_COMPANION[i + 1],
-        direction: TIMED_COMPANION_DIRECTIONS[i],
-        sceneProfile: sceneProfileForDirection(TIMED_COMPANION_DIRECTIONS[i], { storyId: 3, chapterId: i }),
-      }
-    );
+    await generateTTS(timedVoiceId, withVoiceDirection(TIMED_COMPANION[i], TIMED_COMPANION_DIRECTIONS[i]), settings, path.join(TIMED_DIR, `ch${i}_companion.mp3`));
     await new Promise((r) => setTimeout(r, 1000));
   }
 

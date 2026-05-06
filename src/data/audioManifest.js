@@ -108,10 +108,10 @@ const FRANKENSTEIN_AUDIO = {
         // Stranger's labored breathing - fades in from the right
         {
           file: "/audio/sfx/breathing_raspy.mp3",
-          volume: 0.18,
-          loop: false,
+          volume: 0.3,
+          loop: true,
           position: { x: 1, y: 0, z: -2 },
-          trigger: { type: "timed", delay: 10000, fadeIn: 0 },
+          trigger: { type: "timed", delay: 10000, fadeIn: 5 },
         },
         // Ice cracking beneath
         {
@@ -294,10 +294,10 @@ const FRANKENSTEIN_AUDIO = {
           time: 8000,
           action: "play",
           file: "/audio/sfx/heartbeat.mp3",
-          volume: 0.18,
-          loop: false,
+          volume: 0.6,
+          loop: true,
           position: { x: 0, y: 0, z: -1 },
-          label: "creature heartbeat burst - it lives",
+          label: "creature heartbeat - it lives",
         },
 
         // 8.5s: First breath - the creature is alive
@@ -314,10 +314,10 @@ const FRANKENSTEIN_AUDIO = {
         {
           time: 10000,
           action: "fadeGain",
-          target: "creature heartbeat burst - it lives",
-          toVolume: 0.001,
-          duration: 1.2,
-          label: "heartbeat burst fades",
+          target: "creature heartbeat - it lives",
+          toVolume: 0.8,
+          duration: 2,
+          label: "heartbeat intensifies",
         },
 
         // 12-15s: Victor stumbles backward in horror

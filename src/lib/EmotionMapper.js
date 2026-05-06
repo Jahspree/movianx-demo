@@ -1,41 +1,39 @@
 export function mapEmotionToStyle(emotion) {
-  const cleanStyle = {
-    pacing: "normal",
-    transform: t => String(t || "").replace(/\s+/g, " ").trim(),
-    prefix: "",
-  };
-
   switch (emotion) {
     case "fear":
       return {
         pacing: "slow",
-        transform: cleanStyle.transform,
-        prefix: "",
+        transform: t => t.toLowerCase().replace(/\./g, "..."),
+        prefix: "(breathing) ",
       };
 
     case "sadness":
       return {
         pacing: "slow",
-        transform: cleanStyle.transform,
-        prefix: "",
+        transform: t => t.replace(/\./g, "..."),
+        prefix: "(softly) ",
       };
 
     case "anger":
       return {
         pacing: "fast",
-        transform: cleanStyle.transform,
+        transform: t => t.toUpperCase(),
         prefix: "",
       };
 
     case "joy":
       return {
         pacing: "normal",
-        transform: cleanStyle.transform,
+        transform: t => t,
         prefix: "",
       };
 
     default:
-      return cleanStyle;
+      return {
+        pacing: "normal",
+        transform: t => t,
+        prefix: "",
+      };
   }
 }
 
@@ -65,3 +63,4 @@ export function inferEmotionFromScene(scene = {}) {
   if (mood.includes("joy") || mood.includes("warm") || mood.includes("tender")) return "joy";
   return "neutral";
 }
+
