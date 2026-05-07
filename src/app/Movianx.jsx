@@ -710,6 +710,7 @@ export default function MovianxPlatform(){
   const navLockRef=useRef(false); // P0: prevents double navigation
   const telemetryRef=useRef([]); // P3: event logging
   const narrationDurationCacheRef=useRef(new Map());
+  const narrationRequestRef=useRef(0);
   const runtimeRef=useRef(null);
 
   if(!runtimeRef.current){
@@ -808,6 +809,50 @@ export default function MovianxPlatform(){
     });
   },[]);
 
+  const preloadNarrationAsset=useCallback(async(url,context={})=>{
+    const details={url,storyId:context.storyId,chapIdx:context.chapIdx,currentMode:context.currentMode};
+    if(!url)return {ok:false,reason:"missing_url"};
+    if(typeof window==="undefined")return {ok:true,reason:"server_skip"};
+
+    const preloadOnce=attempt=>new Promise((resolve,reject)=>{
+      let settled=false;
+      const finish=(ok,payload={})=>{
+        if(settled)return;
+        settled=true;
+        clearTimeout(timeout);
+        try{audio.pause();audio.src=""}catch(e){}
+        ok?resolve(payload):reject(payload);
+      };
+      const audio=new Audio(url);
+      audio.preload="auto";
+      audio.crossOrigin="anonymous";
+      audio.playsInline=true;
+      const timeout=setTimeout(()=>finish(false,{reason:"preload_timeout",attempt}),4500);
+      audio.addEventListener("canplaythrough",()=>finish(true,{attempt,duration:Number.isFinite(audio.duration)?audio.duration:null}),{once:true});
+      audio.addEventListener("loadedmetadata",()=>finish(true,{attempt,duration:Number.isFinite(audio.duration)?audio.duration:null}),{once:true});
+      audio.addEventListener("error",()=>finish(false,{reason:"audio_error",attempt}),{once:true});
+      try{audio.load()}catch(error){finish(false,{reason:error?.message||String(error),attempt})}
+    });
+
+    for(let attempt=1;attempt<=2;attempt++){
+      try{
+        if(window.fetch){
+          const response=await fetch(url,{method:"HEAD",cache:"no-store"});
+          if(!response.ok)throw new Error(`HEAD ${response.status}`);
+          console.log("narration_asset_found",{...details,status:response.status,attempt});
+        }
+        const loaded=await preloadOnce(attempt);
+        console.log("narration_preloaded",{...details,attempt,duration:loaded.duration});
+        return {ok:true,...loaded};
+      }catch(error){
+        const reason=error?.reason||error?.message||String(error);
+        console.log("narration_failed",{...details,attempt,reason});
+        if(attempt<2)await new Promise(resolve=>setTimeout(resolve,300));
+      }
+    }
+    return {ok:false,reason:"preload_failed_after_retry"};
+  },[]);
+
   const toPosition=(value,fallback={x:0,y:0,z:0})=>{
     if(Array.isArray(value))return {x:value[0]||0,y:value[1]||0,z:value[2]||0};
     return value||fallback;
@@ -870,6 +915,18 @@ export default function MovianxPlatform(){
     const chData=chaps[chapIdx]||{};
     const storyMeta=getStoryMeta(storyId)||{};
     const chManifest=manifest?.chapters?.[chapIdx]||{};
+    const timedStory=isTimedExperience(storyId);
+    const useCompanion=shouldUseCompanionScript(storyId,currentMode);
+    const narrationUrl=useCompanion
+      ?assetResolver.getCompanionNarrationFromManifest(manifest,chapIdx)
+      :assetResolver.getNarrationFromManifest(manifest,chapIdx);
+    const fallbackText=useCompanion&&manifest?.companionScript?.[chapIdx]?.text
+      ||chData.text
+      ||"";
+    const narrationToken=++narrationRequestRef.current;
+    const narrationPreload=narrationUrl
+      ?preloadNarrationAsset(narrationUrl,{storyId,chapIdx,currentMode})
+      :Promise.resolve({ok:false,reason:"missing_url"});
     const audioSceneProfile=getAudioSceneProfile(storyId,chapIdx,chData,storyMeta);
     if(typeof window!=="undefined"){
       window.audioSceneProfile=audioSceneProfile;
@@ -880,10 +937,11 @@ export default function MovianxPlatform(){
       environment: audioSceneProfile.location,
       pacing: audioSceneProfile.pace,
     };
+    const pageAudioProfile=timedStory?chManifest.audioProfile||null:null;
     const audioPlan=buildAdaptiveAudioPlan(audioSceneProfile,chManifest);
     const intensityLevel=audioPlan.intensityLevel ?? getIntensityLevel(audioSceneProfile);
     const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:audioPlan.tension;
-    setNarrationStatus("ready");
+    setNarrationStatus(narrationUrl?"loading":"ready");
     console.log("EMOTION:",audioSceneProfile.emotionLabel||audioSceneProfile.characterEmotion||audioSceneProfile.mood);
     console.log("SCENE PROFILE:",audioSceneProfile);
     console.log("INTENSITY LEVEL:",intensityLevel);
@@ -899,48 +957,56 @@ export default function MovianxPlatform(){
       control: 0,
     });
 
-    // 1. Start ambient sounds
-    const ambientLayers=(audioPlan.ambience&&audioPlan.ambience.length?audioPlan.ambience:getAutoAmbient(sceneAnalysis));
+    // 1. Start priority music immediately. For timed immersive pages this is
+    // explicit per page so fear begins on page 1, not after a late event.
+    const musicBed=pageAudioProfile?.musicLayer||audioPlan.musicBed;
+    if(musicBed){
+      const m=musicBed;
+      if(m.type==="procedural"){
+        audioEngine.playProcedural(m.sound,{volume:m.volume,frequency:m.frequency,waveform:m.waveform,label:m.label,fadeIn:m.fadeIn||0,role:"music"});
+      }else if(m.file){
+        audioEngine.playEvolvingAmbient(assetResolver.resolveFile(m.file),{
+          volume:m.volume||0.1,
+          fadeIn:m.fadeIn||1,
+          label:m.label||"chapter_music",
+          role:"music",
+          layers:m.layers||1,
+        });
+      }
+    }
+
+    // 2. Start supporting ambience after music. Hum/buzz layers are capped so
+    // they cannot become the primary experience.
+    const ambientLayers=pageAudioProfile?.ambienceLayer
+      ||(audioPlan.ambience&&audioPlan.ambience.length?audioPlan.ambience:getAutoAmbient(sceneAnalysis));
     if(ambientLayers){
       ambientLayers.forEach(amb=>{
+        const isBuzz=String(amb.file||amb.sound||amb.label||"").toLowerCase().includes("hum")||amb.sound==="room_tone";
+        const volume=isBuzz?Math.min(amb.volume??0.01,0.018):amb.volume;
         if(amb.type==="procedural"){
-          audioEngine.playProcedural(amb.sound,{volume:amb.volume,frequency:amb.frequency,waveform:amb.waveform,label:amb.label,fadeIn:amb.fadeIn||0,role:"ambient"});
+          audioEngine.playProcedural(amb.sound,{volume,frequency:amb.frequency,waveform:amb.waveform,label:amb.label,fadeIn:amb.fadeIn||0,role:"ambient"});
         }else if(amb.file){
           audioEngine.playEvolvingAmbient(assetResolver.resolveFile(amb.file),{
-            volume:amb.volume,
+            volume,
             fadeIn:amb.fadeIn||0,
             label:amb.label||"scene ambience",
             role:"ambient",
-            layers:amb.layers||3,
+            layers:amb.layers||2,
           });
         }
       });
     }
 
-    // 1b. Start music layer (loops underneath everything)
-    if(audioPlan.musicBed){
-      const m=audioPlan.musicBed;
-      if(m.type==="procedural"){
-        audioEngine.playProcedural(m.sound,{volume:m.volume,frequency:m.frequency,waveform:m.waveform,label:m.label,fadeIn:m.fadeIn||0,role:"music"});
-      }else if(m.file){
-      audioEngine.playEvolvingAmbient(assetResolver.resolveFile(m.file),{
-        volume:m.volume||0.1,
-        fadeIn:m.fadeIn||3,
-        label:m.label||"chapter_music",
-        role:"music",
-        layers:2,
-      });
-      }
-    }
-
-    if(intensityLevel>=2){
+    if(!timedStory&&intensityLevel>=2){
       audioEngine.playSpatial(assetResolver.getAudio("heartbeat"),0.05+(intensityLevel*0.045),{x:0,y:0,z:0},true,1.2,"intensity heartbeat","tension");
     }
-    if(intensityLevel>=3){
+    if(!timedStory&&intensityLevel>=3){
       audioEngine.playSpatial(assetResolver.getAudio("breathing_raspy"),0.12,{x:0.18,y:0,z:-0.18},true,0.4,"panic breath close right","event");
     }
 
-    const environmentEvents=[...(audioPlan.spatialEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
+    const environmentEvents=pageAudioProfile
+      ?[...(pageAudioProfile.spatialEvents||[]),...(chManifest.environmentEvents||[])]
+      :[...(audioPlan.spatialEvents||[]),...getAutoEnvironmentEvents(sceneAnalysis)];
     const scheduleExperienceEvent=(fn,baseDelay=0,pressure=0)=>{
       const state=audioEngine.getExperienceState?.()||{};
       const uncertainty=state.uncertainty??sceneAnalysis.tension??0;
@@ -1030,30 +1096,28 @@ export default function MovianxPlatform(){
       });
     }
 
-    // 4. Start narration
-    const useCompanion=shouldUseCompanionScript(storyId,currentMode);
-    const narrationUrl=useCompanion
-      ?assetResolver.getCompanionNarrationFromManifest(manifest,chapIdx)
-      :assetResolver.getNarrationFromManifest(manifest,chapIdx);
-    const fallbackText=useCompanion&&manifest?.companionScript?.[chapIdx]?.text
-      ||chData.text
-      ||"";
-
-    // Try to load audio file; if missing, keep story flow alive and report the asset.
+    // 4. Start narration after verified preload. Preload begins before any
+    // scene layers above, then retries once if the browser rejects the asset.
     if(narrationUrl){
       const narrationVolume=isTimedExperience(storyId)?1.4:1.0; // timed companion narration is intentionally close and dominant
-      const narrationPlayback=runtimeRef.current?.playbackManager?.playNarration({
-        url:narrationUrl,
-        volume:narrationVolume,
-        sceneKey:`${storyId}:${chapIdx}:${currentMode}`,
-        timeoutMs:4500,
-        onStatus:setNarrationStatus,
-        play:(url,volume)=>audioEngine.playNarration(url,volume),
-      });
-      narrationPlayback?.then(result=>{
-        if(!result?.ok)console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode,error:result?.error||result?.status});
+      narrationPreload.then(result=>{
+        if(narrationRequestRef.current!==narrationToken)return;
+        if(!result?.ok){
+          setNarrationStatus("unavailable");
+          console.log("narration_failed",{url:narrationUrl,storyId,chapIdx,currentMode,reason:result?.reason||"preload_failed"});
+          console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode,error:result?.reason||result?.status});
+          return;
+        }
+        const started=audioEngine.playNarration(narrationUrl,narrationVolume);
+        if(started){
+          setNarrationStatus("playing");
+        }else{
+          setNarrationStatus("unavailable");
+          console.log("narration_failed",{url:narrationUrl,storyId,chapIdx,currentMode,reason:"engine_rejected_play"});
+        }
       }).catch(error=>{
         setNarrationStatus("unavailable");
+        console.log("narration_failed",{url:narrationUrl,storyId,chapIdx,currentMode,reason:error?.message||String(error)});
         console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode,error:error?.message||String(error)});
       });
     }else if(fallbackText&&currentMode!=="Reader"){

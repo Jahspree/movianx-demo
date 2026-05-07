@@ -87,6 +87,16 @@ const TIMED_HORROR_AUDIO = {
       emotion: "terrified",
       sceneAnalysis: { mood: "horror", tension: 0.72, environment: "indoor" },
       tension: 0.72,
+      audioProfile: {
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.045, frequency: 38, waveform: "triangle", fadeIn: 0.8, label: "page1_low_tension_drone" },
+        ambienceLayer: [
+          { type: "procedural", sound: "room_tone", volume: 0.012, frequency: 44, waveform: "sine", fadeIn: 0.4, label: "page1_room_air" },
+          { file: "/audio/sfx/electrical_hum.mp3", volume: 0.01, fadeIn: 1.2, label: "page1_distant_house_hum", layers: 1 },
+        ],
+        spatialEvents: [
+          { sound: "/audio/sfx/floor_creak.mp3", startPosition: [-0.8, -0.2, -2.2], endPosition: [-0.3, -0.2, -1.4], movement: "approaching", duration: 1200, delay: 650, volume: 0.08, triggerTension: 0.08, label: "page1_first_distant_creak" },
+        ],
+      },
 
       // ONE low drone underneath. Cinematic pulse. Clearly present but narrator dominant.
       ambient: [
@@ -94,7 +104,7 @@ const TIMED_HORROR_AUDIO = {
       ],
       environmentEvents: [
         { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -1, -6], endPosition: [0, -0.4, -1.2], movement: "approaching", duration: 5200, delay: 11500, volume: 0.18, triggerTension: 0.22, unsourced: true, voiceReaction: "Don't move. Don't even breathe.", label: "intruder footsteps approaching from downstairs" },
-        { sound: "/audio/sfx/breathing_raspy.mp3", startPosition: [0.18, 0, -0.12], movement: "fixed", duration: 4000, delay: 22000, volume: 0.09, loop: true, triggerTension: 0.1, label: "Sarah whisper breath in right ear" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", startPosition: [0.18, 0, -0.12], movement: "fixed", duration: 1400, delay: 22000, volume: 0.06, loop: false, triggerTension: 0.1, label: "Sarah single breath in right ear" },
       ],
 
       timedSequence: [
@@ -184,6 +194,16 @@ const TIMED_HORROR_AUDIO = {
       emotion: "panicked",
       sceneAnalysis: { mood: "horror", tension: 0.84, environment: "indoor" },
       tension: 0.84,
+      audioProfile: {
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.055, frequency: 34, waveform: "triangle", fadeIn: 0.7, label: "page2_tension_drone" },
+        ambienceLayer: [
+          { type: "procedural", sound: "room_tone", volume: 0.01, frequency: 42, waveform: "sine", fadeIn: 0.6, label: "page2_hall_air" },
+          { file: "/audio/sfx/electrical_hum.mp3", volume: 0.008, fadeIn: 1.2, label: "page2_thin_hall_hum", layers: 1 },
+        ],
+        spatialEvents: [
+          { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -2, -6], endPosition: [0, -0.5, -2.5], movement: "approaching", duration: 2600, delay: 900, volume: 0.14, triggerTension: 0.12, label: "page2_stairs_begin" },
+        ],
+      },
 
       ambient: [
         { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
@@ -295,13 +315,23 @@ const TIMED_HORROR_AUDIO = {
       emotion: "terrified",
       sceneAnalysis: { mood: "horror", tension: 0.96, environment: "indoor" },
       tension: 0.96,
+      audioProfile: {
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.068, frequency: 30, waveform: "sawtooth", fadeIn: 0.5, label: "page3_danger_drone" },
+        ambienceLayer: [
+          { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 38, waveform: "sine", fadeIn: 0.5, label: "page3_room_pressure" },
+        ],
+        spatialEvents: [
+          { sound: "/audio/sfx/door_creak.mp3", startPosition: [0.2, 0, -1.2], movement: "fixed", duration: 1100, delay: 700, volume: 0.18, triggerTension: 0.14, label: "page3_handle_pressure" },
+          { sound: "/audio/sfx/heartbeat.mp3", startPosition: [0, 0, 0], movement: "fixed", duration: 1800, delay: 1600, volume: 0.08, loop: false, triggerTension: 0.1, label: "page3_heartbeat_burst" },
+        ],
+      },
 
       ambient: [
         { type: "procedural", sound: "room_tone", volume: 0.006, frequency: 38, waveform: "sine", fadeIn: 1, label: "timed_ch2_room_tone" },
       ],
       environmentEvents: [
         { sound: "/audio/sfx/door_creak.mp3", position: [0, 0, -0.7], movement: "fixed", duration: 1200, delay: 2600, volume: 0.55, label: "door handle directly ahead" },
-        { sound: "/audio/sfx/breathing_raspy.mp3", position: [1.2, 0, -0.25], movement: "fixed", duration: 6000, delay: 6200, volume: 0.13, loop: true, label: "Sarah breath breaking in right ear" },
+        { sound: "/audio/sfx/breathing_raspy.mp3", position: [1.2, 0, -0.25], movement: "fixed", duration: 1600, delay: 6200, volume: 0.08, loop: false, label: "Sarah breath breaking in right ear" },
       ],
 
       timedSequence: [
@@ -369,6 +399,15 @@ const TIMED_HORROR_AUDIO = {
       emotion: "devastated",
       sceneAnalysis: { mood: "dark", tension: 0.35, environment: "indoor" },
       tension: 0.35,
+      audioProfile: {
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.032, frequency: 48, waveform: "sine", fadeIn: 1.2, label: "page4_aftermath_low_drone" },
+        ambienceLayer: [
+          { type: "procedural", sound: "room_tone", volume: 0.006, frequency: 50, waveform: "sine", fadeIn: 1.2, label: "page4_aftermath_air" },
+        ],
+        spatialEvents: [
+          { sound: "/audio/sfx/heartbeat.mp3", startPosition: [0, 0, 0], movement: "fixed", duration: 2200, delay: 400, volume: 0.1, loop: false, label: "page4_heart_fading_burst" },
+        ],
+      },
 
       ambient: [],
       environmentEvents: [
