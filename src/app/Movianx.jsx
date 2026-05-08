@@ -711,6 +711,7 @@ export default function MovianxPlatform(){
   const telemetryRef=useRef([]); // P3: event logging
   const narrationDurationCacheRef=useRef(new Map());
   const narrationRequestRef=useRef(0);
+  const navFailsafeRef=useRef(null);
   const runtimeRef=useRef(null);
 
   if(!runtimeRef.current){
@@ -733,11 +734,15 @@ export default function MovianxPlatform(){
   };
 
   // === AUDIO ENGINE INTEGRATION ===
-  const stopAllAudio=useCallback(()=>{
-    runtimeRef.current?.playbackManager?.stopScene?.();
-    if(audioEngine)audioEngine.stopAll();
+  const stopAllAudio=useCallback((reason="cleanup")=>{
+    console.log("cleanup_started",{reason});
+    narrationRequestRef.current++;
+    try{runtimeRef.current?.stopScene?.()?.catch?.(error=>console.error("cleanup_plugin_error",{reason,error:error?.message||String(error)}))}catch(error){console.error("cleanup_plugin_error",{reason,error:error?.message||String(error)})}
+    try{runtimeRef.current?.playbackManager?.stopScene?.()}catch(error){console.error("cleanup_playback_error",{reason,error:error?.message||String(error)})}
+    try{audioEngine?.stopAll?.(reason)}catch(error){console.error("cleanup_audio_error",{reason,error:error?.message||String(error)})}
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
     setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
+    console.log("cleanup_completed",{reason});
   },[]);
 
   // Get manifest for current story
@@ -1194,9 +1199,16 @@ export default function MovianxPlatform(){
 
   // === NAVIGATION CONTROLLER ===
   const navigateTo=(newPg)=>{
-    if(navLockRef.current)return;
+    console.log("navigation_requested",{from:pg,to:newPg,kind:"view",locked:navLockRef.current});
+    if(navFailsafeRef.current)clearTimeout(navFailsafeRef.current);
     navLockRef.current=true;
-    stopAllAudio();
+    navFailsafeRef.current=setTimeout(()=>{
+      console.log("navigation_completed",{from:pg,to:newPg,kind:"view",forced:true});
+      setViewTransitionState("idle");
+      navLockRef.current=false;
+    },500);
+    console.log("navigation_started",{from:pg,to:newPg,kind:"view"});
+    stopAllAudio("view_navigation");
     runtimeRef.current?.navigate({from:pg,to:newPg,kind:"view"});
     logEvent("navigate",{from:pg,to:newPg});
     setViewTransitionState("exiting");
@@ -1209,21 +1221,33 @@ export default function MovianxPlatform(){
           window.requestAnimationFrame(()=>{
             setTimeout(()=>{
               setViewTransitionState("idle");
+              if(navFailsafeRef.current){clearTimeout(navFailsafeRef.current);navFailsafeRef.current=null}
               navLockRef.current=false;
+              console.log("navigation_completed",{from:pg,to:newPg,kind:"view",forced:false});
             },VIEW_ENTER_BUFFER_MS);
           });
         });
         return;
       }
       setViewTransitionState("idle");
+      if(navFailsafeRef.current){clearTimeout(navFailsafeRef.current);navFailsafeRef.current=null}
       navLockRef.current=false;
+      console.log("navigation_completed",{from:pg,to:newPg,kind:"view",forced:false});
     },VIEW_TRANSITION_MS);
   };
 
   const goChapter=(idx)=>{
-    if(navLockRef.current||idx<0||idx>=chaps.length)return;
+    console.log("navigation_requested",{from:chIdx,to:idx,kind:"chapter",locked:navLockRef.current});
+    if(idx<0||idx>=chaps.length)return;
+    if(navFailsafeRef.current)clearTimeout(navFailsafeRef.current);
     navLockRef.current=true;
-    stopAllAudio();
+    navFailsafeRef.current=setTimeout(()=>{
+      console.log("navigation_completed",{from:chIdx,to:idx,kind:"chapter",forced:true});
+      setPageAnim("");
+      navLockRef.current=false;
+    },500);
+    console.log("navigation_started",{from:chIdx,to:idx,kind:"chapter"});
+    stopAllAudio("chapter_navigation");
     runtimeRef.current?.navigate({from:chIdx,to:idx,kind:"chapter"});
     logEvent("page_view",{chapter:idx,title:chaps[idx]?.title});
     setPageAnim("out");
@@ -1231,7 +1255,12 @@ export default function MovianxPlatform(){
       setChIdx(idx);setShowChoice(false);setTimerActive(false);setTimeRemaining(null);
       setPageAnim("in");
       if(typeof window!=="undefined")window.scrollTo(0,0);
-      setTimeout(()=>{setPageAnim("");navLockRef.current=false},400);
+      setTimeout(()=>{
+        setPageAnim("");
+        if(navFailsafeRef.current){clearTimeout(navFailsafeRef.current);navFailsafeRef.current=null}
+        navLockRef.current=false;
+        console.log("navigation_completed",{from:chIdx,to:idx,kind:"chapter",forced:false});
+      },400);
     },300);
   };
 

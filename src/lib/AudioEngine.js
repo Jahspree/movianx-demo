@@ -325,7 +325,10 @@ class AudioEngine {
     audio.loop = false;
 
     const isWhisperAsset = /\/timed\//.test(url);
-    const deliveryVolume = isWhisperAsset ? Math.min(volume * 0.58, 0.82) : volume;
+    const deliveryVolume = isWhisperAsset ? Math.min(volume * 0.56, 0.78) : volume;
+    audio.playbackRate = isWhisperAsset
+      ? 0.985 + Math.random() * 0.018
+      : 0.995 + Math.random() * 0.01;
     this.narrationManager = {
       currentAudio: audio,
       currentUrl: url,
@@ -362,43 +365,77 @@ class AudioEngine {
       const source = ctx.createMediaElementSource(audio);
       const filter = ctx.createBiquadFilter();
       filter.type = "lowpass";
-      filter.frequency.setValueAtTime(isWhisperAsset ? 7200 : 12000, ctx.currentTime);
-      filter.Q.setValueAtTime(0.18, ctx.currentTime);
+      filter.frequency.setValueAtTime(isWhisperAsset ? 6600 : 12000, ctx.currentTime);
+      filter.Q.setValueAtTime(0.2, ctx.currentTime);
+      const proximity = ctx.createBiquadFilter();
+      proximity.type = "lowshelf";
+      proximity.frequency.setValueAtTime(220, ctx.currentTime);
+      proximity.gain.setValueAtTime(isWhisperAsset ? 2.2 : 0.4, ctx.currentTime);
+      const presence = ctx.createBiquadFilter();
+      presence.type = "peaking";
+      presence.frequency.setValueAtTime(isWhisperAsset ? 1800 : 2400, ctx.currentTime);
+      presence.Q.setValueAtTime(0.75, ctx.currentTime);
+      presence.gain.setValueAtTime(isWhisperAsset ? 0.9 : 0.2, ctx.currentTime);
+      const compressor = ctx.createDynamicsCompressor();
+      compressor.threshold.setValueAtTime(isWhisperAsset ? -28 : -24, ctx.currentTime);
+      compressor.knee.setValueAtTime(22, ctx.currentTime);
+      compressor.ratio.setValueAtTime(isWhisperAsset ? 2.4 : 1.8, ctx.currentTime);
+      compressor.attack.setValueAtTime(0.012, ctx.currentTime);
+      compressor.release.setValueAtTime(0.18, ctx.currentTime);
       const gain = ctx.createGain();
       gain.gain.setValueAtTime(deliveryVolume, ctx.currentTime);
+      const humanize = ctx.createOscillator();
+      const humanizeDepth = ctx.createGain();
+      humanize.frequency.setValueAtTime(0.18 + Math.random() * 0.08, ctx.currentTime);
+      humanizeDepth.gain.setValueAtTime(deliveryVolume * 0.012, ctx.currentTime);
+      humanize.connect(humanizeDepth);
+      humanizeDepth.connect(gain.gain);
+      humanize.start();
       source.connect(filter);
-      filter.connect(gain);
+      filter.connect(proximity);
+      proximity.connect(presence);
+      presence.connect(compressor);
+      compressor.connect(gain);
       if (isWhisperAsset) {
         const wetGain = ctx.createGain();
-        wetGain.gain.setValueAtTime(0.045, ctx.currentTime);
+        wetGain.gain.setValueAtTime(0.038, ctx.currentTime);
         const reverb = ctx.createConvolver();
-        reverb.buffer = this.createCloseRoomImpulse(0.18, 0.32);
-        filter.connect(reverb);
+        reverb.buffer = this.createCloseRoomImpulse(0.14, 0.38);
+        compressor.connect(reverb);
         reverb.connect(wetGain);
         wetGain.connect(this.getLayerDestination("narration"));
         this.activeNodes.push(reverb, wetGain);
         this.narrationManager.nodes.push(reverb, wetGain);
       }
       gain.connect(this.getLayerDestination("narration"));
-      this.activeNodes.push(source, filter, gain);
+      this.activeNodes.push(source, filter, proximity, presence, compressor, gain, humanize, humanizeDepth);
       this.registerLayerGain(gain, "narration");
       this.narrationManager.gainNode = gain;
-      this.narrationManager.nodes.push(source, filter, gain);
+      this.narrationManager.nodes.push(source, filter, proximity, presence, compressor, gain, humanize, humanizeDepth);
     } catch (e) {
       audio.volume = Math.min(deliveryVolume, 1.0);
     }
 
     audio.load();
-    audio.play()
-      .then(() => console.log("narration_started", { url, volume: deliveryVolume }))
-      .catch(error => {
-        this.narrationManager.completed = true;
-        console.log("narration_interrupted", {
-          interruption_reason: "play_rejected",
-          url,
-          error: error?.message || String(error),
+    const startDelayMs = isWhisperAsset ? Math.round(12 + Math.random() * 28) : 0;
+    const startPlayback = () => {
+      audio.play()
+        .then(() => console.log("narration_started", { url, volume: deliveryVolume, startDelayMs }))
+        .catch(error => {
+          this.narrationManager.completed = true;
+          console.log("narration_interrupted", {
+            interruption_reason: "play_rejected",
+            url,
+            error: error?.message || String(error),
+          });
         });
-      });
+    };
+    if (startDelayMs) {
+      const tid = setTimeout(startPlayback, startDelayMs);
+      this.activeTimers.push(tid);
+    } else {
+      startPlayback();
+    }
     return audio;
   }
 
