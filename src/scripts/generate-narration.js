@@ -11,12 +11,19 @@ const https = require("https");
 const API_KEY = process.env.ELEVEN_LABS_API_KEY;
 const TTS_MODEL_ID = process.env.ELEVEN_MODEL_ID || "eleven_turbo_v2";
 const RACHEL_VOICE_ID = "21m00Tcm4TlvDq8ikWAM";
-const WHISPER_SETTINGS = {
-  stability: 0.38,
-  similarity_boost: 0.88,
-  style: 0.55,
-  use_speaker_boost: true,
-};
+const NarrationProfile_10Seconds_FemaleFear = Object.freeze({
+  name: "NarrationProfile_10Seconds_FemaleFear",
+  voice_id: process.env.TIMED_VOICE_ID || RACHEL_VOICE_ID,
+  model_id: TTS_MODEL_ID,
+  voice_settings: Object.freeze({
+    stability: 0.38,
+    similarity_boost: 0.88,
+    style: 0.55,
+    use_speaker_boost: true,
+  }),
+  processing_chain: "ElevenLabs MP3 render; runtime narration FX only",
+});
+const WHISPER_SETTINGS = NarrationProfile_10Seconds_FemaleFear.voice_settings;
 if (!API_KEY) {
   console.error("ERROR: Set ELEVEN_LABS_API_KEY environment variable");
   process.exit(1);
@@ -51,7 +58,7 @@ const TIMED_STANDARD_SETTINGS = [
   WHISPER_SETTINGS,
   WHISPER_SETTINGS,
   WHISPER_SETTINGS,
-  { stability: 0.44, similarity_boost: 0.88, style: 0.42, use_speaker_boost: true },
+  WHISPER_SETTINGS,
 ];
 
 // --- 10 Seconds companion narration ---
@@ -72,7 +79,7 @@ const TIMED_COMPANION_SETTINGS = [
   WHISPER_SETTINGS,
   WHISPER_SETTINGS,
   WHISPER_SETTINGS,
-  { stability: 0.44, similarity_boost: 0.88, style: 0.42, use_speaker_boost: true },
+  WHISPER_SETTINGS,
 ];
 
 const FRANK_DIRECTIONS = [
@@ -237,9 +244,10 @@ async function main() {
   }
 
   // --- 10 SECONDS: Standard (per-chapter emotional settings) ---
-  console.log("\n3. Using Rachel voice for 10 Seconds whisper realism...");
-  let timedVoiceId = process.env.TIMED_VOICE_ID || RACHEL_VOICE_ID;
+  console.log(`\n3. Using ${NarrationProfile_10Seconds_FemaleFear.name} for 10 Seconds whisper realism...`);
+  let timedVoiceId = NarrationProfile_10Seconds_FemaleFear.voice_id;
   console.log(`   Voice: ${timedVoiceId}`);
+  console.log(`   Settings: ${JSON.stringify(NarrationProfile_10Seconds_FemaleFear.voice_settings)}`);
 
   console.log(`\n4. Generating ${TIMED_CHAPTERS.length} standard 10 Seconds chapters (per-chapter emotion)...\n`);
   for (let i = 0; i < TIMED_CHAPTERS.length; i++) {

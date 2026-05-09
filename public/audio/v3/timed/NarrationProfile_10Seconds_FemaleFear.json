@@ -1,0 +1,24 @@
+{
+  "name": "NarrationProfile_10Seconds_FemaleFear",
+  "voice_id": "21m00Tcm4TlvDq8ikWAM",
+  "voice_name": "Rachel",
+  "model_id": "eleven_turbo_v2",
+  "voice_settings": {
+    "stability": 0.38,
+    "similarity_boost": 0.88,
+    "style": 0.55,
+    "use_speaker_boost": true
+  },
+  "processing_chain": "ElevenLabs MP3 render; runtime narration FX only",
+  "scope": "10 Seconds standard and companion narration assets only",
+  "files": [
+    "ch0.mp3",
+    "ch1.mp3",
+    "ch2.mp3",
+    "ch3.mp3",
+    "ch0_companion.mp3",
+    "ch1_companion.mp3",
+    "ch2_companion.mp3",
+    "ch3_companion.mp3"
+  ]
+}
