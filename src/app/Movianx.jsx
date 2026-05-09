@@ -906,7 +906,7 @@ export default function MovianxPlatform(){
       const reactionDelay=Math.max(250,Math.min(event.duration||1200,1800));
       audioEngine.addTimeout(()=>console.log("CHARACTER REACTION:",event.voiceReaction,event.voiceEmotion||"whispering"),reactionDelay);
     }
-    if(event.silenceAfter||Math.random()<0.18){
+    if(!event.protectNarration&&(event.silenceAfter||Math.random()<0.18)){
       const after=(event.duration||1000)+(350+Math.random()*900);
       const duration=event.silenceAfter?.duration||Math.round(500+Math.random()*1200);
       audioEngine.addTimeout(()=>audioEngine.silence(duration),after);
@@ -1023,7 +1023,7 @@ export default function MovianxPlatform(){
       },Math.max(0,baseDelay+jitter));
     };
 
-    const scheduler=new SpatialEventScheduler(audioEngine,playEnvironmentEvent,{uncertainty:audioSceneProfile.emotionalIntensity});
+    const scheduler=new SpatialEventScheduler(audioEngine,playEnvironmentEvent,{uncertainty:audioSceneProfile.emotionalIntensity,protectNarration:isTimedExperience(storyId)});
     environmentEvents.forEach(event=>{
       const pressure=event.triggerTension||sceneAnalysis.tension*0.12;
       scheduler.schedule(event,event.delay||event.time||0,pressure);
