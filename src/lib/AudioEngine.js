@@ -325,7 +325,7 @@ class AudioEngine {
     audio.loop = false;
 
     const isWhisperAsset = /\/timed\//.test(url);
-    const deliveryVolume = isWhisperAsset ? Math.min(volume * 0.6, 0.84) : volume;
+    const deliveryVolume = isWhisperAsset ? Math.min(volume * 0.56, 0.78) : volume;
     audio.playbackRate = isWhisperAsset
       ? 0.985 + Math.random() * 0.018
       : 0.995 + Math.random() * 0.01;
@@ -387,7 +387,7 @@ class AudioEngine {
       const humanize = ctx.createOscillator();
       const humanizeDepth = ctx.createGain();
       humanize.frequency.setValueAtTime(0.18 + Math.random() * 0.08, ctx.currentTime);
-      humanizeDepth.gain.setValueAtTime(deliveryVolume * 0.009, ctx.currentTime);
+      humanizeDepth.gain.setValueAtTime(deliveryVolume * 0.012, ctx.currentTime);
       humanize.connect(humanizeDepth);
       humanizeDepth.connect(gain.gain);
       humanize.start();
@@ -398,7 +398,7 @@ class AudioEngine {
       compressor.connect(gain);
       if (isWhisperAsset) {
         const wetGain = ctx.createGain();
-        wetGain.gain.setValueAtTime(0.032, ctx.currentTime);
+        wetGain.gain.setValueAtTime(0.038, ctx.currentTime);
         const reverb = ctx.createConvolver();
         reverb.buffer = this.createCloseRoomImpulse(0.14, 0.38);
         compressor.connect(reverb);
@@ -417,7 +417,7 @@ class AudioEngine {
     }
 
     audio.load();
-    const startDelayMs = isWhisperAsset ? Math.round(8 + Math.random() * 24) : 0;
+    const startDelayMs = isWhisperAsset ? Math.round(12 + Math.random() * 28) : 0;
     const startPlayback = () => {
       audio.play()
         .then(() => console.log("narration_started", { url, volume: deliveryVolume, startDelayMs }))
@@ -516,7 +516,7 @@ class AudioEngine {
       ],
     } = options;
     if (!this.ctx || !url) return [];
-    const count = Math.max(1, Math.min(3, layers));
+    const count = Math.max(2, Math.min(3, layers));
     const created = [];
     for (let i = 0; i < count; i++) {
       const spatial = new SpatialSound(this, url, {

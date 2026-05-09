@@ -841,16 +841,12 @@ export default function MovianxPlatform(){
 
     for(let attempt=1;attempt<=2;attempt++){
       try{
-        const headCheck=window.fetch
-          ?fetch(url,{method:"HEAD",cache:"no-store"})
-            .then(response=>{
-              if(!response.ok)throw new Error(`HEAD ${response.status}`);
-              console.log("narration_asset_found",{...details,status:response.status,attempt});
-              return true;
-            })
-          :Promise.resolve(true);
+        if(window.fetch){
+          const response=await fetch(url,{method:"HEAD",cache:"no-store"});
+          if(!response.ok)throw new Error(`HEAD ${response.status}`);
+          console.log("narration_asset_found",{...details,status:response.status,attempt});
+        }
         const loaded=await preloadOnce(attempt);
-        headCheck.catch(error=>console.log("narration_failed",{...details,attempt,reason:error?.message||String(error),phase:"head_check"}));
         console.log("narration_preloaded",{...details,attempt,duration:loaded.duration});
         return {ok:true,...loaded};
       }catch(error){
