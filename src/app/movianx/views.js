@@ -23,7 +23,7 @@ function openCreatorDashboard() {
 
 export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
   return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 25%, #f5f3f0 50%, #f0eff5 75%, #f8f9fa 100%)",backgroundSize:"300% 300%",animation:"gradientShift 15s ease infinite",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",...getViewTransition(transitionState)}}>
+    <div style={{height:"100vh",overflowY:"auto",background:"linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 25%, #f5f3f0 50%, #f0eff5 75%, #f8f9fa 100%)",backgroundSize:"300% 300%",animation:"gradientShift 15s ease infinite",display:"flex",flexDirection:"column",alignItems:"center",padding:20,fontFamily:FF,position:"relative",...getViewTransition(transitionState)}}>
       <div style={{position:"absolute",top:0,left:0,right:0,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"24px 5%",zIndex:10,animation:"fadeDown 0.6s ease both"}}>
         
         <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
@@ -32,15 +32,28 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
           <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
         </div>
       </div>
-      <div style={{textAlign:"center",maxWidth:900,zIndex:1,marginTop:60}}>
-        <h1 style={{fontSize:"clamp(42px,8vw,72px)",fontWeight:700,color:C.text,marginBottom:20,letterSpacing:"-2px",lineHeight:1.1,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>What do you want to experience?</h1>
-        <p style={{fontSize:18,color:C.text2,marginBottom:50,lineHeight:1.6,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1}}>Books that adapt to you. Stories that listen. Worlds you shape with every choice.</p>
-        <div style={{display:"flex",gap:20,justifyContent:"center",flexWrap:"wrap",marginBottom:60,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.4s"),opacity:1}}>
-          <button onClick={()=>navigateTo("home")} style={{padding:"18px 36px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:16,fontWeight:600,cursor:"pointer",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>Get Started</button>
+      <div style={{textAlign:"center",maxWidth:980,zIndex:1,marginTop:128,paddingBottom:52}}>
+        <h1 style={{fontSize:"clamp(42px,8vw,76px)",fontWeight:760,color:C.text,marginBottom:20,letterSpacing:"-2px",lineHeight:1.05,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Immersive media powered by AI.</h1>
+        <p style={{fontSize:"clamp(16px,2.4vw,20px)",color:C.text2,margin:"0 auto 36px",lineHeight:1.65,maxWidth:820,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1}}>Upload films, stories, and cinematic experiences into a platform designed for next generation creators. Movianx enhances media with immersive audio, AI analysis, and intelligent cinematic tooling.</p>
+        <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap",marginBottom:38,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.4s"),opacity:1}}>
+          <button onClick={openCreatorDashboard} style={{padding:"16px 30px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>For Creators</button>
+          <button onClick={()=>navigateTo("home")} style={{padding:"16px 30px",borderRadius:20,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:FF,boxShadow:C.shadow}}>Explore Experiences</button>
         </div>
-        <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.5s"),opacity:1}}>
-          {["Choice-Driven Narratives","AI Narration","Adaptive Soundscapes","Immersive Visuals"].map(f=>(
+        <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:44,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.5s"),opacity:1}}>
+          {["AI Directed Experiences","Immersive Audio","Creator Upload Platform","Cinematic Enhancement","AI Scene Analysis","Interactive Media"].map(f=>(
             <div key={f} style={{padding:"8px 16px",borderRadius:20,background:C.pillBg,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${C.glassBorder}`,color:C.text,fontSize:13,fontWeight:500}}>{f}</div>
+          ))}
+        </div>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14,textAlign:"left",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.6s"),opacity:1}}>
+          {[
+            ["Built for directors", "A creator-first AI media platform for directors, filmmakers, storytellers, artists, and creators shaping cinematic work."],
+            ["Secure creator pipeline", "Upload and manage media through a private review flow designed for premium films, video, and immersive content."],
+            ["Intelligent enhancement", "Use immersive audio, AI-assisted enhancement, and intelligent media analysis to prepare experiences for the next screen."],
+          ].map(([title,body])=>(
+            <div key={title} style={{background:C.glass,backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",border:`1px solid ${C.glassBorder}`,borderRadius:16,padding:20,boxShadow:C.shadow}}>
+              <h3 style={{fontSize:16,color:C.text,marginBottom:8,fontWeight:700}}>{title}</h3>
+              <p style={{fontSize:14,color:C.text2,lineHeight:1.55}}>{body}</p>
+            </div>
           ))}
         </div>
       </div>
@@ -60,8 +73,8 @@ export function HomeView({ C, FF, CSS, transitionState, navigateTo }) {
         </div>
       </div>
       <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"32px 5% 60px"}}>
-        <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:700,color:C.text,marginBottom:8,textAlign:"center",letterSpacing:"-1px",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.1s"),opacity:1}}>Choose Your Experience</h1>
-        <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:500,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Explore interactive stories, cinematic adaptations, and connect with creators.</p>
+        <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:700,color:C.text,marginBottom:8,textAlign:"center",letterSpacing:"-1px",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.1s"),opacity:1}}>Explore Movianx Experiences</h1>
+        <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:560,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Preview immersive media and creator-ready cinematic tooling built for AI-directed experiences.</p>
         <div style={{display:"flex",gap:16,width:"100%",maxWidth:900,justifyContent:"center",flexWrap:"wrap",paddingBottom:40}}>
           <button onClick={()=>navigateTo("library")} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
             <div style={{fontSize:36,marginBottom:8}}>📚</div>
