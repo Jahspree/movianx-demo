@@ -1,6 +1,8 @@
 .watchShell {
   min-height: 100vh;
   height: 100vh;
+  width: 100%;
+  max-width: 100vw;
   overflow-y: auto;
   overflow-x: hidden;
   background:
@@ -79,9 +81,12 @@
 .secondaryButton {
   display: inline-flex;
   min-height: 50px;
+  max-width: 100%;
   align-items: center;
   justify-content: center;
   padding: 14px 24px;
+  text-align: center;
+  white-space: normal;
 }
 
 .secondaryButton {
@@ -182,6 +187,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
+  width: 100%;
 }
 
 .posterArt {
@@ -497,12 +503,14 @@
   .watchLayout {
     padding-left: 16px;
     padding-right: 16px;
+    max-width: 100%;
   }
 
   .heroContent,
   .heroPoster {
     min-width: 0;
     width: 100%;
+    max-width: 100%;
   }
 
   .railScroller {
@@ -511,6 +519,12 @@
 
   .hero h1 {
     font-size: clamp(42px, 14vw, 66px);
+  }
+
+  .hero p,
+  .detailPanel p {
+    max-width: 100%;
+    overflow-wrap: anywhere;
   }
 
   .primaryButton,
