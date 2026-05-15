@@ -3,8 +3,6 @@ import './globals.css';
 export const metadata = {
   title: 'Movianx — Immersive Media Powered by AI',
   description: 'Creator-first AI media platform for films, video, immersive audio, intelligent media analysis, and cinematic enhancement.',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no',
-  themeColor: '#000000',
   openGraph: {
     title: 'Movianx — Immersive Media Powered by AI',
     description: 'Creator-first AI media platform for films, video, immersive audio, intelligent media analysis, and cinematic enhancement.',
@@ -17,6 +15,14 @@ export const metadata = {
     title: 'Movianx — Immersive Media Powered by AI',
     description: 'Creator-first AI media platform for cinematic AI-directed experiences.',
   },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: '#000000',
 };
 
 export default function RootLayout({ children }) {

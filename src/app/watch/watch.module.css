@@ -1,0 +1,513 @@
+.watchShell {
+  min-height: 100vh;
+  height: 100vh;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 18% 8%, rgba(139, 26, 26, 0.34), transparent 28%),
+    radial-gradient(circle at 82% 4%, rgba(214, 163, 58, 0.14), transparent 24%),
+    linear-gradient(135deg, #050507 0%, #101014 48%, #170808 100%);
+  color: #fff;
+  font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 5%;
+  background: linear-gradient(180deg, rgba(5, 5, 7, 0.92), rgba(5, 5, 7, 0.58));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 760;
+}
+
+.brand img {
+  width: 34px;
+  height: auto;
+  filter: brightness(0) invert(1);
+}
+
+.nav {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.nav a {
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.creatorButton,
+.primaryButton,
+.secondaryButton {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-weight: 760;
+  text-decoration: none;
+  transition: transform 220ms ease, box-shadow 220ms ease, background 220ms ease;
+}
+
+.creatorButton,
+.primaryButton {
+  color: #fff;
+  background: linear-gradient(135deg, #a52121 0%, #741414 100%);
+  box-shadow: 0 18px 58px rgba(139, 26, 26, 0.34);
+}
+
+.creatorButton {
+  padding: 10px 18px;
+  font-size: 14px;
+}
+
+.primaryButton,
+.secondaryButton {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+}
+
+.secondaryButton {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.creatorButton:hover,
+.primaryButton:hover,
+.secondaryButton:hover,
+.posterCard:hover,
+.featureTile:hover {
+  transform: translateY(-3px);
+}
+
+.hero {
+  position: relative;
+  min-height: 620px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(300px, 0.8fr);
+  gap: 44px;
+  align-items: center;
+  padding: 70px 5% 42px;
+  overflow: hidden;
+}
+
+.hero:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 7, 0.98) 0%, rgba(5, 5, 7, 0.68) 52%, rgba(5, 5, 7, 0.2) 100%),
+    radial-gradient(circle at 74% 32%, rgba(181, 31, 42, 0.34), transparent 32%);
+  pointer-events: none;
+}
+
+.heroContent,
+.heroPoster {
+  position: relative;
+  z-index: 2;
+}
+
+.kicker,
+.badge,
+.miniBadge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.075);
+  color: rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.kicker {
+  padding: 9px 13px;
+  margin-bottom: 20px;
+}
+
+.badge,
+.miniBadge {
+  padding: 7px 10px;
+}
+
+.hero h1 {
+  margin: 0 0 18px;
+  max-width: 760px;
+  font-size: clamp(48px, 8vw, 92px);
+  line-height: 0.98;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: clamp(16px, 2vw, 20px);
+  line-height: 1.65;
+}
+
+.metaLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0 28px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 14px;
+}
+
+.ctaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.posterArt {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 40px 110px rgba(0, 0, 0, 0.52);
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.22), transparent 12%),
+    radial-gradient(circle at 70% 58%, var(--poster-accent), transparent 26%),
+    linear-gradient(145deg, #08080a, #1d1013 58%, #050507);
+}
+
+.posterArt:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.72) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 38px);
+}
+
+.posterText {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 22px;
+}
+
+.posterText h2,
+.posterText h3 {
+  margin: 0 0 10px;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.posterText h2 {
+  font-size: clamp(30px, 4vw, 52px);
+}
+
+.posterText h3 {
+  font-size: 28px;
+}
+
+.rails {
+  padding: 18px 5% 80px;
+}
+
+.rail {
+  margin-top: 42px;
+}
+
+.railHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-end;
+  margin-bottom: 16px;
+}
+
+.railHeader h2 {
+  margin: 0;
+  font-size: clamp(22px, 3vw, 32px);
+}
+
+.railHeader p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 14px;
+}
+
+.railScroller {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(190px, 230px);
+  gap: 16px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  padding: 4px 2px 18px;
+  scroll-snap-type: x proximity;
+}
+
+.posterCard {
+  color: #fff;
+  text-decoration: none;
+  scroll-snap-align: start;
+  transition: transform 220ms ease, filter 220ms ease;
+}
+
+.posterCard .posterArt {
+  border-radius: 8px;
+  box-shadow: 0 20px 62px rgba(0, 0, 0, 0.38);
+}
+
+.cardInfo {
+  padding-top: 12px;
+}
+
+.cardInfo h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.cardInfo p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 13px;
+}
+
+.badgeRow {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.miniBadge {
+  font-size: 10px;
+  padding: 5px 7px;
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.watchLayout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(310px, 0.6fr);
+  gap: 28px;
+  padding: 40px 5% 80px;
+}
+
+.watchBackground {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 30% 18%, var(--poster-accent), transparent 26%),
+    linear-gradient(135deg, #050507, #120708);
+  opacity: 0.32;
+  filter: blur(22px);
+}
+
+.videoFrame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), transparent 18%),
+    linear-gradient(135deg, #070709, #191014 58%, #050507);
+  box-shadow: 0 34px 110px rgba(0, 0, 0, 0.48);
+}
+
+.videoFrame:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 20%, rgba(0, 0, 0, 0.42)),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 54px);
+}
+
+.playGlyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+}
+
+.playGlyph span {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.42);
+}
+
+.playerStatus {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 20px;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 13px;
+}
+
+.detailPanel,
+.enhancementPanel {
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.065);
+  border-radius: 10px;
+  padding: 22px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 24px 82px rgba(0, 0, 0, 0.32);
+}
+
+.detailPanel h1 {
+  margin: 14px 0 12px;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1;
+}
+
+.detailPanel p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.62;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.featureTile {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  padding: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 13px;
+  transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+}
+
+.toggleRow {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 8px;
+  padding: 13px 14px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+}
+
+.toggle span:last-child {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 760;
+}
+
+.rightsNote {
+  margin-top: 18px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .watchLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .hero {
+    min-height: auto;
+    padding-top: 48px;
+  }
+
+  .heroPoster {
+    max-width: 360px;
+  }
+
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .topbar {
+    padding: 16px;
+  }
+
+  .brand span,
+  .nav a {
+    display: none;
+  }
+
+  .hero,
+  .rails,
+  .watchLayout {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .railScroller {
+    grid-auto-columns: minmax(158px, 72vw);
+  }
+
+  .hero h1 {
+    font-size: clamp(42px, 14vw, 66px);
+  }
+
+  .playerStatus {
+    flex-direction: column;
+    gap: 6px;
+  }
+}

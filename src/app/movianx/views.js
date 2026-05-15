@@ -21,6 +21,10 @@ function openCreatorDashboard() {
   window.location.href = "/dashboard";
 }
 
+function openWatchLibrary() {
+  window.location.href = "/watch";
+}
+
 const LANDING_FEATURE_TAGS = [
   "AI Directed Experiences",
   "Immersive Audio",
@@ -28,6 +32,12 @@ const LANDING_FEATURE_TAGS = [
   "Cinematic Enhancement",
   "AI Scene Analysis",
   "Interactive Media",
+];
+
+const LANDING_MOVIE_PREVIEWS = [
+  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a"],
+  ["Nosferatu", "Immersive Ready", "#9ca3af"],
+  ["A Trip to the Moon", "Experimental Immersive", "#d6a33a"],
 ];
 
 const LANDING_SUPPORT_CARDS = [
@@ -169,7 +179,7 @@ const landingCinematicCSS = `
     gap:14px;
     justify-content:center;
     flex-wrap:wrap;
-    margin-bottom:34px;
+    margin-bottom:24px;
     animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.46s;
   }
   .movianx-button{
@@ -213,7 +223,7 @@ const landingCinematicCSS = `
     gap:12px;
     justify-content:center;
     flex-wrap:wrap;
-    margin:0 auto 46px;
+    margin:0 auto 34px;
     max-width:880px;
   }
   .movianx-feature-tag{
@@ -242,6 +252,59 @@ const landingCinematicCSS = `
     gap:14px;
     text-align:left;
     animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.72s;
+  }
+  .movianx-preview-rail{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+    margin:0 auto 30px;
+    max-width:820px;
+    animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.66s;
+  }
+  .movianx-preview-card{
+    position:relative;
+    aspect-ratio:16/10;
+    width:100%;
+    padding:0;
+    overflow:hidden;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.13);
+    background:
+      radial-gradient(circle at 64% 32%, var(--preview-accent), transparent 34%),
+      linear-gradient(145deg,#09090c,#1a1014 64%,#050507);
+    box-shadow:0 22px 72px rgba(0,0,0,0.28);
+    transition:transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+  }
+  .movianx-preview-card:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg,transparent 20%,rgba(0,0,0,0.76) 100%),
+      repeating-linear-gradient(90deg,rgba(255,255,255,0.03) 0,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 34px);
+  }
+  .movianx-preview-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(255,255,255,0.24);
+    box-shadow:0 26px 88px rgba(0,0,0,0.38),0 0 34px rgba(139,26,26,0.16);
+  }
+  .movianx-preview-card div{
+    position:absolute;
+    left:15px;
+    right:15px;
+    bottom:14px;
+  }
+  .movianx-preview-card strong{
+    display:block;
+    color:#fff;
+    font-size:15px;
+    line-height:1.1;
+    margin-bottom:6px;
+  }
+  .movianx-preview-card span{
+    color:rgba(255,255,255,0.62);
+    font-size:12px;
+    font-weight:650;
   }
   .movianx-support-card{
     position:relative;
@@ -344,6 +407,7 @@ const landingCinematicCSS = `
     .movianx-landing-copy{font-size:16px;line-height:1.58;margin-bottom:28px}
     .movianx-cta-row{gap:10px}
     .movianx-cta-row .movianx-button{width:100%;max-width:310px}
+    .movianx-preview-rail{grid-template-columns:1fr;margin-bottom:28px}
     .movianx-support-grid{grid-template-columns:1fr}
     .movianx-support-card{min-height:auto}
   }
@@ -356,6 +420,7 @@ const landingCinematicCSS = `
     .movianx-landing-copy,
     .movianx-cta-row,
     .movianx-feature-tag,
+    .movianx-preview-rail,
     .movianx-support-grid,
     .movianx-orb,
     .movianx-streak{
@@ -392,7 +457,17 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
         <p className="movianx-landing-copy">Upload films, stories, and cinematic experiences into a platform designed for next generation creators. Movianx enhances media with immersive audio, AI analysis, and intelligent cinematic tooling.</p>
         <div className="movianx-cta-row">
           <button onClick={openCreatorDashboard} className="movianx-button movianx-button-primary">For Creators</button>
-          <button onClick={()=>navigateTo("home")} className="movianx-button movianx-button-secondary">Explore Experiences</button>
+          <button onClick={openWatchLibrary} className="movianx-button movianx-button-secondary">Explore Experiences</button>
+        </div>
+        <div className="movianx-preview-rail" aria-label="Cinematic experience previews">
+          {LANDING_MOVIE_PREVIEWS.map(([title, label, accent])=>(
+            <button key={title} onClick={openWatchLibrary} className="movianx-preview-card" style={{"--preview-accent":accent,cursor:"pointer",fontFamily:FF,textAlign:"left"}}>
+              <div>
+                <strong>{title}</strong>
+                <span>{label} · AI Enhanced</span>
+              </div>
+            </button>
+          ))}
         </div>
         <div className="movianx-feature-tags">
           {LANDING_FEATURE_TAGS.map((feature, idx)=>(
@@ -428,17 +503,18 @@ export function HomeView({ C, FF, CSS, transitionState, navigateTo }) {
         <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:700,color:C.text,marginBottom:8,textAlign:"center",letterSpacing:"-1px",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.1s"),opacity:1}}>Explore Movianx Experiences</h1>
         <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:560,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Preview immersive media and creator-ready cinematic tooling built for AI-directed experiences.</p>
         <div style={{display:"flex",gap:16,width:"100%",maxWidth:900,justifyContent:"center",flexWrap:"wrap",paddingBottom:40}}>
-          <button onClick={()=>navigateTo("library")} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
+          <button onClick={openWatchLibrary} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
+            <div style={{fontSize:36,marginBottom:8}}>🎬</div>
+            <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Cinema</h3>
+            <p style={{fontSize:14,color:C.text2,margin:0}}>AI-enhanced films</p>
+            <div style={{marginTop:"auto",alignSelf:"flex-end",width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,flexShrink:0}}>→</div>
+          </button>
+          <button onClick={()=>navigateTo("library")} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.4s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
             <div style={{fontSize:36,marginBottom:8}}>📚</div>
             <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Stories</h3>
             <p style={{fontSize:14,color:C.text2,margin:0}}>Interactive fiction</p>
             <div style={{marginTop:"auto",alignSelf:"flex-end",width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,flexShrink:0}}>→</div>
           </button>
-          <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.4s"),opacity:1,boxShadow:C.shadow}}>
-            <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎬</div>
-            <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Cinema</h3>
-            <div style={{display:"inline-block",padding:"4px 10px",borderRadius:12,background:C.pillBg,fontSize:10,fontWeight:600,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Coming Soon</div>
-          </div>
           <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.5s"),opacity:1,boxShadow:C.shadow}}>
             <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎨</div>
             <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Artists</h3>
