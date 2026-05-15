@@ -17,6 +17,10 @@ function getEntryAnimation(transitionState, animation) {
   return transitionState === "idle" ? animation : "none";
 }
 
+function openCreatorDashboard() {
+  window.location.href = "/dashboard";
+}
+
 export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
   return (
     <div style={{minHeight:"100vh",background:"linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 25%, #f5f3f0 50%, #f0eff5 75%, #f8f9fa 100%)",backgroundSize:"300% 300%",animation:"gradientShift 15s ease infinite",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:20,fontFamily:FF,position:"relative",...getViewTransition(transitionState)}}>
@@ -24,8 +28,8 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
         
         <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
         <div style={{display:"flex",gap:32,alignItems:"center"}}>
-          <button onClick={()=>navigateTo("creator")} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Sign In</button>
-          <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
+          <button onClick={openCreatorDashboard} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Sign In</button>
+          <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
         </div>
       </div>
       <div style={{textAlign:"center",maxWidth:900,zIndex:1,marginTop:60}}>
@@ -51,8 +55,8 @@ export function HomeView({ C, FF, CSS, transitionState, navigateTo }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 5%",borderBottom:`1px solid ${C.border}`,animation:getEntryAnimation(transitionState,"fadeDown 0.6s ease both")}}>
         <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
         <div style={{display:"flex",gap:24,alignItems:"center"}}>
-          <button onClick={()=>navigateTo("creator")} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Creator Studio</button>
-          <button onClick={()=>navigateTo("creator")} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
+          <button onClick={openCreatorDashboard} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Creator Studio</button>
+          <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
         </div>
       </div>
       <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"32px 5% 60px"}}>
