@@ -2,6 +2,7 @@
   min-height: 100vh;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at 18% 8%, rgba(139, 26, 26, 0.34), transparent 28%),
     radial-gradient(circle at 82% 4%, rgba(214, 163, 58, 0.14), transparent 24%),
@@ -498,12 +499,23 @@
     padding-right: 16px;
   }
 
+  .heroContent,
+  .heroPoster {
+    min-width: 0;
+    width: 100%;
+  }
+
   .railScroller {
     grid-auto-columns: minmax(158px, 72vw);
   }
 
   .hero h1 {
     font-size: clamp(42px, 14vw, 66px);
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    width: 100%;
   }
 
   .playerStatus {
