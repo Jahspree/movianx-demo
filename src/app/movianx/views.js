@@ -21,43 +21,395 @@ function openCreatorDashboard() {
   window.location.href = "/dashboard";
 }
 
+const LANDING_FEATURE_TAGS = [
+  "AI Directed Experiences",
+  "Immersive Audio",
+  "Creator Upload Platform",
+  "Cinematic Enhancement",
+  "AI Scene Analysis",
+  "Interactive Media",
+];
+
+const LANDING_SUPPORT_CARDS = [
+  [
+    "Built for directors",
+    "A creator-first AI media platform for directors, filmmakers, storytellers, artists, and creators shaping cinematic work.",
+  ],
+  [
+    "Secure creator pipeline",
+    "Upload and manage media through a private review flow designed for premium films, video, and immersive content.",
+  ],
+  [
+    "Intelligent enhancement",
+    "Use immersive audio, AI-assisted enhancement, and intelligent media analysis to prepare experiences for the next screen.",
+  ],
+];
+
+const landingCinematicCSS = `
+  .movianx-landing-shell{
+    height:100vh;
+    overflow-y:auto;
+    background:
+      radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
+      radial-gradient(circle at 18% 28%, rgba(139,26,26,0.28), transparent 26%),
+      radial-gradient(circle at 82% 30%, rgba(184,134,11,0.14), transparent 24%),
+      linear-gradient(135deg,#050507 0%,#111116 42%,#170808 100%);
+    background-size:180% 180%,140% 140%,130% 130%,100% 100%;
+    animation:cinematicAtmosphere 18s ease-in-out infinite;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:20px;
+    position:relative;
+    isolation:isolate;
+  }
+  .movianx-landing-shell:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.06) 48%,transparent 54%),
+      radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,0.58) 100%);
+    opacity:0.7;
+    mix-blend-mode:screen;
+    animation:lightSweep 16s ease-in-out infinite;
+    z-index:0;
+  }
+  .movianx-landing-shell:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);
+    background-size:90px 90px;
+    mask-image:linear-gradient(to bottom,rgba(0,0,0,0.22),transparent 72%);
+    z-index:0;
+  }
+  .movianx-topbar{
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:24px 5%;
+    z-index:10;
+    animation:fadeDown 0.7s ease both;
+  }
+  .movianx-topbar img{
+    height:40px;
+    width:auto;
+    filter:brightness(0) invert(1) drop-shadow(0 8px 22px rgba(0,0,0,0.35));
+    opacity:0.94;
+  }
+  .movianx-nav-actions{
+    display:flex;
+    gap:18px;
+    align-items:center;
+  }
+  .movianx-landing-hero{
+    text-align:center;
+    width:100%;
+    max-width:1060px;
+    z-index:2;
+    margin-top:132px;
+    padding-bottom:64px;
+  }
+  .movianx-hero-kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    color:rgba(255,255,255,0.74);
+    border:1px solid rgba(255,255,255,0.12);
+    background:rgba(255,255,255,0.055);
+    backdrop-filter:blur(16px);
+    -webkit-backdrop-filter:blur(16px);
+    border-radius:999px;
+    padding:9px 14px;
+    margin-bottom:22px;
+    font-size:12px;
+    font-weight:650;
+    text-transform:uppercase;
+    letter-spacing:0;
+    animation:cinematicReveal 0.85s cubic-bezier(.2,.8,.2,1) both 0.12s;
+  }
+  .movianx-hero-kicker:before{
+    content:"";
+    width:7px;
+    height:7px;
+    border-radius:999px;
+    background:#b82b2b;
+    box-shadow:0 0 18px rgba(184,43,43,0.95);
+  }
+  .movianx-landing-title{
+    font-size:clamp(46px,8vw,86px);
+    font-weight:790;
+    color:#fff;
+    margin-bottom:20px;
+    letter-spacing:0;
+    line-height:1.02;
+    text-wrap:balance;
+    text-shadow:0 20px 70px rgba(0,0,0,0.5);
+    animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.22s;
+  }
+  .movianx-landing-copy{
+    font-size:clamp(16px,2.4vw,20px);
+    color:rgba(255,255,255,0.72);
+    margin:0 auto 36px;
+    line-height:1.68;
+    max-width:820px;
+    animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.34s;
+  }
+  .movianx-cta-row{
+    display:flex;
+    gap:14px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-bottom:34px;
+    animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.46s;
+  }
+  .movianx-button{
+    min-height:52px;
+    padding:15px 28px;
+    border-radius:999px;
+    font-size:15px;
+    font-weight:760;
+    cursor:pointer;
+    font-family:inherit;
+    transition:transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background 220ms ease;
+    will-change:transform;
+  }
+  .movianx-button-primary{
+    background:linear-gradient(135deg,#a52121 0%,#741414 100%);
+    border:1px solid rgba(255,255,255,0.14);
+    color:#fff;
+    box-shadow:0 18px 58px rgba(139,26,26,0.34), inset 0 1px 0 rgba(255,255,255,0.18);
+  }
+  .movianx-button-secondary{
+    background:rgba(255,255,255,0.075);
+    border:1px solid rgba(255,255,255,0.16);
+    color:#fff;
+    box-shadow:0 14px 44px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.08);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  .movianx-button:hover{
+    transform:translateY(-3px);
+  }
+  .movianx-button-primary:hover{
+    box-shadow:0 22px 70px rgba(139,26,26,0.48), 0 0 42px rgba(139,26,26,0.28), inset 0 1px 0 rgba(255,255,255,0.22);
+  }
+  .movianx-button-secondary:hover{
+    border-color:rgba(255,255,255,0.28);
+    background:rgba(255,255,255,0.11);
+    box-shadow:0 18px 52px rgba(0,0,0,0.3), 0 0 34px rgba(255,255,255,0.08);
+  }
+  .movianx-feature-tags{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:0 auto 46px;
+    max-width:880px;
+  }
+  .movianx-feature-tag{
+    padding:9px 15px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.07);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.12);
+    color:rgba(255,255,255,0.82);
+    font-size:13px;
+    font-weight:620;
+    box-shadow:0 10px 34px rgba(0,0,0,0.16);
+    animation:tagRise 0.7s cubic-bezier(.2,.8,.2,1) both;
+    transition:transform 220ms ease, background 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+  }
+  .movianx-feature-tag:hover{
+    transform:translateY(-3px);
+    background:rgba(255,255,255,0.11);
+    border-color:rgba(255,255,255,0.22);
+    box-shadow:0 16px 46px rgba(0,0,0,0.24), 0 0 28px rgba(139,26,26,0.16);
+  }
+  .movianx-support-grid{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+    text-align:left;
+    animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.72s;
+  }
+  .movianx-support-card{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(180deg,rgba(255,255,255,0.115),rgba(255,255,255,0.055));
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border:1px solid rgba(255,255,255,0.13);
+    border-radius:8px;
+    padding:20px;
+    min-height:150px;
+    box-shadow:0 22px 70px rgba(0,0,0,0.26);
+    transition:transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease, background 240ms ease;
+  }
+  .movianx-support-card:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.1),transparent);
+    transform:translateX(-120%);
+    transition:transform 700ms ease;
+  }
+  .movianx-support-card:hover{
+    transform:translateY(-5px);
+    border-color:rgba(255,255,255,0.23);
+    background:linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.07));
+    box-shadow:0 26px 86px rgba(0,0,0,0.34), 0 0 38px rgba(139,26,26,0.12);
+  }
+  .movianx-support-card:hover:before{
+    transform:translateX(120%);
+  }
+  .movianx-support-card h3{
+    position:relative;
+    font-size:16px;
+    color:#fff;
+    margin-bottom:9px;
+    font-weight:760;
+    letter-spacing:0;
+  }
+  .movianx-support-card p{
+    position:relative;
+    font-size:14px;
+    color:rgba(255,255,255,0.65);
+    line-height:1.58;
+  }
+  .movianx-orb{
+    position:absolute;
+    pointer-events:none;
+    border-radius:999px;
+    filter:blur(1px);
+    background:rgba(255,255,255,0.38);
+    box-shadow:0 0 28px rgba(255,255,255,0.18);
+    opacity:0.28;
+    animation:particleFloat 12s ease-in-out infinite;
+    z-index:1;
+  }
+  .movianx-streak{
+    position:absolute;
+    pointer-events:none;
+    width:180px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.32),transparent);
+    opacity:0.18;
+    transform:rotate(-18deg);
+    animation:streakDrift 14s ease-in-out infinite;
+    z-index:1;
+  }
+  @keyframes cinematicAtmosphere{
+    0%,100%{background-position:0% 42%,8% 18%,92% 18%,0 0}
+    50%{background-position:100% 56%,18% 32%,78% 24%,0 0}
+  }
+  @keyframes lightSweep{
+    0%,100%{transform:translateX(-20%);opacity:0.42}
+    50%{transform:translateX(18%);opacity:0.72}
+  }
+  @keyframes cinematicReveal{
+    from{opacity:0;transform:translateY(26px) scale(0.985);filter:blur(8px)}
+    to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+  }
+  @keyframes tagRise{
+    from{opacity:0;transform:translateY(16px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  @keyframes particleFloat{
+    0%,100%{transform:translate3d(0,0,0);opacity:0.12}
+    50%{transform:translate3d(18px,-24px,0);opacity:0.34}
+  }
+  @keyframes streakDrift{
+    0%,100%{transform:translate3d(-18px,0,0) rotate(-18deg);opacity:0.08}
+    50%{transform:translate3d(34px,-18px,0) rotate(-18deg);opacity:0.24}
+  }
+  @media (max-width:760px){
+    .movianx-landing-shell{padding:16px}
+    .movianx-topbar{padding:18px 18px}
+    .movianx-topbar img{height:34px}
+    .movianx-nav-actions{gap:10px}
+    .movianx-nav-actions .movianx-button{min-height:40px;padding:10px 14px;font-size:13px}
+    .movianx-landing-hero{margin-top:104px;padding-bottom:42px}
+    .movianx-landing-title{font-size:clamp(42px,14vw,64px)}
+    .movianx-landing-copy{font-size:16px;line-height:1.58;margin-bottom:28px}
+    .movianx-cta-row{gap:10px}
+    .movianx-cta-row .movianx-button{width:100%;max-width:310px}
+    .movianx-support-grid{grid-template-columns:1fr}
+    .movianx-support-card{min-height:auto}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .movianx-landing-shell,
+    .movianx-landing-shell:before,
+    .movianx-topbar,
+    .movianx-hero-kicker,
+    .movianx-landing-title,
+    .movianx-landing-copy,
+    .movianx-cta-row,
+    .movianx-feature-tag,
+    .movianx-support-grid,
+    .movianx-orb,
+    .movianx-streak{
+      animation:none!important;
+    }
+    .movianx-button,
+    .movianx-feature-tag,
+    .movianx-support-card{
+      transition:none!important;
+    }
+  }
+`;
+
 export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
   return (
-    <div style={{height:"100vh",overflowY:"auto",background:"linear-gradient(135deg, #f8f9fa 0%, #f0f0f5 25%, #f5f3f0 50%, #f0eff5 75%, #f8f9fa 100%)",backgroundSize:"300% 300%",animation:"gradientShift 15s ease infinite",display:"flex",flexDirection:"column",alignItems:"center",padding:20,fontFamily:FF,position:"relative",...getViewTransition(transitionState)}}>
-      <div style={{position:"absolute",top:0,left:0,right:0,display:"flex",justifyContent:"space-between",alignItems:"center",padding:"24px 5%",zIndex:10,animation:"fadeDown 0.6s ease both"}}>
-        
-        <img src="/movianx-logo.png" alt="Movianx" style={{height:40,width:"auto"}}/>
-        <div style={{display:"flex",gap:32,alignItems:"center"}}>
-          <button onClick={openCreatorDashboard} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,fontWeight:500,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Sign In</button>
-          <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
+    <div className="movianx-landing-shell" style={{fontFamily:FF,...getViewTransition(transitionState)}}>
+      <div className="movianx-orb" style={{width:4,height:4,top:"25%",left:"12%",animationDelay:"0.4s"}}/>
+      <div className="movianx-orb" style={{width:3,height:3,top:"38%",right:"16%",animationDelay:"2.4s"}}/>
+      <div className="movianx-orb" style={{width:5,height:5,bottom:"24%",left:"22%",animationDelay:"4.1s"}}/>
+      <div className="movianx-streak" style={{top:"31%",left:"8%",animationDelay:"1.2s"}}/>
+      <div className="movianx-streak" style={{right:"7%",bottom:"30%",animationDelay:"5.4s"}}/>
+
+      <div className="movianx-topbar">
+        <img src="/movianx-logo.png" alt="Movianx"/>
+        <div className="movianx-nav-actions">
+          <button onClick={openCreatorDashboard} style={{background:"transparent",border:"none",color:"rgba(255,255,255,0.68)",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>Sign In</button>
+          <button onClick={openCreatorDashboard} className="movianx-button movianx-button-primary" style={{minHeight:40,padding:"10px 18px",fontSize:14}}>For Creators</button>
         </div>
       </div>
-      <div style={{textAlign:"center",maxWidth:980,zIndex:1,marginTop:128,paddingBottom:52}}>
-        <h1 style={{fontSize:"clamp(42px,8vw,76px)",fontWeight:760,color:C.text,marginBottom:20,letterSpacing:"-2px",lineHeight:1.05,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Immersive media powered by AI.</h1>
-        <p style={{fontSize:"clamp(16px,2.4vw,20px)",color:C.text2,margin:"0 auto 36px",lineHeight:1.65,maxWidth:820,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1}}>Upload films, stories, and cinematic experiences into a platform designed for next generation creators. Movianx enhances media with immersive audio, AI analysis, and intelligent cinematic tooling.</p>
-        <div style={{display:"flex",gap:14,justifyContent:"center",flexWrap:"wrap",marginBottom:38,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.4s"),opacity:1}}>
-          <button onClick={openCreatorDashboard} style={{padding:"16px 30px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:FF,boxShadow:"0 8px 32px rgba(139,26,26,0.25)"}} onMouseEnter={e=>{e.target.style.transform="translateY(-2px)";e.target.style.boxShadow="0 12px 40px rgba(139,26,26,0.35)"}} onMouseLeave={e=>{e.target.style.transform="translateY(0)";e.target.style.boxShadow="0 8px 32px rgba(139,26,26,0.25)"}}>For Creators</button>
-          <button onClick={()=>navigateTo("home")} style={{padding:"16px 30px",borderRadius:20,background:C.glass,border:`1px solid ${C.glassBorder}`,color:C.text,fontSize:16,fontWeight:700,cursor:"pointer",fontFamily:FF,boxShadow:C.shadow}}>Explore Experiences</button>
+
+      <div className="movianx-landing-hero">
+        <div className="movianx-hero-kicker">Creator-first cinematic intelligence</div>
+        <h1 className="movianx-landing-title">Immersive media powered by AI.</h1>
+        <p className="movianx-landing-copy">Upload films, stories, and cinematic experiences into a platform designed for next generation creators. Movianx enhances media with immersive audio, AI analysis, and intelligent cinematic tooling.</p>
+        <div className="movianx-cta-row">
+          <button onClick={openCreatorDashboard} className="movianx-button movianx-button-primary">For Creators</button>
+          <button onClick={()=>navigateTo("home")} className="movianx-button movianx-button-secondary">Explore Experiences</button>
         </div>
-        <div style={{display:"flex",gap:12,justifyContent:"center",flexWrap:"wrap",marginBottom:44,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.5s"),opacity:1}}>
-          {["AI Directed Experiences","Immersive Audio","Creator Upload Platform","Cinematic Enhancement","AI Scene Analysis","Interactive Media"].map(f=>(
-            <div key={f} style={{padding:"8px 16px",borderRadius:20,background:C.pillBg,backdropFilter:"blur(12px)",WebkitBackdropFilter:"blur(12px)",border:`1px solid ${C.glassBorder}`,color:C.text,fontSize:13,fontWeight:500}}>{f}</div>
+        <div className="movianx-feature-tags">
+          {LANDING_FEATURE_TAGS.map((feature, idx)=>(
+            <div key={feature} className="movianx-feature-tag" style={{animationDelay:`${0.56 + idx * 0.055}s`}}>{feature}</div>
           ))}
         </div>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(220px,1fr))",gap:14,textAlign:"left",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.6s"),opacity:1}}>
-          {[
-            ["Built for directors", "A creator-first AI media platform for directors, filmmakers, storytellers, artists, and creators shaping cinematic work."],
-            ["Secure creator pipeline", "Upload and manage media through a private review flow designed for premium films, video, and immersive content."],
-            ["Intelligent enhancement", "Use immersive audio, AI-assisted enhancement, and intelligent media analysis to prepare experiences for the next screen."],
-          ].map(([title,body])=>(
-            <div key={title} style={{background:C.glass,backdropFilter:"blur(18px)",WebkitBackdropFilter:"blur(18px)",border:`1px solid ${C.glassBorder}`,borderRadius:16,padding:20,boxShadow:C.shadow}}>
-              <h3 style={{fontSize:16,color:C.text,marginBottom:8,fontWeight:700}}>{title}</h3>
-              <p style={{fontSize:14,color:C.text2,lineHeight:1.55}}>{body}</p>
+        <div className="movianx-support-grid">
+          {LANDING_SUPPORT_CARDS.map(([title, body])=>(
+            <div key={title} className="movianx-support-card">
+              <h3>{title}</h3>
+              <p>{body}</p>
             </div>
           ))}
         </div>
       </div>
       <style>{CSS}</style>
+      <style>{landingCinematicCSS}</style>
     </div>
   );
 }
