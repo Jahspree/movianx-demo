@@ -28,10 +28,10 @@ export default function DashboardPage() {
           <p className="muted">Monetization is modeled, not connected.</p>
         </div>
         <div className="panel half">
-          <h2>Start a secure upload</h2>
-          <p className="muted">Create private signed upload targets for movie, trailer, and poster assets.</p>
+          <h2>Verification-gated upload</h2>
+          <p className="muted">Apply for creator verification before private upload targets are enabled.</p>
           <br />
-          <Link className="button-link" href="/dashboard/upload">Open upload pipeline</Link>
+          <Link className="button-link" href="/dashboard/application">Start verification</Link>
         </div>
         <div className="panel half">
           <h2>Security state</h2>

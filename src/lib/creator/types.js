@@ -29,6 +29,20 @@ export const MONETIZATION_STATUSES = Object.freeze([
 
 export const ASSET_TYPES = Object.freeze(["movie", "trailer", "poster"]);
 
+export const CREATOR_VERIFICATION_STATES = Object.freeze([
+  "pending_application",
+  "basic_verified",
+  "identity_verified",
+  "trusted_creator",
+  "enterprise_creator",
+]);
+
+export const EMAIL_CAPTURE_INTENTS = Object.freeze([
+  "early_access",
+  "waitlist",
+  "creator_application",
+]);
+
 export const ANALYSIS_TASKS = Object.freeze([
   "genre_detection",
   "tone_analysis",
@@ -44,6 +58,29 @@ export const ANALYSIS_TASKS = Object.freeze([
  * @property {string} displayName
  * @property {string} email
  * @property {string} role
+ * @property {string} verificationState
+ */
+
+/**
+ * @typedef {Object} CreatorApplication
+ * @property {string} id
+ * @property {string} email
+ * @property {string} name
+ * @property {string} company
+ * @property {string} portfolioUrl
+ * @property {string} creatorType
+ * @property {string} verificationState
+ * @property {string} moderationStatus
+ * @property {string} createdAt
+ */
+
+/**
+ * @typedef {Object} EmailCapture
+ * @property {string} id
+ * @property {string} email
+ * @property {string} source
+ * @property {string} intent
+ * @property {string} createdAt
  */
 
 /**

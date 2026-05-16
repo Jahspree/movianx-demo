@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 function getViewOpacity(transitionState) {
   return transitionState === "idle" ? 1 : 0;
 }
@@ -18,7 +20,11 @@ function getEntryAnimation(transitionState, animation) {
 }
 
 function openCreatorDashboard() {
-  window.location.href = "/dashboard";
+  window.location.href = "/dashboard/welcome";
+}
+
+function openConsumerLogin() {
+  window.location.href = "/watch";
 }
 
 function openWatchLibrary() {
@@ -26,38 +32,86 @@ function openWatchLibrary() {
 }
 
 const LANDING_FEATURE_TAGS = [
-  "AI Directed Experiences",
+  "AI Enhanced Cinema",
   "Immersive Audio",
-  "Creator Upload Platform",
-  "Cinematic Enhancement",
-  "AI Scene Analysis",
+  "Interactive Stories",
+  "Public Domain Classics",
+  "Adaptive Sound",
   "Interactive Media",
 ];
 
 const LANDING_MOVIE_PREVIEWS = [
   ["Night of the Living Dead", "Public Domain Horror", "#b51f2a"],
-  ["Nosferatu", "Immersive Ready", "#9ca3af"],
+  ["10 Seconds", "Timed Interactive Story", "#991b1b"],
   ["A Trip to the Moon", "Experimental Immersive", "#d6a33a"],
+  ["Frankenstein", "Classic Interactive Story", "#7f1d1d"],
+  ["The Lost World", "AI Enhanced Cinema", "#4d7c0f"],
+  ["Nosferatu", "Immersive Ready", "#9ca3af"],
 ];
 
 const LANDING_SUPPORT_CARDS = [
   [
-    "Built for directors",
-    "A creator-first AI media platform for directors, filmmakers, storytellers, artists, and creators shaping cinematic work.",
+    "Cinema that surrounds you",
+    "Films and stories are staged with immersive audio, intelligent scene analysis, and atmospheric enhancement.",
   ],
   [
-    "Secure creator pipeline",
-    "Upload and manage media through a private review flow designed for premium films, video, and immersive content.",
+    "Stories that move",
+    "Interactive experiences bring choice, timing, and cinematic tension into the same premium media library.",
   ],
   [
-    "Intelligent enhancement",
-    "Use immersive audio, AI-assisted enhancement, and intelligent media analysis to prepare experiences for the next screen.",
+    "A new entertainment layer",
+    "Movianx blends demo-safe cinema, public-domain classics, and original interactive experiences into one immersive destination.",
   ],
 ];
+
+function WaitlistCapture({ FF }) {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  async function submit(event) {
+    event.preventDefault();
+    setBusy(true);
+    setStatus("");
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, source: "homepage", intent: "early_access" }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body?.error?.message || "Could not join waitlist");
+      setEmail("");
+      setStatus("You're on the early access list.");
+    } catch (error) {
+      setStatus(error.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form className="movianx-waitlist" onSubmit={submit}>
+      <input
+        type="email"
+        value={email}
+        onChange={event => setEmail(event.target.value)}
+        placeholder="Email for early access"
+        aria-label="Email for early access"
+        required
+        style={{fontFamily:FF}}
+      />
+      <button type="submit" disabled={busy} style={{fontFamily:FF}}>{busy ? "Joining..." : "Join Waitlist"}</button>
+      <span>{status || "Privacy-first updates. No private creator paths exposed."}</span>
+    </form>
+  );
+}
 
 const landingCinematicCSS = `
   .movianx-landing-shell{
     height:100vh;
+    width:100%;
+    overflow-x:hidden;
     overflow-y:auto;
     background:
       radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
@@ -72,6 +126,10 @@ const landingCinematicCSS = `
     padding:20px;
     position:relative;
     isolation:isolate;
+  }
+  .movianx-landing-shell,
+  .movianx-landing-shell *{
+    box-sizing:border-box;
   }
   .movianx-landing-shell:before{
     content:"";
@@ -124,9 +182,9 @@ const landingCinematicCSS = `
   .movianx-landing-hero{
     text-align:center;
     width:100%;
-    max-width:1060px;
+    max-width:1120px;
     z-index:2;
-    margin-top:132px;
+    margin-top:118px;
     padding-bottom:64px;
   }
   .movianx-hero-kicker{
@@ -146,6 +204,23 @@ const landingCinematicCSS = `
     text-transform:uppercase;
     letter-spacing:0;
     animation:cinematicReveal 0.85s cubic-bezier(.2,.8,.2,1) both 0.12s;
+  }
+  .movianx-logo-reveal{
+    width:58px;
+    height:58px;
+    margin:0 auto 18px;
+    border-radius:18px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,rgba(255,255,255,0.14),rgba(255,255,255,0.04));
+    border:1px solid rgba(255,255,255,0.14);
+    box-shadow:0 24px 80px rgba(139,26,26,0.24), inset 0 1px 0 rgba(255,255,255,0.16);
+    animation:logoArrival 1s cubic-bezier(.2,.8,.2,1) both 0.04s;
+  }
+  .movianx-logo-reveal img{
+    width:31px;
+    height:auto;
+    filter:brightness(0) invert(1);
   }
   .movianx-hero-kicker:before{
     content:"";
@@ -255,10 +330,10 @@ const landingCinematicCSS = `
   }
   .movianx-preview-rail{
     display:grid;
-    grid-template-columns:repeat(3,minmax(0,1fr));
+    grid-template-columns:repeat(6,minmax(0,1fr));
     gap:14px;
     margin:0 auto 30px;
-    max-width:820px;
+    max-width:1040px;
     animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.66s;
   }
   .movianx-preview-card{
@@ -350,6 +425,42 @@ const landingCinematicCSS = `
     color:rgba(255,255,255,0.65);
     line-height:1.58;
   }
+  .movianx-waitlist{
+    display:grid;
+    grid-template-columns:minmax(220px,1fr) auto;
+    gap:10px;
+    max-width:620px;
+    margin:0 auto 34px;
+    animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.58s;
+  }
+  .movianx-waitlist input{
+    min-height:52px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.14);
+    background:rgba(0,0,0,0.22);
+    color:#fff;
+    padding:0 18px;
+    font-size:15px;
+    outline:none;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.07);
+  }
+  .movianx-waitlist button{
+    min-height:52px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.14);
+    background:linear-gradient(135deg,#a52121 0%,#741414 100%);
+    color:#fff;
+    padding:0 22px;
+    font-size:15px;
+    font-weight:760;
+    cursor:pointer;
+    box-shadow:0 16px 46px rgba(139,26,26,0.28);
+  }
+  .movianx-waitlist span{
+    grid-column:1/-1;
+    color:rgba(255,255,255,0.56);
+    font-size:12px;
+  }
   .movianx-orb{
     position:absolute;
     pointer-events:none;
@@ -384,6 +495,10 @@ const landingCinematicCSS = `
     from{opacity:0;transform:translateY(26px) scale(0.985);filter:blur(8px)}
     to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
   }
+  @keyframes logoArrival{
+    from{opacity:0;transform:translateY(-14px) scale(0.9);filter:blur(10px)}
+    to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}
+  }
   @keyframes tagRise{
     from{opacity:0;transform:translateY(16px)}
     to{opacity:1;transform:translateY(0)}
@@ -397,17 +512,21 @@ const landingCinematicCSS = `
     50%{transform:translate3d(34px,-18px,0) rotate(-18deg);opacity:0.24}
   }
   @media (max-width:760px){
-    .movianx-landing-shell{padding:16px}
-    .movianx-topbar{padding:18px 18px}
+    .movianx-landing-shell{padding:16px;align-items:flex-start}
+    .movianx-topbar{left:16px;right:auto;width:calc(100% - 32px);max-width:360px;padding:18px 0;gap:12px}
     .movianx-topbar img{height:34px}
-    .movianx-nav-actions{gap:10px}
-    .movianx-nav-actions .movianx-button{min-height:40px;padding:10px 14px;font-size:13px}
-    .movianx-landing-hero{margin-top:104px;padding-bottom:42px}
-    .movianx-landing-title{font-size:clamp(42px,14vw,64px)}
-    .movianx-landing-copy{font-size:16px;line-height:1.58;margin-bottom:28px}
+    .movianx-nav-actions{gap:8px;min-width:0;flex-shrink:0}
+    .movianx-nav-actions button:first-child{font-size:13px!important}
+    .movianx-nav-actions .movianx-button{min-height:38px!important;padding:9px 12px!important;font-size:12px!important;white-space:nowrap}
+    .movianx-landing-hero{margin-top:104px;padding-bottom:42px;width:100%;max-width:360px;overflow:hidden}
+    .movianx-landing-title{font-size:clamp(30px,9.6vw,38px);max-width:100%;overflow-wrap:break-word;line-height:1.08}
+    .movianx-landing-copy{font-size:16px;line-height:1.58;margin-bottom:28px;max-width:100%}
     .movianx-cta-row{gap:10px}
     .movianx-cta-row .movianx-button{width:100%;max-width:310px}
-    .movianx-preview-rail{grid-template-columns:1fr;margin-bottom:28px}
+    .movianx-preview-rail{grid-template-columns:1fr;margin-bottom:28px;max-width:100%}
+    .movianx-waitlist{grid-template-columns:1fr;width:100%;max-width:100%}
+    .movianx-waitlist input,
+    .movianx-waitlist button{width:100%;min-width:0}
     .movianx-support-grid{grid-template-columns:1fr}
     .movianx-support-card{min-height:auto}
   }
@@ -416,11 +535,13 @@ const landingCinematicCSS = `
     .movianx-landing-shell:before,
     .movianx-topbar,
     .movianx-hero-kicker,
+    .movianx-logo-reveal,
     .movianx-landing-title,
     .movianx-landing-copy,
     .movianx-cta-row,
     .movianx-feature-tag,
     .movianx-preview-rail,
+    .movianx-waitlist,
     .movianx-support-grid,
     .movianx-orb,
     .movianx-streak{
@@ -446,19 +567,21 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
       <div className="movianx-topbar">
         <img src="/movianx-logo.png" alt="Movianx"/>
         <div className="movianx-nav-actions">
-          <button onClick={openCreatorDashboard} style={{background:"transparent",border:"none",color:"rgba(255,255,255,0.68)",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>Sign In</button>
-          <button onClick={openCreatorDashboard} className="movianx-button movianx-button-primary" style={{minHeight:40,padding:"10px 18px",fontSize:14}}>For Creators</button>
+          <button onClick={openConsumerLogin} style={{background:"transparent",border:"none",color:"rgba(255,255,255,0.68)",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>Login</button>
+          <button onClick={openCreatorDashboard} className="movianx-button movianx-button-primary" style={{minHeight:40,padding:"10px 18px",fontSize:14}}>Creator Login</button>
         </div>
       </div>
 
       <div className="movianx-landing-hero">
-        <div className="movianx-hero-kicker">Creator-first cinematic intelligence</div>
+        <div className="movianx-logo-reveal"><img src="/movianx-logo.png" alt="" /></div>
+        <div className="movianx-hero-kicker">Immersive AI entertainment</div>
         <h1 className="movianx-landing-title">Immersive media powered by AI.</h1>
-        <p className="movianx-landing-copy">Upload films, stories, and cinematic experiences into a platform designed for next generation creators. Movianx enhances media with immersive audio, AI analysis, and intelligent cinematic tooling.</p>
+        <p className="movianx-landing-copy">Experience AI-enhanced entertainment across films, interactive stories, and cinematic worlds designed to feel alive around you.</p>
         <div className="movianx-cta-row">
-          <button onClick={openCreatorDashboard} className="movianx-button movianx-button-primary">For Creators</button>
+          <button onClick={openWatchLibrary} className="movianx-button movianx-button-primary">Start Watching</button>
           <button onClick={openWatchLibrary} className="movianx-button movianx-button-secondary">Explore Experiences</button>
         </div>
+        <WaitlistCapture FF={FF} />
         <div className="movianx-preview-rail" aria-label="Cinematic experience previews">
           {LANDING_MOVIE_PREVIEWS.map(([title, label, accent])=>(
             <button key={title} onClick={openWatchLibrary} className="movianx-preview-card" style={{"--preview-accent":accent,cursor:"pointer",fontFamily:FF,textAlign:"left"}}>
@@ -495,13 +618,13 @@ export function HomeView({ C, FF, CSS, transitionState, navigateTo }) {
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 5%",borderBottom:`1px solid ${C.border}`,animation:getEntryAnimation(transitionState,"fadeDown 0.6s ease both")}}>
         <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
         <div style={{display:"flex",gap:24,alignItems:"center"}}>
-          <button onClick={openCreatorDashboard} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Creator Studio</button>
-          <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>For Creators</button>
+          <button onClick={openWatchLibrary} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Watch</button>
+          <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>Creator Login</button>
         </div>
       </div>
       <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"32px 5% 60px"}}>
         <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:700,color:C.text,marginBottom:8,textAlign:"center",letterSpacing:"-1px",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.1s"),opacity:1}}>Explore Movianx Experiences</h1>
-        <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:560,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Preview immersive media and creator-ready cinematic tooling built for AI-directed experiences.</p>
+        <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:560,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Preview films, stories, and interactive worlds built for immersive AI-enhanced entertainment.</p>
         <div style={{display:"flex",gap:16,width:"100%",maxWidth:900,justifyContent:"center",flexWrap:"wrap",paddingBottom:40}}>
           <button onClick={openWatchLibrary} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
             <div style={{fontSize:36,marginBottom:8}}>🎬</div>

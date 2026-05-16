@@ -2,7 +2,9 @@ import Link from "next/link";
 import "./dashboard.css";
 
 const navItems = [
+  ["/dashboard/welcome", "Welcome"],
   ["/dashboard", "Overview"],
+  ["/dashboard/application", "Verification"],
   ["/dashboard/upload", "Upload"],
   ["/dashboard/content", "Content"],
   ["/dashboard/review-status", "Review"],

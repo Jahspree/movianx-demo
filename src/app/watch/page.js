@@ -1,40 +1,42 @@
 import Link from "next/link";
 import styles from "./watch.module.css";
 import {
-  MOVIE_RAILS,
+  CONSUMER_RAILS,
+  getConsumerRailItems,
+} from "../../data/consumerExperiences";
+import {
   getFeaturedMovieExperience,
-  getMovieRailItems,
 } from "../../data/movieExperiences";
 
-function posterStyle(movie) {
-  return { "--poster-accent": movie.accent };
+function posterStyle(experience) {
+  return { "--poster-accent": experience.accent };
 }
 
-function PosterCard({ movie }) {
+function PosterCard({ experience }) {
   return (
-    <Link className={styles.posterCard} href={`/watch/${movie.id}`}>
-      <div className={styles.posterArt} style={posterStyle(movie)}>
+    <Link className={styles.posterCard} href={experience.href || `/watch/${experience.id}`}>
+      <div className={styles.posterArt} style={posterStyle(experience)}>
         <div className={styles.badgeRow}>
-          {movie.aiEnhanced && <span className={styles.miniBadge}>AI Enhanced</span>}
-          {movie.immersiveReady && <span className={styles.miniBadge}>Immersive Ready</span>}
+          {experience.aiEnhanced && <span className={styles.miniBadge}>AI Enhanced</span>}
+          {experience.immersiveReady && <span className={styles.miniBadge}>Immersive Ready</span>}
         </div>
         <div className={styles.posterText}>
-          <h3>{movie.title}</h3>
-          <span className={styles.miniBadge}>{movie.year}</span>
+          <h3>{experience.title}</h3>
+          <span className={styles.miniBadge}>{experience.mediaType || experience.year}</span>
         </div>
       </div>
       <div className={styles.cardInfo}>
-        <h3>{movie.title}</h3>
-        <p>{movie.genre} · {movie.runtime}</p>
+        <h3>{experience.title}</h3>
+        <p>{experience.genre} · {experience.runtime}</p>
       </div>
     </Link>
   );
 }
 
 export const metadata = {
-  title: "Watch — Movianx AI Enhanced Cinema",
+  title: "Watch — Movianx Immersive Experiences",
   description:
-    "Browse demo-safe public-domain and creator-owned cinematic experiences enhanced for immersive AI media.",
+    "Browse demo-safe films, interactive stories, and AI-enhanced immersive entertainment experiences.",
 };
 
 export default function WatchPage() {
@@ -49,8 +51,8 @@ export default function WatchPage() {
         </Link>
         <nav className={styles.nav} aria-label="Watch navigation">
           <Link href="/">Home</Link>
-          <Link href="/dashboard">Creators</Link>
-          <Link className={styles.creatorButton} href="/dashboard/upload">Upload</Link>
+          <Link href="/dashboard/welcome">Creator Login</Link>
+          <Link className={styles.creatorButton} href="#early-access">Join Waitlist</Link>
         </nav>
       </header>
 
@@ -67,7 +69,7 @@ export default function WatchPage() {
           </div>
           <div className={styles.ctaRow}>
             <Link className={styles.primaryButton} href={`/watch/${featured.id}`}>Watch Experience</Link>
-            <Link className={styles.secondaryButton} href="/dashboard/upload">Creator Upload Pipeline</Link>
+            <Link className={styles.secondaryButton} href="#experience-library">Explore Library</Link>
           </div>
         </div>
         <div className={styles.heroPoster}>
@@ -84,22 +86,34 @@ export default function WatchPage() {
         </div>
       </section>
 
-      <section className={styles.rails} aria-label="Movie experience library">
-        {MOVIE_RAILS.map((rail) => (
+      <section id="experience-library" className={styles.rails} aria-label="Immersive experience library">
+        {CONSUMER_RAILS.map((rail) => (
           <div className={styles.rail} key={rail.title}>
             <div className={styles.railHeader}>
               <div>
                 <h2>{rail.title}</h2>
-                <p>Demo-safe entries only: public-domain titles and creator-owned placeholders.</p>
+                <p>{rail.description}</p>
               </div>
             </div>
             <div className={styles.railScroller}>
-              {getMovieRailItems(rail.ids).map((movie) => (
-                <PosterCard key={`${rail.title}-${movie.id}`} movie={movie} />
+              {getConsumerRailItems(rail.ids).map((experience) => (
+                <PosterCard key={`${rail.title}-${experience.id}`} experience={experience} />
               ))}
             </div>
           </div>
         ))}
+        <div id="early-access" className={styles.waitlistPanel}>
+          <div>
+            <span className={styles.badge}>Early Access</span>
+            <h2>Get notified when immersive releases go live.</h2>
+            <p>Privacy-first updates for viewers. Private creator paths stay separate from the public experience.</p>
+          </div>
+          <form className={styles.inlineCapture} action="/api/waitlist" method="post">
+            <input type="email" name="email" placeholder="you@example.com" required />
+            <input type="hidden" name="source" value="watch" />
+            <button type="submit">Join Waitlist</button>
+          </form>
+        </div>
       </section>
     </main>
   );

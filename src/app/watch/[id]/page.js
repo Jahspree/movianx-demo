@@ -46,8 +46,8 @@ export default function WatchDetailPage({ params }) {
         </Link>
         <nav className={styles.nav} aria-label="Watch navigation">
           <Link href="/watch">Browse</Link>
-          <Link href="/dashboard">Creators</Link>
-          <Link className={styles.creatorButton} href="/dashboard/upload">Upload</Link>
+          <Link href="/dashboard/welcome">Creator Login</Link>
+          <Link className={styles.creatorButton} href="/watch">Explore</Link>
         </nav>
       </header>
 
@@ -104,7 +104,7 @@ export default function WatchDetailPage({ params }) {
           <div className={styles.rightsNote}>
             Rights status: {movie.rights}. This investor demo uses metadata and
             placeholder presentation only. No copyrighted film stream or private
-            creator upload is embedded on this page.
+            media source is embedded on this page.
           </div>
 
           <div className={styles.ctaRow} style={{ marginTop: 22 }}>

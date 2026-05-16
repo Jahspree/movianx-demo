@@ -2,10 +2,10 @@ import './globals.css';
 
 export const metadata = {
   title: 'Movianx — Immersive Media Powered by AI',
-  description: 'Creator-first AI media platform for films, video, immersive audio, intelligent media analysis, and cinematic enhancement.',
+  description: 'Experience immersive AI-enhanced entertainment across films, interactive stories, and cinematic media worlds.',
   openGraph: {
     title: 'Movianx — Immersive Media Powered by AI',
-    description: 'Creator-first AI media platform for films, video, immersive audio, intelligent media analysis, and cinematic enhancement.',
+    description: 'Experience immersive AI-enhanced entertainment across films, interactive stories, and cinematic media worlds.',
     url: 'https://demo.movianx.com',
     siteName: 'Movianx',
     type: 'website',
@@ -13,7 +13,7 @@ export const metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Movianx — Immersive Media Powered by AI',
-    description: 'Creator-first AI media platform for cinematic AI-directed experiences.',
+    description: 'Immersive AI-enhanced entertainment for films, stories, and cinematic experiences.',
   },
 };
 

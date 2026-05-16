@@ -1,4 +1,9 @@
-import { ASSET_TYPES, CONTENT_STATUSES } from "./types.js";
+import {
+  ASSET_TYPES,
+  CONTENT_STATUSES,
+  CREATOR_VERIFICATION_STATES,
+  EMAIL_CAPTURE_INTENTS,
+} from "./types.js";
 
 export const MAX_FILE_BYTES = Object.freeze({
   movie: 5 * 1024 * 1024 * 1024,
@@ -19,6 +24,8 @@ const ALLOWED_EXTENSIONS = Object.freeze({
 });
 
 const SAFE_TEXT = /^[\p{L}\p{N}\s.,:;!?'"()\-_/&+@#]+$/u;
+const SAFE_URL = /^https:\/\/[a-z0-9.-]+\.[a-z]{2,}(\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?$/i;
+const SAFE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_TRANSITIONS = Object.freeze({
   draft: ["uploading", "review_required"],
   uploading: ["uploaded", "draft", "rejected"],
@@ -113,6 +120,60 @@ export function sanitizeTags(tags) {
     .map(tag => sanitizeText(tag, { max: 32, field: "tag" }).toLowerCase())
     .filter(Boolean)
     .slice(0, 12);
+}
+
+export function sanitizeEmail(value, { field = "email" } = {}) {
+  const email = String(value || "").normalize("NFKC").trim().toLowerCase();
+  if (!SAFE_EMAIL.test(email) || email.length > 254) {
+    throw new ValidationError(`${field} is invalid`);
+  }
+  return email;
+}
+
+export function sanitizeOptionalUrl(value, { field = "url" } = {}) {
+  const url = String(value || "").normalize("NFKC").trim();
+  if (!url) return "";
+  if (url.length > 300 || !SAFE_URL.test(url)) {
+    throw new ValidationError(`${field} must be a valid https URL`);
+  }
+  return url;
+}
+
+export function validateEmailCapturePayload(payload = {}) {
+  const email = sanitizeEmail(payload.email);
+  const source = sanitizeText(payload.source || "homepage", { max: 40, field: "source" });
+  const intentInput = sanitizeText(payload.intent || "early_access", { max: 40, field: "intent" });
+  const intent = EMAIL_CAPTURE_INTENTS.includes(intentInput) ? intentInput : "early_access";
+  const website = String(payload.website || "").trim();
+
+  if (website) {
+    throw new ValidationError("Submission rejected");
+  }
+
+  return { email, source, intent };
+}
+
+export function validateCreatorApplicationPayload(payload = {}) {
+  const email = sanitizeEmail(payload.email);
+  const name = sanitizeText(payload.name, { max: 120, field: "name", required: true });
+  const company = sanitizeText(payload.company, { max: 120, field: "company" });
+  const creatorType = sanitizeText(payload.creatorType, { max: 60, field: "creatorType", required: true });
+  const portfolioUrl = sanitizeOptionalUrl(payload.portfolioUrl, { field: "portfolioUrl" });
+  const goals = sanitizeText(payload.goals, { max: 1200, field: "goals", required: true });
+  const requestedState = sanitizeText(payload.requestedState || "pending_application", { max: 40, field: "requestedState" });
+  const verificationState = CREATOR_VERIFICATION_STATES.includes(requestedState)
+    ? requestedState
+    : "pending_application";
+
+  return {
+    email,
+    name,
+    company,
+    creatorType,
+    portfolioUrl,
+    goals,
+    verificationState: verificationState === "pending_application" ? verificationState : "pending_application",
+  };
 }
 
 export function validateCreatePayload(payload = {}) {
