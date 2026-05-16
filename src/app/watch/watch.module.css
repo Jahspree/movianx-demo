@@ -339,6 +339,77 @@
   filter: blur(22px);
 }
 
+.detailHero {
+  position: relative;
+  min-height: 560px;
+  display: grid;
+  align-items: end;
+  padding: 88px 5% 54px;
+  overflow: hidden;
+}
+
+.detailBackdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 7, 0.98) 0%, rgba(5, 5, 7, 0.74) 48%, rgba(5, 5, 7, 0.24) 100%),
+    radial-gradient(circle at 72% 34%, var(--poster-accent), transparent 30%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.024) 0, rgba(255, 255, 255, 0.024) 1px, transparent 1px, transparent 58px);
+  opacity: 0.92;
+}
+
+.detailHeroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 860px;
+}
+
+.detailHeroContent h1 {
+  margin: 18px 0 16px;
+  max-width: 820px;
+  font-size: clamp(52px, 8vw, 104px);
+  line-height: 0.96;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.detailHeroContent p {
+  margin: 0;
+  max-width: 720px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: clamp(17px, 2.2vw, 23px);
+  line-height: 1.55;
+}
+
+.creatorLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin: 18px 0 22px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.tagCloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  max-width: 760px;
+  margin-bottom: 28px;
+}
+
+.tagCloud span {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.76);
+  padding: 8px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
 .videoFrame {
   position: relative;
   aspect-ratio: 16 / 9;
@@ -442,6 +513,159 @@
   margin-top: 22px;
 }
 
+.seriesBox h2,
+.merchPanel h2,
+.curatedHeader h2 {
+  margin: 0;
+  color: #fff;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.seriesBox h2 {
+  font-size: clamp(24px, 3vw, 36px);
+}
+
+.seriesBox p,
+.merchPanel p,
+.curatedHeader p {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.58;
+}
+
+.episodeList {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.episodeSeason {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.16);
+  padding: 12px;
+}
+
+.episodeSeason span {
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 13px;
+}
+
+.merchPanel {
+  margin-top: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035));
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.merchPanel h2 {
+  margin-top: 12px;
+  font-size: 22px;
+}
+
+.merchPanel div > span {
+  display: inline-flex;
+  margin-top: 12px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 12px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.detailRails {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 46px;
+  padding: 0 5% 90px;
+}
+
+.curatedSection {
+  display: grid;
+  gap: 16px;
+}
+
+.curatedHeader {
+  max-width: 720px;
+}
+
+.curatedHeader h2 {
+  font-size: clamp(24px, 3vw, 38px);
+}
+
+.curatedGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.relatedCard {
+  color: #fff;
+  text-decoration: none;
+}
+
+.relatedPoster {
+  position: relative;
+  overflow: hidden;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 16px;
+  background:
+    radial-gradient(circle at 68% 30%, var(--poster-accent), transparent 32%),
+    linear-gradient(145deg, #08080a, #1a1014 64%, #050507);
+  box-shadow: 0 24px 76px rgba(0, 0, 0, 0.32);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.relatedPoster:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, transparent 12%, rgba(0, 0, 0, 0.72) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.028) 0, rgba(255, 255, 255, 0.028) 1px, transparent 1px, transparent 36px);
+}
+
+.relatedPoster span,
+.relatedPoster strong {
+  position: relative;
+  z-index: 2;
+}
+
+.relatedPoster span {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 11px;
+  font-weight: 760;
+  text-transform: uppercase;
+}
+
+.relatedPoster strong {
+  font-size: 20px;
+  line-height: 1.08;
+}
+
+.relatedCard p {
+  margin: 10px 0 0;
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 13px;
+}
+
+.relatedCard:hover .relatedPoster {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.24);
+  box-shadow: 0 30px 96px rgba(0, 0, 0, 0.44), 0 0 34px rgba(139, 26, 26, 0.14);
+}
+
 .waitlistPanel {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
@@ -542,6 +766,10 @@
     grid-template-columns: 1fr;
   }
 
+  .curatedGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .waitlistPanel {
     grid-template-columns: 1fr;
   }
@@ -558,11 +786,27 @@
   }
 
   .hero,
+  .detailHero,
   .rails,
-  .watchLayout {
+  .watchLayout,
+  .detailRails {
     padding-left: 16px;
     padding-right: 16px;
     max-width: 100%;
+  }
+
+  .detailHero {
+    min-height: auto;
+    padding-top: 56px;
+    padding-bottom: 42px;
+  }
+
+  .detailHeroContent h1 {
+    font-size: clamp(40px, 12vw, 58px);
+  }
+
+  .tagCloud {
+    gap: 7px;
   }
 
   .heroContent,
@@ -592,6 +836,14 @@
   }
 
   .inlineCapture {
+    flex-direction: column;
+  }
+
+  .curatedGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .episodeSeason {
     flex-direction: column;
   }
 

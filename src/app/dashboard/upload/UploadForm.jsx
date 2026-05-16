@@ -9,6 +9,11 @@ const emptyForm = {
   language: "English",
   maturityRating: "PG-13",
   tags: "",
+  discoveryTags: "",
+  contentFormat: "standalone_film",
+  seriesTitle: "",
+  seasonNumber: "",
+  episodeNumber: "",
 };
 
 export default function UploadForm() {
@@ -45,6 +50,7 @@ export default function UploadForm() {
           ...form,
           submitMode,
           tags: form.tags,
+          discoveryTags: form.discoveryTags,
           assets,
         }),
       });
@@ -94,8 +100,34 @@ export default function UploadForm() {
         </select>
       </div>
       <div className="field full">
-        <label htmlFor="tags">Tags</label>
-        <input id="tags" name="tags" value={form.tags} onChange={updateField} placeholder="festival, suspense, feature" />
+        <label htmlFor="tags">Creator tags</label>
+        <input id="tags" name="tags" value={form.tags} onChange={updateField} placeholder="anime, psychological thriller, cyberpunk" />
+      </div>
+      <div className="field full">
+        <label htmlFor="discoveryTags">Discovery tags</label>
+        <input id="discoveryTags" name="discoveryTags" value={form.discoveryTags} onChange={updateField} placeholder="moods, themes, aesthetics, fandom categories" />
+      </div>
+      <div className="field">
+        <label htmlFor="contentFormat">Release format</label>
+        <select id="contentFormat" name="contentFormat" value={form.contentFormat} onChange={updateField}>
+          <option value="standalone_film">Standalone film</option>
+          <option value="series">Series</option>
+          <option value="franchise">Franchise / creator universe</option>
+          <option value="episodic_story">Episodic story</option>
+          <option value="documentary_series">Documentary series</option>
+        </select>
+      </div>
+      <div className="field">
+        <label htmlFor="seriesTitle">Series / universe title</label>
+        <input id="seriesTitle" name="seriesTitle" value={form.seriesTitle} onChange={updateField} placeholder="Optional for standalone releases" />
+      </div>
+      <div className="field">
+        <label htmlFor="seasonNumber">Season</label>
+        <input id="seasonNumber" name="seasonNumber" type="number" min="1" max="99" value={form.seasonNumber} onChange={updateField} placeholder="1" />
+      </div>
+      <div className="field">
+        <label htmlFor="episodeNumber">Episode order</label>
+        <input id="episodeNumber" name="episodeNumber" type="number" min="1" max="999" value={form.episodeNumber} onChange={updateField} placeholder="1" />
       </div>
       <div className="field">
         <label htmlFor="movie">Movie/video upload</label>

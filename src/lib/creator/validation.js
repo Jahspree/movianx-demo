@@ -1,6 +1,7 @@
 import {
   ASSET_TYPES,
   CONTENT_STATUSES,
+  CONTENT_FORMATS,
   CREATOR_VERIFICATION_STATES,
   EMAIL_CAPTURE_INTENTS,
 } from "./types.js";
@@ -183,14 +184,44 @@ export function validateCreatePayload(payload = {}) {
   const language = sanitizeText(payload.language, { max: 32, field: "language", required: true });
   const maturityRating = sanitizeText(payload.maturityRating, { max: 24, field: "maturityRating", required: true });
   const tags = sanitizeTags(payload.tags);
+  const discoveryTags = sanitizeTags(payload.discoveryTags);
+  const formatInput = sanitizeText(payload.contentFormat || "standalone_film", { max: 40, field: "contentFormat" });
+  const contentFormat = CONTENT_FORMATS.includes(formatInput) ? formatInput : "standalone_film";
+  const seriesTitle = sanitizeText(payload.seriesTitle, { max: 120, field: "seriesTitle" });
+  const seasonNumber = payload.seasonNumber ? Number(payload.seasonNumber) : null;
+  const episodeNumber = payload.episodeNumber ? Number(payload.episodeNumber) : null;
   const submitMode = payload.submitMode === "review" ? "review" : "draft";
   const assets = Array.isArray(payload.assets) ? payload.assets.map(validateAssetMetadata) : [];
+
+  if (contentFormat !== "standalone_film" && !seriesTitle) {
+    throw new ValidationError("Series title is required for episodic or franchise content");
+  }
+  if (seasonNumber !== null && (!Number.isSafeInteger(seasonNumber) || seasonNumber < 1 || seasonNumber > 99)) {
+    throw new ValidationError("seasonNumber must be between 1 and 99");
+  }
+  if (episodeNumber !== null && (!Number.isSafeInteger(episodeNumber) || episodeNumber < 1 || episodeNumber > 999)) {
+    throw new ValidationError("episodeNumber must be between 1 and 999");
+  }
 
   if (!assets.some(asset => asset.assetType === "movie")) {
     throw new ValidationError("Movie upload is required", ["movie asset is required"]);
   }
 
-  return { title, description, genre, language, maturityRating, tags, submitMode, assets };
+  return {
+    title,
+    description,
+    genre,
+    language,
+    maturityRating,
+    tags,
+    discoveryTags,
+    contentFormat,
+    seriesTitle,
+    seasonNumber,
+    episodeNumber,
+    submitMode,
+    assets,
+  };
 }
 
 export function validatePatchPayload(payload = {}) {

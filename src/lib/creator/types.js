@@ -29,6 +29,24 @@ export const MONETIZATION_STATUSES = Object.freeze([
 
 export const ASSET_TYPES = Object.freeze(["movie", "trailer", "poster"]);
 
+export const CONTENT_FORMATS = Object.freeze([
+  "standalone_film",
+  "series",
+  "franchise",
+  "episodic_story",
+  "documentary_series",
+]);
+
+export const DISCOVERY_TAG_GROUPS = Object.freeze([
+  "genres",
+  "themes",
+  "audience_interests",
+  "moods",
+  "styles",
+  "aesthetics",
+  "fandom_categories",
+]);
+
 export const CREATOR_VERIFICATION_STATES = Object.freeze([
   "pending_application",
   "basic_verified",
@@ -123,6 +141,11 @@ export const ANALYSIS_TASKS = Object.freeze([
  * @property {string} language
  * @property {string} maturityRating
  * @property {string[]} tags
+ * @property {string} contentFormat
+ * @property {string} seriesTitle
+ * @property {number|null} seasonNumber
+ * @property {number|null} episodeNumber
+ * @property {string[]} discoveryTags
  * @property {string} status
  * @property {string} reviewStatus
  * @property {UploadAsset[]} assets

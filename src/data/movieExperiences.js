@@ -5,8 +5,11 @@ export const MOVIE_EXPERIENCES = [
     year: "1968",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "George A. Romero Estate / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A landmark independent horror film reframed here as a demo-safe immersive cinema experience with adaptive atmosphere and scene-aware audio enhancement indicators.",
+    hook: "Claustrophobic survival horror rebuilt around dread, silence, and human panic.",
     genre: "Public Domain Horror",
     runtime: "96 min",
     rating: "Unrated",
@@ -17,6 +20,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "crimson",
     accent: "#b51f2a",
     tags: ["Survival Horror", "Mono Restoration", "Adaptive Dread"],
+    moodTags: ["fear", "survival", "suspense"],
+    styleTags: ["indie", "black-and-white", "psychological horror"],
     enhancements: [
       "Immersive audio enhancement",
       "AI scene analysis",
@@ -32,6 +37,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1922",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "F. W. Murnau / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "German expressionist horror staged as a silent-era immersive restoration concept, with atmospheric sound mapping and shadow-driven scene analysis.",
     genre: "Public Domain Horror",
@@ -43,6 +50,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "ash",
     accent: "#9ca3af",
     tags: ["Expressionist", "Silent Cinema", "Shadow Mapping"],
+    moodTags: ["dread", "uncanny", "supernatural"],
+    styleTags: ["gothic", "expressionist", "silent cinema"],
     enhancements: [
       "Adaptive score staging",
       "AI shot rhythm analysis",
@@ -56,6 +65,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1920",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "Robert Wiene / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A fractured silent classic presented as an AI-enhanced expressionist demo with stylized ambience, visual tone analysis, and cinematic processing states.",
     genre: "Public Domain Horror",
@@ -67,6 +78,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "violet",
     accent: "#7c3aed",
     tags: ["Expressionist Horror", "Dream Logic", "Spatial Score"],
+    moodTags: ["unease", "surreal", "suspense"],
+    styleTags: ["expressionist", "dark fantasy", "experimental"],
     enhancements: [
       "Scene geometry analysis",
       "Intelligent subtitle generation",
@@ -80,6 +93,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1902",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "Georges Melies / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A foundational fantasy film imagined as a compact immersive experience with playful sound staging, restoration cues, and AI-assisted scene indexing.",
     genre: "Experimental Immersive",
@@ -91,6 +106,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "gold",
     accent: "#d6a33a",
     tags: ["Fantasy", "Silent Short", "Restoration Demo"],
+    moodTags: ["wonder", "playful", "curious"],
+    styleTags: ["fantasy", "retro", "experimental"],
     enhancements: [
       "Scene beat detection",
       "Adaptive music bed",
@@ -104,6 +121,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1926",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "Buster Keaton / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A silent action-comedy classic positioned as an AI-enhanced motion and timing study for creator-safe cinematic experimentation.",
     genre: "AI Enhanced Cinema",
@@ -115,6 +134,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "steel",
     accent: "#64748b",
     tags: ["Action Comedy", "Motion Analysis", "Rhythm Mapping"],
+    moodTags: ["adventure", "momentum", "joy"],
+    styleTags: ["action", "comedy", "retro"],
     enhancements: [
       "Action beat analysis",
       "Adaptive sound staging",
@@ -128,6 +149,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1959",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "William Castle / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A haunted-house horror title framed as a demo-safe AI cinema experience with spatial ambience, dialogue lift, and suspense-aware processing states.",
     genre: "Recently Added",
@@ -139,6 +162,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "ember",
     accent: "#ea580c",
     tags: ["Haunted House", "Suspense", "Dialogue Lift"],
+    moodTags: ["suspense", "fear", "mystery"],
+    styleTags: ["haunted house", "retro", "horror"],
     enhancements: [
       "Dialogue enhancement",
       "Room tone expansion",
@@ -152,17 +177,46 @@ export const MOVIE_EXPERIENCES = [
     year: "Demo",
     rights: "Creator-owned demo placeholder",
     sourceType: "No third-party media bundled",
+    creator: "Movianx Originals",
+    teamLabel: "Creator universe preview",
     synopsis:
       "A creator-owned sci-fi placeholder showing how original films can become AI-enhanced cinematic experiences after private review.",
+    hook: "A signal appears after midnight, and an entire creator universe starts listening back.",
     genre: "Featured Experiences",
     runtime: "18 min",
     rating: "Demo",
     language: "English",
     immersiveReady: false,
     aiEnhanced: false,
+    contentFormat: "series_seed",
+    seriesType: "franchise_seed",
+    series: {
+      title: "Midnight Signal Universe",
+      type: "Creator franchise",
+      seasons: [
+        {
+          number: 1,
+          title: "Signal One",
+          episodes: [
+            { number: 1, title: "The First Frequency", runtime: "18 min" },
+          ],
+        },
+      ],
+      continueWatching: "Episode resume foundation",
+      bingeSupport: "Future franchise rail and season playlist support",
+    },
     posterTone: "midnight",
     accent: "#2563eb",
-    tags: ["Creator Demo", "Signal Horror", "Processing"],
+    tags: ["Creator Demo", "Signal Horror", "Processing", "Sci-Fi", "Franchise"],
+    moodTags: ["mystery", "dread", "wonder"],
+    styleTags: ["sci-fi", "cyberpunk", "indie"],
+    merchCollections: [
+      {
+        title: "Signal One Release Collection",
+        description: "A future limited fan release for viewers who want to support the creator's world.",
+        label: "Release collection",
+      },
+    ],
     enhancements: [
       "AI scene analysis pending",
       "Immersive audio mapping pending",
@@ -175,6 +229,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1921",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "Victor Sjostrom / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A spectral silent drama positioned for atmospheric restoration, layered score placement, and grief-aware scene analysis.",
     genre: "AI Enhanced Cinema",
@@ -186,6 +242,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "green",
     accent: "#0f766e",
     tags: ["Silent Drama", "Supernatural", "Restoration"],
+    moodTags: ["sadness", "spiritual", "haunting"],
+    styleTags: ["spiritual", "silent drama", "arthouse"],
     enhancements: [
       "Atmospheric score mapping",
       "Scene tone analysis",
@@ -199,6 +257,8 @@ export const MOVIE_EXPERIENCES = [
     year: "1925",
     rights: "Public domain in the United States",
     sourceType: "Verified public-domain metadata",
+    creator: "Harry O. Hoyt / Public Domain",
+    teamLabel: "Movianx classics curation",
     synopsis:
       "A public-domain adventure title staged as an immersive creature-feature demo with movement cues and environment-aware audio.",
     genre: "Experimental Immersive",
@@ -210,6 +270,8 @@ export const MOVIE_EXPERIENCES = [
     posterTone: "jungle",
     accent: "#4d7c0f",
     tags: ["Adventure", "Creature Cinema", "World Building"],
+    moodTags: ["adventure", "wonder", "tension"],
+    styleTags: ["sci-fi", "dark fantasy", "creature feature"],
     enhancements: [
       "Motion cue analysis",
       "Environmental audio mapping",
