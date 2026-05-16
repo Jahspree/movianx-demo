@@ -120,8 +120,11 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(5, 5, 7, 0.98) 0%, rgba(5, 5, 7, 0.68) 52%, rgba(5, 5, 7, 0.2) 100%),
+    linear-gradient(90deg, rgba(5, 5, 7, 0.96) 0%, rgba(5, 5, 7, 0.56) 50%, rgba(5, 5, 7, 0.08) 100%),
+    var(--poster-image),
     radial-gradient(circle at 74% 32%, rgba(181, 31, 42, 0.34), transparent 32%);
+  background-size: cover, cover, cover;
+  background-position: center;
   pointer-events: none;
 }
 
@@ -198,9 +201,13 @@
   border: 1px solid rgba(255, 255, 255, 0.14);
   box-shadow: 0 40px 110px rgba(0, 0, 0, 0.52);
   background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.02), rgba(0, 0, 0, 0.56)),
+    var(--poster-image),
     radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.22), transparent 12%),
     radial-gradient(circle at 70% 58%, var(--poster-accent), transparent 26%),
     linear-gradient(145deg, #08080a, #1d1013 58%, #050507);
+  background-size: cover, cover, cover, cover, cover;
+  background-position: center;
 }
 
 .posterArt:before {
@@ -208,7 +215,7 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.72) 100%),
+    linear-gradient(180deg, transparent 18%, rgba(0, 0, 0, 0.62) 100%),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 38px);
 }
 
@@ -301,6 +308,19 @@
   font-size: 13px;
 }
 
+.cardInfo p + p {
+  margin-top: 5px;
+}
+
+.cardInfo p:nth-of-type(2) {
+  color: rgba(255, 255, 255, 0.68);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .badgeRow {
   position: absolute;
   top: 12px;
@@ -353,8 +373,11 @@
   inset: 0;
   background:
     linear-gradient(90deg, rgba(5, 5, 7, 0.98) 0%, rgba(5, 5, 7, 0.74) 48%, rgba(5, 5, 7, 0.24) 100%),
+    var(--poster-image),
     radial-gradient(circle at 72% 34%, var(--poster-accent), transparent 30%),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.024) 0, rgba(255, 255, 255, 0.024) 1px, transparent 1px, transparent 58px);
+  background-size: cover, cover, cover, auto;
+  background-position: center;
   opacity: 0.92;
 }
 
@@ -621,8 +644,12 @@
   border-radius: 10px;
   padding: 16px;
   background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.78)),
+    var(--poster-image),
     radial-gradient(circle at 68% 30%, var(--poster-accent), transparent 32%),
     linear-gradient(145deg, #08080a, #1a1014 64%, #050507);
+  background-size: cover, cover, cover, cover;
+  background-position: center;
   box-shadow: 0 24px 76px rgba(0, 0, 0, 0.32);
   transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
 }

@@ -9,7 +9,14 @@ import {
 } from "../../data/movieExperiences";
 
 function posterStyle(experience) {
-  return { "--poster-accent": experience.accent };
+  return {
+    "--poster-accent": experience.accent,
+    "--poster-image": experience.image ? `url(${experience.image})` : "none",
+  };
+}
+
+function railId(title) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
 function PosterCard({ experience }) {
@@ -27,6 +34,8 @@ function PosterCard({ experience }) {
       </div>
       <div className={styles.cardInfo}>
         <h3>{experience.title}</h3>
+        <p>{experience.creator}</p>
+        <p>{experience.hook}</p>
         <p>{experience.genre} · {experience.runtime}</p>
       </div>
     </Link>
@@ -41,6 +50,10 @@ export const metadata = {
 
 export default function WatchPage() {
   const featured = getFeaturedMovieExperience();
+  const featuredStyle = {
+    "--poster-accent": featured.accent,
+    "--poster-image": "url(/media/cinematic/movies-world.jpg)",
+  };
 
   return (
     <main className={styles.watchShell}>
@@ -56,11 +69,11 @@ export default function WatchPage() {
         </nav>
       </header>
 
-      <section className={styles.hero}>
+      <section className={styles.hero} style={featuredStyle}>
         <div className={styles.heroContent}>
-          <div className={styles.kicker}>AI-enhanced public-domain cinema</div>
-          <h1>{featured.title}</h1>
-          <p>{featured.synopsis}</p>
+          <div className={styles.kicker}>Explore immersive entertainment</div>
+          <h1>Worlds that feel alive.</h1>
+          <p>Films, interactive stories, music experiences, and creator universes presented with cinematic imagery, immersive audio, and AI-enhanced discovery.</p>
           <div className={styles.metaLine}>
             <span>{featured.year}</span>
             <span>{featured.genre}</span>
@@ -68,12 +81,12 @@ export default function WatchPage() {
             <span>{featured.rights}</span>
           </div>
           <div className={styles.ctaRow}>
-            <Link className={styles.primaryButton} href={`/watch/${featured.id}`}>Watch Experience</Link>
+            <Link className={styles.primaryButton} href={`/watch/${featured.id}`}>Enter Featured World</Link>
             <Link className={styles.secondaryButton} href="#experience-library">Explore Library</Link>
           </div>
         </div>
         <div className={styles.heroPoster}>
-          <div className={styles.posterArt} style={posterStyle(featured)}>
+          <div className={styles.posterArt} style={featuredStyle}>
             <div className={styles.badgeRow}>
               <span className={styles.miniBadge}>AI Enhanced</span>
               <span className={styles.miniBadge}>Immersive Ready</span>
@@ -88,7 +101,7 @@ export default function WatchPage() {
 
       <section id="experience-library" className={styles.rails} aria-label="Immersive experience library">
         {CONSUMER_RAILS.map((rail) => (
-          <div className={styles.rail} key={rail.title}>
+          <div id={railId(rail.title)} className={styles.rail} key={rail.title}>
             <div className={styles.railHeader}>
               <div>
                 <h2>{rail.title}</h2>

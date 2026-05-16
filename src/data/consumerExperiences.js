@@ -1,11 +1,110 @@
 import { MOVIE_EXPERIENCES } from "./movieExperiences.js";
 import { STORIES } from "./stories.js";
 
+const IMAGE = "/media/cinematic/";
+
 const STORY_ACCENTS = {
   1: "#7f1d1d",
   2: "#334155",
   3: "#991b1b",
 };
+
+const STORY_IMAGES = {
+  1: `${IMAGE}emotional-journey.jpg`,
+  2: `${IMAGE}experimental-cinema.jpg`,
+  3: `${IMAGE}psychological-thriller.jpg`,
+};
+
+const MOVIE_IMAGES = {
+  "night-of-the-living-dead": `${IMAGE}movies-world.jpg`,
+  nosferatu: `${IMAGE}psychological-thriller.jpg`,
+  "cabinet-of-dr-caligari": `${IMAGE}experimental-cinema.jpg`,
+  "a-trip-to-the-moon": `${IMAGE}experimental-cinema.jpg`,
+  "the-general": `${IMAGE}hero-portal.jpg`,
+  "house-on-haunted-hill": `${IMAGE}psychological-thriller.jpg`,
+  "creator-proof-film": `${IMAGE}dark-sci-fi.jpg`,
+  "the-phantom-carriage": `${IMAGE}emotional-journey.jpg`,
+  "the-lost-world": `${IMAGE}anime-worlds.jpg`,
+};
+
+export const MUSIC_EXPERIENCES = [
+  {
+    id: "music-echoes-in-orbit",
+    title: "Echoes in Orbit",
+    creator: "Movianx Sound Lab",
+    teamLabel: "Spatial music experience",
+    year: "Demo",
+    rights: "Movianx generated visual demo",
+    sourceType: "Creator-safe music concept",
+    synopsis: "A spatial audio concept for cinematic listening, designed as a future music experience rail.",
+    hook: "A slow-blooming sci-fi sound world that feels like drifting through signal and memory.",
+    genre: "Music Experience",
+    runtime: "7 min",
+    rating: "All ages",
+    language: "Instrumental",
+    mediaType: "Music Experience",
+    contentFormat: "music_experience",
+    seriesType: "standalone_music",
+    series: null,
+    immersiveReady: true,
+    aiEnhanced: true,
+    featured: false,
+    accent: "#0f766e",
+    image: `${IMAGE}music-world.jpg`,
+    tags: ["Spatial Audio", "Ambient", "Sci-Fi"],
+    discoveryTags: ["music", "spatial audio", "ambient", "sci-fi", "cinematic"],
+    moodTags: ["wonder", "calm", "mystery"],
+    styleTags: ["electronic", "immersive", "minimal"],
+    merchCollections: [
+      {
+        title: "Echoes Listener Collection",
+        description: "A future limited fan-support release for the artist's sound world.",
+        label: "Support the artist",
+      },
+    ],
+    enhancements: ["Spatial audio staging", "Mood-reactive visuals", "Adaptive ambience", "Immersive listening mode"],
+    href: "/watch/music-echoes-in-orbit",
+    launchHref: "/watch/music-echoes-in-orbit#player",
+  },
+  {
+    id: "music-velvet-static",
+    title: "Velvet Static",
+    creator: "Movianx Sound Lab",
+    teamLabel: "Experimental audio team",
+    year: "Demo",
+    rights: "Movianx generated visual demo",
+    sourceType: "Creator-safe music concept",
+    synopsis: "A dark, tactile audio-visual mood piece for future immersive music drops.",
+    hook: "A quiet storm of texture, bass, and flickering light.",
+    genre: "Music Experience",
+    runtime: "5 min",
+    rating: "All ages",
+    language: "Instrumental",
+    mediaType: "Music Experience",
+    contentFormat: "music_experience",
+    seriesType: "standalone_music",
+    series: null,
+    immersiveReady: true,
+    aiEnhanced: true,
+    featured: false,
+    accent: "#7c3aed",
+    image: `${IMAGE}creator-spotlight.jpg`,
+    tags: ["Experimental", "Ambient", "Mood"],
+    discoveryTags: ["music", "experimental", "ambient", "dark", "cinematic"],
+    moodTags: ["intimate", "mysterious", "nocturnal"],
+    styleTags: ["electronic", "art-house", "minimal"],
+    merchCollections: [
+      {
+        title: "Velvet Static Drop",
+        description: "A future release collection shaped around the artist's visual world.",
+        label: "Limited fan release",
+      },
+    ],
+    enhancements: ["Mood-reactive visuals", "Spatial audio staging", "Adaptive low-frequency motion"],
+    href: "/watch/music-velvet-static",
+    launchHref: "/watch/music-velvet-static#player",
+  },
+];
 
 export const STORY_EXPERIENCES = STORIES.map((story) => ({
   id: `story-${story.id}`,
@@ -40,6 +139,7 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
   aiEnhanced: true,
   featured: story.isTimed,
   accent: STORY_ACCENTS[story.id] || "#8b1a1a",
+  image: STORY_IMAGES[story.id] || `${IMAGE}stories-world.jpg`,
   tags: [
     story.isTimed ? "Timed Choices" : "Branching Story",
     "Immersive Audio",
@@ -89,43 +189,65 @@ export const CONSUMER_EXPERIENCES = [
         label: "From the creator collection",
       },
     ],
+    image: movie.image || MOVIE_IMAGES[movie.id] || `${IMAGE}movies-world.jpg`,
     mediaType: "Film Experience",
     href: `/watch/${movie.id}`,
     launchHref: `/watch/${movie.id}#player`,
   })),
   ...STORY_EXPERIENCES,
+  ...MUSIC_EXPERIENCES,
 ];
 
 export const CONSUMER_RAILS = [
   {
-    title: "Featured Immersive Experiences",
-    description: "Films and stories staged for AI-enhanced cinematic immersion.",
-    ids: ["night-of-the-living-dead", "story-3", "creator-proof-film", "a-trip-to-the-moon"],
+    title: "Featured Worlds",
+    description: "Curated cinematic worlds designed to invite discovery, not overload it.",
+    ids: ["story-3", "night-of-the-living-dead", "creator-proof-film", "music-echoes-in-orbit", "a-trip-to-the-moon"],
   },
   {
-    title: "AI Enhanced Films",
-    description: "Demo-safe cinema entries with immersive enhancement indicators.",
-    ids: ["night-of-the-living-dead", "nosferatu", "the-general", "the-lost-world", "the-phantom-carriage"],
+    title: "Trending Cinema",
+    description: "Premium film experiences with cinematic visual staging and immersive indicators.",
+    ids: ["night-of-the-living-dead", "nosferatu", "house-on-haunted-hill", "the-general", "the-lost-world"],
   },
   {
-    title: "Interactive Stories",
-    description: "Branching narrative experiences built for cinematic sound and choice.",
-    ids: ["story-3", "story-1", "story-2"],
+    title: "Immersive Stories",
+    description: "Story-first experiences shaped around emotion, timing, and presence.",
+    ids: ["story-3", "story-1", "story-2", "cabinet-of-dr-caligari"],
   },
   {
-    title: "Public Domain Horror",
-    description: "Classic horror metadata only, presented with demo-safe enhancement layers.",
-    ids: ["night-of-the-living-dead", "nosferatu", "cabinet-of-dr-caligari", "house-on-haunted-hill"],
+    title: "Music Experiences",
+    description: "Spatial listening concepts for future artist worlds and audio-visual drops.",
+    ids: ["music-echoes-in-orbit", "music-velvet-static", "the-phantom-carriage", "a-trip-to-the-moon"],
   },
   {
-    title: "Experimental Immersive",
-    description: "Shorts, silent cinema, and interactive formats for new media language.",
-    ids: ["a-trip-to-the-moon", "the-lost-world", "story-3", "cabinet-of-dr-caligari"],
+    title: "Creator Spotlights",
+    description: "Creator universes and artistic worlds presented with respect and breathing room.",
+    ids: ["creator-proof-film", "story-2", "music-velvet-static", "the-phantom-carriage"],
   },
   {
-    title: "Recently Added",
-    description: "Fresh placeholders and public-domain-safe entries for the demo library.",
-    ids: ["house-on-haunted-hill", "the-phantom-carriage", "creator-proof-film", "story-2"],
+    title: "Psychological Thrillers",
+    description: "Suspense, dread, pressure, and strange decisions.",
+    ids: ["story-3", "night-of-the-living-dead", "house-on-haunted-hill", "cabinet-of-dr-caligari"],
+  },
+  {
+    title: "Anime Worlds",
+    description: "Stylized worlds, heightened emotion, and creator-led visual language.",
+    ids: ["the-lost-world", "creator-proof-film", "music-echoes-in-orbit", "story-2"],
+  },
+  {
+    title: "Emotional Journeys",
+    description: "Quiet, haunted, intimate experiences with lasting atmosphere.",
+    ids: ["the-phantom-carriage", "story-1", "music-velvet-static", "a-trip-to-the-moon"],
+  },
+  {
+    title: "Dark Sci-Fi",
+    description: "Signals, systems, strange futures, and cinematic unease.",
+    ids: ["creator-proof-film", "music-echoes-in-orbit", "the-lost-world", "story-3"],
+  },
+  {
+    title: "Experimental Cinema",
+    description: "Restoration concepts, silent cinema, and new forms of immersive media.",
+    ids: ["a-trip-to-the-moon", "cabinet-of-dr-caligari", "the-general", "music-velvet-static"],
   },
 ];
 

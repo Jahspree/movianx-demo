@@ -40,13 +40,20 @@ const LANDING_FEATURE_TAGS = [
   "Interactive Media",
 ];
 
+const LANDING_PORTALS = [
+  ["movies", "Movies", "Cinematic worlds", "/watch", "top"],
+  ["music", "Music", "Spatial listening", "/watch#music-experiences", "left"],
+  ["stories", "Stories", "Interactive fiction", "/watch#immersive-stories", "right"],
+  ["explore", "Explore", "Enter Movianx", "/watch", "center"],
+];
+
 const LANDING_MOVIE_PREVIEWS = [
-  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a"],
-  ["10 Seconds", "Timed Interactive Story", "#991b1b"],
-  ["A Trip to the Moon", "Experimental Immersive", "#d6a33a"],
-  ["Frankenstein", "Classic Interactive Story", "#7f1d1d"],
-  ["The Lost World", "AI Enhanced Cinema", "#4d7c0f"],
-  ["Nosferatu", "Immersive Ready", "#9ca3af"],
+  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/media/cinematic/movies-world.jpg"],
+  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/media/cinematic/psychological-thriller.jpg"],
+  ["Echoes in Orbit", "Music Experience", "#0f766e", "/media/cinematic/music-world.jpg"],
+  ["Midnight Signal", "Dark Sci-Fi", "#2563eb", "/media/cinematic/dark-sci-fi.jpg"],
+  ["Neon Ash", "Anime Worlds", "#dc2626", "/media/cinematic/anime-worlds.jpg"],
+  ["Moon Static", "Experimental Cinema", "#d6a33a", "/media/cinematic/experimental-cinema.jpg"],
 ];
 
 const LANDING_SUPPORT_CARDS = [
@@ -63,6 +70,38 @@ const LANDING_SUPPORT_CARDS = [
     "Movianx blends demo-safe cinema, public-domain classics, and original interactive experiences into one immersive destination.",
   ],
 ];
+
+function PortalIcon({ type }) {
+  if (type === "movies") {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <rect x="6" y="8" width="20" height="16" rx="3" />
+        <path d="M10 8v16M22 8v16M6 13h20M6 19h20" />
+      </svg>
+    );
+  }
+  if (type === "music") {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M6 18v-4M11 22V10M16 25V7M21 22V10M26 18v-4" />
+      </svg>
+    );
+  }
+  if (type === "stories") {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M8 7h11a5 5 0 0 1 5 5v13H13a5 5 0 0 0-5 0V7Z" />
+        <path d="M13 12h6M13 17h7" />
+      </svg>
+    );
+  }
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <circle cx="16" cy="16" r="8" />
+      <path d="M16 2v6M16 24v6M2 16h6M24 16h6M6 6l4 4M22 22l4 4M26 6l-4 4M10 22l-4 4" />
+    </svg>
+  );
+}
 
 function WaitlistCapture({ FF }) {
   const [email, setEmail] = useState("");
@@ -114,11 +153,14 @@ const landingCinematicCSS = `
     overflow-x:hidden;
     overflow-y:auto;
     background:
+      linear-gradient(90deg,rgba(5,5,7,0.86),rgba(5,5,7,0.28),rgba(5,5,7,0.86)),
+      url('/media/cinematic/hero-portal.jpg'),
       radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
       radial-gradient(circle at 18% 28%, rgba(139,26,26,0.28), transparent 26%),
       radial-gradient(circle at 82% 30%, rgba(184,134,11,0.14), transparent 24%),
       linear-gradient(135deg,#050507 0%,#111116 42%,#170808 100%);
-    background-size:180% 180%,140% 140%,130% 130%,100% 100%;
+    background-size:cover,cover,180% 180%,140% 140%,130% 130%,100% 100%;
+    background-position:center,center,50% 18%,18% 28%,82% 30%,center;
     animation:cinematicAtmosphere 18s ease-in-out infinite;
     display:flex;
     flex-direction:column;
@@ -139,7 +181,7 @@ const landingCinematicCSS = `
     background:
       linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.06) 48%,transparent 54%),
       radial-gradient(ellipse at center,transparent 38%,rgba(0,0,0,0.58) 100%);
-    opacity:0.7;
+    opacity:0.48;
     mix-blend-mode:screen;
     animation:lightSweep 16s ease-in-out infinite;
     z-index:0;
@@ -184,7 +226,7 @@ const landingCinematicCSS = `
     width:100%;
     max-width:1120px;
     z-index:2;
-    margin-top:118px;
+    margin-top:96px;
     padding-bottom:64px;
   }
   .movianx-hero-kicker{
@@ -231,7 +273,7 @@ const landingCinematicCSS = `
     box-shadow:0 0 18px rgba(184,43,43,0.95);
   }
   .movianx-landing-title{
-    font-size:clamp(46px,8vw,86px);
+    font-size:clamp(42px,7.2vw,76px);
     font-weight:790;
     color:#fff;
     margin-bottom:20px;
@@ -244,10 +286,103 @@ const landingCinematicCSS = `
   .movianx-landing-copy{
     font-size:clamp(16px,2.4vw,20px);
     color:rgba(255,255,255,0.72);
-    margin:0 auto 36px;
+    margin:0 auto 26px;
     line-height:1.68;
     max-width:820px;
     animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.34s;
+  }
+  .movianx-portal-field{
+    position:relative;
+    width:min(860px,100%);
+    height:330px;
+    margin:14px auto 22px;
+    animation:cinematicReveal 1s cubic-bezier(.2,.8,.2,1) both 0.42s;
+  }
+  .movianx-portal-field:before{
+    content:"";
+    position:absolute;
+    inset:32px 18%;
+    border-radius:999px;
+    background:
+      radial-gradient(circle at center,rgba(255,255,255,0.16),transparent 28%),
+      radial-gradient(circle at center,rgba(181,31,42,0.34),transparent 54%);
+    filter:blur(16px);
+    opacity:0.88;
+    animation:portalPulse 4.8s ease-in-out infinite;
+  }
+  .movianx-portal-line{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:min(390px,46vw);
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);
+    transform-origin:left center;
+    opacity:0.62;
+  }
+  .movianx-portal-line-top{transform:rotate(-90deg)}
+  .movianx-portal-line-left{transform:rotate(180deg)}
+  .movianx-portal-line-right{transform:rotate(0deg)}
+  .movianx-portal-button{
+    position:absolute;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    min-width:190px;
+    padding:13px 16px;
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:999px;
+    background:linear-gradient(135deg,rgba(255,255,255,0.13),rgba(255,255,255,0.045));
+    color:#fff;
+    cursor:pointer;
+    font-family:inherit;
+    text-align:left;
+    box-shadow:0 24px 76px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.12);
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+    transform:translate(-50%,-50%);
+    transition:transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease, background 260ms ease;
+    animation:portalFloat 5.8s ease-in-out infinite;
+  }
+  .movianx-portal-button svg{
+    width:28px;
+    height:28px;
+    flex:0 0 auto;
+    fill:none;
+    stroke:currentColor;
+    stroke-width:1.8;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    color:rgba(255,255,255,0.86);
+  }
+  .movianx-portal-button strong{
+    display:block;
+    font-size:17px;
+    line-height:1;
+    margin-bottom:5px;
+  }
+  .movianx-portal-button span{
+    display:block;
+    color:rgba(255,255,255,0.58);
+    font-size:12px;
+    font-weight:650;
+  }
+  .movianx-portal-button:hover{
+    transform:translate(-50%,-50%) translateY(-5px) scale(1.035);
+    border-color:rgba(255,255,255,0.3);
+    background:linear-gradient(135deg,rgba(181,31,42,0.28),rgba(255,255,255,0.075));
+    box-shadow:0 32px 98px rgba(0,0,0,0.45),0 0 46px rgba(181,31,42,0.24);
+  }
+  .movianx-portal-top{left:50%;top:12%;animation-delay:0.1s}
+  .movianx-portal-left{left:23%;top:53%;animation-delay:0.9s}
+  .movianx-portal-right{left:77%;top:53%;animation-delay:1.4s}
+  .movianx-portal-center{
+    left:50%;
+    top:53%;
+    min-width:230px;
+    padding:18px 22px;
+    background:linear-gradient(135deg,rgba(165,33,33,0.92),rgba(116,20,20,0.78));
+    box-shadow:0 30px 96px rgba(139,26,26,0.42),0 0 70px rgba(181,31,42,0.22);
   }
   .movianx-cta-row{
     display:flex;
@@ -332,7 +467,7 @@ const landingCinematicCSS = `
     display:grid;
     grid-template-columns:repeat(6,minmax(0,1fr));
     gap:14px;
-    margin:0 auto 30px;
+    margin:0 auto 24px;
     max-width:1040px;
     animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.66s;
   }
@@ -345,8 +480,12 @@ const landingCinematicCSS = `
     border-radius:8px;
     border:1px solid rgba(255,255,255,0.13);
     background:
+      linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.56)),
+      var(--preview-image),
       radial-gradient(circle at 64% 32%, var(--preview-accent), transparent 34%),
       linear-gradient(145deg,#09090c,#1a1014 64%,#050507);
+    background-size:cover,cover,cover,cover;
+    background-position:center;
     box-shadow:0 22px 72px rgba(0,0,0,0.28);
     transition:transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
   }
@@ -355,7 +494,7 @@ const landingCinematicCSS = `
     position:absolute;
     inset:0;
     background:
-      linear-gradient(180deg,transparent 20%,rgba(0,0,0,0.76) 100%),
+      linear-gradient(180deg,transparent 34%,rgba(0,0,0,0.62) 100%),
       repeating-linear-gradient(90deg,rgba(255,255,255,0.03) 0,rgba(255,255,255,0.03) 1px,transparent 1px,transparent 34px);
   }
   .movianx-preview-card:hover{
@@ -511,6 +650,14 @@ const landingCinematicCSS = `
     0%,100%{transform:translate3d(-18px,0,0) rotate(-18deg);opacity:0.08}
     50%{transform:translate3d(34px,-18px,0) rotate(-18deg);opacity:0.24}
   }
+  @keyframes portalPulse{
+    0%,100%{transform:scale(0.96);opacity:0.68}
+    50%{transform:scale(1.04);opacity:0.94}
+  }
+  @keyframes portalFloat{
+    0%,100%{margin-top:0}
+    50%{margin-top:-9px}
+  }
   @media (max-width:760px){
     .movianx-landing-shell{padding:16px;align-items:flex-start}
     .movianx-topbar{left:16px;right:auto;width:calc(100% - 32px);max-width:360px;padding:18px 0;gap:12px}
@@ -518,9 +665,20 @@ const landingCinematicCSS = `
     .movianx-nav-actions{gap:8px;min-width:0;flex-shrink:0}
     .movianx-nav-actions button:first-child{font-size:13px!important}
     .movianx-nav-actions .movianx-button{min-height:38px!important;padding:9px 12px!important;font-size:12px!important;white-space:nowrap}
-    .movianx-landing-hero{margin-top:104px;padding-bottom:42px;width:100%;max-width:360px;overflow:hidden}
+    .movianx-landing-hero{margin-top:96px;padding-bottom:42px;width:100%;max-width:360px;overflow:hidden}
     .movianx-landing-title{font-size:clamp(30px,9.6vw,38px);max-width:100%;overflow-wrap:break-word;line-height:1.08}
     .movianx-landing-copy{font-size:16px;line-height:1.58;margin-bottom:28px;max-width:100%}
+    .movianx-portal-field{height:390px;margin:8px auto 24px}
+    .movianx-portal-field:before{inset:78px 12% 80px}
+    .movianx-portal-line{display:none}
+    .movianx-portal-button{min-width:148px;padding:11px 12px;gap:10px}
+    .movianx-portal-button svg{width:24px;height:24px}
+    .movianx-portal-button strong{font-size:15px}
+    .movianx-portal-button span{font-size:11px}
+    .movianx-portal-top{left:50%;top:14%}
+    .movianx-portal-center{left:50%;top:52%;min-width:220px}
+    .movianx-portal-left{left:28%;top:78%}
+    .movianx-portal-right{left:72%;top:78%}
     .movianx-cta-row{gap:10px}
     .movianx-cta-row .movianx-button{width:100%;max-width:310px}
     .movianx-preview-rail{grid-template-columns:1fr;margin-bottom:28px;max-width:100%}
@@ -577,14 +735,28 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
         <div className="movianx-hero-kicker">Immersive AI entertainment</div>
         <h1 className="movianx-landing-title">Immersive media powered by AI.</h1>
         <p className="movianx-landing-copy">Experience AI-enhanced entertainment across films, interactive stories, and cinematic worlds designed to feel alive around you.</p>
-        <div className="movianx-cta-row">
-          <button onClick={openWatchLibrary} className="movianx-button movianx-button-primary">Start Watching</button>
-          <button onClick={openWatchLibrary} className="movianx-button movianx-button-secondary">Explore Experiences</button>
+        <div className="movianx-portal-field" aria-label="Explore Movianx">
+          <div className="movianx-portal-line movianx-portal-line-top" />
+          <div className="movianx-portal-line movianx-portal-line-left" />
+          <div className="movianx-portal-line movianx-portal-line-right" />
+          {LANDING_PORTALS.map(([type, title, subtitle, href, position])=>(
+            <button
+              key={type}
+              onClick={()=>{ window.location.href = href; }}
+              className={`movianx-portal-button movianx-portal-${position}`}
+              style={{fontFamily:FF}}
+            >
+              <PortalIcon type={type} />
+              <span>
+                <strong>{title}</strong>
+                <span>{subtitle}</span>
+              </span>
+            </button>
+          ))}
         </div>
-        <WaitlistCapture FF={FF} />
         <div className="movianx-preview-rail" aria-label="Cinematic experience previews">
-          {LANDING_MOVIE_PREVIEWS.map(([title, label, accent])=>(
-            <button key={title} onClick={openWatchLibrary} className="movianx-preview-card" style={{"--preview-accent":accent,cursor:"pointer",fontFamily:FF,textAlign:"left"}}>
+          {LANDING_MOVIE_PREVIEWS.map(([title, label, accent, image])=>(
+            <button key={title} onClick={openWatchLibrary} className="movianx-preview-card" style={{"--preview-accent":accent,"--preview-image":`url(${image})`,cursor:"pointer",fontFamily:FF,textAlign:"left"}}>
               <div>
                 <strong>{title}</strong>
                 <span>{label} · AI Enhanced</span>
@@ -592,6 +764,7 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
             </button>
           ))}
         </div>
+        <WaitlistCapture FF={FF} />
         <div className="movianx-feature-tags">
           {LANDING_FEATURE_TAGS.map((feature, idx)=>(
             <div key={feature} className="movianx-feature-tag" style={{animationDelay:`${0.56 + idx * 0.055}s`}}>{feature}</div>

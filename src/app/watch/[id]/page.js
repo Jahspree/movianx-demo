@@ -28,7 +28,10 @@ export function generateMetadata({ params }) {
 }
 
 function posterStyle(experience) {
-  return { "--poster-accent": experience.accent };
+  return {
+    "--poster-accent": experience.accent,
+    "--poster-image": experience.image ? `url(${experience.image})` : "none",
+  };
 }
 
 function ExperienceCard({ experience }) {
