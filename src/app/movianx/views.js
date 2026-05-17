@@ -41,10 +41,10 @@ const LANDING_FEATURE_TAGS = [
 ];
 
 const LANDING_PORTALS = [
-  ["movies", "Movies", "Cinematic worlds", "/watch", "top"],
-  ["music", "Music", "Spatial listening", "/watch#music-experiences", "left"],
-  ["stories", "Stories", "Interactive fiction", "/watch#immersive-stories", "right"],
-  ["explore", "Explore", "Enter Movianx", "/watch", "center"],
+  ["movies", "Movies", "Cinematic worlds", "/watch", "top", "/media/cinematic/movies-world.jpg", "#b51f2a"],
+  ["music", "Music", "Spatial listening", "/watch#music-experiences", "left", "/media/cinematic/music-world.jpg", "#0f766e"],
+  ["stories", "Stories", "Interactive fiction", "/watch#immersive-stories", "right", "/media/cinematic/stories-world.jpg", "#7c3aed"],
+  ["explore", "Explore", "Enter Movianx", "/watch", "center", "/media/cinematic/hero-portal.jpg", "#d6a33a"],
 ];
 
 const LANDING_MOVIE_PREVIEWS = [
@@ -293,9 +293,9 @@ const landingCinematicCSS = `
   }
   .movianx-portal-field{
     position:relative;
-    width:min(860px,100%);
-    height:330px;
-    margin:14px auto 22px;
+    width:min(980px,100%);
+    height:370px;
+    margin:18px auto 26px;
     animation:cinematicReveal 1s cubic-bezier(.2,.8,.2,1) both 0.42s;
   }
   .movianx-portal-field:before{
@@ -327,26 +327,54 @@ const landingCinematicCSS = `
     position:absolute;
     display:flex;
     align-items:center;
-    gap:14px;
-    min-width:190px;
-    padding:13px 16px;
-    border:1px solid rgba(255,255,255,0.14);
-    border-radius:999px;
-    background:linear-gradient(135deg,rgba(255,255,255,0.13),rgba(255,255,255,0.045));
+    gap:16px;
+    min-width:238px;
+    min-height:104px;
+    padding:20px;
+    border:1px solid rgba(255,255,255,0.18);
+    border-radius:18px;
+    background:
+      linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.66)),
+      var(--portal-image),
+      linear-gradient(135deg,rgba(255,255,255,0.13),rgba(255,255,255,0.045));
+    background-size:cover,cover,cover;
+    background-position:center;
     color:#fff;
     cursor:pointer;
     font-family:inherit;
     text-align:left;
-    box-shadow:0 24px 76px rgba(0,0,0,0.34), inset 0 1px 0 rgba(255,255,255,0.12);
-    backdrop-filter:blur(22px);
-    -webkit-backdrop-filter:blur(22px);
+    overflow:hidden;
+    box-shadow:0 30px 96px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.16);
     transform:translate(-50%,-50%);
-    transition:transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease, background 260ms ease;
+    transition:transform 260ms ease, border-color 260ms ease, box-shadow 260ms ease, filter 260ms ease;
     animation:portalFloat 5.8s ease-in-out infinite;
   }
+  .movianx-portal-button:before{
+    content:"";
+    position:absolute;
+    inset:-12%;
+    background:var(--portal-image);
+    background-size:cover;
+    background-position:center;
+    opacity:0.48;
+    transform:scale(1.04);
+    transition:transform 700ms ease, opacity 260ms ease;
+    z-index:-2;
+  }
+  .movianx-portal-button:after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(90deg,rgba(0,0,0,0.72),rgba(0,0,0,0.18)),
+      radial-gradient(circle at 78% 22%,var(--portal-accent),transparent 34%),
+      linear-gradient(180deg,transparent,rgba(0,0,0,0.64));
+    opacity:0.86;
+    z-index:-1;
+  }
   .movianx-portal-button svg{
-    width:28px;
-    height:28px;
+    width:34px;
+    height:34px;
     flex:0 0 auto;
     fill:none;
     stroke:currentColor;
@@ -354,34 +382,39 @@ const landingCinematicCSS = `
     stroke-linecap:round;
     stroke-linejoin:round;
     color:rgba(255,255,255,0.86);
+    filter:drop-shadow(0 10px 22px rgba(0,0,0,0.42));
   }
   .movianx-portal-button strong{
     display:block;
-    font-size:17px;
+    font-size:20px;
     line-height:1;
     margin-bottom:5px;
+    text-shadow:0 10px 30px rgba(0,0,0,0.6);
   }
   .movianx-portal-button span{
     display:block;
-    color:rgba(255,255,255,0.58);
+    color:rgba(255,255,255,0.72);
     font-size:12px;
     font-weight:650;
   }
   .movianx-portal-button:hover{
     transform:translate(-50%,-50%) translateY(-5px) scale(1.035);
-    border-color:rgba(255,255,255,0.3);
-    background:linear-gradient(135deg,rgba(181,31,42,0.28),rgba(255,255,255,0.075));
-    box-shadow:0 32px 98px rgba(0,0,0,0.45),0 0 46px rgba(181,31,42,0.24);
+    border-color:rgba(255,255,255,0.34);
+    filter:saturate(1.1) brightness(1.08);
+    box-shadow:0 36px 110px rgba(0,0,0,0.55),0 0 54px rgba(181,31,42,0.28);
+  }
+  .movianx-portal-button:hover:before{
+    transform:scale(1.12);
+    opacity:0.62;
   }
   .movianx-portal-top{left:50%;top:12%;animation-delay:0.1s}
-  .movianx-portal-left{left:23%;top:53%;animation-delay:0.9s}
-  .movianx-portal-right{left:77%;top:53%;animation-delay:1.4s}
+  .movianx-portal-left{left:20%;top:56%;animation-delay:0.9s}
+  .movianx-portal-right{left:80%;top:56%;animation-delay:1.4s}
   .movianx-portal-center{
     left:50%;
-    top:53%;
-    min-width:230px;
-    padding:18px 22px;
-    background:linear-gradient(135deg,rgba(165,33,33,0.92),rgba(116,20,20,0.78));
+    top:56%;
+    min-width:270px;
+    min-height:122px;
     box-shadow:0 30px 96px rgba(139,26,26,0.42),0 0 70px rgba(181,31,42,0.22);
   }
   .movianx-cta-row{
@@ -659,29 +692,31 @@ const landingCinematicCSS = `
     50%{margin-top:-9px}
   }
   @media (max-width:760px){
-    .movianx-landing-shell{padding:16px;align-items:flex-start}
+    .movianx-landing-shell{padding:16px;align-items:center}
     .movianx-topbar{left:16px;right:auto;width:calc(100% - 32px);max-width:360px;padding:18px 0;gap:12px}
     .movianx-topbar img{height:34px}
     .movianx-nav-actions{gap:8px;min-width:0;flex-shrink:0}
     .movianx-nav-actions button:first-child{font-size:13px!important}
     .movianx-nav-actions .movianx-button{min-height:38px!important;padding:9px 12px!important;font-size:12px!important;white-space:nowrap}
     .movianx-landing-hero{margin-top:96px;padding-bottom:42px;width:100%;max-width:360px;overflow:hidden}
-    .movianx-landing-title{font-size:clamp(30px,9.6vw,38px);max-width:100%;overflow-wrap:break-word;line-height:1.08}
-    .movianx-landing-copy{font-size:16px;line-height:1.58;margin-bottom:28px;max-width:100%}
-    .movianx-portal-field{height:390px;margin:8px auto 24px}
+    .movianx-landing-title{font-size:clamp(27px,8vw,32px);max-width:300px;margin-left:auto;margin-right:auto;overflow-wrap:normal;line-height:1.08;text-wrap:balance}
+    .movianx-landing-copy{font-size:14px;line-height:1.56;margin-left:auto;margin-right:auto;margin-bottom:24px;max-width:294px;text-wrap:pretty}
+    .movianx-hero-kicker{font-size:11px;padding:8px 11px}
+    .movianx-portal-field{height:510px;margin:8px auto 24px}
     .movianx-portal-field:before{inset:78px 12% 80px}
     .movianx-portal-line{display:none}
-    .movianx-portal-button{min-width:148px;padding:11px 12px;gap:10px}
-    .movianx-portal-button svg{width:24px;height:24px}
-    .movianx-portal-button strong{font-size:15px}
+    .movianx-portal-button{min-width:150px;min-height:112px;padding:14px;gap:10px;border-radius:16px}
+    .movianx-portal-button svg{width:25px;height:25px}
+    .movianx-portal-button strong{font-size:16px}
     .movianx-portal-button span{font-size:11px}
-    .movianx-portal-top{left:50%;top:14%}
-    .movianx-portal-center{left:50%;top:52%;min-width:220px}
-    .movianx-portal-left{left:28%;top:78%}
-    .movianx-portal-right{left:72%;top:78%}
+    .movianx-portal-top{left:50%;top:13%;min-width:230px}
+    .movianx-portal-center{left:50%;top:43%;min-width:250px;min-height:124px}
+    .movianx-portal-left{left:26%;top:76%}
+    .movianx-portal-right{left:74%;top:76%}
     .movianx-cta-row{gap:10px}
     .movianx-cta-row .movianx-button{width:100%;max-width:310px}
-    .movianx-preview-rail{grid-template-columns:1fr;margin-bottom:28px;max-width:100%}
+    .movianx-preview-rail{display:flex;overflow-x:auto;gap:12px;margin-bottom:28px;max-width:100%;padding-bottom:8px;scroll-snap-type:x proximity}
+    .movianx-preview-card{min-width:220px;scroll-snap-align:start}
     .movianx-waitlist{grid-template-columns:1fr;width:100%;max-width:100%}
     .movianx-waitlist input,
     .movianx-waitlist button{width:100%;min-width:0}
@@ -739,12 +774,12 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
           <div className="movianx-portal-line movianx-portal-line-top" />
           <div className="movianx-portal-line movianx-portal-line-left" />
           <div className="movianx-portal-line movianx-portal-line-right" />
-          {LANDING_PORTALS.map(([type, title, subtitle, href, position])=>(
+          {LANDING_PORTALS.map(([type, title, subtitle, href, position, image, accent])=>(
             <button
               key={type}
               onClick={()=>{ window.location.href = href; }}
               className={`movianx-portal-button movianx-portal-${position}`}
-              style={{fontFamily:FF}}
+              style={{fontFamily:FF,"--portal-image":`url(${image})`,"--portal-accent":accent}}
             >
               <PortalIcon type={type} />
               <span>

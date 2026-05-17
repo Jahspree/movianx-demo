@@ -440,8 +440,12 @@
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.66)),
+    var(--poster-image),
     radial-gradient(circle at 50% 45%, rgba(255, 255, 255, 0.08), transparent 18%),
     linear-gradient(135deg, #070709, #191014 58%, #050507);
+  background-size: cover, cover, cover, cover;
+  background-position: center;
   box-shadow: 0 34px 110px rgba(0, 0, 0, 0.48);
 }
 
@@ -450,7 +454,7 @@
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 20%, rgba(0, 0, 0, 0.42)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 28%, rgba(0, 0, 0, 0.58)),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 54px);
 }
 
