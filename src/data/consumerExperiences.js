@@ -1,7 +1,10 @@
 import { MOVIE_EXPERIENCES } from "./movieExperiences.js";
 import { STORIES } from "./stories.js";
 
-const IMAGE = "/media/cinematic/";
+const MOVIE_IMAGE = "/images/movies/";
+const STORY_IMAGE = "/images/stories/";
+const MUSIC_IMAGE = "/images/music/";
+const CREATOR_IMAGE = "/images/creators/";
 
 const STORY_ACCENTS = {
   1: "#7f1d1d",
@@ -10,21 +13,21 @@ const STORY_ACCENTS = {
 };
 
 const STORY_IMAGES = {
-  1: `${IMAGE}emotional-journey.jpg`,
-  2: `${IMAGE}experimental-cinema.jpg`,
-  3: `${IMAGE}psychological-thriller.jpg`,
+  1: `${STORY_IMAGE}frankenstein.jpg`,
+  2: `${STORY_IMAGE}the-choice.jpg`,
+  3: `${STORY_IMAGE}ten-seconds.jpg`,
 };
 
 const MOVIE_IMAGES = {
-  "night-of-the-living-dead": `${IMAGE}movies-world.jpg`,
-  nosferatu: `${IMAGE}psychological-thriller.jpg`,
-  "cabinet-of-dr-caligari": `${IMAGE}experimental-cinema.jpg`,
-  "a-trip-to-the-moon": `${IMAGE}experimental-cinema.jpg`,
-  "the-general": `${IMAGE}hero-portal.jpg`,
-  "house-on-haunted-hill": `${IMAGE}psychological-thriller.jpg`,
-  "creator-proof-film": `${IMAGE}dark-sci-fi.jpg`,
-  "the-phantom-carriage": `${IMAGE}emotional-journey.jpg`,
-  "the-lost-world": `${IMAGE}anime-worlds.jpg`,
+  "night-of-the-living-dead": `${MOVIE_IMAGE}night-of-the-living-dead.jpg`,
+  nosferatu: `${MOVIE_IMAGE}nosferatu.jpg`,
+  "cabinet-of-dr-caligari": `${MOVIE_IMAGE}cabinet-of-dr-caligari.jpg`,
+  "a-trip-to-the-moon": `${MOVIE_IMAGE}a-trip-to-the-moon.jpg`,
+  "the-general": `${MOVIE_IMAGE}the-general.jpg`,
+  "house-on-haunted-hill": `${MOVIE_IMAGE}house-on-haunted-hill.jpg`,
+  "creator-proof-film": `${MOVIE_IMAGE}midnight-signal.jpg`,
+  "the-phantom-carriage": `${MOVIE_IMAGE}the-phantom-carriage.jpg`,
+  "the-lost-world": `${MOVIE_IMAGE}the-lost-world.jpg`,
 };
 
 export const MUSIC_EXPERIENCES = [
@@ -50,7 +53,7 @@ export const MUSIC_EXPERIENCES = [
     aiEnhanced: true,
     featured: false,
     accent: "#0f766e",
-    image: `${IMAGE}music-world.jpg`,
+    image: `${MUSIC_IMAGE}echoes-in-orbit.jpg`,
     tags: ["Spatial Audio", "Ambient", "Sci-Fi"],
     discoveryTags: ["music", "spatial audio", "ambient", "sci-fi", "cinematic"],
     moodTags: ["wonder", "calm", "mystery"],
@@ -88,7 +91,7 @@ export const MUSIC_EXPERIENCES = [
     aiEnhanced: true,
     featured: false,
     accent: "#7c3aed",
-    image: `${IMAGE}creator-spotlight.jpg`,
+    image: `${MUSIC_IMAGE}velvet-static.jpg`,
     tags: ["Experimental", "Ambient", "Mood"],
     discoveryTags: ["music", "experimental", "ambient", "dark", "cinematic"],
     moodTags: ["intimate", "mysterious", "nocturnal"],
@@ -139,7 +142,7 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
   aiEnhanced: true,
   featured: story.isTimed,
   accent: STORY_ACCENTS[story.id] || "#8b1a1a",
-  image: STORY_IMAGES[story.id] || `${IMAGE}stories-world.jpg`,
+  image: STORY_IMAGES[story.id] || `${CREATOR_IMAGE}spotlight-lab.jpg`,
   tags: [
     story.isTimed ? "Timed Choices" : "Branching Story",
     "Immersive Audio",
@@ -189,7 +192,7 @@ export const CONSUMER_EXPERIENCES = [
         label: "From the creator collection",
       },
     ],
-    image: movie.image || MOVIE_IMAGES[movie.id] || `${IMAGE}movies-world.jpg`,
+    image: movie.image || MOVIE_IMAGES[movie.id] || `${MOVIE_IMAGE}night-of-the-living-dead.jpg`,
     mediaType: "Film Experience",
     href: `/watch/${movie.id}`,
     launchHref: `/watch/${movie.id}#player`,

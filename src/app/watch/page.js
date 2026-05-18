@@ -52,7 +52,7 @@ export default function WatchPage() {
   const featured = getFeaturedMovieExperience();
   const featuredStyle = {
     "--poster-accent": featured.accent,
-    "--poster-image": "url(/media/cinematic/movies-world.jpg)",
+    "--poster-image": "url(/images/movies/night-of-the-living-dead.jpg)",
   };
 
   return (

@@ -41,19 +41,19 @@ const LANDING_FEATURE_TAGS = [
 ];
 
 const LANDING_PORTALS = [
-  ["movies", "Movies", "Cinematic worlds", "/watch", "top", "/media/cinematic/movies-world.jpg", "#b51f2a"],
-  ["music", "Music", "Spatial listening", "/watch#music-experiences", "left", "/media/cinematic/music-world.jpg", "#0f766e"],
-  ["stories", "Stories", "Interactive fiction", "/watch#immersive-stories", "right", "/media/cinematic/stories-world.jpg", "#7c3aed"],
-  ["explore", "Explore", "Enter Movianx", "/watch", "center", "/media/cinematic/hero-portal.jpg", "#d6a33a"],
+  ["movies", "Movies", "Cinematic worlds", "/watch", "top", "/images/homepage/movies.jpg", "#b51f2a"],
+  ["music", "Music", "Spatial listening", "/watch#music-experiences", "left", "/images/homepage/music.jpg", "#0f766e"],
+  ["stories", "Stories", "Interactive fiction", "/watch#immersive-stories", "right", "/images/homepage/stories.jpg", "#7c3aed"],
+  ["explore", "Explore", "Enter Movianx", "/watch", "center", "/images/homepage/explore.jpg", "#d6a33a"],
 ];
 
 const LANDING_MOVIE_PREVIEWS = [
-  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/media/cinematic/movies-world.jpg"],
-  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/media/cinematic/psychological-thriller.jpg"],
-  ["Echoes in Orbit", "Music Experience", "#0f766e", "/media/cinematic/music-world.jpg"],
-  ["Midnight Signal", "Dark Sci-Fi", "#2563eb", "/media/cinematic/dark-sci-fi.jpg"],
-  ["Neon Ash", "Anime Worlds", "#dc2626", "/media/cinematic/anime-worlds.jpg"],
-  ["Moon Static", "Experimental Cinema", "#d6a33a", "/media/cinematic/experimental-cinema.jpg"],
+  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/images/movies/night-of-the-living-dead.jpg"],
+  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/images/stories/ten-seconds.jpg"],
+  ["Echoes in Orbit", "Music Experience", "#0f766e", "/images/music/echoes-in-orbit.jpg"],
+  ["Midnight Signal", "Dark Sci-Fi", "#2563eb", "/images/movies/midnight-signal.jpg"],
+  ["Creator Spotlight", "Creator Universe", "#7c3aed", "/images/creators/spotlight-lab.jpg"],
+  ["Moon Static", "Experimental Cinema", "#d6a33a", "/images/movies/a-trip-to-the-moon.jpg"],
 ];
 
 const LANDING_SUPPORT_CARDS = [
@@ -154,7 +154,7 @@ const landingCinematicCSS = `
     overflow-y:auto;
     background:
       linear-gradient(90deg,rgba(5,5,7,0.86),rgba(5,5,7,0.28),rgba(5,5,7,0.86)),
-      url('/media/cinematic/hero-portal.jpg'),
+      url('/images/backgrounds/hero-cinematic.jpg'),
       radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
       radial-gradient(circle at 18% 28%, rgba(139,26,26,0.28), transparent 26%),
       radial-gradient(circle at 82% 30%, rgba(184,134,11,0.14), transparent 24%),
