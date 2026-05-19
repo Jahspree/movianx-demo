@@ -73,7 +73,7 @@ export default function WatchPage() {
         <div className={styles.heroContent}>
           <div className={styles.kicker}>Explore immersive entertainment</div>
           <h1>Worlds that feel alive.</h1>
-          <p>Films, interactive stories, music experiences, and creator universes presented with cinematic imagery, immersive audio, and AI-enhanced discovery.</p>
+          <p>Films, stories, music, and creator worlds.</p>
           <div className={styles.metaLine}>
             <span>{featured.year}</span>
             <span>{featured.genre}</span>

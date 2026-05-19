@@ -1,0 +1,85 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { analyzeVisualMetadata } from "../src/lib/imagePipeline/analysis.js";
+import { buildCinematicPrompts } from "../src/lib/imagePipeline/promptEngine.js";
+import { LocalCinematicImageProvider } from "../src/lib/imagePipeline/providers.js";
+import { validateGeneratedImage, ImageValidationError } from "../src/lib/imagePipeline/validation.js";
+import { mapGeneratedAssetsToExperience } from "../src/lib/imagePipeline/mapper.js";
+
+test("visual analysis detects horror/thriller tone deterministically", () => {
+  const first = analyzeVisualMetadata({
+    id: "story-3",
+    title: "10 Seconds",
+    genre: "Thriller / Survival Horror",
+    description: "Intruders, fear, silence, pressure, and danger inside the house.",
+    tags: ["psychological thriller"],
+  });
+  const second = analyzeVisualMetadata({
+    id: "story-3",
+    title: "10 Seconds",
+    genre: "Thriller / Survival Horror",
+    description: "Intruders, fear, silence, pressure, and danger inside the house.",
+    tags: ["psychological thriller"],
+  });
+
+  assert.deepEqual(first, second);
+  assert.equal(first.genre, "horror");
+  assert.equal(first.tone, "dread");
+  assert.equal(first.emotion, "fear");
+  assert.equal(first.intensity, 3);
+});
+
+test("prompt engine creates HD cinematic asset prompts", () => {
+  const analysis = analyzeVisualMetadata({ id: "film-1", title: "Night Film", genre: "horror", description: "A haunted cinema." });
+  const prompts = buildCinematicPrompts(analysis, ["poster", "hero", "thumbnail"]);
+
+  assert.equal(prompts.length, 3);
+  assert.ok(prompts.every(prompt => prompt.width >= 1000));
+  assert.ok(prompts.every(prompt => prompt.height >= 600));
+  assert.ok(prompts.every(prompt => prompt.prompt.includes("Dark premium entertainment aesthetic")));
+  assert.ok(prompts.every(prompt => prompt.negativePrompt.includes("transparent background")));
+});
+
+test("local provider output validates without executable SVG content", async () => {
+  const provider = new LocalCinematicImageProvider();
+  const generated = await provider.generate({
+    contentId: "safe-content",
+    title: "Safe Content",
+    type: "poster",
+    width: 1200,
+    height: 1800,
+    prompt: "cinematic poster",
+  });
+  const validation = validateGeneratedImage(generated);
+
+  assert.equal(generated.contentType, "image/svg+xml");
+  assert.equal(validation.quality, "pass");
+  assert.doesNotMatch(generated.bytes.toString("utf8"), /<script|onload=|href="http/i);
+});
+
+test("validation rejects unsafe or undersized images", () => {
+  assert.throws(() => validateGeneratedImage({
+    contentType: "image/svg+xml",
+    width: 100,
+    height: 100,
+    bytes: Buffer.from("<svg><script>alert(1)</script></svg>"),
+  }), ImageValidationError);
+});
+
+test("mapper injects generated assets while preserving fallback data", () => {
+  const mapped = mapGeneratedAssetsToExperience({
+    id: "story-3",
+    title: "10 Seconds",
+    image: "/images/stories/ten-seconds.jpg",
+  }, {
+    "story-3": {
+      poster: "/images/generated/content/story-3/poster.svg",
+      hero: "/images/generated/content/story-3/hero.svg",
+      thumbnail: "/images/generated/content/story-3/thumbnail.svg",
+    },
+  });
+
+  assert.equal(mapped.image, "/images/generated/content/story-3/poster.svg");
+  assert.equal(mapped.heroImage, "/images/generated/content/story-3/hero.svg");
+  assert.equal(mapped.thumbnailImage, "/images/generated/content/story-3/thumbnail.svg");
+});

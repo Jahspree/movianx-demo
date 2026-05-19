@@ -1,6 +1,6 @@
 .watchShell {
-  min-height: 100vh;
-  height: 100vh;
+  min-height: 100svh;
+  height: auto;
   width: 100%;
   max-width: 100vw;
   overflow-y: auto;
@@ -172,9 +172,11 @@
 .hero p {
   margin: 0;
   max-width: 700px;
+  max-inline-size: 100%;
   color: rgba(255, 255, 255, 0.72);
   font-size: clamp(16px, 2vw, 20px);
   line-height: 1.65;
+  overflow-wrap: break-word;
 }
 
 .metaLine {
@@ -826,6 +828,11 @@
     max-width: 100%;
   }
 
+  .hero {
+    display: block;
+    overflow: visible;
+  }
+
   .detailHero {
     min-height: auto;
     padding-top: 56px;
@@ -847,6 +854,10 @@
     max-width: 100%;
   }
 
+  .heroContent {
+    max-width: calc(100vw - 32px);
+  }
+
   .railScroller {
     grid-auto-columns: minmax(158px, 72vw);
   }
@@ -857,6 +868,7 @@
 
   .hero p,
   .detailPanel p {
+    width: 100%;
     max-width: 100%;
     overflow-wrap: anywhere;
   }

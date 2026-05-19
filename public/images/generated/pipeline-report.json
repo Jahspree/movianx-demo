@@ -1,0 +1,144 @@
+{
+  "generatedAt": "2026-05-19T02:32:21.965Z",
+  "provider": "local-cinematic-svg",
+  "contentIds": [
+    "night-of-the-living-dead",
+    "story-3",
+    "music-echoes-in-orbit",
+    "creator-director-noir"
+  ],
+  "assets": [
+    {
+      "contentId": "night-of-the-living-dead",
+      "type": "poster",
+      "publicPath": "/images/generated/content/night-of-the-living-dead/poster.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 1800
+      }
+    },
+    {
+      "contentId": "night-of-the-living-dead",
+      "type": "hero",
+      "publicPath": "/images/generated/content/night-of-the-living-dead/hero.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 2400,
+        "height": 1350
+      }
+    },
+    {
+      "contentId": "night-of-the-living-dead",
+      "type": "thumbnail",
+      "publicPath": "/images/generated/content/night-of-the-living-dead/thumbnail.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      }
+    },
+    {
+      "contentId": "story-3",
+      "type": "poster",
+      "publicPath": "/images/generated/content/story-3/poster.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 1800
+      }
+    },
+    {
+      "contentId": "story-3",
+      "type": "hero",
+      "publicPath": "/images/generated/content/story-3/hero.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 2400,
+        "height": 1350
+      }
+    },
+    {
+      "contentId": "story-3",
+      "type": "thumbnail",
+      "publicPath": "/images/generated/content/story-3/thumbnail.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      }
+    },
+    {
+      "contentId": "music-echoes-in-orbit",
+      "type": "poster",
+      "publicPath": "/images/generated/content/music-echoes-in-orbit/poster.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 1800
+      }
+    },
+    {
+      "contentId": "music-echoes-in-orbit",
+      "type": "hero",
+      "publicPath": "/images/generated/content/music-echoes-in-orbit/hero.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 2400,
+        "height": 1350
+      }
+    },
+    {
+      "contentId": "music-echoes-in-orbit",
+      "type": "thumbnail",
+      "publicPath": "/images/generated/content/music-echoes-in-orbit/thumbnail.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      }
+    },
+    {
+      "contentId": "creator-director-noir",
+      "type": "poster",
+      "publicPath": "/images/generated/content/creator-director-noir/poster.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 1800
+      }
+    },
+    {
+      "contentId": "creator-director-noir",
+      "type": "hero",
+      "publicPath": "/images/generated/content/creator-director-noir/hero.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 2400,
+        "height": 1350
+      }
+    },
+    {
+      "contentId": "creator-director-noir",
+      "type": "thumbnail",
+      "publicPath": "/images/generated/content/creator-director-noir/thumbnail.svg",
+      "validation": "pass",
+      "moderation": "pass",
+      "dimensions": {
+        "width": 1200,
+        "height": 675
+      }
+    }
+  ]
+}

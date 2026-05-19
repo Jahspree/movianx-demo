@@ -1,5 +1,7 @@
 import { MOVIE_EXPERIENCES } from "./movieExperiences.js";
 import { STORIES } from "./stories.js";
+import { GENERATED_IMAGE_MANIFEST } from "./generatedImageManifest.js";
+import { mapGeneratedAssetsToExperiences } from "../lib/imagePipeline/mapper.js";
 
 const MOVIE_IMAGE = "/images/movies/";
 const STORY_IMAGE = "/images/stories/";
@@ -299,7 +301,7 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
   launchHref: `/?story=${story.id}&mode=Immersive`,
 }));
 
-export const CONSUMER_EXPERIENCES = [
+const BASE_CONSUMER_EXPERIENCES = [
   ...MOVIE_EXPERIENCES.map((movie) => ({
     ...movie,
     creator: movie.creator || "Movianx Curation",
@@ -332,6 +334,8 @@ export const CONSUMER_EXPERIENCES = [
   ...MUSIC_EXPERIENCES,
   ...CREATOR_SPOTLIGHTS,
 ];
+
+export const CONSUMER_EXPERIENCES = mapGeneratedAssetsToExperiences(BASE_CONSUMER_EXPERIENCES, GENERATED_IMAGE_MANIFEST);
 
 export const CONSUMER_RAILS = [
   {

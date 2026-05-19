@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1800" viewBox="0 0 1200 1800">
+      <defs>
+        <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#050507"/><stop offset=".55" stop-color="#151114"/><stop offset="1" stop-color="#030305"/></linearGradient>
+        <radialGradient id="glow" cx="70%" cy="32%" r="70%"><stop stop-color="hsl(164 88% 60%)" stop-opacity=".42"/><stop offset=".45" stop-color="hsl(122 76% 46%)" stop-opacity=".2"/><stop offset="1" stop-color="#050507" stop-opacity="0"/></radialGradient>
+        <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".62" numOctaves="3"/><feColorMatrix type="saturate" values="0"/><feComponentTransfer><feFuncA type="table" tableValues="0 .12"/></feComponentTransfer></filter>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#bg)"/>
+      <rect width="100%" height="100%" fill="url(#glow)"/>
+      <g opacity=".18"><path d="M-96 324 C 288 162 744 252.00000000000003 1296 144" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 423 C 288 234 744 342 1296 252.00000000000003" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 522 C 288 306 744 432.00000000000006 1296 360" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 621 C 288 378 744 522.0000000000001 1296 468" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 720 C 288 450 744 612 1296 576" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 819 C 288 522.0000000000001 744 702 1296 684" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 918 C 288 593.9999999999999 744 792.0000000000001 1296 792" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 1016.9999999999999 C 288 666 744 882.0000000000001 1296 900" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 1116 C 288 738 744 972.0000000000001 1296 1007.9999999999999" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 1215 C 288 809.9999999999999 744 1062.0000000000002 1296 1116" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 1314 C 288 882 744 1152 1296 1224" fill="none" stroke="white" stroke-width="2.16"/><path d="M-96 1412.9999999999998 C 288 954 744 1242 1296 1331.9999999999998" fill="none" stroke="white" stroke-width="2.16"/></g>
+      <g opacity=".76">
+        <rect x="168.00000000000003" y="396" width="864" height="1008.0000000000001" rx="42.00000000000001" fill="rgba(0,0,0,.42)" stroke="hsl(122 76% 46%)" stroke-width="7.2"/>
+        <circle cx="816.0000000000001" cy="756" r="168.00000000000003" fill="hsl(164 88% 60%)" opacity=".25"/>
+        <path d="M432 1386 L600 648 L792 1386 Z" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)" stroke-width="2.4"/>
+      </g>
+      <rect width="100%" height="100%" fill="black" opacity=".12"/>
+      <rect width="100%" height="100%" filter="url(#grain)"/>
+      <text x="84.00000000000001" y="1584" fill="white" font-family="Arial, Helvetica, sans-serif" font-size="72" font-weight="800" letter-spacing="-2">Echoes in Orbit</text>
+      <text x="86.39999999999999" y="1692" fill="rgba(255,255,255,.68)" font-family="Arial, Helvetica, sans-serif" font-size="28.8" font-weight="700" letter-spacing="5">MOVIANX GENERATED</text>
+    </svg>
