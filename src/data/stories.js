@@ -1,7 +1,7 @@
 export const STORIES=[
-  {id:1,title:"Frankenstein",author:"Mary Shelley",genre:"Gothic / Classic",cover:"https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400&h=600&fit=crop",desc:"The timeless tale of ambition and creation. Your choices shape the tragic destinies of creator and creature.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"159K",chapters:10,isClassic:true},
-  {id:2,title:"The Choice [Sample]",author:"Movianx Demo",genre:"Thriller / Interactive",cover:"https://images.unsplash.com/photo-1495364141860-b0d03eccd065?w=400&h=600&fit=crop",desc:"A quick 3-minute demo showing how choices branch the story.",immersions:["Reader","Cinematic","Immersive"],rating:4.7,reads:"Sample",chapters:4,isSample:true},
-  {id:3,title:"10 Seconds",author:"Movianx Original",genre:"Thriller / Survival Horror",cover:"https://images.unsplash.com/photo-1509248961158-e54f6934749c?w=400&h=600&fit=crop",desc:"You have 10 seconds to decide. Every choice. Every time. ⏱️ TIMED CHOICES.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"New",chapters:4,isTimed:true,isTimedExperience:true},
+  {id:1,title:"Frankenstein",author:"Mary Shelley",genre:"Gothic / Classic",cover:"/images/stories/frankenstein.jpg",desc:"The timeless tale of ambition and creation. Your choices shape the tragic destinies of creator and creature.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"159K",chapters:10,isClassic:true},
+  {id:2,title:"The Choice [Sample]",author:"Movianx Demo",genre:"Thriller / Interactive",cover:"/images/stories/the-choice.jpg",desc:"A quick 3-minute demo showing how choices branch the story.",immersions:["Reader","Cinematic","Immersive"],rating:4.7,reads:"Sample",chapters:4,isSample:true},
+  {id:3,title:"10 Seconds",author:"Movianx Original",genre:"Thriller / Survival Horror",cover:"/images/stories/ten-seconds.jpg",desc:"You have 10 seconds to decide. Every choice. Every time. ⏱️ TIMED CHOICES.",immersions:["Reader","Cinematic","Immersive"],rating:4.9,reads:"New",chapters:4,isTimed:true,isTimedExperience:true},
 ];
 const CHAPTERS_BY_STORY = {};
 

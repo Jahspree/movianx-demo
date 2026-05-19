@@ -713,6 +713,7 @@ export default function MovianxPlatform(){
   const narrationRequestRef=useRef(0);
   const navFailsafeRef=useRef(null);
   const runtimeRef=useRef(null);
+  const initialLaunchHandledRef=useRef(false);
 
   if(!runtimeRef.current){
     runtimeRef.current=new RuntimeManager({logger:console});
@@ -723,6 +724,23 @@ export default function MovianxPlatform(){
   const currentTheme=THEMES[colorTheme];
   const chaps=sel?getChapters(sel.id):getChapters(1);
   const ch=chaps[chIdx]||{};
+
+  useEffect(()=>{
+    if(initialLaunchHandledRef.current||typeof window==="undefined")return;
+    initialLaunchHandledRef.current=true;
+    const params=new URLSearchParams(window.location.search);
+    const storyId=Number(params.get("story"));
+    if(!storyId)return;
+    const story=STORIES.find(item=>item.id===storyId);
+    if(!story)return;
+    const requestedMode=params.get("mode");
+    setSel(story);
+    setMode(story.immersions.includes(requestedMode)?requestedMode:"Immersive");
+    setChIdx(0);
+    setChoices([]);
+    setShowChoice(false);
+    setPg("detail");
+  },[]);
 
   // === BRANCH MEMORY ENGINE ===
   const branchPath=choices.map(c=>c.consequence).filter(Boolean);

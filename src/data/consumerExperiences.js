@@ -165,7 +165,7 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
     },
   ],
   href: `/watch/story-${story.id}`,
-  launchHref: "/",
+  launchHref: `/?story=${story.id}&mode=Immersive`,
 }));
 
 export const CONSUMER_EXPERIENCES = [
