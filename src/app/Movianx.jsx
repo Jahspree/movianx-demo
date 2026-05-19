@@ -673,10 +673,23 @@ const FRANK_ASSETS = [
 export default function MovianxPlatform(){
   const VIEW_TRANSITION_MS=420;
   const VIEW_ENTER_BUFFER_MS=340;
+  const initialLaunch=(()=>{
+    if(typeof window==="undefined")return {pg:"landing",sel:null,mode:"Reader"};
+    const params=new URLSearchParams(window.location.search);
+    const storyId=Number(params.get("story"));
+    const story=storyId?STORIES.find(item=>item.id===storyId):null;
+    if(!story)return {pg:"landing",sel:null,mode:"Reader"};
+    const requestedMode=params.get("mode");
+    return {
+      pg:"detail",
+      sel:story,
+      mode:story.immersions.includes(requestedMode)?requestedMode:"Immersive",
+    };
+  })();
   // === STATE ===
-  const[pg,setPg]=useState("landing");
-  const[sel,setSel]=useState(null);
-  const[mode,setMode]=useState("Reader");
+  const[pg,setPg]=useState(initialLaunch.pg);
+  const[sel,setSel]=useState(initialLaunch.sel);
+  const[mode,setMode]=useState(initialLaunch.mode);
   const[txt,setTxt]=useState("");
   const[chIdx,setChIdx]=useState(0);
   const[choices,setChoices]=useState([]); // Branch memory engine

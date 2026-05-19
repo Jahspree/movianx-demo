@@ -148,10 +148,10 @@ function WaitlistCapture({ FF }) {
 
 const landingCinematicCSS = `
   .movianx-landing-shell{
-    height:100vh;
+    min-height:100svh;
     width:100%;
     overflow-x:hidden;
-    overflow-y:auto;
+    overflow-y:visible;
     background:
       linear-gradient(90deg,rgba(5,5,7,0.86),rgba(5,5,7,0.28),rgba(5,5,7,0.86)),
       url('/images/backgrounds/hero-cinematic.jpg'),
@@ -698,21 +698,21 @@ const landingCinematicCSS = `
     .movianx-nav-actions{gap:8px;min-width:0;flex-shrink:0}
     .movianx-nav-actions button:first-child{font-size:13px!important}
     .movianx-nav-actions .movianx-button{min-height:38px!important;padding:9px 12px!important;font-size:12px!important;white-space:nowrap}
-    .movianx-landing-hero{margin-top:96px;padding-bottom:42px;width:100%;max-width:360px;overflow:hidden}
+    .movianx-landing-hero{margin-top:96px;padding-bottom:56px;width:100%;max-width:360px;overflow:visible}
     .movianx-landing-title{font-size:clamp(27px,8vw,32px);max-width:300px;margin-left:auto;margin-right:auto;overflow-wrap:normal;line-height:1.08;text-wrap:balance}
     .movianx-landing-copy{font-size:14px;line-height:1.56;margin-left:auto;margin-right:auto;margin-bottom:24px;max-width:294px;text-wrap:pretty}
     .movianx-hero-kicker{font-size:11px;padding:8px 11px}
-    .movianx-portal-field{height:510px;margin:8px auto 24px}
-    .movianx-portal-field:before{inset:78px 12% 80px}
+    .movianx-portal-field{height:500px;margin:8px auto 34px}
+    .movianx-portal-field:before{inset:72px 12% 88px}
     .movianx-portal-line{display:none}
     .movianx-portal-button{min-width:150px;min-height:112px;padding:14px;gap:10px;border-radius:16px}
     .movianx-portal-button svg{width:25px;height:25px}
     .movianx-portal-button strong{font-size:16px}
     .movianx-portal-button span{font-size:11px}
     .movianx-portal-top{left:50%;top:13%;min-width:230px}
-    .movianx-portal-center{left:50%;top:43%;min-width:250px;min-height:124px}
-    .movianx-portal-left{left:26%;top:76%}
-    .movianx-portal-right{left:74%;top:76%}
+    .movianx-portal-center{left:50%;top:42%;min-width:250px;min-height:124px}
+    .movianx-portal-left{left:25%;top:75%}
+    .movianx-portal-right{left:75%;top:75%}
     .movianx-cta-row{gap:10px}
     .movianx-cta-row .movianx-button{width:100%;max-width:310px}
     .movianx-preview-rail{display:flex;overflow-x:auto;gap:12px;margin-bottom:28px;max-width:100%;padding-bottom:8px;scroll-snap-type:x proximity}
