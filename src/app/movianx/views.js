@@ -67,14 +67,23 @@ const LANDING_SUPPORT_CARDS = [
   [
     "Cinema that surrounds you",
     "Films and stories are staged with immersive audio, intelligent scene analysis, and atmospheric enhancement.",
+    "/images/homepage/movies.jpg",
+    "Spatial cinema",
+    "#b51f2a",
   ],
   [
     "Stories that move",
     "Interactive experiences bring choice, timing, and cinematic tension into the same premium media library.",
+    "/images/homepage/stories.jpg",
+    "Interactive worlds",
+    "#7c3aed",
   ],
   [
     "A new entertainment layer",
     "Movianx blends demo-safe cinema, public-domain classics, and original interactive experiences into one immersive destination.",
+    "/images/homepage/explore.jpg",
+    "AI enhanced",
+    "#d6a33a",
   ],
 ];
 
@@ -518,14 +527,30 @@ const landingCinematicCSS = `
     box-shadow:0 18px 52px rgba(0,0,0,0.3), 0 0 34px rgba(255,255,255,0.08);
   }
   .movianx-feature-tags{
+    position:relative;
     display:flex;
     gap:12px;
     justify-content:center;
     flex-wrap:wrap;
-    margin:0 auto 34px;
+    margin:4px auto 34px;
     max-width:880px;
+    padding:18px 18px 4px;
+  }
+  .movianx-feature-tags:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    border-radius:28px;
+    background:
+      linear-gradient(90deg,rgba(255,255,255,0.045),rgba(255,255,255,0.015)),
+      radial-gradient(circle at 18% 0%,rgba(181,31,42,0.16),transparent 38%),
+      radial-gradient(circle at 82% 0%,rgba(214,163,58,0.11),transparent 34%);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 28px 90px rgba(0,0,0,0.24);
+    pointer-events:none;
   }
   .movianx-feature-tag{
+    position:relative;
     padding:9px 15px;
     border-radius:999px;
     background:rgba(255,255,255,0.07);
@@ -546,11 +571,32 @@ const landingCinematicCSS = `
     box-shadow:0 16px 46px rgba(0,0,0,0.24), 0 0 28px rgba(139,26,26,0.16);
   }
   .movianx-support-grid{
+    position:relative;
     display:grid;
     grid-template-columns:repeat(3,minmax(0,1fr));
-    gap:14px;
+    gap:16px;
     text-align:left;
+    max-width:1040px;
+    margin:0 auto;
+    padding:18px;
+    border-radius:28px;
+    background:
+      linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.015)),
+      radial-gradient(circle at 15% 15%,rgba(181,31,42,0.18),transparent 34%),
+      radial-gradient(circle at 86% 18%,rgba(15,118,110,0.12),transparent 30%);
+    border:1px solid rgba(255,255,255,0.08);
+    box-shadow:0 34px 110px rgba(0,0,0,0.28);
     animation:cinematicReveal 0.95s cubic-bezier(.2,.8,.2,1) both 0.72s;
+  }
+  .movianx-support-grid:before{
+    content:"";
+    position:absolute;
+    left:8%;
+    right:8%;
+    top:-1px;
+    height:1px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,0.28),transparent);
+    opacity:0.8;
   }
   .movianx-preview-rail{
     display:grid;
@@ -576,7 +622,7 @@ const landingCinematicCSS = `
     background-size:cover,cover,cover,cover;
     background-position:center;
     box-shadow:0 22px 72px rgba(0,0,0,0.28);
-    transition:transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease;
+    transition:transform 240ms ease, box-shadow 240ms ease, border-color 240ms ease, filter 240ms ease;
   }
   .movianx-preview-card:before{
     content:"";
@@ -589,6 +635,7 @@ const landingCinematicCSS = `
   .movianx-preview-card:hover{
     transform:translateY(-5px);
     border-color:rgba(255,255,255,0.24);
+    filter:saturate(1.08) brightness(1.04);
     box-shadow:0 26px 88px rgba(0,0,0,0.38),0 0 34px rgba(139,26,26,0.16);
   }
   .movianx-preview-card div{
@@ -612,36 +659,75 @@ const landingCinematicCSS = `
   .movianx-support-card{
     position:relative;
     overflow:hidden;
-    background:linear-gradient(180deg,rgba(255,255,255,0.115),rgba(255,255,255,0.055));
+    background:
+      linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.7)),
+      var(--support-image),
+      linear-gradient(180deg,rgba(255,255,255,0.115),rgba(255,255,255,0.055));
+    background-size:cover,cover,cover;
+    background-position:center;
     backdrop-filter:blur(20px);
     -webkit-backdrop-filter:blur(20px);
     border:1px solid rgba(255,255,255,0.13);
-    border-radius:8px;
+    border-radius:14px;
     padding:20px;
-    min-height:150px;
+    min-height:220px;
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-end;
     box-shadow:0 22px 70px rgba(0,0,0,0.26);
-    transition:transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease, background 240ms ease;
+    transition:transform 240ms ease, border-color 240ms ease, box-shadow 240ms ease, filter 240ms ease;
   }
   .movianx-support-card:before{
     content:"";
     position:absolute;
     inset:0;
-    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.1),transparent);
+    background:
+      linear-gradient(180deg,rgba(0,0,0,0.08),rgba(0,0,0,0.76)),
+      radial-gradient(circle at 78% 18%,var(--support-accent),transparent 34%),
+      linear-gradient(120deg,transparent,rgba(255,255,255,0.1),transparent);
+    opacity:0.9;
+    transition:opacity 260ms ease;
+  }
+  .movianx-support-card:after{
+    content:"";
+    position:absolute;
+    inset:-20%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.16),transparent);
     transform:translateX(-120%);
-    transition:transform 700ms ease;
+    transition:transform 760ms ease;
   }
   .movianx-support-card:hover{
     transform:translateY(-5px);
     border-color:rgba(255,255,255,0.23);
-    background:linear-gradient(180deg,rgba(255,255,255,0.14),rgba(255,255,255,0.07));
+    filter:saturate(1.08) brightness(1.04);
     box-shadow:0 26px 86px rgba(0,0,0,0.34), 0 0 38px rgba(139,26,26,0.12);
   }
   .movianx-support-card:hover:before{
+    opacity:0.76;
+  }
+  .movianx-support-card:hover:after{
     transform:translateX(120%);
+  }
+  .movianx-support-card-label{
+    position:relative;
+    display:inline-flex;
+    align-self:flex-start;
+    margin-bottom:12px;
+    padding:7px 10px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.1);
+    border:1px solid rgba(255,255,255,0.13);
+    color:rgba(255,255,255,0.78);
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
   }
   .movianx-support-card h3{
     position:relative;
-    font-size:16px;
+    font-size:18px;
     color:#fff;
     margin-bottom:9px;
     font-weight:760;
@@ -650,7 +736,7 @@ const landingCinematicCSS = `
   .movianx-support-card p{
     position:relative;
     font-size:14px;
-    color:rgba(255,255,255,0.65);
+    color:rgba(255,255,255,0.72);
     line-height:1.58;
   }
   .movianx-waitlist{
@@ -786,8 +872,8 @@ const landingCinematicCSS = `
     .movianx-waitlist{grid-template-columns:1fr;width:100%;max-width:100%}
     .movianx-waitlist input,
     .movianx-waitlist button{width:100%;min-width:0}
-    .movianx-support-grid{grid-template-columns:1fr}
-    .movianx-support-card{min-height:auto}
+    .movianx-support-grid{grid-template-columns:1fr;padding:12px;border-radius:22px}
+    .movianx-support-card{min-height:190px}
   }
   @media (prefers-reduced-motion:reduce){
     .movianx-landing-shell,
@@ -889,8 +975,9 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
           ))}
         </div>
         <div className="movianx-support-grid">
-          {LANDING_SUPPORT_CARDS.map(([title, body])=>(
-            <div key={title} className="movianx-support-card">
+          {LANDING_SUPPORT_CARDS.map(([title, body, image, label, accent])=>(
+            <div key={title} className="movianx-support-card" style={{"--support-image":`url(${image})`,"--support-accent":accent}}>
+              <span className="movianx-support-card-label">{label}</span>
               <h3>{title}</h3>
               <p>{body}</p>
             </div>
