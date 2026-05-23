@@ -47,6 +47,13 @@ const LANDING_PORTALS = [
   ["explore", "Explore", "Enter Movianx", "/watch", "center", "/images/homepage/explore.jpg", "#d6a33a"],
 ];
 
+const LANDING_HERO_ENVIRONMENTS = [
+  ["Movies", "/images/homepage/movies.jpg", "8%", "12%", "32deg"],
+  ["Music", "/images/homepage/music.jpg", "70%", "18%", "-22deg"],
+  ["Stories", "/images/homepage/stories.jpg", "2%", "62%", "-14deg"],
+  ["Explore", "/images/homepage/explore.jpg", "72%", "64%", "18deg"],
+];
+
 const LANDING_MOVIE_PREVIEWS = [
   ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/images/movies/night-of-the-living-dead.jpg"],
   ["10 Seconds", "Timed Interactive Story", "#991b1b", "/images/stories/ten-seconds.jpg"],
@@ -153,14 +160,16 @@ const landingCinematicCSS = `
     overflow-x:hidden;
     overflow-y:visible;
     background:
-      linear-gradient(90deg,rgba(5,5,7,0.86),rgba(5,5,7,0.28),rgba(5,5,7,0.86)),
-      url('/images/backgrounds/hero-cinematic.jpg'),
+      linear-gradient(90deg,rgba(5,5,7,0.9),rgba(5,5,7,0.34),rgba(5,5,7,0.9)),
+      linear-gradient(180deg,rgba(5,5,7,0.2),rgba(5,5,7,0.76)),
+      url('/images/homepage/explore.jpg'),
+      url('/images/homepage/movies.jpg'),
       radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
       radial-gradient(circle at 18% 28%, rgba(139,26,26,0.28), transparent 26%),
       radial-gradient(circle at 82% 30%, rgba(184,134,11,0.14), transparent 24%),
       linear-gradient(135deg,#050507 0%,#111116 42%,#170808 100%);
-    background-size:cover,cover,180% 180%,140% 140%,130% 130%,100% 100%;
-    background-position:center,center,50% 18%,18% 28%,82% 30%,center;
+    background-size:cover,cover,cover,cover,180% 180%,140% 140%,130% 130%,100% 100%;
+    background-position:center,center,center 44%,center 18%,50% 18%,18% 28%,82% 30%,center;
     animation:cinematicAtmosphere 18s ease-in-out infinite;
     display:flex;
     flex-direction:column;
@@ -197,6 +206,53 @@ const landingCinematicCSS = `
     background-size:90px 90px;
     mask-image:linear-gradient(to bottom,rgba(0,0,0,0.22),transparent 72%);
     z-index:0;
+  }
+  .movianx-homepage-environments{
+    position:absolute;
+    inset:92px 3.5% auto;
+    height:min(620px,62svh);
+    pointer-events:none;
+    z-index:1;
+    opacity:0.86;
+    filter:saturate(1.05);
+  }
+  .movianx-environment-panel{
+    position:absolute;
+    left:var(--env-left);
+    top:var(--env-top);
+    width:clamp(180px,22vw,330px);
+    aspect-ratio:16/10;
+    border-radius:22px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.12);
+    background:
+      linear-gradient(180deg,rgba(0,0,0,0.02),rgba(0,0,0,0.68)),
+      var(--env-image);
+    background-size:cover;
+    background-position:center;
+    box-shadow:0 32px 110px rgba(0,0,0,0.44), inset 0 1px 0 rgba(255,255,255,0.12);
+    transform:rotate(var(--env-rotate));
+    animation:environmentDrift 14s ease-in-out infinite;
+  }
+  .movianx-environment-panel:before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(circle at 72% 22%,rgba(255,255,255,0.16),transparent 28%),
+      linear-gradient(90deg,rgba(0,0,0,0.66),transparent 62%);
+    opacity:0.9;
+  }
+  .movianx-environment-panel:after{
+    content:attr(data-label);
+    position:absolute;
+    left:16px;
+    bottom:14px;
+    color:rgba(255,255,255,0.78);
+    font-size:11px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1.6px;
   }
   .movianx-topbar{
     position:absolute;
@@ -656,8 +712,8 @@ const landingCinematicCSS = `
     z-index:1;
   }
   @keyframes cinematicAtmosphere{
-    0%,100%{background-position:0% 42%,8% 18%,92% 18%,0 0}
-    50%{background-position:100% 56%,18% 32%,78% 24%,0 0}
+    0%,100%{background-position:center,center,48% 44%,50% 18%,0% 42%,8% 18%,92% 18%,0 0}
+    50%{background-position:center,center,54% 52%,46% 24%,100% 56%,18% 32%,78% 24%,0 0}
   }
   @keyframes lightSweep{
     0%,100%{transform:translateX(-20%);opacity:0.42}
@@ -691,8 +747,18 @@ const landingCinematicCSS = `
     0%,100%{margin-top:0}
     50%{margin-top:-9px}
   }
+  @keyframes environmentDrift{
+    0%,100%{margin-top:0;filter:brightness(0.86) saturate(1.06)}
+    50%{margin-top:-14px;filter:brightness(1) saturate(1.16)}
+  }
   @media (max-width:760px){
     .movianx-landing-shell{padding:16px;align-items:center}
+    .movianx-homepage-environments{inset:116px 0 auto;height:560px;opacity:0.5;overflow:hidden}
+    .movianx-environment-panel{width:190px;border-radius:18px}
+    .movianx-environment-panel:nth-child(1){left:-28px;top:36px}
+    .movianx-environment-panel:nth-child(2){left:220px;top:54px}
+    .movianx-environment-panel:nth-child(3){left:-42px;top:344px}
+    .movianx-environment-panel:nth-child(4){left:224px;top:358px}
     .movianx-topbar{left:16px;right:auto;width:calc(100% - 32px);max-width:360px;padding:18px 0;gap:12px}
     .movianx-topbar img{height:34px}
     .movianx-nav-actions{gap:8px;min-width:0;flex-shrink:0}
@@ -737,7 +803,8 @@ const landingCinematicCSS = `
     .movianx-waitlist,
     .movianx-support-grid,
     .movianx-orb,
-    .movianx-streak{
+    .movianx-streak,
+    .movianx-environment-panel{
       animation:none!important;
     }
     .movianx-button,
@@ -756,6 +823,22 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
       <div className="movianx-orb" style={{width:5,height:5,bottom:"24%",left:"22%",animationDelay:"4.1s"}}/>
       <div className="movianx-streak" style={{top:"31%",left:"8%",animationDelay:"1.2s"}}/>
       <div className="movianx-streak" style={{right:"7%",bottom:"30%",animationDelay:"5.4s"}}/>
+      <div className="movianx-homepage-environments" aria-hidden="true">
+        {LANDING_HERO_ENVIRONMENTS.map(([label, image, left, top, rotate], idx)=>(
+          <div
+            key={label}
+            className="movianx-environment-panel"
+            data-label={label}
+            style={{
+              "--env-image": `url(${image})`,
+              "--env-left": left,
+              "--env-top": top,
+              "--env-rotate": rotate,
+              animationDelay: `${idx * 0.7}s`,
+            }}
+          />
+        ))}
+      </div>
 
       <div className="movianx-topbar">
         <img src="/movianx-logo.png" alt="Movianx"/>
