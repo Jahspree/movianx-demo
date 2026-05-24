@@ -33,12 +33,41 @@ function PosterCard({ experience }) {
         </div>
       </div>
       <div className={styles.cardInfo}>
+        <div className={styles.creatorLine}>
+          <span>{experience.creator}</span>
+          <span>{experience.runtime}</span>
+        </div>
         <h3>{experience.title}</h3>
-        <p>{experience.creator}</p>
         <p>{experience.hook}</p>
-        <p>{experience.genre} · {experience.runtime}</p>
+        <p>{experience.genre}</p>
       </div>
     </Link>
+  );
+}
+
+function RailSection({ rail }) {
+  const items = getConsumerRailItems(rail.ids);
+  const railStyle = {
+    "--rail-accent": rail.accent || "#b51f2a",
+    "--rail-image": items[0]?.image ? `url(${items[0].image})` : "none",
+  };
+
+  return (
+    <div id={rail.slug || railId(rail.title)} className={styles.rail} style={railStyle}>
+      <div className={styles.railHeader}>
+        <div>
+          {rail.mood && <span className={styles.railMood}>{rail.mood}</span>}
+          <h2>{rail.title}</h2>
+          <p>{rail.description}</p>
+        </div>
+        <span className={styles.railCount}>{items.length} curated</span>
+      </div>
+      <div className={styles.railScroller}>
+        {items.map((experience) => (
+          <PosterCard key={`${rail.title}-${experience.id}`} experience={experience} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -101,19 +130,7 @@ export default function WatchPage() {
 
       <section id="experience-library" className={styles.rails} aria-label="Immersive experience library">
         {CONSUMER_RAILS.map((rail) => (
-          <div id={railId(rail.title)} className={styles.rail} key={rail.title}>
-            <div className={styles.railHeader}>
-              <div>
-                <h2>{rail.title}</h2>
-                <p>{rail.description}</p>
-              </div>
-            </div>
-            <div className={styles.railScroller}>
-              {getConsumerRailItems(rail.ids).map((experience) => (
-                <PosterCard key={`${rail.title}-${experience.id}`} experience={experience} />
-              ))}
-            </div>
-          </div>
+          <RailSection rail={rail} key={rail.title} />
         ))}
         <div id="early-access" className={styles.waitlistPanel}>
           <div>
