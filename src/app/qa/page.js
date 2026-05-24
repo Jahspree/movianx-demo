@@ -132,7 +132,7 @@ export default function QA() {
         <p style={{ color: "#fca5a5", textTransform: "uppercase", letterSpacing: 2, fontSize: 12, fontWeight: 800 }}>Production QA</p>
         <h1 style={{ fontSize: "clamp(34px,6vw,72px)", lineHeight: 0.95, margin: "12px 0 18px" }}>Movianx QA console</h1>
         <p style={{ color: "rgba(255,255,255,.7)", fontSize: 18, maxWidth: 680, lineHeight: 1.6 }}>
-          Use this page to verify critical demo routes, image assets, audio assets, and release notes without exposing creator upload tools on the public homepage.
+          Use this page to verify critical release routes, image assets, audio assets, and release notes without exposing creator upload tools on the public homepage.
         </p>
         <h2 style={{ margin: "34px 0 14px", fontSize: 26 }}>Route checks</h2>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))", gap: 14, marginTop: 34 }}>

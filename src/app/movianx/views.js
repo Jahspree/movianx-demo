@@ -80,7 +80,7 @@ const LANDING_SUPPORT_CARDS = [
   ],
   [
     "A new entertainment layer",
-    "Movianx blends demo-safe cinema, public-domain classics, and original interactive experiences into one immersive destination.",
+    "Movianx blends curated cinema, public-domain classics, and original interactive experiences into one immersive destination.",
     "/images/homepage/explore.jpg",
     "AI enhanced",
     "#d6a33a",
@@ -157,7 +157,7 @@ function WaitlistCapture({ FF }) {
         style={{fontFamily:FF}}
       />
       <button type="submit" disabled={busy} style={{fontFamily:FF}}>{busy ? "Joining..." : "Join Waitlist"}</button>
-      <span>{status || "Privacy-first updates. No private creator paths exposed."}</span>
+      <span>{status || "Privacy-first updates for early access."}</span>
     </form>
   );
 }

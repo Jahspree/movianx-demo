@@ -74,7 +74,7 @@ function RailSection({ rail }) {
 export const metadata = {
   title: "Watch — Movianx Immersive Experiences",
   description:
-    "Browse demo-safe films, interactive stories, and AI-enhanced immersive entertainment experiences.",
+    "Browse curated films, interactive stories, music worlds, and AI-enhanced immersive entertainment experiences.",
 };
 
 export default function WatchPage() {

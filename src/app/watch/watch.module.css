@@ -1039,6 +1039,16 @@
   line-height: 1.5;
 }
 
+.rightsNote summary {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 760;
+}
+
+.rightsNote p {
+  margin: 9px 0 0;
+}
+
 @media (max-width: 900px) {
   .hero,
   .detailHero,

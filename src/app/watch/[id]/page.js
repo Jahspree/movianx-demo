@@ -152,13 +152,13 @@ export default function WatchDetailPage({ params }) {
               <span>▶</span>
             </div>
             <div className={styles.playerStatus}>
-              <span>Demo-safe cinematic player placeholder</span>
-              <span>No copyrighted stream or private asset exposed</span>
+              <span>Immersive Preview</span>
+              <span>Full release access appears when available</span>
             </div>
           </div>
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
             <div className={styles.kicker}>AI enhancement layer</div>
-            <h2 className={styles.panelTitle}>Cinematic processing profile</h2>
+            <h2 className={styles.panelTitle}>Cinematic enhancement profile</h2>
             <div className={styles.featureGrid}>
               {(experience.enhancements || [
                 "Immersive audio enhancement",
@@ -174,20 +174,20 @@ export default function WatchDetailPage({ params }) {
           </div>
 
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
-            <div className={styles.kicker}>Series foundation</div>
+            <div className={styles.kicker}>Series Experience</div>
             <div className={styles.seriesBox}>
               <h2>{experience.series?.title || "Standalone experience"}</h2>
               <p>
                 {experience.series
                   ? `${experience.series.type}. ${experience.series.continueWatching}. ${experience.series.bingeSupport}.`
-                  : "This title is modeled as a standalone release, with the same architecture available for seasons, episodes, ordering, thumbnails, continue watching, and future binge support."}
+                  : "A complete standalone release with room to expand into seasons, episodes, ordered chapters, title art, and continue watching."}
               </p>
               {experience.series?.seasons?.length ? (
                 <div className={styles.episodeList}>
                   {experience.series.seasons.map((season) => (
                     <div key={season.number} className={styles.episodeSeason}>
                       <strong>Season {season.number}: {season.title}</strong>
-                      <span>{season.episodes?.length || season.episodes} episode foundation</span>
+                      <span>{season.episodes?.length || season.episodes} episode experience</span>
                     </div>
                   ))}
                 </div>
@@ -220,19 +220,19 @@ export default function WatchDetailPage({ params }) {
           <div className={styles.toggleRow} aria-label="Experience controls">
             <div className={styles.toggle}>
               <span>Immersive Audio</span>
-              <span>{experience.immersiveReady ? "Ready" : "Pending"}</span>
+              <span>{experience.immersiveReady ? "Ready" : "Preview"}</span>
             </div>
             <div className={styles.toggle}>
               <span>Subtitles</span>
-              <span>Demo</span>
+              <span>Preview</span>
             </div>
             <div className={styles.toggle}>
               <span>AI Enhanced</span>
-              <span>{experience.aiEnhanced ? "On" : "Processing"}</span>
+              <span>{experience.aiEnhanced ? "On" : "Curated"}</span>
             </div>
             <div className={styles.toggle}>
               <span>Continue Watching</span>
-              <span>Foundation</span>
+              <span>Ready</span>
             </div>
           </div>
 
@@ -247,11 +247,13 @@ export default function WatchDetailPage({ params }) {
             ))}
           </div>
 
-          <div className={styles.rightsNote}>
-            Rights status: {experience.rights}. This investor demo uses metadata and
-            placeholder presentation only. No copyrighted film stream or private
-            media source is embedded on this page.
-          </div>
+          <details className={styles.rightsNote}>
+            <summary>Rights and availability</summary>
+            <p>
+              {experience.rights}. Playback access is cleared before public
+              release, and private creator media stays protected.
+            </p>
+          </details>
         </aside>
       </section>
 
