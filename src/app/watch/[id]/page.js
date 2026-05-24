@@ -40,8 +40,9 @@ function ExperienceCard({ experience }) {
       <div className={styles.relatedPoster} style={posterStyle(experience)}>
         <span>{experience.mediaType}</span>
         <strong>{experience.title}</strong>
+        <small>{experience.creator}</small>
       </div>
-      <p>{experience.genre}</p>
+      <p>{experience.hook || experience.genre}</p>
     </Link>
   );
 }
@@ -81,6 +82,11 @@ export default function WatchDetailPage({ params }) {
     ...(experience.moodTags || []),
     ...(experience.styleTags || []),
   ].filter(Boolean).slice(0, 10);
+  const moodLine = [
+    experience.moodTags?.[0],
+    experience.styleTags?.[0],
+    experience.discoveryTags?.[0],
+  ].filter(Boolean).join(" / ");
 
   return (
     <main className={styles.watchShell} style={posterStyle(experience)}>
@@ -99,6 +105,11 @@ export default function WatchDetailPage({ params }) {
 
       <section className={styles.detailHero}>
         <div className={styles.detailBackdrop} />
+        <div className={styles.detailAtmosphere} aria-hidden="true">
+          <span />
+          <span />
+          <span />
+        </div>
         <div className={styles.detailHeroContent}>
           <span className={styles.badge}>{experience.mediaType}</span>
           <h1>{experience.title}</h1>
@@ -106,6 +117,7 @@ export default function WatchDetailPage({ params }) {
           <div className={styles.creatorLine}>
             <span>By {experience.creator}</span>
             <span>{experience.teamLabel}</span>
+            {moodLine && <span>{moodLine}</span>}
           </div>
           <div className={styles.tagCloud} aria-label="Discovery tags">
             {visibleTags.map((tag) => (
@@ -117,6 +129,18 @@ export default function WatchDetailPage({ params }) {
               {experience.contentFormat === "interactive_story" ? "Launch Story" : "Watch Preview"}
             </Link>
             <Link className={styles.secondaryButton} href="/watch">Back to Library</Link>
+          </div>
+        </div>
+        <div className={styles.detailHeroPoster}>
+          <div className={styles.posterArt} style={posterStyle(experience)}>
+            <div className={styles.badgeRow}>
+              {experience.aiEnhanced && <span className={styles.miniBadge}>AI Enhanced</span>}
+              {experience.immersiveReady && <span className={styles.miniBadge}>Immersive Ready</span>}
+            </div>
+            <div className={styles.posterText}>
+              <h2>{experience.title}</h2>
+              <span className={styles.badge}>{experience.runtime}</span>
+            </div>
           </div>
         </div>
       </section>
@@ -134,6 +158,7 @@ export default function WatchDetailPage({ params }) {
           </div>
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
             <div className={styles.kicker}>AI enhancement layer</div>
+            <h2 className={styles.panelTitle}>Cinematic processing profile</h2>
             <div className={styles.featureGrid}>
               {(experience.enhancements || [
                 "Immersive audio enhancement",
@@ -181,6 +206,16 @@ export default function WatchDetailPage({ params }) {
             <span>{experience.language}</span>
           </div>
           <p>{experience.synopsis}</p>
+
+          <div className={styles.creatorProfileCard}>
+            <span className={styles.kicker}>Creator identity</span>
+            <h2>{experience.creator}</h2>
+            <p>{experience.teamLabel || "Creator-led immersive media world"}</p>
+            <div>
+              <span>{experience.contentFormat?.replaceAll("_", " ")}</span>
+              <span>{experience.seriesType?.replaceAll("_", " ")}</span>
+            </div>
+          </div>
 
           <div className={styles.toggleRow} aria-label="Experience controls">
             <div className={styles.toggle}>

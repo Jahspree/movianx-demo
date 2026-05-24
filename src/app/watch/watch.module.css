@@ -466,8 +466,10 @@
   position: relative;
   min-height: 560px;
   display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.44fr);
+  gap: 36px;
   align-items: end;
-  padding: 88px 5% 54px;
+  padding: 98px 5% 58px;
   overflow: hidden;
 }
 
@@ -484,9 +486,57 @@
   opacity: 0.92;
 }
 
-.detailHeroContent {
+.detailBackdrop:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 14% 22%, color-mix(in srgb, var(--poster-accent), transparent 62%), transparent 28%),
+    linear-gradient(180deg, transparent 0%, rgba(5, 5, 7, 0.72) 100%);
+}
+
+.detailAtmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.detailAtmosphere span {
+  position: absolute;
+  width: 220px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.28), transparent);
+  opacity: 0.18;
+  transform: rotate(-16deg);
+  animation: detailDrift 15s ease-in-out infinite;
+}
+
+.detailAtmosphere span:nth-child(1) {
+  left: 9%;
+  top: 28%;
+}
+
+.detailAtmosphere span:nth-child(2) {
+  right: 10%;
+  top: 42%;
+  animation-delay: 4s;
+}
+
+.detailAtmosphere span:nth-child(3) {
+  left: 38%;
+  bottom: 24%;
+  animation-delay: 7s;
+}
+
+.detailHeroContent,
+.detailHeroPoster {
   position: relative;
   z-index: 2;
+}
+
+.detailHeroContent {
   max-width: 860px;
 }
 
@@ -505,6 +555,20 @@
   color: rgba(255, 255, 255, 0.74);
   font-size: clamp(17px, 2.2vw, 23px);
   line-height: 1.55;
+}
+
+.detailHeroPoster {
+  align-self: end;
+  max-width: 360px;
+  justify-self: end;
+  width: 100%;
+  animation: detailPosterRise 900ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.detailHeroPoster .posterArt {
+  border-radius: 18px;
+  box-shadow: 0 44px 130px rgba(0, 0, 0, 0.58), 0 0 70px color-mix(in srgb, var(--poster-accent), transparent 72%);
+  transform: rotate(1.2deg);
 }
 
 .creatorLine {
@@ -534,6 +598,31 @@
   font-size: 12px;
   font-weight: 700;
   text-transform: capitalize;
+}
+
+@keyframes detailDrift {
+  0%,
+  100% {
+    transform: translate3d(-20px, 0, 0) rotate(-16deg);
+    opacity: 0.1;
+  }
+  50% {
+    transform: translate3d(38px, -18px, 0) rotate(-16deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes detailPosterRise {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
 }
 
 .videoFrame {
@@ -601,11 +690,17 @@
   z-index: 2;
   border: 1px solid rgba(255, 255, 255, 0.11);
   background: rgba(255, 255, 255, 0.065);
-  border-radius: 10px;
+  border-radius: 16px;
   padding: 22px;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   box-shadow: 0 24px 82px rgba(0, 0, 0, 0.32);
+}
+
+.panelTitle {
+  margin: 14px 0 0;
+  font-size: clamp(22px, 2.6vw, 34px);
+  line-height: 1.05;
 }
 
 .detailPanel h1 {
@@ -635,6 +730,62 @@
   color: rgba(255, 255, 255, 0.78);
   font-size: 13px;
   transition: transform 220ms ease, border-color 220ms ease, background 220ms ease;
+}
+
+.creatorProfileCard {
+  position: relative;
+  overflow: hidden;
+  margin-top: 22px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.68)),
+    var(--poster-image);
+  background-size: cover;
+  background-position: center;
+  padding: 18px;
+}
+
+.creatorProfileCard:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 78% 14%, var(--poster-accent), transparent 32%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.18));
+  opacity: 0.82;
+}
+
+.creatorProfileCard > * {
+  position: relative;
+}
+
+.creatorProfileCard h2 {
+  margin: 14px 0 8px;
+  font-size: 24px;
+  line-height: 1.08;
+}
+
+.creatorProfileCard p {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.creatorProfileCard div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.creatorProfileCard div span {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 7px 9px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 11px;
+  font-weight: 760;
+  text-transform: capitalize;
 }
 
 .toggleRow {
@@ -771,12 +922,14 @@
 }
 
 .relatedPoster span,
-.relatedPoster strong {
+.relatedPoster strong,
+.relatedPoster small {
   position: relative;
   z-index: 2;
 }
 
-.relatedPoster span {
+.relatedPoster span,
+.relatedPoster small {
   color: rgba(255, 255, 255, 0.62);
   font-size: 11px;
   font-weight: 760;
@@ -786,6 +939,11 @@
 .relatedPoster strong {
   font-size: 20px;
   line-height: 1.08;
+}
+
+.relatedPoster small {
+  color: rgba(255, 255, 255, 0.52);
+  letter-spacing: 0.6px;
 }
 
 .relatedCard p {
@@ -883,6 +1041,7 @@
 
 @media (max-width: 900px) {
   .hero,
+  .detailHero,
   .watchLayout {
     grid-template-columns: 1fr;
   }
@@ -894,6 +1053,11 @@
 
   .heroPoster {
     max-width: 360px;
+  }
+
+  .detailHeroPoster {
+    max-width: 300px;
+    justify-self: start;
   }
 
   .featureGrid {
@@ -938,6 +1102,10 @@
     min-height: auto;
     padding-top: 56px;
     padding-bottom: 42px;
+  }
+
+  .detailHeroPoster .posterArt {
+    transform: none;
   }
 
   .detailHeroContent h1 {
