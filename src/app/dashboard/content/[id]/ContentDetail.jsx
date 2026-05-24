@@ -36,9 +36,9 @@ export default function ContentDetail({ id }) {
         <h2>{content.title}</h2>
         <p className="muted">{content.description || "No description yet."}</p>
         <div className="trust-list">
-          <div className="trust-item"><span>Status</span><span className="badge pending">{content.status}</span></div>
-          <div className="trust-item"><span>Review</span><span className="badge pending">{content.reviewStatus}</span></div>
-          <div className="trust-item"><span>Public access</span><span className="badge private">blocked</span></div>
+          <div className="trust-item"><span>Status</span><span className="badge gold">{content.status}</span></div>
+          <div className="trust-item"><span>Studio clearance</span><span className="badge gold">{content.reviewStatus}</span></div>
+          <div className="trust-item"><span>Public access</span><span className="badge private">locked</span></div>
         </div>
       </div>
       <div className="panel half">
@@ -47,18 +47,18 @@ export default function ContentDetail({ id }) {
           {content.assets.map(asset => (
             <div className="asset-row" key={asset.id}>
               <span>{asset.assetType}</span>
-              <span className="badge pending">{asset.status}</span>
+              <span className="badge gold">{asset.status}</span>
             </div>
           ))}
         </div>
       </div>
       <div className="panel">
-        <h2>AI analysis placeholder</h2>
+        <h2>AI analysis package</h2>
         <div className="status-list">
           {(analysis?.tasks || []).map(task => (
             <div className="status-row" key={task.name}>
               <span>{task.name.replaceAll("_", " ")}</span>
-              <span className="badge pending">{task.status}</span>
+              <span className="badge gold">{task.status}</span>
             </div>
           ))}
         </div>

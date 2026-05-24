@@ -9,7 +9,7 @@ export default function ContentPage() {
   return (
     <DashboardShell
       title="Private content library"
-      description="Uploaded titles remain private until review approval and explicit publish."
+      description="Your films, episodes, stories, and sound worlds stay protected until you choose a release path."
     >
       <section className="dashboard-grid">
         <div className="panel">

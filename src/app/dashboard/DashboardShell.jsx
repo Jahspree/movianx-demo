@@ -38,10 +38,10 @@ export function TrustSignals() {
   return (
     <div className="trust-list">
       <div className="trust-item"><span>Upload encrypted in transit</span><span className="badge">active</span></div>
-      <div className="trust-item"><span>Private review state</span><span className="badge private">private</span></div>
-      <div className="trust-item"><span>Security scan</span><span className="badge pending">pending</span></div>
-      <div className="trust-item"><span>AI analysis</span><span className="badge pending">pending</span></div>
-      <div className="trust-item"><span>Public release</span><span className="badge private">approval gated</span></div>
+      <div className="trust-item"><span>Private studio review</span><span className="badge private">protected</span></div>
+      <div className="trust-item"><span>Security scan</span><span className="badge gold">queued</span></div>
+      <div className="trust-item"><span>AI media analysis</span><span className="badge gold">curated</span></div>
+      <div className="trust-item"><span>Public release</span><span className="badge private">gated</span></div>
     </div>
   );
 }

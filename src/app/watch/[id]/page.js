@@ -67,6 +67,22 @@ function CuratedRail({ title, description, items }) {
   );
 }
 
+function creatorLanes(experience) {
+  if (experience.contentFormat === "creator_spotlight") {
+    return ["Films", "Worlds", "Soundscapes", "Collections"];
+  }
+
+  if (experience.mediaType === "Music Experience") {
+    return ["Soundscapes", "Visuals", "Albums", "Collections"];
+  }
+
+  if (experience.contentFormat === "interactive_story") {
+    return ["Stories", "Chapters", "Worlds", "Collections"];
+  }
+
+  return ["Films", "Series", "Worlds", "Collections"];
+}
+
 export default function WatchDetailPage({ params }) {
   const experience = getConsumerExperience(params.id);
 
@@ -208,12 +224,21 @@ export default function WatchDetailPage({ params }) {
           <p>{experience.synopsis}</p>
 
           <div className={styles.creatorProfileCard}>
-            <span className={styles.kicker}>Creator identity</span>
+            <div className={styles.creatorIdentityHeader}>
+              <span className={styles.creatorAvatar} aria-hidden="true">
+                {experience.creator?.slice(0, 1) || "M"}
+              </span>
+              <span className={styles.kicker}>Creator world</span>
+            </div>
             <h2>{experience.creator}</h2>
-            <p>{experience.teamLabel || "Creator-led immersive media world"}</p>
-            <div>
-              <span>{experience.contentFormat?.replaceAll("_", " ")}</span>
-              <span>{experience.seriesType?.replaceAll("_", " ")}</span>
+            <p>
+              {experience.teamLabel || "Creator-led immersive media world"} shaped around
+              mood, authorship, and audience connection.
+            </p>
+            <div className={styles.creatorLanes}>
+              {creatorLanes(experience).map((lane) => (
+                <span key={lane}>{lane}</span>
+              ))}
             </div>
           </div>
 

@@ -744,6 +744,7 @@
   background-size: cover;
   background-position: center;
   padding: 18px;
+  min-height: 230px;
 }
 
 .creatorProfileCard:before {
@@ -760,6 +761,28 @@
   position: relative;
 }
 
+.creatorIdentityHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.creatorAvatar {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.34), transparent 34%),
+    rgba(0, 0, 0, 0.36);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 860;
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+}
+
 .creatorProfileCard h2 {
   margin: 14px 0 8px;
   font-size: 24px;
@@ -770,14 +793,14 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.creatorProfileCard div {
+.creatorLanes {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
 }
 
-.creatorProfileCard div span {
+.creatorLanes span {
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: rgba(255, 255, 255, 0.08);

@@ -33,7 +33,7 @@ export default function CreatorApplicationForm() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body?.error?.message || "Application failed");
-      setResult(`Application received. Verification: ${body.application.verificationState}. Upload permission: ${body.application.uploadPermission}.`);
+      setResult(`Application received. Creator access: ${body.application.verificationState}. Upload permission: ${body.application.uploadPermission}.`);
       setForm(initialForm);
     } catch (error) {
       setResult(error.message);
@@ -82,7 +82,7 @@ export default function CreatorApplicationForm() {
         <button className="primary-button" disabled={busy} type="submit">
           {busy ? "Submitting..." : "Submit creator application"}
         </button>
-        <span className="muted">Applications start as pending. Upload access remains gated by verification state.</span>
+        <span className="muted">Creator access begins privately. Upload permission opens as trust is established.</span>
       </div>
       {result ? <div className="api-result">{result}</div> : null}
     </form>

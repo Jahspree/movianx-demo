@@ -9,23 +9,23 @@ export default function DashboardPage() {
   return (
     <DashboardShell
       title="Creator command center"
-      description="Upload films, keep assets private, and prepare work for AI-assisted review without exposing files publicly."
+      description="Shape films, episodes, stories, and sound worlds inside a private studio space before audience release."
     >
       <section className="dashboard-grid">
         <div className="panel third">
           <p className="muted">Private titles</p>
           <div className="metric">0</div>
-          <p className="muted">Content appears here after secure upload creation.</p>
+          <p className="muted">Titles appear here after secure studio intake.</p>
         </div>
         <div className="panel third">
-          <p className="muted">Review queue</p>
+          <p className="muted">Release path</p>
           <div className="metric">0</div>
           <p className="muted">No public release before approval.</p>
         </div>
         <div className="panel third">
           <p className="muted">Estimated revenue</p>
           <div className="metric">$--</div>
-          <p className="muted">Monetization is modeled, not connected.</p>
+          <p className="muted">Support signals unlock as titles move toward release.</p>
         </div>
         <div className="panel half">
           <h2>Verification-gated upload</h2>

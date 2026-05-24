@@ -43,7 +43,7 @@ export default function ContentList() {
       {items.map(item => (
         <Link className="status-row" href={`/dashboard/content/${item.id}`} key={item.id}>
           <span>{item.title}</span>
-          <span className="badge pending">{item.status}</span>
+          <span className="badge gold">{item.status}</span>
         </Link>
       ))}
     </div>

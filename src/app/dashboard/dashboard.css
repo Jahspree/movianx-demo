@@ -3,6 +3,7 @@
   max-height: 100vh;
   overflow-y: auto;
   background:
+    radial-gradient(circle at 82% 10%, rgba(214, 163, 58, 0.13), transparent 20rem),
     radial-gradient(circle at top left, rgba(122, 31, 31, 0.25), transparent 30rem),
     linear-gradient(145deg, #07070a 0%, #111016 45%, #07070a 100%);
   color: #f5efe7;
@@ -78,6 +79,8 @@
 }
 
 .panel {
+  position: relative;
+  overflow: hidden;
   grid-column: span 12;
   border: 1px solid rgba(245, 239, 231, 0.13);
   background: rgba(13, 13, 18, 0.82);
@@ -90,6 +93,31 @@
   background:
     radial-gradient(circle at top right, rgba(155, 28, 31, 0.22), transparent 24rem),
     rgba(13, 13, 18, 0.86);
+}
+
+.creator-world-panel {
+  min-height: 320px;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.28)),
+    radial-gradient(circle at 80% 18%, rgba(214, 163, 58, 0.2), transparent 22rem),
+    url("/images/creators/spotlight-lab.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.creator-world-panel:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.48)),
+    radial-gradient(circle at 20% 92%, rgba(155, 28, 31, 0.3), transparent 20rem);
+}
+
+.creator-world-panel > * {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-panel h2,
@@ -165,6 +193,56 @@
 .badge.private {
   background: rgba(96, 165, 250, 0.12);
   color: #9cc7ff;
+}
+
+.badge.gold {
+  background: rgba(214, 163, 58, 0.14);
+  color: #f8d88c;
+}
+
+.trust-ladder {
+  display: grid;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.trust-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 13px;
+  border-radius: 8px;
+  border: 1px solid rgba(245, 239, 231, 0.1);
+  background:
+    linear-gradient(90deg, rgba(214, 163, 58, 0.08), transparent),
+    rgba(255, 255, 255, 0.04);
+}
+
+.trust-step > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(214, 163, 58, 0.34);
+  color: #f8d88c;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.trust-step strong,
+.trust-step small {
+  display: block;
+}
+
+.trust-step strong {
+  color: #fff8ee;
+}
+
+.trust-step small {
+  margin-top: 3px;
+  color: rgba(245, 239, 231, 0.62);
 }
 
 .upload-form {
