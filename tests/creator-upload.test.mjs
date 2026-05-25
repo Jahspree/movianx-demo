@@ -1,8 +1,13 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { POST as createUpload } from "../src/app/api/uploads/create/route.js";
+import { PUT as mockUpload } from "../src/app/api/uploads/mock-signed/[token]/route.js";
 import { resetContentStoreForTests } from "../src/lib/creator/contentStore.js";
-import { validateAssetMetadata, validateStatusTransition } from "../src/lib/creator/validation.js";
+import {
+  validateAssetMetadata,
+  validateStatusTransition,
+  validateUploadRequestHeaders,
+} from "../src/lib/creator/validation.js";
 
 const validPayload = {
   title: "Night Hall",
@@ -55,6 +60,32 @@ test("oversized file is rejected", () => {
     contentType: "image/png",
     size: 20 * 1024 * 1024,
   }), /Invalid upload asset/);
+});
+
+test("polyglot-style unsafe filename segments are rejected", () => {
+  assert.throws(() => validateAssetMetadata({
+    assetType: "poster",
+    filename: "poster.svg.png",
+    contentType: "image/png",
+    size: 1024,
+  }), /Invalid upload asset/);
+});
+
+test("mock signed uploads require private upload headers and allowed content types", async () => {
+  assert.throws(() => validateUploadRequestHeaders(new Headers({
+    "content-type": "image/svg+xml",
+    "content-length": "100",
+    "x-movianx-private-upload": "true",
+  })), /Invalid upload request/);
+
+  const response = await mockUpload(new Request("https://demo.movianx.com/api/uploads/mock-signed/token", {
+    method: "PUT",
+    headers: {
+      "content-type": "image/png",
+      "content-length": "100",
+    },
+  }), { params: { token: "token" } });
+  assert.equal(response.status, 400);
 });
 
 test("content status transitions are constrained", () => {

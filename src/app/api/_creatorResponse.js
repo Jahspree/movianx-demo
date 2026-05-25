@@ -6,6 +6,7 @@ export function json(data, status = 200) {
     headers: {
       "cache-control": "no-store",
       "x-content-type-options": "nosniff",
+      "referrer-policy": "strict-origin-when-cross-origin",
     },
   });
 }

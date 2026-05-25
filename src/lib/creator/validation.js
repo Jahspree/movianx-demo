@@ -24,6 +24,28 @@ const ALLOWED_EXTENSIONS = Object.freeze({
   poster: [".jpg", ".jpeg", ".png", ".webp"],
 });
 
+const ALL_ALLOWED_MIME_TYPES = new Set(Object.values(ALLOWED_MIME_TYPES).flat());
+const DANGEROUS_EXTENSION_SEGMENTS = Object.freeze([
+  ".app",
+  ".bat",
+  ".cmd",
+  ".com",
+  ".dll",
+  ".dmg",
+  ".exe",
+  ".html",
+  ".hta",
+  ".jar",
+  ".js",
+  ".mjs",
+  ".php",
+  ".ps1",
+  ".scr",
+  ".sh",
+  ".svg",
+  ".vbs",
+]);
+
 const SAFE_TEXT = /^[\p{L}\p{N}\s.,:;!?'"()\-_/&+@#]+$/u;
 const SAFE_URL = /^https:\/\/[a-z0-9.-]+\.[a-z]{2,}(\/[\w\-._~:/?#[\]@!$&'()*+,;=%]*)?$/i;
 const SAFE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -69,17 +91,35 @@ export function getExtension(filename = "") {
   return idx >= 0 ? safe.slice(idx) : "";
 }
 
+function getExtensionSegments(filename = "") {
+  return sanitizeFilename(filename)
+    .toLowerCase()
+    .split(".")
+    .slice(1)
+    .map(segment => `.${segment}`)
+    .filter(Boolean);
+}
+
+function normalizeContentType(contentType = "") {
+  return String(contentType || "").trim().toLowerCase();
+}
+
 export function validateAssetMetadata(asset) {
   const errors = [];
   const assetType = String(asset?.assetType || "");
   const filename = sanitizeFilename(asset?.filename || asset?.originalFilename || "");
-  const contentType = String(asset?.contentType || "").toLowerCase();
+  const contentType = normalizeContentType(asset?.contentType);
   const size = Number(asset?.size || 0);
   const extension = getExtension(filename);
+  const extensionSegments = getExtensionSegments(filename);
 
   if (!ASSET_TYPES.includes(assetType)) errors.push("assetType is invalid");
   if (!filename) errors.push("filename is required");
   if (!Number.isSafeInteger(size) || size <= 0) errors.push("size must be a positive integer");
+  if (contentType.includes(";")) errors.push("contentType parameters are not allowed");
+  if (extensionSegments.some(segment => DANGEROUS_EXTENSION_SEGMENTS.includes(segment))) {
+    errors.push("filename contains an unsafe extension segment");
+  }
 
   if (ASSET_TYPES.includes(assetType)) {
     if (!ALLOWED_MIME_TYPES[assetType].includes(contentType)) {
@@ -105,6 +145,28 @@ export function validateAssetMetadata(asset) {
     size,
     extension,
   };
+}
+
+export function validateUploadRequestHeaders(headers = new Headers()) {
+  const contentType = normalizeContentType(headers.get("content-type"));
+  const contentLength = Number(headers.get("content-length") || 0);
+  const privateUpload = headers.get("x-movianx-private-upload") === "true";
+  const errors = [];
+
+  if (!privateUpload) errors.push("private upload header is required");
+  if (!ALL_ALLOWED_MIME_TYPES.has(contentType)) errors.push("contentType is not allowed");
+  if (!Number.isSafeInteger(contentLength) || contentLength <= 0) {
+    errors.push("content-length must be a positive integer");
+  }
+  if (contentLength > MAX_FILE_BYTES.movie) {
+    errors.push("content-length exceeds maximum upload size");
+  }
+
+  if (errors.length) {
+    throw new ValidationError("Invalid upload request", errors);
+  }
+
+  return { contentType, contentLength, privateUpload };
 }
 
 export function sanitizeText(value, { max = 500, field = "text", required = false } = {}) {
