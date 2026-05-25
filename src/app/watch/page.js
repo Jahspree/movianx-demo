@@ -7,6 +7,7 @@ import {
 import {
   getFeaturedMovieExperience,
 } from "../../data/movieExperiences";
+import WaitlistInline from "./WaitlistInline";
 
 function posterStyle(experience) {
   return {
@@ -138,11 +139,7 @@ export default function WatchPage() {
             <h2>Get notified when immersive releases go live.</h2>
             <p>Privacy-first updates for viewers. Private creator paths stay separate from the public experience.</p>
           </div>
-          <form className={styles.inlineCapture} action="/api/waitlist" method="post">
-            <input type="email" name="email" placeholder="you@example.com" required />
-            <input type="hidden" name="source" value="watch" />
-            <button type="submit">Join Waitlist</button>
-          </form>
+          <WaitlistInline />
         </div>
       </section>
     </main>

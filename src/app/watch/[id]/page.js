@@ -83,6 +83,22 @@ function creatorLanes(experience) {
   return ["Films", "Series", "Worlds", "Collections"];
 }
 
+function previewMood(experience) {
+  if (experience.contentFormat === "interactive_story") {
+    return "Interactive launch";
+  }
+
+  if (experience.mediaType === "Music Experience") {
+    return "Spatial listening preview";
+  }
+
+  if (experience.contentFormat === "creator_spotlight") {
+    return "Creator world preview";
+  }
+
+  return "Cinematic preview";
+}
+
 export default function WatchDetailPage({ params }) {
   const experience = getConsumerExperience(params.id);
 
@@ -141,7 +157,7 @@ export default function WatchDetailPage({ params }) {
             ))}
           </div>
           <div className={styles.ctaRow}>
-            <Link className={styles.primaryButton} href={experience.launchHref || "#player"}>
+            <Link className={styles.primaryButton} href={experience.launchHref || "#player"} scroll>
               {experience.contentFormat === "interactive_story" ? "Launch Story" : "Watch Preview"}
             </Link>
             <Link className={styles.secondaryButton} href="/watch">Back to Library</Link>
@@ -164,12 +180,24 @@ export default function WatchDetailPage({ params }) {
       <section className={styles.watchLayout}>
         <div>
           <div id="player" className={styles.videoFrame}>
+            <div className={styles.previewAtmosphere} aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </div>
             <div className={styles.playGlyph} aria-hidden="true">
               <span>▶</span>
             </div>
+            <div className={styles.previewMeta}>
+              <span>{previewMood(experience)}</span>
+              <strong>{experience.title}</strong>
+            </div>
             <div className={styles.playerStatus}>
-              <span>Immersive Preview</span>
-              <span>Full release access appears when available</span>
+              <span>Preview ready</span>
+              <span>Rights-cleared access appears when available</span>
+            </div>
+            <div className={styles.previewTimeline} aria-hidden="true">
+              <span />
             </div>
           </div>
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>

@@ -55,12 +55,12 @@ const LANDING_HERO_ENVIRONMENTS = [
 ];
 
 const LANDING_MOVIE_PREVIEWS = [
-  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/images/movies/night-of-the-living-dead.jpg"],
-  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/images/stories/ten-seconds.jpg"],
-  ["Echoes in Orbit", "Music Experience", "#0f766e", "/images/music/echoes-in-orbit.jpg"],
-  ["Midnight Signal", "Dark Sci-Fi", "#2563eb", "/images/movies/midnight-signal.jpg"],
-  ["Creator Spotlight", "Creator Universe", "#7c3aed", "/images/creators/spotlight-lab.jpg"],
-  ["Moon Static", "Experimental Cinema", "#d6a33a", "/images/movies/a-trip-to-the-moon.jpg"],
+  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/images/movies/night-of-the-living-dead.jpg", "/watch/night-of-the-living-dead"],
+  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/images/stories/ten-seconds.jpg", "/watch/story-3"],
+  ["Echoes in Orbit", "Music Experience", "#0f766e", "/images/music/echoes-in-orbit.jpg", "/watch/music-echoes-in-orbit"],
+  ["Midnight Signal", "Dark Sci-Fi", "#2563eb", "/images/movies/midnight-signal.jpg", "/watch/creator-proof-film"],
+  ["Creator Spotlight", "Creator Universe", "#7c3aed", "/images/creators/spotlight-lab.jpg", "/watch/creator-spotlight-lab"],
+  ["Moon Static", "Experimental Cinema", "#d6a33a", "/images/movies/a-trip-to-the-moon.jpg", "/watch/a-trip-to-the-moon"],
 ];
 
 const LANDING_SUPPORT_CARDS = [
@@ -959,8 +959,8 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
           ))}
         </div>
         <div className="movianx-preview-rail" aria-label="Cinematic experience previews">
-          {LANDING_MOVIE_PREVIEWS.map(([title, label, accent, image])=>(
-            <button key={title} onClick={openWatchLibrary} className="movianx-preview-card" style={{"--preview-accent":accent,"--preview-image":`url(${image})`,cursor:"pointer",fontFamily:FF,textAlign:"left"}}>
+          {LANDING_MOVIE_PREVIEWS.map(([title, label, accent, image, href])=>(
+            <button key={title} onClick={()=>{ window.location.href = href; }} className="movianx-preview-card" style={{"--preview-accent":accent,"--preview-image":`url(${image})`,cursor:"pointer",fontFamily:FF,textAlign:"left"}}>
               <div>
                 <strong>{title}</strong>
                 <span>{label} · AI Enhanced</span>
