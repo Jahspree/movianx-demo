@@ -41,47 +41,47 @@ const LANDING_FEATURE_TAGS = [
 ];
 
 const LANDING_PORTALS = [
-  ["movies", "Movies", "Cinematic worlds", "/watch/movies", "top", "/images/homepage/movies.jpg", "#b51f2a"],
-  ["music", "Music", "Spatial listening", "/watch/music", "left", "/images/homepage/music.jpg", "#0f766e"],
-  ["stories", "Stories", "Interactive fiction", "/watch/stories", "right", "/images/homepage/stories.jpg", "#7c3aed"],
-  ["explore", "Explore", "Enter Movianx", "/watch", "center", "/images/homepage/explore.jpg", "#d6a33a"],
+  ["movies", "Movies", "Cinematic worlds", "/watch/movies", "top", "/images/generated-live/movies/movies_psychological-horror_the-hollowing-signal_20260526t003000z_h1k9p4/poster.jpg", "#b51f2a"],
+  ["music", "Music", "Late-night sound", "/watch/music", "left", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg", "#0f766e"],
+  ["stories", "Stories", "Quiet pressure", "/watch/stories", "right", "/images/generated-live/stories/world-01-the-weight-of-silence/story.jpg", "#7c3aed"],
+  ["explore", "Explore", "Wander the worlds", "/watch", "center", "/images/generated-live/content/hero-backgrounds/hero.jpg", "#d6a33a"],
 ];
 
 const LANDING_HERO_ENVIRONMENTS = [
-  ["Movies", "/images/homepage/movies.jpg", "8%", "12%", "32deg"],
-  ["Music", "/images/homepage/music.jpg", "70%", "18%", "-22deg"],
-  ["Stories", "/images/homepage/stories.jpg", "2%", "62%", "-14deg"],
-  ["Explore", "/images/homepage/explore.jpg", "72%", "64%", "18deg"],
+  ["Movies", "/images/generated-live/movies/world-03-the-salt-line/poster.jpg", "8%", "12%", "32deg"],
+  ["Music", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg", "70%", "18%", "-22deg"],
+  ["Stories", "/images/generated-live/content/world-01-the-weight-of-silence/hero.jpg", "2%", "62%", "-14deg"],
+  ["Explore", "/images/generated-live/worlds/world-04-the-last-summer-we-spoke/creatorbanner.jpg", "72%", "64%", "18deg"],
 ];
 
 const LANDING_MOVIE_PREVIEWS = [
-  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/images/movies/night-of-the-living-dead.jpg", "/watch/night-of-the-living-dead"],
-  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/images/stories/ten-seconds.jpg", "/watch/story-3"],
-  ["Echoes in Orbit", "Music Experience", "#0f766e", "/images/music/echoes-in-orbit.jpg", "/watch/music-echoes-in-orbit"],
-  ["Midnight Signal", "Dark Sci-Fi", "#2563eb", "/images/movies/midnight-signal.jpg", "/watch/creator-proof-film"],
-  ["Creator Spotlight", "Creator Universe", "#7c3aed", "/images/creators/spotlight-lab.jpg", "/watch/creator-spotlight-lab"],
-  ["Moon Static", "Experimental Cinema", "#d6a33a", "/images/movies/a-trip-to-the-moon.jpg", "/watch/a-trip-to-the-moon"],
+  ["Night of the Living Dead", "Public Domain Horror", "#b51f2a", "/images/generated-live/movies/movies_psychological-horror_the-hollowing-signal_20260526t003000z_h1k9p4/poster.jpg", "/watch/night-of-the-living-dead"],
+  ["10 Seconds", "Timed Interactive Story", "#991b1b", "/images/generated-live/movies/world-01-the-weight-of-silence/poster.jpg", "/watch/story-3"],
+  ["Echoes in Orbit", "Music Experience", "#0f766e", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg", "/watch/music-echoes-in-orbit"],
+  ["The Salt Line", "Coastal Folk Horror", "#2563eb", "/images/generated-live/content/world-03-the-salt-line/rail.jpg", "/watch/world-03-the-salt-line"],
+  ["Creator Spotlight", "Creator Universe", "#7c3aed", "/images/generated-live/content/world-05-the-record-shop-at-the-end-of-the-world/thumbnail.jpg", "/watch/creator-spotlight-lab"],
+  ["Event Horizon Choir", "Experimental Cinema", "#d6a33a", "/images/generated-live/movies/world-02-the-event-horizon-choir/poster.jpg", "/watch/world-02-the-event-horizon-choir"],
 ];
 
 const LANDING_SUPPORT_CARDS = [
   [
     "Cinema that surrounds you",
     "Films and stories are staged with immersive audio, intelligent scene analysis, and atmospheric enhancement.",
-    "/images/homepage/movies.jpg",
+    "/images/generated-live/content/world-03-the-salt-line/hero.jpg",
     "Spatial cinema",
     "#b51f2a",
   ],
   [
     "Stories that move",
     "Interactive experiences bring choice, timing, and cinematic tension into the same premium media library.",
-    "/images/homepage/stories.jpg",
+    "/images/generated-live/stories/world-04-the-last-summer-we-spoke/story.jpg",
     "Interactive worlds",
     "#7c3aed",
   ],
   [
     "A new entertainment layer",
     "Movianx blends curated cinema, public-domain classics, and original interactive experiences into one immersive destination.",
-    "/images/homepage/explore.jpg",
+    "/images/generated-live/worlds/world-01-the-weight-of-silence/creatorbanner.jpg",
     "AI enhanced",
     "#d6a33a",
   ],
@@ -171,8 +171,8 @@ const landingCinematicCSS = `
     background:
       linear-gradient(90deg,rgba(5,5,7,0.9),rgba(5,5,7,0.34),rgba(5,5,7,0.9)),
       linear-gradient(180deg,rgba(5,5,7,0.2),rgba(5,5,7,0.76)),
-      url('/images/homepage/explore.jpg'),
-      url('/images/homepage/movies.jpg'),
+      url('/images/generated-live/content/hero-backgrounds/hero.jpg'),
+      url('/images/generated-live/movies/movies_psychological-horror_the-hollowing-signal_20260526t003000z_h1k9p4/poster.jpg'),
       radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
       radial-gradient(circle at 18% 28%, rgba(139,26,26,0.28), transparent 26%),
       radial-gradient(circle at 82% 30%, rgba(184,134,11,0.14), transparent 24%),
@@ -359,8 +359,8 @@ const landingCinematicCSS = `
   .movianx-portal-field{
     position:relative;
     width:min(980px,100%);
-    height:370px;
-    margin:18px auto 26px;
+    height:430px;
+    margin:22px auto 30px;
     animation:cinematicReveal 1s cubic-bezier(.2,.8,.2,1) both 0.42s;
   }
   .movianx-portal-field:before{
@@ -391,13 +391,13 @@ const landingCinematicCSS = `
   .movianx-portal-button{
     position:absolute;
     display:flex;
-    align-items:center;
-    gap:16px;
-    min-width:238px;
-    min-height:104px;
-    padding:20px;
+    align-items:flex-end;
+    gap:14px;
+    min-width:258px;
+    min-height:142px;
+    padding:18px;
     border:1px solid rgba(255,255,255,0.18);
-    border-radius:18px;
+    border-radius:20px;
     background:
       linear-gradient(180deg,rgba(0,0,0,0.12),rgba(0,0,0,0.66)),
       var(--portal-image),
@@ -431,22 +431,25 @@ const landingCinematicCSS = `
     position:absolute;
     inset:0;
     background:
-      linear-gradient(90deg,rgba(0,0,0,0.72),rgba(0,0,0,0.18)),
+      linear-gradient(90deg,rgba(0,0,0,0.78),rgba(0,0,0,0.08)),
       radial-gradient(circle at 78% 22%,var(--portal-accent),transparent 34%),
-      linear-gradient(180deg,transparent,rgba(0,0,0,0.64));
-    opacity:0.86;
+      linear-gradient(180deg,rgba(0,0,0,0.04) 0%,rgba(0,0,0,0.24) 44%,rgba(0,0,0,0.76) 100%);
+    opacity:0.82;
     z-index:-1;
   }
   .movianx-portal-button svg{
-    width:34px;
-    height:34px;
+    position:absolute;
+    top:16px;
+    right:16px;
+    width:25px;
+    height:25px;
     flex:0 0 auto;
     fill:none;
     stroke:currentColor;
     stroke-width:1.8;
     stroke-linecap:round;
     stroke-linejoin:round;
-    color:rgba(255,255,255,0.86);
+    color:rgba(255,255,255,0.66);
     filter:drop-shadow(0 10px 22px rgba(0,0,0,0.42));
   }
   .movianx-portal-button strong{
@@ -478,8 +481,8 @@ const landingCinematicCSS = `
   .movianx-portal-center{
     left:50%;
     top:56%;
-    min-width:270px;
-    min-height:122px;
+    min-width:306px;
+    min-height:172px;
     box-shadow:0 30px 96px rgba(139,26,26,0.42),0 0 70px rgba(181,31,42,0.22);
   }
   .movianx-cta-row{
@@ -608,7 +611,7 @@ const landingCinematicCSS = `
   }
   .movianx-preview-card{
     position:relative;
-    aspect-ratio:16/10;
+    aspect-ratio:4/3;
     width:100%;
     padding:0;
     overflow:hidden;
@@ -854,17 +857,17 @@ const landingCinematicCSS = `
     .movianx-landing-title{font-size:clamp(27px,8vw,32px);max-width:300px;margin-left:auto;margin-right:auto;overflow-wrap:normal;line-height:1.08;text-wrap:balance}
     .movianx-landing-copy{font-size:14px;line-height:1.56;margin-left:auto;margin-right:auto;margin-bottom:24px;max-width:294px;text-wrap:pretty}
     .movianx-hero-kicker{font-size:11px;padding:8px 11px}
-    .movianx-portal-field{height:500px;margin:8px auto 34px}
+    .movianx-portal-field{height:560px;margin:8px auto 34px}
     .movianx-portal-field:before{inset:72px 12% 88px}
     .movianx-portal-line{display:none}
-    .movianx-portal-button{min-width:150px;min-height:112px;padding:14px;gap:10px;border-radius:16px}
-    .movianx-portal-button svg{width:25px;height:25px}
+    .movianx-portal-button{min-width:154px;min-height:138px;padding:14px;gap:10px;border-radius:16px}
+    .movianx-portal-button svg{width:20px;height:20px;top:13px;right:13px}
     .movianx-portal-button strong{font-size:16px}
     .movianx-portal-button span{font-size:11px}
-    .movianx-portal-top{left:50%;top:13%;min-width:230px}
-    .movianx-portal-center{left:50%;top:42%;min-width:250px;min-height:124px}
-    .movianx-portal-left{left:25%;top:75%}
-    .movianx-portal-right{left:75%;top:75%}
+    .movianx-portal-top{left:50%;top:13%;min-width:248px}
+    .movianx-portal-center{left:50%;top:42%;min-width:264px;min-height:154px}
+    .movianx-portal-left{left:25%;top:76%}
+    .movianx-portal-right{left:75%;top:76%}
     .movianx-cta-row{gap:10px}
     .movianx-cta-row .movianx-button{width:100%;max-width:310px}
     .movianx-preview-rail{display:flex;overflow-x:auto;gap:12px;margin-bottom:28px;max-width:100%;padding-bottom:8px;scroll-snap-type:x proximity}
