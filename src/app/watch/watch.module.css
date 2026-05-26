@@ -18,6 +18,47 @@
   background-attachment: scroll;
   color: #fff;
   font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  position: relative;
+  isolation: isolate;
+}
+
+.watchShell:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 7, 0.92), rgba(5, 5, 7, 0.42), rgba(5, 5, 7, 0.94)),
+    var(--zone-environment-secondary);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.08;
+  filter: saturate(1.04) brightness(0.92);
+  transform: scale(1.04);
+  animation: atmosphereBreath 52s ease-in-out infinite alternate;
+}
+
+.watchShell > * {
+  position: relative;
+  z-index: 1;
+}
+
+:global(html[data-movianx-atmosphere="quiet-hour"]) .watchShell:before {
+  opacity: 0.16;
+  filter: saturate(0.96) brightness(0.78);
+  animation-duration: 72s;
+}
+
+:global(html[data-movianx-atmosphere="evening"]) .watchShell:before {
+  opacity: 0.12;
+  filter: saturate(1.08) brightness(0.86);
+  animation-duration: 60s;
+}
+
+:global(html[data-movianx-atmosphere="morning"]) .watchShell:before {
+  opacity: 0.07;
+  filter: saturate(0.92) brightness(1.02);
 }
 
 .watchShell[data-zone="movies"] {
@@ -191,6 +232,7 @@
   background-size: cover, cover, cover;
   background-position: center;
   pointer-events: none;
+  animation: heroAtmosphereEvolution 46s ease-in-out infinite alternate;
 }
 
 .heroContent,
@@ -404,6 +446,7 @@
   background-size: cover, cover, cover;
   background-position: center;
   box-shadow: 0 36px 120px rgba(0, 0, 0, 0.34);
+  animation: editorialBreath 38s ease-in-out infinite alternate;
 }
 
 .editorial:before {
@@ -530,6 +573,20 @@
   filter: saturate(1.08);
 }
 
+:global(html[data-movianx-atmosphere="quiet-hour"]) .watchShell[data-zone="stories"] .editorial,
+:global(html[data-movianx-atmosphere="quiet-hour"]) .watchShell[data-zone="music"] .editorial {
+  box-shadow: 0 42px 140px rgba(0, 0, 0, 0.44), 0 0 90px rgba(181, 31, 42, 0.08);
+}
+
+:global(html[data-movianx-atmosphere="quiet-hour"]) .watchShell[data-zone="stories"] .rail:before,
+:global(html[data-movianx-atmosphere="quiet-hour"]) .watchShell[data-zone="music"] .rail:before {
+  opacity: 0.27;
+}
+
+:global(html[data-movianx-atmosphere="evening"]) .watchShell[data-zone="movies"] .hero:before {
+  filter: saturate(1.08) brightness(0.94);
+}
+
 .rail {
   position: relative;
   margin-top: 28px;
@@ -556,6 +613,8 @@
   background-position: center;
   opacity: 0.2;
   filter: blur(0.5px) saturate(1.1);
+  transform: scale(1.01);
+  animation: railAtmosphereDrift 58s ease-in-out infinite alternate;
 }
 
 .railHeader {
@@ -887,6 +946,50 @@
   text-transform: capitalize;
 }
 
+@keyframes atmosphereBreath {
+  0% {
+    background-position: 46% 48%;
+    transform: scale(1.035);
+  }
+  100% {
+    background-position: 54% 52%;
+    transform: scale(1.075);
+  }
+}
+
+@keyframes heroAtmosphereEvolution {
+  0% {
+    background-position: center, 48% 50%, center;
+    filter: saturate(1) brightness(0.96);
+  }
+  100% {
+    background-position: center, 54% 50%, center;
+    filter: saturate(1.08) brightness(1.02);
+  }
+}
+
+@keyframes editorialBreath {
+  0% {
+    background-position: center;
+    filter: saturate(1) brightness(0.98);
+  }
+  100% {
+    background-position: 54% 50%;
+    filter: saturate(1.05) brightness(1.01);
+  }
+}
+
+@keyframes railAtmosphereDrift {
+  0% {
+    background-position: 46% 50%;
+    transform: scale(1.01);
+  }
+  100% {
+    background-position: 54% 50%;
+    transform: scale(1.04);
+  }
+}
+
 @keyframes detailDrift {
   0%,
   100% {
@@ -1085,6 +1188,25 @@
   }
   50% {
     transform: translateX(165%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .watchShell:before,
+  .hero:before,
+  .editorial,
+  .rail:before,
+  .previewAtmosphere span,
+  .previewTimeline span {
+    animation: none !important;
+  }
+
+  .posterCard,
+  .posterCard .posterArt,
+  .editorialFeature,
+  .editorialMini,
+  .playGlyph span {
+    transition: none !important;
   }
 }
 

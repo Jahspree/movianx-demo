@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getAtmosphereState } from "../../lib/atmosphere";
 
 function getViewOpacity(transitionState) {
   return transitionState === "idle" ? 1 : 0;
@@ -29,6 +30,23 @@ function openConsumerLogin() {
 
 function openWatchLibrary() {
   window.location.href = "/watch";
+}
+
+function useAtmosphereDataset(zone) {
+  useEffect(() => {
+    function applyAtmosphere() {
+      document.documentElement.dataset.movianxAtmosphere = getAtmosphereState();
+      document.documentElement.dataset.movianxZone = zone;
+    }
+
+    applyAtmosphere();
+    const timer = window.setInterval(applyAtmosphere, 60000);
+
+    return () => {
+      window.clearInterval(timer);
+      delete document.documentElement.dataset.movianxZone;
+    };
+  }, [zone]);
 }
 
 const LANDING_FEATURE_TAGS = [
@@ -262,6 +280,35 @@ const landingCinematicCSS = `
     font-weight:800;
     text-transform:uppercase;
     letter-spacing:1.6px;
+  }
+  html[data-movianx-atmosphere="quiet-hour"] .movianx-landing-shell{
+    animation-duration:30s;
+  }
+  html[data-movianx-atmosphere="quiet-hour"] .movianx-landing-shell:before{
+    opacity:0.36;
+    animation-duration:28s;
+  }
+  html[data-movianx-atmosphere="quiet-hour"] .movianx-homepage-environments{
+    opacity:0.92;
+    filter:saturate(0.96) brightness(0.84);
+  }
+  html[data-movianx-atmosphere="quiet-hour"] .movianx-environment-panel{
+    animation-duration:24s;
+    box-shadow:0 38px 130px rgba(0,0,0,0.54), inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  html[data-movianx-atmosphere="quiet-hour"] .movianx-portal-button{
+    animation-duration:8.5s;
+  }
+  html[data-movianx-atmosphere="evening"] .movianx-landing-shell{
+    animation-duration:24s;
+  }
+  html[data-movianx-atmosphere="evening"] .movianx-homepage-environments{
+    opacity:0.9;
+    filter:saturate(1.08) brightness(0.92);
+  }
+  html[data-movianx-atmosphere="morning"] .movianx-homepage-environments{
+    opacity:0.74;
+    filter:saturate(0.94) brightness(1.02);
   }
   .movianx-topbar{
     position:absolute;
@@ -905,6 +952,8 @@ const landingCinematicCSS = `
 `;
 
 export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
+  useAtmosphereDataset("home");
+
   return (
     <div className="movianx-landing-shell" style={{fontFamily:FF,...getViewTransition(transitionState)}}>
       <div className="movianx-orb" style={{width:4,height:4,top:"25%",left:"12%",animationDelay:"0.4s"}}/>

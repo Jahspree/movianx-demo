@@ -6,6 +6,7 @@ import {
   getConsumerRailItems,
 } from "../../data/consumerExperiences";
 import { orchestrateEcosystemRails } from "../../lib/ecosystemGovernance";
+import AtmosphereBridge from "./AtmosphereBridge";
 import WaitlistInline from "./WaitlistInline";
 
 const ZONES = {
@@ -380,6 +381,7 @@ export default function WatchExperiencePage({ zone = "explore" }) {
 
   return (
     <main className={styles.watchShell} data-zone={activeZone} style={zoneEnvironmentStyle(activeZone)}>
+      <AtmosphereBridge zone={activeZone} />
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/">
           <img src="/movianx-logo.png" alt="Movianx" />
