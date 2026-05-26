@@ -50,6 +50,25 @@ const ZONE_LINKS = [
   ["Music", "/watch/music", "music"],
 ];
 
+const ZONE_ENVIRONMENT_IMAGES = {
+  explore: {
+    primary: "/images/generated-live/content/hero-backgrounds/hero.jpg",
+    secondary: "/images/generated-live/content/wave-2-atmospheric-mystery/rail.jpg",
+  },
+  movies: {
+    primary: "/images/generated-live/content/world-03-the-salt-line/hero.jpg",
+    secondary: "/images/generated-live/content/world-02-the-event-horizon-choir/hero.jpg",
+  },
+  stories: {
+    primary: "/images/generated-live/content/world-01-the-weight-of-silence/hero.jpg",
+    secondary: "/images/generated-live/stories/world-04-the-last-summer-we-spoke/story.jpg",
+  },
+  music: {
+    primary: "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg",
+    secondary: "/images/generated-live/content/world-05-the-record-shop-at-the-end-of-the-world/rail.jpg",
+  },
+};
+
 const EDITORIAL_MODULES = {
   explore: {
     eyebrow: "Creator of the Week",
@@ -145,6 +164,14 @@ function visualStyle(experience, preferred = "poster") {
   return {
     "--poster-accent": experience.accent,
     "--poster-image": visualFor(experience, preferred) ? `url(${visualFor(experience, preferred)})` : "none",
+  };
+}
+
+function zoneEnvironmentStyle(zone) {
+  const environment = ZONE_ENVIRONMENT_IMAGES[zone] || ZONE_ENVIRONMENT_IMAGES.explore;
+  return {
+    "--zone-environment-primary": `url(${environment.primary})`,
+    "--zone-environment-secondary": `url(${environment.secondary})`,
   };
 }
 
@@ -308,8 +335,10 @@ function EditorialSection({ zone }) {
 
   if (!feature) return null;
 
+  const featureVisualPreference = zone === "explore" ? "creator" : "hero";
+
   return (
-    <section className={styles.editorial} style={visualStyle(feature, "creator")} aria-label={`${editorial.eyebrow} editorial spotlight`}>
+    <section className={styles.editorial} style={visualStyle(feature, featureVisualPreference)} aria-label={`${editorial.eyebrow} editorial spotlight`}>
       <Link className={styles.editorialFeature} href={feature.href || `/watch/${feature.id}`}>
         <span className={styles.kicker}>{editorial.eyebrow}</span>
         <h2>{editorial.title}</h2>
@@ -350,7 +379,7 @@ export default function WatchExperiencePage({ zone = "explore" }) {
   };
 
   return (
-    <main className={styles.watchShell} data-zone={activeZone}>
+    <main className={styles.watchShell} data-zone={activeZone} style={zoneEnvironmentStyle(activeZone)}>
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/">
           <img src="/movianx-logo.png" alt="Movianx" />

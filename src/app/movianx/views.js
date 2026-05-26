@@ -41,14 +41,14 @@ const LANDING_FEATURE_TAGS = [
 ];
 
 const LANDING_PORTALS = [
-  ["movies", "Movies", "Cinematic worlds", "/watch/movies", "top", "/images/generated-live/movies/movies_psychological-horror_the-hollowing-signal_20260526t003000z_h1k9p4/poster.jpg", "#b51f2a"],
+  ["movies", "Movies", "Cinematic worlds", "/watch/movies", "top", "/images/generated-live/content/world-03-the-salt-line/hero.jpg", "#b51f2a"],
   ["music", "Music", "Late-night sound", "/watch/music", "left", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg", "#0f766e"],
   ["stories", "Stories", "Quiet pressure", "/watch/stories", "right", "/images/generated-live/stories/world-01-the-weight-of-silence/story.jpg", "#7c3aed"],
   ["explore", "Explore", "Wander the worlds", "/watch", "center", "/images/generated-live/content/hero-backgrounds/hero.jpg", "#d6a33a"],
 ];
 
 const LANDING_HERO_ENVIRONMENTS = [
-  ["Movies", "/images/generated-live/movies/world-03-the-salt-line/poster.jpg", "8%", "12%", "32deg"],
+  ["Movies", "/images/generated-live/content/world-03-the-salt-line/hero.jpg", "8%", "12%", "32deg"],
   ["Music", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg", "70%", "18%", "-22deg"],
   ["Stories", "/images/generated-live/content/world-01-the-weight-of-silence/hero.jpg", "2%", "62%", "-14deg"],
   ["Explore", "/images/generated-live/worlds/world-04-the-last-summer-we-spoke/creatorbanner.jpg", "72%", "64%", "18deg"],
@@ -172,7 +172,7 @@ const landingCinematicCSS = `
       linear-gradient(90deg,rgba(5,5,7,0.9),rgba(5,5,7,0.34),rgba(5,5,7,0.9)),
       linear-gradient(180deg,rgba(5,5,7,0.2),rgba(5,5,7,0.76)),
       url('/images/generated-live/content/hero-backgrounds/hero.jpg'),
-      url('/images/generated-live/movies/movies_psychological-horror_the-hollowing-signal_20260526t003000z_h1k9p4/poster.jpg'),
+      url('/images/generated-live/content/world-03-the-salt-line/hero.jpg'),
       radial-gradient(circle at 50% 18%, rgba(255,255,255,0.14), transparent 18%),
       radial-gradient(circle at 18% 28%, rgba(139,26,26,0.28), transparent 26%),
       radial-gradient(circle at 82% 30%, rgba(184,134,11,0.14), transparent 24%),
