@@ -21,29 +21,61 @@ function railId(title) {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 }
 
+const ATMOSPHERIC_HOOKS = {
+  "The Weight of Silence": "Silence keeps its own archive.",
+  "The Last Summer We Spoke": "Some summers never leave.",
+  "The Event Horizon Choir": "A signal sings at the edge.",
+  "The Record Shop at the End of the World": "The last song still matters.",
+  "Night of the Living Dead": "No door holds forever.",
+  "10 Seconds": "You do not get another breath.",
+  "Signal Bloom": "Memory drifts through signal.",
+  "Basement Frequency": "The room hums back.",
+  "Marisol Vale": "Quiet dread. Precise light.",
+  "Juno Trace": "Pressure shaped into sound.",
+  "Iris Monroe": "Memory rendered in motion.",
+  "Creator Worlds": "Artists building places you can enter.",
+};
+
+function atmosphericHook(experience) {
+  if (ATMOSPHERIC_HOOKS[experience.title]) {
+    return ATMOSPHERIC_HOOKS[experience.title];
+  }
+
+  const source = experience.hook || experience.synopsis || experience.genre || "Enter quietly.";
+  return source.split(/[.!?]/).find(Boolean)?.trim() || source;
+}
+
+function primaryBadge(experience) {
+  if (experience.factoryIngested) return "Factory World";
+  if (experience.immersiveReady) return "Immersive";
+  if (experience.aiEnhanced) return "AI Enhanced";
+  return experience.mediaType || experience.year;
+}
+
+function posterMeta(experience) {
+  if (experience.contentFormat === "interactive_story") return "Story";
+  if (experience.mediaType === "Music Experience") return "Sound";
+  if (experience.contentFormat === "creator_spotlight") return "Creator";
+  return experience.runtime || experience.year;
+}
+
 function PosterCard({ experience }) {
   return (
     <Link className={styles.posterCard} href={experience.href || `/watch/${experience.id}`}>
       <div className={styles.posterArt} style={posterStyle(experience)}>
         <div className={styles.badgeRow}>
-          {experience.aiEnhanced && <span className={styles.miniBadge}>AI Enhanced</span>}
-          {experience.immersiveReady && <span className={styles.miniBadge}>Immersive Ready</span>}
-          {experience.factoryIngested && <span className={styles.miniBadge}>Cinematic World</span>}
+          <span className={styles.miniBadge}>{primaryBadge(experience)}</span>
         </div>
         <div className={styles.posterText}>
           <h3>{experience.title}</h3>
-          <span className={styles.miniBadge}>{experience.mediaType || experience.year}</span>
+          <span className={styles.miniBadge}>{posterMeta(experience)}</span>
         </div>
       </div>
       <div className={styles.cardInfo}>
         <div className={styles.creatorLine}>
           <span>{experience.creator}</span>
-          <span>{experience.runtime}</span>
         </div>
-        <h3>{experience.title}</h3>
-        <p>{experience.hook}</p>
-        {experience.creatorWorld && <p>{experience.creatorWorld}</p>}
-        <p>{experience.genre}</p>
+        <p className={styles.cardHook}>{atmosphericHook(experience)}</p>
       </div>
     </Link>
   );
@@ -64,7 +96,7 @@ function RailSection({ rail }) {
           <h2>{rail.title}</h2>
           <p>{rail.description}</p>
         </div>
-        <span className={styles.railCount}>{items.length} curated · {rail.governanceMood || "balanced"}</span>
+        <span className={styles.railCount}>{items.length} worlds</span>
       </div>
       {rail.governanceSignal && <div className={styles.governanceSignal}>{rail.governanceSignal}</div>}
       <div className={styles.railScroller}>
@@ -113,10 +145,9 @@ export default function WatchPage() {
             <span>{featured.year}</span>
             <span>{featured.genre}</span>
             <span>{featured.runtime}</span>
-            <span>{featured.rights}</span>
           </div>
           <div className={styles.ecosystemPulse}>
-            <span>Ecosystem pulse</span>
+            <span>Tonight</span>
             <strong>{governance.health.summary}</strong>
           </div>
           <div className={styles.ctaRow}>

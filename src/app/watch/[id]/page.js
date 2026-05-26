@@ -34,15 +34,44 @@ function posterStyle(experience) {
   };
 }
 
+const ATMOSPHERIC_HOOKS = {
+  "The Weight of Silence": "Silence keeps its own archive.",
+  "The Last Summer We Spoke": "Some summers never leave.",
+  "The Event Horizon Choir": "A signal sings at the edge.",
+  "The Record Shop at the End of the World": "The last song still matters.",
+  "Night of the Living Dead": "No door holds forever.",
+  "10 Seconds": "You do not get another breath.",
+  "Signal Bloom": "Memory drifts through signal.",
+  "Basement Frequency": "The room hums back.",
+};
+
+function atmosphericHook(experience) {
+  if (ATMOSPHERIC_HOOKS[experience.title]) {
+    return ATMOSPHERIC_HOOKS[experience.title];
+  }
+
+  const source = experience.hook || experience.synopsis || experience.genre || "Enter quietly.";
+  return source.split(/[.!?]/).find(Boolean)?.trim() || source;
+}
+
+function readableTag(tag) {
+  return tag
+    .replace(/[-_]+/g, " ")
+    .replace(/\brails\b/g, "")
+    .replace(/\bfactory generated\b/g, "factory world")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
 function ExperienceCard({ experience }) {
   return (
     <Link className={styles.relatedCard} href={experience.href || `/watch/${experience.id}`}>
       <div className={styles.relatedPoster} style={posterStyle(experience)}>
-        <span>{experience.mediaType}</span>
         <strong>{experience.title}</strong>
         <small>{experience.creator}</small>
       </div>
-      <p>{experience.hook || experience.genre}</p>
+      <p>{atmosphericHook(experience)}</p>
     </Link>
   );
 }
@@ -113,12 +142,8 @@ export default function WatchDetailPage({ params }) {
     ...(experience.discoveryTags || []),
     ...(experience.moodTags || []),
     ...(experience.styleTags || []),
-  ].filter(Boolean).slice(0, 10);
-  const moodLine = [
-    experience.moodTags?.[0],
-    experience.styleTags?.[0],
-    experience.discoveryTags?.[0],
-  ].filter(Boolean).join(" / ");
+  ].filter(Boolean).map(readableTag).slice(0, 4);
+  const moodLine = readableTag(experience.moodTags?.[0] || experience.genre || "");
 
   return (
     <main className={styles.watchShell} style={posterStyle(experience)}>
@@ -145,11 +170,9 @@ export default function WatchDetailPage({ params }) {
         <div className={styles.detailHeroContent}>
           <span className={styles.badge}>{experience.mediaType}</span>
           <h1>{experience.title}</h1>
-          <p>{experience.hook || experience.synopsis}</p>
+          <p>{atmosphericHook(experience)}</p>
           <div className={styles.creatorLine}>
             <span>By {experience.creator}</span>
-            <span>{experience.teamLabel}</span>
-            {experience.creatorWorld && <span>{experience.creatorWorld}</span>}
             {moodLine && <span>{moodLine}</span>}
           </div>
           <div className={styles.tagCloud} aria-label="Discovery tags">
@@ -195,7 +218,6 @@ export default function WatchDetailPage({ params }) {
             </div>
             <div className={styles.playerStatus}>
               <span>Preview ready</span>
-              <span>Rights-cleared access appears when available</span>
             </div>
             <div className={styles.previewTimeline} aria-hidden="true">
               <span />
@@ -222,11 +244,7 @@ export default function WatchDetailPage({ params }) {
             <div className={styles.kicker}>Series Experience</div>
             <div className={styles.seriesBox}>
               <h2>{experience.series?.title || "Standalone experience"}</h2>
-              <p>
-                {experience.series
-                  ? `${experience.series.type}. ${experience.series.continueWatching}. ${experience.series.bingeSupport}.`
-                  : "A complete standalone release with room to expand into seasons, episodes, ordered chapters, title art, and continue watching."}
-              </p>
+              <p>{experience.series ? experience.series.type : "A complete standalone release."}</p>
               {experience.series?.seasons?.length ? (
                 <div className={styles.episodeList}>
                   {experience.series.seasons.map((season) => (
@@ -263,10 +281,7 @@ export default function WatchDetailPage({ params }) {
               <span className={styles.kicker}>Creator world</span>
             </div>
             <h2>{experience.creator}</h2>
-            <p>
-              {experience.atmosphereProfile || experience.teamLabel || "Creator-led immersive media world"} shaped around
-              mood, authorship, and audience connection.
-            </p>
+            <p>{experience.atmosphereProfile || experience.teamLabel || "Creator-led immersive media world."}</p>
             <div className={styles.creatorLanes}>
               {creatorLanes(experience).map((lane) => (
                 <span key={lane}>{lane}</span>
@@ -317,12 +332,12 @@ export default function WatchDetailPage({ params }) {
       <div className={styles.detailRails}>
         <CuratedRail
           title="More From The Creator"
-          description="Creator worlds and related work are treated as artistic ecosystems, not disposable uploads."
+          description="More work from this world."
           items={moreFromCreator}
         />
         <CuratedRail
           title="More Like This"
-          description="Curated by genre, mood, style, and psychological similarity."
+          description="Similar mood. Different door."
           items={moreLikeThis}
         />
       </div>
