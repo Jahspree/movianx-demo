@@ -1,0 +1,19 @@
+{
+  "asset_id": "hero-backgrounds_folk-horror_the-salt-line_w03b01",
+  "world_id": "world-03-the-salt-line",
+  "title": "The Salt Line — The House in the Marsh",
+  "asset_type": "cinematic-backdrop",
+  "category": "hero-backgrounds",
+  "file_name": "hero-backgrounds_folk-horror_the-salt-line_20260526T020000Z_w03b01.jpg",
+  "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_folk-horror_the-salt-line_20260526T020000Z_w03b01.jpg",
+  "emotional_category": "folk-horror-coastal",
+  "creator_identity": "Elara Voss",
+  "atmospheric_profile": "vast flat salt marsh at dusk, lone wooden house on stilts with single warm light, heavy sea mist, wind moving through reeds, profound isolation",
+  "recommendation_tags": ["folk-horror", "salt-marsh", "isolation", "mist", "house-on-stilts"],
+  "rail_assignment": "folk-horror-coastal",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T02:10:00Z",
+  "quality_notes": "Powerful wide environmental storytelling. The scale of the marsh against the tiny house with one light is haunting. Perfect new folk horror visual identity.",
+  "prompt_signature": "folk-horror-salt-marsh-house-on-stilts-mist-reeds-dusk-isolation",
+  "validation_batch": "weekly-2026-w22"
+}

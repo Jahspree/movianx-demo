@@ -1,0 +1,19 @@
+{
+  "asset_id": "movies_psychological-horror_the-weight-of-silence_w01p01",
+  "world_id": "world-01-the-weight-of-silence",
+  "title": "The Weight of Silence",
+  "asset_type": "poster",
+  "category": "movies",
+  "file_name": "movies_psychological-horror_the-weight-of-silence_20260526T011500Z_w01p01.jpg",
+  "relative_path": "approved-assets/movies/movies_psychological-horror_the-weight-of-silence_20260526T011500Z_w01p01.jpg",
+  "emotional_category": "psychological-horror",
+  "creator_identity": "Mara Kaine",
+  "atmospheric_profile": "oppressive domestic silence, guilt, peeling wallpaper, child's drawing, single practical lamp, unbearable negative space",
+  "recommendation_tags": ["psychological-horror", "domestic-dread", "guilt", "silence", "isolation"],
+  "rail_assignment": "horror-rails-deep",
+  "aspect_ratio": "2:3",
+  "approved_at": "2026-05-26T01:18:00Z",
+  "quality_notes": "Excellent. Heavy emotional weight through pure environment. Child's drawing and empty chair tell the entire story. No people, no artifacts, strong filmic low-key lighting. Passes all style bible criteria decisively.",
+  "prompt_signature": "psych-horror-domestic-1970s-living-room-peeling-wallpaper-child-drawing-lamp-guilt-negative-space-eggers-ramsay",
+  "validation_batch": "001"
+}

@@ -1,0 +1,19 @@
+{
+  "asset_id": "hero-backgrounds_dark-sci-fi_the-event-horizon-choir_w02b01",
+  "world_id": "world-02-the-event-horizon-choir",
+  "title": "The Event Horizon Choir",
+  "asset_type": "cinematic-backdrop",
+  "category": "hero-backgrounds",
+  "file_name": "hero-backgrounds_dark-sci-fi_the-event-horizon-choir_20260526T012800Z_w02b01.jpg",
+  "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_dark-sci-fi_the-event-horizon-choir_20260526T012800Z_w02b01.jpg",
+  "emotional_category": "dark-sci-fi",
+  "creator_identity": "Dr. Liora Kane",
+  "atmospheric_profile": "massive abandoned quantum ring station, dying star, crystalline debris, lone figure, gravitational lensing, elegiac cosmic scale",
+  "recommendation_tags": ["dark-sci-fi", "cosmic-loneliness", "ring-station", "dying-star", "quantum"],
+  "rail_assignment": "dark-sci-fi-rails",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T01:32:00Z",
+  "quality_notes": "Excellent wide-scale dark sci-fi. Different from previous 'Veil of Static'. Strong emotional match. Premium IMAX feel.",
+  "prompt_signature": "dark-sci-fi-ring-station-dying-star-crystalline-debris-lone-astronaut-quantum-lensing-elegiac",
+  "validation_batch": "001"
+}

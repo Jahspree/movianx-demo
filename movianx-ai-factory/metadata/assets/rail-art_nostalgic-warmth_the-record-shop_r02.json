@@ -1,0 +1,20 @@
+{
+  "asset_id": "rail-art_nostalgic-warmth_the-record-shop_r02",
+  "world_id": "world-05-the-record-shop-at-the-end-of-the-world",
+  "title": "The Record Shop at the End of the World",
+  "asset_type": "rail-art",
+  "category": "rail-art",
+  "file_name": "rail-art_nostalgic-warmth_the-record-shop_20260526T031500Z_r02.jpg",
+  "relative_path": "approved-assets/rail-art/rail-art_nostalgic-warmth_the-record-shop_20260526T031500Z_r02.jpg",
+  "emotional_category": "nostalgic-warmth",
+  "creator_identity": "Marcus 'The Needle' Rivera",
+  "atmospheric_profile": "wooden counter with spinning record on turntable, warm lamp, rain on window, old headphones, handwritten note 'For when you need it most' — tactile analog comfort and quiet human connection",
+  "recommendation_tags": ["nostalgic-warmth", "rail-art", "vinyl", "late-night", "connection"],
+  "rail_assignment": "returning-tonight, late-night-discoveries",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T03:20:00Z",
+  "quality_notes": "Rich, emotionally resonant rail asset. Deepens Marcus Rivera's world with recurring turntable, rain, and handwritten notes. Excellent for Returning Tonight and Late Night Discoveries.",
+  "prompt_signature": "nostalgic-rail-turntable-record-headphones-rain-note-analog-warmth",
+  "wave": "density-wave-2",
+  "creator_continuity": "Marcus Rivera - recurring turntable, rain, handwritten notes, warm lamp light"
+}

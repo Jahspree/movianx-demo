@@ -1,0 +1,19 @@
+{
+  "asset_id": "thumbnails_emotional-drama_the-last-summer-we-spoke_t01",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "The Last Summer We Spoke",
+  "asset_type": "thumbnail",
+  "category": "thumbnails",
+  "file_name": "thumbnails_emotional-drama_the-last-summer-we-spoke_20260526T030000Z_t01.jpg",
+  "relative_path": "approved-assets/thumbnails/thumbnails_emotional-drama_the-last-summer-we-spoke_20260526T030000Z_t01.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "wooden windowsill at golden hour: handwritten letter, reading glasses, small vase with wilted flowers, warm light, quiet memory and tenderness",
+  "recommendation_tags": ["emotional-drama", "thumbnail", "memory", "golden-hour", "intimacy"],
+  "rail_assignment": "quiet-hour-viewing, stories-that-linger",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T03:05:00Z",
+  "quality_notes": "Excellent warm, intimate thumbnail. Perfect emotional tone for Quiet Hour and Stories That Linger rails. First wave of thumbnail density.",
+  "prompt_signature": "emotional-drama-thumbnail-windowsill-letter-glasses-wilted-flowers-golden-light-memory",
+  "wave": "density-wave-2"
+}

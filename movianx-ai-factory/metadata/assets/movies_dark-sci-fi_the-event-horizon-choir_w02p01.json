@@ -1,0 +1,19 @@
+{
+  "asset_id": "movies_dark-sci-fi_the-event-horizon-choir_w02p01",
+  "world_id": "world-02-the-event-horizon-choir",
+  "title": "The Event Horizon Choir",
+  "asset_type": "poster",
+  "category": "movies",
+  "file_name": "movies_dark-sci-fi_the-event-horizon-choir_20260526T012800Z_w02p01.jpg",
+  "relative_path": "approved-assets/movies/movies_dark-sci-fi_the-event-horizon-choir_20260526T012800Z_w02p01.jpg",
+  "emotional_category": "dark-sci-fi",
+  "creator_identity": "Dr. Liora Kane",
+  "atmospheric_profile": "airlock perspective looking up at red event horizon through portal, red emergency lights, lone astronaut from behind, finality and quantum dread",
+  "recommendation_tags": ["dark-sci-fi", "event-horizon", "airlock", "finality", "red-light"],
+  "rail_assignment": "dark-sci-fi-rails",
+  "aspect_ratio": "2:3",
+  "approved_at": "2026-05-26T01:32:00Z",
+  "quality_notes": "Powerful low-angle composition with strong emotional impact. Different framing and color story from previous sci-fi. Passes all criteria.",
+  "prompt_signature": "dark-sci-fi-airlock-red-event-horizon-astronaut-from-behind-portal-finality",
+  "validation_batch": "001"
+}

@@ -1,0 +1,19 @@
+{
+  "asset_id": "stories_psychological-horror_the-weight-of-silence_w01s01",
+  "world_id": "world-01-the-weight-of-silence",
+  "title": "The Weight of Silence — The Letters",
+  "asset_type": "atmospheric-still",
+  "category": "stories",
+  "file_name": "stories_psychological-horror_the-weight-of-silence_20260526T011500Z_w01s01.jpg",
+  "relative_path": "approved-assets/stories/stories_psychological-horror_the-weight-of-silence_20260526T011500Z_w01s01.jpg",
+  "emotional_category": "psychological-horror",
+  "creator_identity": "Mara Kaine",
+  "atmospheric_profile": "intimate micro-detail of guilt: bundled unopened letters, dead moth, cold tea, dust in moonlight beam, handwritten confession fragment",
+  "recommendation_tags": ["psychological-horror", "detail-shot", "memory", "guilt", "unspoken"],
+  "rail_assignment": "horror-rails-deep",
+  "aspect_ratio": "4:3",
+  "approved_at": "2026-05-26T01:18:00Z",
+  "quality_notes": "Outstanding micro-storytelling. The half-pulled letter with visible text, the moth, dust motes, and cold tea create unbearable emotional residue. Rich textures, perfect motivated lighting. Highest level intimate atmospheric still.",
+  "prompt_signature": "psych-horror-intimate-kitchen-table-unopened-letters-moth-cold-tea-moonlight-dust-motes-guilt-detail",
+  "validation_batch": "001"
+}

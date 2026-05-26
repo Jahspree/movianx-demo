@@ -1,0 +1,27 @@
+{
+  "asset_id": "movies_psychological-horror_the-hollowing-signal_h1k9p4",
+  "title": "The Hollowing Signal",
+  "category": "movies",
+  "file_name": "movies_psychological-horror_the-hollowing-signal_20260526T003000Z_h1k9p4.jpg",
+  "relative_path": "approved-assets/movies/movies_psychological-horror_the-hollowing-signal_20260526T003000Z_h1k9p4.jpg",
+  "emotional_category": "psychological-horror",
+  "genre": "Psychological Horror",
+  "creator_identity": "Movianx Originals",
+  "atmospheric_profile": "oppressive, isolated, dread-filled cinematic darkness with practical fluorescent decay and heavy negative space",
+  "recommendation_tags": [
+    "horror",
+    "psychological",
+    "atmospheric",
+    "isolation",
+    "dread",
+    "cinematic-darkness"
+  ],
+  "rail_assignment": "horror-rails",
+  "aspect_ratio": "2:3",
+  "resolution": "portrait-poster",
+  "approved_at": "2026-05-26T00:32:00Z",
+  "quality_notes": "Excellent match to style bible. Powerful use of negative space, motivated practical lighting, decaying environment tells story without faces or gore. No anatomical issues, no AI artifacts, premium filmic grain and mood. Passes all rejection criteria.",
+  "prompt_signature": "psych-horror-corridor-lone-figure-flickering-fluorescents-peeling-walls-oppressive-darkness-35mm-ari-aster-villeneuve",
+  "source_session": "session-019e61a9-9de8-7a52-a659-49ea331aa10c",
+  "movianx_integration_notes": "Ideal for horror rail hero card or title detail page cinematic still. Strong emotional dread signal for recommendation engine."
+}

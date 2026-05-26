@@ -1,0 +1,15 @@
+{
+  "world_id": "world-02-the-event-horizon-choir",
+  "title": "The Event Horizon Choir",
+  "creator_identity": "Dr. Liora Kane",
+  "emotional_profile": "dark-sci-fi: cosmic loneliness, quantum dread, elegiac wonder, vast emptiness, strange beauty at the end of things",
+  "genre": "Dark Sci-Fi / Existential",
+  "primary_rail": "dark-sci-fi-rails",
+  "atmosphere_tags": ["cosmic-scale", "dying-star", "abandoned-megastructure", "quantum-phenomena", "melancholic-beauty"],
+  "validation_batch": "001",
+  "assets_in_world": 2,
+  "approved_assets": 2,
+  "created_at": "2026-05-26T01:30:00Z",
+  "cinematic_description": "A quantum research ring station orbiting a dying star. The Choir is the sound of spacetime itself as the star collapses. Dr. Liora Kane's world is one of scale, finality, and the terrible beauty of the end.",
+  "quality_notes": "Both assets passed strict QA. Different in tone and composition from previous sci-fi assets. Strong emotional match for cosmic loneliness + elegiac wonder."
+}

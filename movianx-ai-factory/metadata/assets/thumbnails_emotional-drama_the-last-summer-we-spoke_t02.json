@@ -1,0 +1,20 @@
+{
+  "asset_id": "thumbnails_emotional-drama_the-last-summer-we-spoke_t02",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "The Last Summer We Spoke",
+  "asset_type": "thumbnail",
+  "category": "thumbnails",
+  "file_name": "thumbnails_emotional-drama_the-last-summer-we-spoke_20260526T031500Z_t02.jpg",
+  "relative_path": "approved-assets/thumbnails/thumbnails_emotional-drama_the-last-summer-we-spoke_20260526T031500Z_t02.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "worn wooden windowsill at dusk: handwritten letter tied with faded ribbon, old reading glasses, half-empty glass of water, soft golden-blue light, quiet waiting and memory",
+  "recommendation_tags": ["emotional-drama", "thumbnail", "quiet-melancholy", "memory", "dusk"],
+  "rail_assignment": "quiet-hour-viewing, stories-that-linger",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T03:20:00Z",
+  "quality_notes": "Exceptional quiet melancholy thumbnail. Strong emotional evidence of Lena Moreau's world — recurring motif of letters and light on wood. Perfect for Quiet Hour and Stories That Linger.",
+  "prompt_signature": "emotional-drama-thumbnail-windowsill-letter-ribbon-glasses-water-dusk-melancholy",
+  "wave": "density-wave-2",
+  "creator_continuity": "Lena Moreau - recurring windowsill, letters, and late light"
+}

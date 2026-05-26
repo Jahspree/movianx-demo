@@ -1,0 +1,20 @@
+{
+  "asset_id": "creator-worlds_emotional-drama_the-last-summer-we-spoke_c02",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "Lena Moreau — The Desk at Night",
+  "asset_type": "creator-atmosphere",
+  "category": "creator-worlds",
+  "file_name": "creator-worlds_emotional-drama_the-last-summer-we-spoke_20260526T031500Z_c02.jpg",
+  "relative_path": "approved-assets/creator-worlds/creator-worlds_emotional-drama_the-last-summer-we-spoke_20260526T031500Z_c02.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "writer's desk at night: manual typewriter with half-finished letter 'My dearest, the summer we spoke last...', vase of dried wildflowers, matchbox, faded porch photograph, soft lamplight and cool window light — the quiet, lived-in space of memory and reconciliation",
+  "recommendation_tags": ["creator-world", "emotional-drama", "workspace", "memory", "surreal-stillness"],
+  "rail_assignment": "stories-that-linger, quiet-hour-viewing",
+  "aspect_ratio": "2:1",
+  "approved_at": "2026-05-26T03:20:00Z",
+  "quality_notes": "Powerful creator continuity. The typewriter, letter fragment, flowers, and photo create recognizable emotional DNA for Lena Moreau's world. Dreamlike intimacy and surreal stillness.",
+  "prompt_signature": "emotional-drama-creator-typewriter-letter-wildflowers-matchbox-photo-night-desk",
+  "wave": "density-wave-2",
+  "creator_continuity": "Lena Moreau - recurring typewriter, letters, dried flowers, porch photo, warm + cool light"
+}

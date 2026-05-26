@@ -1,0 +1,19 @@
+{
+  "asset_id": "stories_emotional-drama_the-last-summer-we-spoke_s01",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "The Last Summer We Spoke — The Letter",
+  "asset_type": "immersive-still",
+  "category": "stories",
+  "file_name": "stories_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_s01.jpg",
+  "relative_path": "approved-assets/stories/stories_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_s01.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "kitchen table close-up: two glasses of iced tea, stack of old photographs, single handwritten letter with visible text 'I should have come home sooner...', lace curtain light, dust motes, quiet tenderness and time",
+  "recommendation_tags": ["emotional-drama", "intimate-detail", "letter", "memory", "unsaid"],
+  "rail_assignment": "drama-intimate-rails",
+  "aspect_ratio": "4:3",
+  "approved_at": "2026-05-26T02:38:00Z",
+  "quality_notes": "Masterful emotional micro-storytelling. The visible letter text, iced tea, and light through lace create unbearable tenderness. Highest quality intimate drama still.",
+  "prompt_signature": "emotional-drama-kitchen-table-iced-tea-handwritten-letter-old-photos-lace-curtain-dust",
+  "population_run": "first-real-2026-05"
+}

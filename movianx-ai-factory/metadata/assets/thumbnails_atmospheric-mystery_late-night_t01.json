@@ -1,0 +1,19 @@
+{
+  "asset_id": "thumbnails_atmospheric-mystery_late-night_t01",
+  "world_id": "wave-2-atmospheric-mystery",
+  "title": "Late Night Corridor",
+  "asset_type": "thumbnail",
+  "category": "thumbnails",
+  "file_name": "thumbnails_atmospheric-mystery_late-night_20260526T030000Z_t01.jpg",
+  "relative_path": "approved-assets/thumbnails/thumbnails_atmospheric-mystery_late-night_20260526T030000Z_t01.jpg",
+  "emotional_category": "atmospheric-mystery",
+  "creator_identity": "Wave 2 Atmosphere Collection",
+  "atmospheric_profile": "long dim hallway in old building at night, single shoe under the light from a distant door, peeling wallpaper, quiet tension and hidden story",
+  "recommendation_tags": ["atmospheric-mystery", "thumbnail", "late-night", "hidden-corners", "tension"],
+  "rail_assignment": "late-night-discoveries, hidden-corners",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T03:05:00Z",
+  "quality_notes": "Strong atmospheric mystery thumbnail. Perfect mood for Late Night Discoveries and Hidden Corners. High cinematic quality.",
+  "prompt_signature": "atmospheric-mystery-thumbnail-hallway-shoe-under-light-peeling-wallpaper-quiet-tension",
+  "wave": "density-wave-2"
+}

@@ -1,0 +1,114 @@
+================================================================================
+MOVIANX AUTONOMOUS MEDIA FACTORY — STYLE BIBLE (ENFORCED)
+================================================================================
+Version: 1.0
+Initialized: 2026-05-26T00:24:35Z
+Physical Root: /Users/jahspringer/movianx-ai-factory
+
+ALL GENERATED OUTPUTS MUST ADHERE TO THIS BIBLE WITHOUT EXCEPTION.
+
+--------------------------------------------------------------------------------
+CORE AESTHETIC
+--------------------------------------------------------------------------------
+Every asset must feel:
+  • cinematic
+  • premium
+  • emotionally immersive
+  • moody
+  • filmic
+  • atmospheric
+  • realistic (photoreal where appropriate)
+  • artistically curated (as if from a festival-level film or AAA game cinematic)
+
+--------------------------------------------------------------------------------
+STRICTLY FORBIDDEN
+--------------------------------------------------------------------------------
+  ✗ Generic AI look / plastic skin / waxy textures
+  ✗ Repetitive compositions or safe centered framing
+  ✗ Fake HDR glow, oversaturated neon, "epic" over-lighting
+  ✗ Cyberpunk overload unless explicitly for a cyber world asset
+  ✗ Oversharpening / crunchy edges / halo artifacts
+  ✗ Low-detail rendering / muddy backgrounds / flat lighting
+  ✗ AI slop aesthetics: extra limbs, bad anatomy, text artifacts, warped faces
+  ✗ Generic poster layouts (centered hero + floating title + 3 floating heads)
+  ✗ Stock-photo cleanliness or corporate gloss
+
+--------------------------------------------------------------------------------
+TECHNICAL QUALITY BAR
+--------------------------------------------------------------------------------
+  • Cinematic lighting (practical sources, motivated shadows, volumetric god rays where appropriate)
+  • Film grain or subtle digital film emulation (35mm / Alexa / RED look)
+  • Rich color grading appropriate to emotional tone (never generic teal-orange unless story-driven)
+  • Deep depth of field control or intentional shallow focus
+  • Environmental storytelling in every frame
+  • Faces and bodies must pass human anatomy + emotional micro-expression check
+  • No text on image unless it is diegetic (signage, screens, tattoos) and legible
+
+--------------------------------------------------------------------------------
+EMOTIONAL MATCHING — PROMPT REQUIREMENTS
+--------------------------------------------------------------------------------
+Psychological Horror
+  → oppressive, isolated, dread-filled, cinematic darkness, negative space, 
+    practical low-key lighting, decaying or sterile environments, 
+    sense of being watched, slow suffocation of hope
+
+Emotional Drama
+  → intimate, human, warm but melancholic, lived-in spaces, 
+    natural window light or practical lamps, subtle emotional tension 
+    in posture and eyes, rain on glass, quiet moments
+
+Dark Sci-Fi
+  → atmospheric, mysterious, volumetric light shafts, deep space or 
+    grounded near-future, tactile technology, vast scale vs human frailty, 
+    rich blacks, subtle color accents (sodium, cyan, amber)
+
+Music Worlds / Ambient
+  → dreamlike, emotionally rhythmic, soft focus or crystalline detail, 
+    synesthetic color response to imagined sound, vast internal landscapes, 
+    floating elements, memory-like haze, elegant minimalism
+
+--------------------------------------------------------------------------------
+QUALITY FILTER (AUTOMATIC REJECTION CRITERIA)
+--------------------------------------------------------------------------------
+Automatically reject and move to /rejected-assets if ANY of the following:
+  • Malformed anatomy (hands, faces, limbs)
+  • Muddy or flat lighting with no cinematic contrast
+  • Repetitive / boring framing (dead center hero with nothing else happening)
+  • Low-detail rendering (especially backgrounds or fabric)
+  • Generic poster composition
+  • Inconsistent cinematic quality with previous approved assets
+  • Visible AI artifacts (text gibberish, melting shapes, extra fingers)
+
+ONLY assets that survive this filter move to /approved-assets.
+
+--------------------------------------------------------------------------------
+ASSET NAMING CONVENTION (ENFORCED)
+--------------------------------------------------------------------------------
+Format:
+  {category}_{emotional-key}_{descriptor}_{YYYYMMDDTHHMMSSZ}_{shortid}.{ext}
+
+Examples:
+  movie-poster_psychological-horror_the-hollowing_20260526T003000Z_k9p2m4.png
+  rail-thumbnail_dark-sci-fi_veil-of-static_20260526T003500Z_x7v3q1.jpg
+  creator-banner_music-world_elias-voss_20260526T004000Z_b2n8r5.png
+
+Short ID = 6 char lowercase alphanumeric for uniqueness.
+
+--------------------------------------------------------------------------------
+METADATA REQUIREMENTS (EVERY APPROVED ASSET)
+--------------------------------------------------------------------------------
+  • title (human cinematic title)
+  • creator_identity (e.g. "Movianx Originals" or specific creator world)
+  • emotional_category (from style bible)
+  • recommendation_tags (array, for rails & discovery)
+  • genre (primary)
+  • atmospheric_profile (short descriptive string)
+  • rail_assignment (e.g. "horror-rails", "featured-home-hero", "music-worlds-rail")
+  • prompt_signature (for deduping)
+  • source_file (relative path in factory)
+  • approved_at
+  • quality_notes (why it passed)
+
+================================================================================
+END OF STYLE BIBLE — VIOLATIONS = REJECTION
+================================================================================

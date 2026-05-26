@@ -2,7 +2,7 @@ import { syncApprovedFactoryAssets } from "../lib/imagePipeline/factorySync.js";
 
 try {
   const result = await syncApprovedFactoryAssets({
-    factoryRoot: process.env.MOVIANX_FACTORY_ROOT || "/movianx-ai-factory",
+    factoryRoot: process.env.MOVIANX_FACTORY_ROOT,
   });
 
   console.log(JSON.stringify({

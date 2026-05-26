@@ -1,0 +1,19 @@
+{
+  "asset_id": "hero-backgrounds_psychological-horror_the-weight-of-silence_w01b01",
+  "world_id": "world-01-the-weight-of-silence",
+  "title": "The Weight of Silence — The House Remembers",
+  "asset_type": "cinematic-backdrop",
+  "category": "hero-backgrounds",
+  "file_name": "hero-backgrounds_psychological-horror_the-weight-of-silence_20260526T011500Z_w01b01.jpg",
+  "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_psychological-horror_the-weight-of-silence_20260526T011500Z_w01b01.jpg",
+  "emotional_category": "psychological-horror",
+  "creator_identity": "Mara Kaine",
+  "atmospheric_profile": "isolated rural house at night in cornfield, single lit window, thick ground fog, oppressive sky, the land itself carries the memory of silence and tragedy",
+  "recommendation_tags": ["psychological-horror", "rural-isolation", "house-as-character", "fog", "dread"],
+  "rail_assignment": "horror-rails-deep",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T01:18:00Z",
+  "quality_notes": "Powerful wide environmental storytelling. The house feels both ordinary and cursed. Fog, single light, cornfield, and heavy sky create perfect psychological weight. No people needed. Premium cinematic scale.",
+  "prompt_signature": "psych-horror-rural-house-cornfield-fog-single-window-at-night-oppressive-sky-eggers-babadook",
+  "validation_batch": "001"
+}

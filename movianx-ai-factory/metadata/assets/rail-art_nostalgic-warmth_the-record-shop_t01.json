@@ -1,0 +1,19 @@
+{
+  "asset_id": "rail-art_nostalgic-warmth_the-record-shop_t01",
+  "world_id": "world-05-the-record-shop-at-the-end-of-the-world",
+  "title": "The Record Shop at the End of the World",
+  "asset_type": "rail-thumbnail",
+  "category": "rail-art",
+  "file_name": "rail-art_nostalgic-warmth_the-record-shop_20260526T023000Z_t01.jpg",
+  "relative_path": "approved-assets/rail-art/rail-art_nostalgic-warmth_the-record-shop_20260526T023000Z_t01.jpg",
+  "emotional_category": "nostalgic-warmth",
+  "creator_identity": "Marcus 'The Needle' Rivera",
+  "atmospheric_profile": "wooden record store counter at dusk: hands holding a beautiful faded soul album, warm lamp light, rain on the window, stacks of vinyl with handwritten tags, pure analog connection",
+  "recommendation_tags": ["nostalgic", "vinyl", "record-store", "warmth", "analog", "soul"],
+  "rail_assignment": "nostalgic-warmth-worlds",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T02:45:00Z",
+  "quality_notes": "Excellent rail thumbnail. Rich textures, human hands, perfect nostalgic mood. First real progress on the critical thumbnails category.",
+  "prompt_signature": "nostalgic-record-shop-hands-vinyl-rainy-window-warm-lamp-handwritten-tags-soul-album",
+  "population_run": "first-real-2026-05"
+}

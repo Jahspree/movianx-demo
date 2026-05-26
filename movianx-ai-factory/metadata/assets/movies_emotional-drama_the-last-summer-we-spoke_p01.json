@@ -1,0 +1,19 @@
+{
+  "asset_id": "movies_emotional-drama_the-last-summer-we-spoke_p01",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "The Last Summer We Spoke",
+  "asset_type": "poster",
+  "category": "movies",
+  "file_name": "movies_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_p01.jpg",
+  "relative_path": "approved-assets/movies/movies_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_p01.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "modest wooden house at golden hour, two figures on the porch steps not quite touching, white sheets on the line, empty field, warm honey light, quiet distance and memory",
+  "recommendation_tags": ["emotional-drama", "reconciliation", "golden-hour", "small-town", "memory"],
+  "rail_assignment": "drama-intimate-rails",
+  "aspect_ratio": "2:3",
+  "approved_at": "2026-05-26T02:38:00Z",
+  "quality_notes": "Beautiful, emotionally precise poster. Strong leading composition with the two figures and the vast empty field. Perfect new drama tone. Passes style bible at highest level.",
+  "prompt_signature": "emotional-drama-golden-hour-porch-two-figures-empty-field-sheets-on-line-reichardt-linklater",
+  "population_run": "first-real-2026-05"
+}

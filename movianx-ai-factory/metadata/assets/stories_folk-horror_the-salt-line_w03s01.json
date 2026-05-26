@@ -1,0 +1,19 @@
+{
+  "asset_id": "stories_folk-horror_the-salt-line_w03s01",
+  "world_id": "world-03-the-salt-line",
+  "title": "The Salt Line — Salt & Toy",
+  "asset_type": "immersive-still",
+  "category": "stories",
+  "file_name": "stories_folk-horror_the-salt-line_20260526T020000Z_w03s01.jpg",
+  "relative_path": "approved-assets/stories/stories_folk-horror_the-salt-line_20260526T020000Z_w03s01.jpg",
+  "emotional_category": "folk-horror-coastal",
+  "creator_identity": "Elara Voss",
+  "atmospheric_profile": "extreme tactile close-up: weathered wood encrusted with thick white salt crystals, tangled blue fishing net, cracked child's toy boat half-buried in salt",
+  "recommendation_tags": ["folk-horror", "tactile-detail", "salt", "decay", "childhood-remnant"],
+  "rail_assignment": "folk-horror-coastal",
+  "aspect_ratio": "4:3",
+  "approved_at": "2026-05-26T02:10:00Z",
+  "quality_notes": "Masterful micro-detail. The salt crystals, net, and toy boat create a complete story of loss and reclamation. Hyper-tactile and emotionally heavy. Highest quality immersive still.",
+  "prompt_signature": "folk-horror-detail-salt-crystals-fishing-net-cracked-toy-boat-weathered-wood-tactile",
+  "validation_batch": "weekly-2026-w22"
+}

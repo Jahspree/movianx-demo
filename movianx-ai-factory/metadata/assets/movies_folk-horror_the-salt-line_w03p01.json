@@ -1,0 +1,19 @@
+{
+  "asset_id": "movies_folk-horror_the-salt-line_w03p01",
+  "world_id": "world-03-the-salt-line",
+  "title": "The Salt Line",
+  "asset_type": "poster",
+  "category": "movies",
+  "file_name": "movies_folk-horror_the-salt-line_20260526T020000Z_w03p01.jpg",
+  "relative_path": "approved-assets/movies/movies_folk-horror_the-salt-line_20260526T020000Z_w03p01.jpg",
+  "emotional_category": "folk-horror-coastal",
+  "creator_identity": "Elara Voss",
+  "atmospheric_profile": "long salt-encrusted pier disappearing into sea mist, solitary figure in yellow oilskin walking toward a lone shack, heavy overcast, tactile dread",
+  "recommendation_tags": ["folk-horror", "coastal", "sea-mist", "isolation", "salt"],
+  "rail_assignment": "folk-horror-coastal",
+  "aspect_ratio": "2:3",
+  "approved_at": "2026-05-26T02:10:00Z",
+  "quality_notes": "Excellent new visual language. Strong leading lines into fog, perfect salt texture, emotionally distinct from previous psychological horror. Passes style bible at high level.",
+  "prompt_signature": "folk-horror-coastal-pier-salt-mist-yellow-oilskin-wooden-shack-eggers-lighthouse",
+  "validation_batch": "weekly-2026-w22"
+}

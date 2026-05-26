@@ -1,0 +1,19 @@
+{
+  "asset_id": "rail-art_atmospheric_hidden-corners_r01",
+  "world_id": "wave-2-atmospheric-mystery",
+  "title": "Hidden Corner — Velvet Chair",
+  "asset_type": "rail-art",
+  "category": "rail-art",
+  "file_name": "rail-art_atmospheric_hidden-corners_20260526T030000Z_r01.jpg",
+  "relative_path": "approved-assets/rail-art/rail-art_atmospheric_hidden-corners_20260526T030000Z_r01.jpg",
+  "emotional_category": "atmospheric-mystery",
+  "creator_identity": "Wave 2 Atmosphere Collection",
+  "atmospheric_profile": "forgotten side room with red velvet chair, dusty light beam through arched window, scattered papers, quiet surreal beauty and hidden history",
+  "recommendation_tags": ["atmospheric", "hidden-corners", "rail-art", "surreal-wonder", "light-study"],
+  "rail_assignment": "hidden-corners, atmospheric-worlds",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T03:15:00Z",
+  "quality_notes": "Beautiful atmospheric rail asset. Strong light, texture, and quiet mystery. Excellent support for Hidden Corners and Atmospheric Worlds rails.",
+  "prompt_signature": "atmospheric-rail-red-velvet-chair-dusty-light-papers-hidden-room",
+  "wave": "density-wave-2"
+}

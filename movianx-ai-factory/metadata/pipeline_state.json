@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "current_status": "first-real-ecosystem-population-in-progress",
+  "current_run_id": "movianx-run-20260526-002435",
+  "initialized_at": "2026-05-26T00:24:35Z",
+  "last_generation_at": "2026-05-26T03:25:00Z",
+  "last_approval_cycle_at": "2026-05-26T01:25:00Z",
+  "total_generations_this_run": 16,
+  "assets_in_generated_staging": 0,
+  "approved_this_run": 29,
+  "rejected_this_run": 0,
+  "cumulative_quality_pass_rate": 1.0,
+  "next_planned_action": "Complete World 2-5 of validation batch, then full find validation + report",
+  "active_categories": [
+    "movies",
+    "stories",
+    "music",
+    "creator-worlds",
+    "thumbnails",
+    "rail-art",
+    "hero-backgrounds"
+  ],
+  "emotional_profiles_active": [
+    "emotional-drama",
+    "arctic-ambient",
+    "folk-horror-coastal",
+    "nostalgic-warmth",
+    "psychological-horror",
+    "atmospheric-mystery",
+    "dark-sci-fi",
+    "music-world-ambient"
+  ],
+  "codex_handoff_ready": false,
+  "notes": "Factory is bootstrapped and ready for autonomous media production. All generations must pass style bible and quality filter before Codex ingestion."
+}

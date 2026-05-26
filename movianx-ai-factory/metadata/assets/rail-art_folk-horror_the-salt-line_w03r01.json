@@ -1,0 +1,19 @@
+{
+  "asset_id": "rail-art_folk-horror_the-salt-line_w03r01",
+  "world_id": "world-03-the-salt-line",
+  "title": "The Salt Line — Keep Out",
+  "asset_type": "rail-thumbnail",
+  "category": "rail-art",
+  "file_name": "rail-art_folk-horror_the-salt-line_20260526T020000Z_w03r01.jpg",
+  "relative_path": "approved-assets/rail-art/rail-art_folk-horror_the-salt-line_20260526T020000Z_w03r01.jpg",
+  "emotional_category": "folk-horror-coastal",
+  "creator_identity": "Elara Voss",
+  "atmospheric_profile": "tight rail composition: heavily salt-encrusted wooden post with rusted 'KEEP OUT' sign half-buried in salt, cold flat light, immediate tactile dread",
+  "recommendation_tags": ["folk-horror", "rail-card", "salt", "warning-sign", "dread"],
+  "rail_assignment": "folk-horror-coastal",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T02:10:00Z",
+  "quality_notes": "Excellent rail-optimized image. The rusted sign emerging from salt is instantly memorable and thematically perfect. Strong mood for discovery rail use.",
+  "prompt_signature": "folk-horror-rail-salt-post-rusted-keep-out-sign-tactile-dread",
+  "validation_batch": "weekly-2026-w22"
+}

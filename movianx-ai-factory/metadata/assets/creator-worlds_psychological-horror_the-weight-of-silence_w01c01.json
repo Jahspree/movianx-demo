@@ -1,0 +1,19 @@
+{
+  "asset_id": "creator-worlds_psychological-horror_the-weight-of-silence_w01c01",
+  "world_id": "world-01-the-weight-of-silence",
+  "title": "Mara Kaine — The Drawer",
+  "asset_type": "creator-banner",
+  "category": "creator-worlds",
+  "file_name": "creator-worlds_psychological-horror_the-weight-of-silence_20260526T011500Z_w01c01.jpg",
+  "relative_path": "approved-assets/creator-worlds/creator-worlds_psychological-horror_the-weight-of-silence_20260526T011500Z_w01c01.jpg",
+  "emotional_category": "psychological-horror",
+  "creator_identity": "Mara Kaine",
+  "atmospheric_profile": "symbolic portrait of the creator through her abandoned objects: open desk drawer containing pearl necklace, key, face-down photos, cassette labeled 'Mara - Summer 1978', pressed flower, moth — all in soft window light with dust",
+  "recommendation_tags": ["creator-world", "symbolic-portrait", "memory-objects", "1970s", "unspoken-history"],
+  "rail_assignment": "horror-rails-deep",
+  "aspect_ratio": "2:1",
+  "approved_at": "2026-05-26T01:18:00Z",
+  "quality_notes": "Masterful symbolic representation of the creator. The cassette label, face-down photos, and moth create a complete emotional biography without ever showing a face. Lighting, texture, and melancholy are perfect. Highest quality creator banner.",
+  "prompt_signature": "creator-banner-open-drawer-pearls-cassette-mara-1978-face-down-photos-moth-soft-light-memory",
+  "validation_batch": "001"
+}

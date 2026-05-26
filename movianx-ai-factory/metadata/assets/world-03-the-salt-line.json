@@ -1,0 +1,16 @@
+{
+  "world_id": "world-03-the-salt-line",
+  "title": "The Salt Line",
+  "creator_identity": "Elara Voss",
+  "emotional_profile": "coastal folk horror: salt, wind, inherited guilt, the sea as witness, cold damp tactile dread, slow reclamation",
+  "genre": "Folk Horror / Coastal",
+  "primary_rail": "folk-horror-coastal",
+  "atmosphere_tags": ["salt-marsh", "sea-mist", "weathered-wood", "inherited-guilt", "tactile-dread", "overcast"],
+  "validation_batch": "weekly-2026-w22",
+  "assets_in_world": 4,
+  "approved_assets": 4,
+  "created_at": "2026-05-26T02:05:00Z",
+  "cinematic_description": "A remote coastal community where the sea is slowly claiming the land and the people. The Salt Line is the invisible boundary where the living and the dead, the past and the present, begin to blur. Elara Voss's world is cold, damp, and unforgivingly tactile.",
+  "recommended_rails": ["folk-horror-coastal", "horror-rails-deep"],
+  "quality_notes": "Strong new emotional territory for the factory. Distinct visual language (salt, mist, weathered wood, flat cold light) from all previous horror assets. Excellent variety in scale within the world."
+}

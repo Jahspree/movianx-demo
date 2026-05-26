@@ -1,0 +1,310 @@
+{
+  "schema_version": "1.0.0",
+  "factory_physical_root": "/Users/jahspringer/movianx-ai-factory",
+  "factory_logical_root": "/movianx-ai-factory",
+  "initialized_at": "2026-05-26T00:24:35Z",
+  "last_updated": "2026-05-26T03:25:00Z",
+  "total_assets_tracked": 29,
+  "approved_count": 29,
+  "rejected_count": 0,
+  "assets": [
+    {
+      "asset_id": "movies_psychological-horror_the-hollowing-signal_h1k9p4",
+      "title": "The Hollowing Signal",
+      "category": "movies",
+      "emotional_category": "psychological-horror",
+      "approved_at": "2026-05-26T00:32:00Z",
+      "relative_path": "approved-assets/movies/movies_psychological-horror_the-hollowing-signal_20260526T003000Z_h1k9p4.jpg",
+      "prompt_signature": "psych-horror-corridor-lone-figure-flickering-fluorescents-peeling-walls-oppressive-darkness-35mm-ari-aster-villeneuve"
+    },
+    {
+      "asset_id": "hero-backgrounds_dark-sci-fi_veil-of-static_v8m3x2",
+      "title": "Veil of Static",
+      "category": "hero-backgrounds",
+      "emotional_category": "dark-sci-fi",
+      "approved_at": "2026-05-26T00:32:00Z",
+      "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_dark-sci-fi_veil-of-static_20260526T003000Z_v8m3x2.jpg",
+      "prompt_signature": "dark-sci-fi-orbital-station-astronaut-earth-crescent-volumetric-god-rays-debris-nebula-imax-70mm"
+    },
+    {
+      "asset_id": "music_ambient-dreamlike_the-quiet-frequency_e4n7r2",
+      "title": "The Quiet Frequency",
+      "category": "music",
+      "emotional_category": "music-world-ambient",
+      "approved_at": "2026-05-26T00:35:00Z",
+      "relative_path": "approved-assets/music/music_ambient-dreamlike_the-quiet-frequency_20260526T003500Z_e4n7r2.jpg",
+      "prompt_signature": "ambient-music-hall-grand-piano-spotlight-rainy-windows-city-bokeh-night-melancholic-dreamlike-wong-kar-wai"
+    },
+    {
+      "asset_id": "movies_psychological-horror_the-weight-of-silence_w01p01",
+      "title": "The Weight of Silence",
+      "category": "movies",
+      "emotional_category": "psychological-horror",
+      "approved_at": "2026-05-26T01:18:00Z",
+      "relative_path": "approved-assets/movies/movies_psychological-horror_the-weight-of-silence_20260526T011500Z_w01p01.jpg",
+      "prompt_signature": "psych-horror-domestic-1970s-living-room-peeling-wallpaper-child-drawing-lamp-guilt-negative-space-eggers-ramsay"
+    },
+    {
+      "asset_id": "stories_psychological-horror_the-weight-of-silence_w01s01",
+      "title": "The Weight of Silence \u2014 The Letters",
+      "category": "stories",
+      "emotional_category": "psychological-horror",
+      "approved_at": "2026-05-26T01:18:00Z",
+      "relative_path": "approved-assets/stories/stories_psychological-horror_the-weight-of-silence_20260526T011500Z_w01s01.jpg",
+      "prompt_signature": "psych-horror-intimate-kitchen-table-unopened-letters-moth-cold-tea-moonlight-dust-motes-guilt-detail"
+    },
+    {
+      "asset_id": "hero-backgrounds_psychological-horror_the-weight-of-silence_w01b01",
+      "title": "The Weight of Silence \u2014 The House Remembers",
+      "category": "hero-backgrounds",
+      "emotional_category": "psychological-horror",
+      "approved_at": "2026-05-26T01:18:00Z",
+      "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_psychological-horror_the-weight-of-silence_20260526T011500Z_w01b01.jpg",
+      "prompt_signature": "psych-horror-rural-house-cornfield-fog-single-window-at-night-oppressive-sky-eggers-babadook"
+    },
+    {
+      "asset_id": "rail-art_psychological-horror_the-weight-of-silence_w01r01",
+      "title": "The Weight of Silence \u2014 Threshold",
+      "category": "rail-art",
+      "emotional_category": "psychological-horror",
+      "approved_at": "2026-05-26T01:18:00Z",
+      "relative_path": "approved-assets/rail-art/rail-art_psychological-horror_the-weight-of-silence_20260526T011500Z_w01r01.jpg",
+      "prompt_signature": "psych-horror-rail-thumbnail-armchair-drawing-open-door-to-darkness-vertical-tension-lamp"
+    },
+    {
+      "asset_id": "creator-worlds_psychological-horror_the-weight-of-silence_w01c01",
+      "title": "Mara Kaine \u2014 The Drawer",
+      "category": "creator-worlds",
+      "emotional_category": "psychological-horror",
+      "approved_at": "2026-05-26T01:18:00Z",
+      "relative_path": "approved-assets/creator-worlds/creator-worlds_psychological-horror_the-weight-of-silence_20260526T011500Z_w01c01.jpg",
+      "prompt_signature": "creator-banner-open-drawer-pearls-cassette-mara-1978-face-down-photos-moth-soft-light-memory"
+    },
+    {
+      "asset_id": "hero-backgrounds_dark-sci-fi_the-event-horizon-choir_w02b01",
+      "title": "The Event Horizon Choir",
+      "category": "hero-backgrounds",
+      "emotional_category": "dark-sci-fi",
+      "approved_at": "2026-05-26T01:32:00Z",
+      "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_dark-sci-fi_the-event-horizon-choir_20260526T012800Z_w02b01.jpg",
+      "prompt_signature": "dark-sci-fi-ring-station-dying-star-crystalline-debris-lone-astronaut-quantum-lensing-elegiac"
+    },
+    {
+      "asset_id": "movies_dark-sci-fi_the-event-horizon-choir_w02p01",
+      "title": "The Event Horizon Choir",
+      "category": "movies",
+      "emotional_category": "dark-sci-fi",
+      "approved_at": "2026-05-26T01:32:00Z",
+      "relative_path": "approved-assets/movies/movies_dark-sci-fi_the-event-horizon-choir_20260526T012800Z_w02p01.jpg",
+      "prompt_signature": "dark-sci-fi-airlock-red-event-horizon-astronaut-from-behind-portal-finality"
+    },
+    {
+      "asset_id": "movies_folk-horror_the-salt-line_w03p01",
+      "title": "The Salt Line",
+      "category": "movies",
+      "emotional_category": "folk-horror-coastal",
+      "approved_at": "2026-05-26T02:10:00Z",
+      "relative_path": "approved-assets/movies/movies_folk-horror_the-salt-line_20260526T020000Z_w03p01.jpg",
+      "prompt_signature": "folk-horror-coastal-pier-salt-mist-yellow-oilskin-wooden-shack-eggers-lighthouse"
+    },
+    {
+      "asset_id": "stories_folk-horror_the-salt-line_w03s01",
+      "title": "The Salt Line \u2014 Salt & Toy",
+      "category": "stories",
+      "emotional_category": "folk-horror-coastal",
+      "approved_at": "2026-05-26T02:10:00Z",
+      "relative_path": "approved-assets/stories/stories_folk-horror_the-salt-line_20260526T020000Z_w03s01.jpg",
+      "prompt_signature": "folk-horror-detail-salt-crystals-fishing-net-cracked-toy-boat-weathered-wood-tactile"
+    },
+    {
+      "asset_id": "hero-backgrounds_folk-horror_the-salt-line_w03b01",
+      "title": "The Salt Line \u2014 The House in the Marsh",
+      "category": "hero-backgrounds",
+      "emotional_category": "folk-horror-coastal",
+      "approved_at": "2026-05-26T02:10:00Z",
+      "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_folk-horror_the-salt-line_20260526T020000Z_w03b01.jpg",
+      "prompt_signature": "folk-horror-salt-marsh-house-on-stilts-mist-reeds-dusk-isolation"
+    },
+    {
+      "asset_id": "rail-art_folk-horror_the-salt-line_w03r01",
+      "title": "The Salt Line \u2014 Keep Out",
+      "category": "rail-art",
+      "emotional_category": "folk-horror-coastal",
+      "approved_at": "2026-05-26T02:10:00Z",
+      "relative_path": "approved-assets/rail-art/rail-art_folk-horror_the-salt-line_20260526T020000Z_w03r01.jpg",
+      "prompt_signature": "folk-horror-rail-salt-post-rusted-keep-out-sign-tactile-dread"
+    },
+    {
+      "asset_id": "creator-worlds_folk-horror_the-salt-line_w03c01",
+      "title": "Elara Voss \u2014 The Notebooks",
+      "category": "creator-worlds",
+      "emotional_category": "folk-horror-coastal",
+      "approved_at": "2026-05-26T02:18:00Z",
+      "relative_path": "approved-assets/creator-worlds/creator-worlds_folk-horror_the-salt-line_20260526T020000Z_w03c01.jpg",
+      "prompt_signature": "creator-banner-salt-stained-gloves-handwritten-notebooks-rusted-key-child-drawing-pier"
+    },
+    {
+      "asset_id": "hero-backgrounds_arctic-ambient_the-last-polar-night_w06b01",
+      "title": "The Last Polar Night",
+      "category": "hero-backgrounds",
+      "emotional_category": "arctic-ambient",
+      "approved_at": "2026-05-26T02:25:00Z",
+      "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_arctic-ambient_the-last-polar-night_20260526T021000Z_w06b01.jpg",
+      "prompt_signature": "arctic-ambient-polar-night-research-station-buried-snow-aurora-single-light-minimalism"
+    },
+    {
+      "asset_id": "movies_emotional-drama_the-last-summer-we-spoke_p01",
+      "title": "The Last Summer We Spoke",
+      "category": "movies",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T02:38:00Z",
+      "relative_path": "approved-assets/movies/movies_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_p01.jpg",
+      "prompt_signature": "emotional-drama-golden-hour-porch-two-figures-empty-field-sheets-on-line-reichardt-linklater"
+    },
+    {
+      "asset_id": "stories_emotional-drama_the-last-summer-we-spoke_s01",
+      "title": "The Last Summer We Spoke \u2014 The Letter",
+      "category": "stories",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T02:38:00Z",
+      "relative_path": "approved-assets/stories/stories_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_s01.jpg",
+      "prompt_signature": "emotional-drama-kitchen-table-iced-tea-handwritten-letter-old-photos-lace-curtain-dust"
+    },
+    {
+      "asset_id": "rail-art_nostalgic-warmth_the-record-shop_t01",
+      "title": "The Record Shop at the End of the World",
+      "category": "rail-art",
+      "emotional_category": "nostalgic-warmth",
+      "approved_at": "2026-05-26T02:45:00Z",
+      "relative_path": "approved-assets/rail-art/rail-art_nostalgic-warmth_the-record-shop_20260526T023000Z_t01.jpg",
+      "prompt_signature": "nostalgic-record-shop-hands-vinyl-rainy-window-warm-lamp-handwritten-tags-soul-album"
+    },
+    {
+      "asset_id": "rail-art_emotional-drama_the-last-summer-we-spoke_t02",
+      "title": "The Last Summer We Spoke",
+      "category": "rail-art",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T02:50:00Z",
+      "relative_path": "approved-assets/rail-art/rail-art_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_t02.jpg",
+      "prompt_signature": "emotional-drama-rail-porch-iced-tea-letter-white-sheet-golden-hour-shadows"
+    },
+    {
+      "asset_id": "creator-worlds_nostalgic-warmth_the-record-shop_c01",
+      "title": "Marcus Rivera \u2014 The Needle",
+      "category": "creator-worlds",
+      "emotional_category": "nostalgic-warmth",
+      "approved_at": "2026-05-26T02:50:00Z",
+      "relative_path": "approved-assets/creator-worlds/creator-worlds_nostalgic-warmth_the-record-shop_20260526T023000Z_c01.jpg",
+      "prompt_signature": "nostalgic-creator-banner-man-cleaning-vinyl-lamp-light-rainy-window-record-store"
+    },
+    {
+      "asset_id": "thumbnails_emotional-drama_the-last-summer-we-spoke_t01",
+      "title": "The Last Summer We Spoke",
+      "category": "thumbnails",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T03:05:00Z",
+      "relative_path": "approved-assets/thumbnails/thumbnails_emotional-drama_the-last-summer-we-spoke_20260526T030000Z_t01.jpg",
+      "prompt_signature": "emotional-drama-thumbnail-windowsill-letter-glasses-wilted-flowers-golden-light-memory"
+    },
+    {
+      "asset_id": "thumbnails_nostalgic-warmth_the-record-shop_t01",
+      "title": "The Record Shop at the End of the World",
+      "category": "thumbnails",
+      "emotional_category": "nostalgic-warmth",
+      "approved_at": "2026-05-26T03:05:00Z",
+      "relative_path": "approved-assets/thumbnails/thumbnails_nostalgic-warmth_the-record-shop_20260526T030000Z_t01.jpg",
+      "prompt_signature": "nostalgic-thumbnail-7inch-singles-price-tag-lamp-rain-analog-warmth"
+    },
+    {
+      "asset_id": "thumbnails_atmospheric-mystery_late-night_t01",
+      "title": "Late Night Corridor",
+      "category": "thumbnails",
+      "emotional_category": "atmospheric-mystery",
+      "approved_at": "2026-05-26T03:05:00Z",
+      "relative_path": "approved-assets/thumbnails/thumbnails_atmospheric-mystery_late-night_20260526T030000Z_t01.jpg",
+      "prompt_signature": "atmospheric-mystery-thumbnail-hallway-shoe-under-light-peeling-wallpaper-quiet-tension"
+    },
+    {
+      "asset_id": "rail-art_atmospheric_hidden-corners_r01",
+      "title": "Hidden Corner \u2014 Velvet Chair",
+      "category": "rail-art",
+      "emotional_category": "atmospheric-mystery",
+      "approved_at": "2026-05-26T03:15:00Z",
+      "relative_path": "approved-assets/rail-art/rail-art_atmospheric_hidden-corners_20260526T030000Z_r01.jpg",
+      "prompt_signature": "atmospheric-rail-red-velvet-chair-dusty-light-papers-hidden-room"
+    },
+    {
+      "asset_id": "creator-worlds_emotional-drama_the-last-summer-we-spoke_c01",
+      "title": "Lena Moreau \u2014 The Typewriter",
+      "category": "creator-worlds",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T03:15:00Z",
+      "relative_path": "approved-assets/creator-worlds/creator-worlds_emotional-drama_the-last-summer-we-spoke_20260526T030000Z_c01.jpg",
+      "prompt_signature": "emotional-drama-creator-typewriter-manuscript-pressed-flower-coffee-quiet-workspace"
+    },
+    {
+      "asset_id": "thumbnails_emotional-drama_the-last-summer-we-spoke_t02",
+      "title": "The Last Summer We Spoke",
+      "category": "thumbnails",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T03:20:00Z",
+      "relative_path": "approved-assets/thumbnails/thumbnails_emotional-drama_the-last-summer-we-spoke_20260526T031500Z_t02.jpg",
+      "prompt_signature": "emotional-drama-thumbnail-windowsill-letter-ribbon-glasses-water-dusk-melancholy"
+    },
+    {
+      "asset_id": "rail-art_nostalgic-warmth_the-record-shop_r02",
+      "title": "The Record Shop at the End of the World",
+      "category": "rail-art",
+      "emotional_category": "nostalgic-warmth",
+      "approved_at": "2026-05-26T03:20:00Z",
+      "relative_path": "approved-assets/rail-art/rail-art_nostalgic-warmth_the-record-shop_20260526T031500Z_r02.jpg",
+      "prompt_signature": "nostalgic-rail-turntable-record-headphones-rain-note-analog-warmth"
+    },
+    {
+      "asset_id": "creator-worlds_emotional-drama_the-last-summer-we-spoke_c02",
+      "title": "Lena Moreau \u2014 The Desk at Night",
+      "category": "creator-worlds",
+      "emotional_category": "emotional-drama",
+      "approved_at": "2026-05-26T03:20:00Z",
+      "relative_path": "approved-assets/creator-worlds/creator-worlds_emotional-drama_the-last-summer-we-spoke_20260526T031500Z_c02.jpg",
+      "prompt_signature": "emotional-drama-creator-typewriter-letter-wildflowers-matchbox-photo-night-desk"
+    }
+  ],
+  "prompt_signatures": [
+    "psych-horror-corridor-lone-figure-flickering-fluorescents-peeling-walls-oppressive-darkness-35mm-ari-aster-villeneuve",
+    "dark-sci-fi-orbital-station-astronaut-earth-crescent-volumetric-god-rays-debris-nebula-imax-70mm",
+    "ambient-music-hall-grand-piano-spotlight-rainy-windows-city-bokeh-night-melancholic-dreamlike-wong-kar-wai",
+    "psych-horror-domestic-1970s-living-room-peeling-wallpaper-child-drawing-lamp-guilt-negative-space-eggers-ramsay",
+    "psych-horror-intimate-kitchen-table-unopened-letters-moth-cold-tea-moonlight-dust-motes-guilt-detail",
+    "psych-horror-rural-house-cornfield-fog-single-window-at-night-oppressive-sky-eggers-babadook",
+    "psych-horror-rail-thumbnail-armchair-drawing-open-door-to-darkness-vertical-tension-lamp",
+    "creator-banner-open-drawer-pearls-cassette-mara-1978-face-down-photos-moth-soft-light-memory",
+    "dark-sci-fi-ring-station-dying-star-crystalline-debris-lone-astronaut-quantum-lensing-elegiac",
+    "dark-sci-fi-airlock-red-event-horizon-astronaut-from-behind-portal-finality",
+    "folk-horror-coastal-pier-salt-mist-yellow-oilskin-wooden-shack-eggers-lighthouse",
+    "folk-horror-detail-salt-crystals-fishing-net-cracked-toy-boat-weathered-wood-tactile",
+    "folk-horror-salt-marsh-house-on-stilts-mist-reeds-dusk-isolation",
+    "folk-horror-rail-salt-post-rusted-keep-out-sign-tactile-dread",
+    "creator-banner-salt-stained-gloves-handwritten-notebooks-rusted-key-child-drawing-pier",
+    "arctic-ambient-polar-night-research-station-buried-snow-aurora-single-light-minimalism",
+    "emotional-drama-golden-hour-porch-two-figures-empty-field-sheets-on-line-reichardt-linklater",
+    "emotional-drama-kitchen-table-iced-tea-handwritten-letter-old-photos-lace-curtain-dust",
+    "nostalgic-record-shop-hands-vinyl-rainy-window-warm-lamp-handwritten-tags-soul-album",
+    "emotional-drama-rail-porch-iced-tea-letter-white-sheet-golden-hour-shadows",
+    "nostalgic-creator-banner-man-cleaning-vinyl-lamp-light-rainy-window-record-store",
+    "emotional-drama-thumbnail-windowsill-letter-glasses-wilted-flowers-golden-light-memory",
+    "nostalgic-thumbnail-7inch-singles-price-tag-lamp-rain-analog-warmth",
+    "atmospheric-mystery-thumbnail-hallway-shoe-under-light-peeling-wallpaper-quiet-tension",
+    "atmospheric-rail-red-velvet-chair-dusty-light-papers-hidden-room",
+    "emotional-drama-creator-typewriter-manuscript-pressed-flower-coffee-quiet-workspace",
+    "emotional-drama-thumbnail-windowsill-letter-ribbon-glasses-water-dusk-melancholy",
+    "nostalgic-rail-turntable-record-headphones-rain-note-analog-warmth",
+    "emotional-drama-creator-typewriter-letter-wildflowers-matchbox-photo-night-desk"
+  ],
+  "duplicate_prevention_notes": "Prompt signatures (normalized) + content descriptors used to avoid stylistic repetition and identical generations. New assets are checked before generation.",
+  "naming_convention": "{category}_{emotional-key}_{descriptor}_{YYYYMMDDTHHMMSSZ}_{shortid}.{ext}",
+  "validation_batch_001_worlds_completed": 2,
+  "weekly_release_2026_w22": 6,
+  "first_real_population_run": 5,
+  "density_wave_2": 8
+}

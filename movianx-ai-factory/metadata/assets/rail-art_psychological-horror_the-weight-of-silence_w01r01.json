@@ -1,0 +1,19 @@
+{
+  "asset_id": "rail-art_psychological-horror_the-weight-of-silence_w01r01",
+  "world_id": "world-01-the-weight-of-silence",
+  "title": "The Weight of Silence — Threshold",
+  "asset_type": "rail-thumbnail",
+  "category": "rail-art",
+  "file_name": "rail-art_psychological-horror_the-weight-of-silence_20260526T011500Z_w01r01.jpg",
+  "relative_path": "approved-assets/rail-art/rail-art_psychological-horror_the-weight-of-silence_20260526T011500Z_w01r01.jpg",
+  "emotional_category": "psychological-horror",
+  "creator_identity": "Mara Kaine",
+  "atmospheric_profile": "tight rail composition: armchair with child's drawing and lamp, open door to pitch black hallway on the right, vertical tension, one light against overwhelming darkness",
+  "recommendation_tags": ["psychological-horror", "rail-card", "threshold", "darkness-beyond", "tension"],
+  "rail_assignment": "horror-rails-deep",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T01:18:00Z",
+  "quality_notes": "Excellent rail-optimized framing. The open door into blackness creates immediate dread and curiosity. Focal point (drawing + lamp) remains strong while adding narrative depth with the necklace detail. Consistent world tone, no repetition of poster composition.",
+  "prompt_signature": "psych-horror-rail-thumbnail-armchair-drawing-open-door-to-darkness-vertical-tension-lamp",
+  "validation_batch": "001"
+}

@@ -1,0 +1,16 @@
+{
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "The Last Summer We Spoke",
+  "creator_identity": "Lena Moreau",
+  "emotional_profile": "emotional drama: quiet reconciliation, memory, the weight of unsaid things, golden late-summer light, tenderness mixed with distance",
+  "genre": "Emotional Drama / Intimate Family",
+  "primary_rail": "drama-intimate-rails",
+  "atmosphere_tags": ["golden-hour", "small-town", "reconciliation", "memory", "unsaid-words", "warm-melancholy"],
+  "population_run": "first-real-2026-05",
+  "assets_in_world": 2,
+  "approved_assets": 2,
+  "created_at": "2026-05-26T02:35:00Z",
+  "cinematic_description": "A small Midwestern town in the last days of summer. Two people who once knew everything about each other must learn how to speak again. Lena Moreau's world is warm, quiet, and heavy with everything that was never said.",
+  "recommended_rails": ["drama-intimate-rails", "nostalgic-warmth-worlds"],
+  "quality_notes": "Strong new emotional territory. Beautiful golden light and intimate scale. Distinct from all previous drama and horror work. Excellent start to the population run."
+}

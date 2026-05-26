@@ -1,0 +1,19 @@
+{
+  "asset_id": "thumbnails_nostalgic-warmth_the-record-shop_t01",
+  "world_id": "world-05-the-record-shop-at-the-end-of-the-world",
+  "title": "The Record Shop at the End of the World",
+  "asset_type": "thumbnail",
+  "category": "thumbnails",
+  "file_name": "thumbnails_nostalgic-warmth_the-record-shop_20260526T030000Z_t01.jpg",
+  "relative_path": "approved-assets/thumbnails/thumbnails_nostalgic-warmth_the-record-shop_20260526T030000Z_t01.jpg",
+  "emotional_category": "nostalgic-warmth",
+  "creator_identity": "Marcus 'The Needle' Rivera",
+  "atmospheric_profile": "stack of used 7-inch singles on wooden counter, one sleeve slightly pulled out with faded artwork and handwritten price tag, warm lamp light, rain on window, analog comfort",
+  "recommendation_tags": ["nostalgic-warmth", "thumbnail", "vinyl", "analog", "record-store"],
+  "rail_assignment": "late-night-discoveries, returning-tonight",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T03:05:00Z",
+  "quality_notes": "Rich, tactile nostalgic thumbnail. Perfect for Late Night Discoveries and Returning Tonight rails. Strong analog soul.",
+  "prompt_signature": "nostalgic-thumbnail-7inch-singles-price-tag-lamp-rain-analog-warmth",
+  "wave": "density-wave-2"
+}

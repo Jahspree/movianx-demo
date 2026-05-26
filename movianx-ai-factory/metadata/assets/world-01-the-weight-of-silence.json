@@ -1,0 +1,16 @@
+{
+  "world_id": "world-01-the-weight-of-silence",
+  "title": "The Weight of Silence",
+  "creator_identity": "Mara Kaine",
+  "emotional_profile": "psychological-horror: oppressive silence, suffocating guilt, domestic isolation, psychological weight of unspoken things",
+  "genre": "Psychological Horror",
+  "primary_rail": "horror-rails-deep",
+  "atmosphere_tags": ["silence", "guilt", "decaying domestic", "low-key practical light", "negative space", "memory residue"],
+  "validation_batch": "001",
+  "assets_in_world": 5,
+  "approved_assets": 5,
+  "created_at": "2026-05-26T01:20:00Z",
+  "cinematic_description": "A quiet 1970s rural house where the silence itself is the monster. Every object carries the weight of something that was never said. Mara Kaine's world is one of unbearable absence and the things we leave behind.",
+  "recommended_rails": ["horror-rails-deep", "drama-rails-intimate"],
+  "quality_notes": "All 5 assets passed strict visual QA with zero rejections. Strong emotional consistency across poster, backdrop, rail, banner, and intimate still. No repetitive framing. Excellent variety in scale and intimacy while maintaining world cohesion."
+}

@@ -1,0 +1,19 @@
+{
+  "asset_id": "rail-art_emotional-drama_the-last-summer-we-spoke_t02",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "The Last Summer We Spoke",
+  "asset_type": "rail-thumbnail",
+  "category": "rail-art",
+  "file_name": "rail-art_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_t02.jpg",
+  "relative_path": "approved-assets/rail-art/rail-art_emotional-drama_the-last-summer-we-spoke_20260526T023000Z_t02.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "wooden porch railing at golden hour: glass of iced tea on a folded handwritten letter, white sheet on the line, long soft shadows, quiet space between people",
+  "recommendation_tags": ["emotional-drama", "rail-thumbnail", "golden-hour", "letter", "porch"],
+  "rail_assignment": "drama-intimate-rails",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T02:50:00Z",
+  "quality_notes": "Clean, text-free, emotionally precise rail thumbnail. Strong improvement and first real progress filling the thumbnails gap.",
+  "prompt_signature": "emotional-drama-rail-porch-iced-tea-letter-white-sheet-golden-hour-shadows",
+  "population_run": "first-real-2026-05"
+}

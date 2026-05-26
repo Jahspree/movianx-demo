@@ -1,5 +1,6 @@
 import { MOVIE_EXPERIENCES } from "./movieExperiences.js";
 import { STORIES } from "./stories.js";
+import { FACTORY_LIVE_EXPERIENCES } from "./factoryLiveContent.js";
 import { GENERATED_LIVE_IMAGE_MANIFEST } from "./generatedLiveImageManifest.js";
 import { GENERATED_IMAGE_MANIFEST } from "./generatedImageManifest.js";
 import { mapGeneratedAssetsToExperiences } from "../lib/imagePipeline/mapper.js";
@@ -403,6 +404,7 @@ const BASE_CONSUMER_EXPERIENCES = [
   ...STORY_EXPERIENCES,
   ...MUSIC_EXPERIENCES,
   ...CREATOR_SPOTLIGHTS,
+  ...FACTORY_LIVE_EXPERIENCES,
 ];
 
 const PROFILED_CONSUMER_EXPERIENCES = BASE_CONSUMER_EXPERIENCES.map(withFactoryWorldProfile);
@@ -412,7 +414,31 @@ export const CONSUMER_EXPERIENCES = mapGeneratedAssetsToExperiences(
   GENERATED_LIVE_IMAGE_MANIFEST
 );
 
+const FACTORY_LIVE_IDS = FACTORY_LIVE_EXPERIENCES.map(experience => experience.id);
+const FACTORY_HORROR_IDS = FACTORY_LIVE_EXPERIENCES
+  .filter(experience => String(experience.genre).toLowerCase().includes("horror"))
+  .map(experience => experience.id);
+const FACTORY_ATMOSPHERIC_IDS = FACTORY_LIVE_EXPERIENCES
+  .filter(experience => !String(experience.genre).toLowerCase().includes("horror"))
+  .map(experience => experience.id);
+
 export const CONSUMER_RAILS = [
+  {
+    title: "Factory Premieres",
+    slug: "factory-premieres",
+    description: "New cinematic worlds approved through the Movianx AI factory.",
+    mood: "Fresh worlds",
+    accent: "#b51f2a",
+    ids: FACTORY_LIVE_IDS.slice(0, 6),
+  },
+  {
+    title: "Factory Emotional Worlds",
+    slug: "factory-emotional-worlds",
+    description: "Approved worlds selected for atmosphere, creator identity, and emotional contrast.",
+    mood: "AI curated",
+    accent: "#d6a33a",
+    ids: [...FACTORY_HORROR_IDS.slice(0, 3), ...FACTORY_ATMOSPHERIC_IDS.slice(0, 3)],
+  },
   {
     title: "Late Night Viewing",
     slug: "featured-worlds",

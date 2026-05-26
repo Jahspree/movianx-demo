@@ -1,0 +1,19 @@
+{
+  "asset_id": "creator-worlds_emotional-drama_the-last-summer-we-spoke_c01",
+  "world_id": "world-04-the-last-summer-we-spoke",
+  "title": "Lena Moreau — The Typewriter",
+  "asset_type": "creator-atmosphere",
+  "category": "creator-worlds",
+  "file_name": "creator-worlds_emotional-drama_the-last-summer-we-spoke_20260526T030000Z_c01.jpg",
+  "relative_path": "approved-assets/creator-worlds/creator-worlds_emotional-drama_the-last-summer-we-spoke_20260526T030000Z_c01.jpg",
+  "emotional_category": "emotional-drama",
+  "creator_identity": "Lena Moreau",
+  "atmospheric_profile": "writer's desk with typewriter, manuscript pages, cold coffee, and a single pressed flower — the quiet space where memory and reconciliation are processed",
+  "recommendation_tags": ["creator-world", "emotional-drama", "workspace", "memory", "writing"],
+  "rail_assignment": "stories-that-linger, quiet-hour-viewing",
+  "aspect_ratio": "2:1",
+  "approved_at": "2026-05-26T03:15:00Z",
+  "quality_notes": "Intimate and emotionally resonant creator atmosphere. Perfect continuity for the Emotional Drama world.",
+  "prompt_signature": "emotional-drama-creator-typewriter-manuscript-pressed-flower-coffee-quiet-workspace",
+  "wave": "density-wave-2"
+}

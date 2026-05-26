@@ -1,0 +1,19 @@
+{
+  "asset_id": "hero-backgrounds_arctic-ambient_the-last-polar-night_w06b01",
+  "world_id": "world-06-the-last-polar-night",
+  "title": "The Last Polar Night",
+  "asset_type": "cinematic-backdrop",
+  "category": "hero-backgrounds",
+  "file_name": "hero-backgrounds_arctic-ambient_the-last-polar-night_20260526T021000Z_w06b01.jpg",
+  "relative_path": "approved-assets/hero-backgrounds/hero-backgrounds_arctic-ambient_the-last-polar-night_20260526T021000Z_w06b01.jpg",
+  "emotional_category": "arctic-ambient",
+  "creator_identity": "Dr. Ingrid Solberg",
+  "atmospheric_profile": "remote research station half-buried in snow on vast ice field during polar night, single warm window light, green aurora overhead, extreme minimalism and human smallness",
+  "recommendation_tags": ["arctic-ambient", "polar-night", "aurora", "minimal", "geological"],
+  "rail_assignment": "polar-ambient-worlds",
+  "aspect_ratio": "16:9",
+  "approved_at": "2026-05-26T02:25:00Z",
+  "quality_notes": "Stunning introduction to a completely new emotional and visual territory. Perfect contrast to The Salt Line. Highest cinematic quality.",
+  "prompt_signature": "arctic-ambient-polar-night-research-station-buried-snow-aurora-single-light-minimalism",
+  "validation_batch": "weekly-2026-w22"
+}

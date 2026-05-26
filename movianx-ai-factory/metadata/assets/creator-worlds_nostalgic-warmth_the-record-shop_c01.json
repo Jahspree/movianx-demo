@@ -1,0 +1,19 @@
+{
+  "asset_id": "creator-worlds_nostalgic-warmth_the-record-shop_c01",
+  "world_id": "world-05-the-record-shop-at-the-end-of-the-world",
+  "title": "Marcus Rivera — The Needle",
+  "asset_type": "creator-banner",
+  "category": "creator-worlds",
+  "file_name": "creator-worlds_nostalgic-warmth_the-record-shop_20260526T023000Z_c01.jpg",
+  "relative_path": "approved-assets/creator-worlds/creator-worlds_nostalgic-warmth_the-record-shop_20260526T023000Z_c01.jpg",
+  "emotional_category": "nostalgic-warmth",
+  "creator_identity": "Marcus 'The Needle' Rivera",
+  "atmospheric_profile": "middle-aged man in plaid shirt gently cleaning a record sleeve in a warm lamp-lit record store at closing time, rain on the front window, rows of vinyl, quiet dignity and analog soul",
+  "recommendation_tags": ["creator-world", "nostalgic", "record-store", "vinyl", "analog", "dignity"],
+  "rail_assignment": "nostalgic-warmth-worlds",
+  "aspect_ratio": "2:1",
+  "approved_at": "2026-05-26T02:50:00Z",
+  "quality_notes": "Beautiful, respectful representation of the creator. Warm light, rain, vinyl textures — perfect nostalgic warmth.",
+  "prompt_signature": "nostalgic-creator-banner-man-cleaning-vinyl-lamp-light-rainy-window-record-store",
+  "population_run": "first-real-2026-05"
+}
