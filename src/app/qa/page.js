@@ -9,20 +9,20 @@ const QA_TARGETS = [
   ["Movies", "/watch/movies"],
   ["Music", "/watch/music"],
   ["Stories", "/watch/stories"],
-  ["10 Seconds", "/?story=3&mode=Immersive"],
+  ["10 Seconds", "/watch/story-3"],
   ["Dashboard", "/dashboard/welcome"],
   ["Creator Login", "/dashboard/welcome"],
   ["Back behavior", "/watch/story-3"],
 ];
 
 const IMAGE_TARGETS = [
-  ["Homepage Movies", "/images/homepage/movies.jpg"],
-  ["Homepage Music", "/images/homepage/music.jpg"],
-  ["Homepage Stories", "/images/homepage/stories.jpg"],
-  ["Homepage Explore", "/images/homepage/explore.jpg"],
-  ["Generated 10 Seconds Poster", "/images/generated/content/story-3/poster.svg"],
-  ["Generated Music Poster", "/images/generated/content/music-echoes-in-orbit/poster.svg"],
-  ["Generated Creator Poster", "/images/generated/content/creator-director-noir/poster.svg"],
+  ["Homepage Movies", "/images/generated-live/content/world-03-the-salt-line/hero.jpg"],
+  ["Homepage Music", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg"],
+  ["Homepage Stories", "/images/generated-live/stories/world-01-the-weight-of-silence/story.jpg"],
+  ["Homepage Explore", "/images/generated-live/content/hero-backgrounds/hero.jpg"],
+  ["Generated 10 Seconds Poster", "/images/generated-live/movies/world-01-the-weight-of-silence/poster.jpg"],
+  ["Generated Music Poster", "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg"],
+  ["Generated Creator Poster", "/images/generated-live/worlds/world-01-the-weight-of-silence/creatorbanner.jpg"],
 ];
 
 const AUDIO_TARGETS = [

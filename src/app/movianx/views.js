@@ -994,41 +994,7 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
 }
 
 export function HomeView({ C, FF, CSS, transitionState, navigateTo }) {
-  return (
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg, #eef0ff 0%, #e8e8f2 50%, #f0ebe6 100%)",fontFamily:FF,display:"flex",flexDirection:"column",position:"relative",...getViewTransition(transitionState)}}>
-      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"20px 5%",borderBottom:`1px solid ${C.border}`,animation:getEntryAnimation(transitionState,"fadeDown 0.6s ease both")}}>
-        <div onClick={()=>navigateTo("landing")} style={{cursor:"pointer"}}><img src="/movianx-logo.png" alt="Movianx" style={{height:36,width:"auto"}}/></div>
-        <div style={{display:"flex",gap:24,alignItems:"center"}}>
-          <button onClick={openWatchLibrary} style={{background:"transparent",border:"none",color:C.text2,fontSize:14,cursor:"pointer",fontFamily:FF}} onMouseEnter={e=>e.target.style.color=C.text} onMouseLeave={e=>e.target.style.color=C.text2}>Watch</button>
-          <button onClick={openCreatorDashboard} style={{padding:"10px 20px",borderRadius:20,background:C.accent,border:"none",color:"#fff",fontSize:14,fontWeight:600,cursor:"pointer",fontFamily:FF}}>Creator Login</button>
-        </div>
-      </div>
-      <div style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"flex-start",padding:"32px 5% 60px"}}>
-        <h1 style={{fontSize:"clamp(24px,4vw,40px)",fontWeight:700,color:C.text,marginBottom:8,textAlign:"center",letterSpacing:"-1px",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.1s"),opacity:1}}>Explore Movianx Experiences</h1>
-        <p style={{fontSize:"clamp(13px,2vw,16px)",color:C.text2,marginBottom:32,textAlign:"center",maxWidth:560,animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.2s"),opacity:1}}>Preview films, stories, and interactive worlds built for immersive AI-enhanced entertainment.</p>
-        <div style={{display:"flex",gap:16,width:"100%",maxWidth:900,justifyContent:"center",flexWrap:"wrap",paddingBottom:40}}>
-          <button onClick={openWatchLibrary} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.3s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
-            <div style={{fontSize:36,marginBottom:8}}>🎬</div>
-            <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Cinema</h3>
-            <p style={{fontSize:14,color:C.text2,margin:0}}>AI-enhanced films</p>
-            <div style={{marginTop:"auto",alignSelf:"flex-end",width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,flexShrink:0}}>→</div>
-          </button>
-          <button onClick={()=>navigateTo("library")} style={{width:160,minHeight:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"pointer",textAlign:"left",display:"flex",flexDirection:"column",alignItems:"flex-start",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.4s"),opacity:1,transition:"all 0.3s",boxShadow:C.shadow}} onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-8px) scale(1.02)";e.currentTarget.style.boxShadow=C.shadowHover}} onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0) scale(1)";e.currentTarget.style.boxShadow=C.shadow}}>
-            <div style={{fontSize:36,marginBottom:8}}>📚</div>
-            <h3 style={{fontSize:20,fontWeight:700,color:C.text,marginBottom:6}}>Stories</h3>
-            <p style={{fontSize:14,color:C.text2,margin:0}}>Interactive fiction</p>
-            <div style={{marginTop:"auto",alignSelf:"flex-end",width:32,height:32,borderRadius:"50%",background:C.accent,display:"flex",alignItems:"center",justifyContent:"center",color:"#fff",fontSize:16,flexShrink:0}}>→</div>
-          </button>
-          <div style={{width:160,height:160,background:C.glass,backdropFilter:"blur(16px)",WebkitBackdropFilter:"blur(16px)",border:`1px solid ${C.glassBorder}`,borderRadius:24,padding:20,cursor:"not-allowed",textAlign:"left",display:"flex",flexDirection:"column",animation:getEntryAnimation(transitionState,"fadeUp 0.8s ease both 0.5s"),opacity:1,boxShadow:C.shadow}}>
-            <div style={{fontSize:36,marginBottom:8,opacity:0.4}}>🎨</div>
-            <h3 style={{fontSize:24,fontWeight:700,color:`${C.text}50`,marginBottom:6}}>Artists</h3>
-            <div style={{display:"inline-block",padding:"4px 10px",borderRadius:12,background:C.pillBg,fontSize:10,fontWeight:600,color:C.text2,textTransform:"uppercase",letterSpacing:"1px"}}>Coming Soon</div>
-          </div>
-        </div>
-      </div>
-      <style>{CSS}</style>
-    </div>
-  );
+  return <LandingView C={C} FF={FF} CSS={CSS} transitionState={transitionState} navigateTo={navigateTo} />;
 }
 
 export function LibraryView({ C, FF, CSS, transitionState, navigateTo, stories, onSelectStory }) {

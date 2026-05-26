@@ -339,7 +339,7 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
     },
   ],
   href: `/watch/story-${story.id}`,
-  launchHref: `/?story=${story.id}&mode=Immersive`,
+  launchHref: `/watch/story-${story.id}#player`,
 }));
 
 function mergeUnique(...groups) {

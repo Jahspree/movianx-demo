@@ -11,7 +11,7 @@ import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
 import { getAudioSceneProfile } from "../data/audioSceneProfiles";
 import { STORIES, getChapters } from "../data/stories";
 import { C, THEMES, FONTS, FF, CSS, estimateSpeechDurationMs } from "./movianx/config";
-import { LandingView, HomeView, LibraryView, DetailView } from "./movianx/views";
+import { LandingView, LibraryView, DetailView } from "./movianx/views";
 
 const AUDIO_MANIFESTS_BY_STORY = {
   [FRANKENSTEIN_AUDIO.storyId]: FRANKENSTEIN_AUDIO,
@@ -678,6 +678,10 @@ export default function MovianxPlatform(){
     const params=new URLSearchParams(window.location.search);
     const storyId=Number(params.get("story"));
     const story=storyId?STORIES.find(item=>item.id===storyId):null;
+    if(story&&window.location.pathname==="/"){
+      window.location.replace(`/watch/story-${story.id}`);
+      return {pg:"landing",sel:null,mode:"Reader"};
+    }
     if(!story)return {pg:"landing",sel:null,mode:"Reader"};
     const requestedMode=params.get("mode");
     return {
@@ -746,6 +750,10 @@ export default function MovianxPlatform(){
     if(!storyId)return;
     const story=STORIES.find(item=>item.id===storyId);
     if(!story)return;
+    if(window.location.pathname==="/"){
+      window.location.replace(`/watch/story-${story.id}`);
+      return;
+    }
     const requestedMode=params.get("mode");
     setSel(story);
     setMode(story.immersions.includes(requestedMode)?requestedMode:"Immersive");
@@ -1230,21 +1238,22 @@ export default function MovianxPlatform(){
 
   // === NAVIGATION CONTROLLER ===
   const navigateTo=(newPg)=>{
-    console.log("navigation_requested",{from:pg,to:newPg,kind:"view",locked:navLockRef.current});
+    const targetPg=newPg==="home"?"landing":newPg;
+    console.log("navigation_requested",{from:pg,to:targetPg,kind:"view",locked:navLockRef.current});
     if(navFailsafeRef.current)clearTimeout(navFailsafeRef.current);
     navLockRef.current=true;
     navFailsafeRef.current=setTimeout(()=>{
-      console.log("navigation_completed",{from:pg,to:newPg,kind:"view",forced:true});
+      console.log("navigation_completed",{from:pg,to:targetPg,kind:"view",forced:true});
       setViewTransitionState("idle");
       navLockRef.current=false;
     },500);
-    console.log("navigation_started",{from:pg,to:newPg,kind:"view"});
+    console.log("navigation_started",{from:pg,to:targetPg,kind:"view"});
     stopAllAudio("view_navigation");
-    runtimeRef.current?.navigate({from:pg,to:newPg,kind:"view"});
-    logEvent("navigate",{from:pg,to:newPg});
+    runtimeRef.current?.navigate({from:pg,to:targetPg,kind:"view"});
+    logEvent("navigate",{from:pg,to:targetPg});
     setViewTransitionState("exiting");
     setTimeout(()=>{
-      setPg(newPg);
+      setPg(targetPg);
       setViewTransitionState("entering");
       if(typeof window!=="undefined"){
         window.scrollTo(0,0);
@@ -1254,7 +1263,7 @@ export default function MovianxPlatform(){
               setViewTransitionState("idle");
               if(navFailsafeRef.current){clearTimeout(navFailsafeRef.current);navFailsafeRef.current=null}
               navLockRef.current=false;
-              console.log("navigation_completed",{from:pg,to:newPg,kind:"view",forced:false});
+              console.log("navigation_completed",{from:pg,to:targetPg,kind:"view",forced:false});
             },VIEW_ENTER_BUFFER_MS);
           });
         });
@@ -1266,6 +1275,28 @@ export default function MovianxPlatform(){
       console.log("navigation_completed",{from:pg,to:newPg,kind:"view",forced:false});
     },VIEW_TRANSITION_MS);
   };
+
+  useEffect(()=>{
+    if(typeof window==="undefined")return;
+    const stabilizeRootShell=()=>{
+      const params=new URLSearchParams(window.location.search);
+      const storyId=Number(params.get("story"));
+      if(storyId&&window.location.pathname==="/"){
+        window.location.replace(`/watch/story-${storyId}`);
+        return;
+      }
+      if(window.location.pathname==="/"&&!storyId){
+        setPg("landing");
+        setViewTransitionState("idle");
+      }
+    };
+    window.addEventListener("pageshow",stabilizeRootShell);
+    window.addEventListener("popstate",stabilizeRootShell);
+    return()=>{
+      window.removeEventListener("pageshow",stabilizeRootShell);
+      window.removeEventListener("popstate",stabilizeRootShell);
+    };
+  },[]);
 
   const goChapter=(idx)=>{
     console.log("navigation_requested",{from:chIdx,to:idx,kind:"chapter",locked:navLockRef.current});
@@ -1540,7 +1571,7 @@ export default function MovianxPlatform(){
 
   // === HOME PAGE ===
   if(pg==="home"){
-    return <HomeView C={C} FF={FF} CSS={CSS} transitionState={viewTransitionState} navigateTo={navigateTo} />;
+    return <LandingView C={C} FF={FF} CSS={CSS} transitionState={viewTransitionState} navigateTo={navigateTo} />;
   }
 
   // === LIBRARY PAGE ===
