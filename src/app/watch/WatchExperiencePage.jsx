@@ -50,6 +50,53 @@ const ZONE_LINKS = [
   ["Music", "/watch/music", "music"],
 ];
 
+const EDITORIAL_MODULES = {
+  explore: {
+    eyebrow: "Creator of the Week",
+    title: "Mara Kaine",
+    itemId: "world-01-the-weight-of-silence",
+    reason: "Most revisited this week for its quiet domestic dread and restrained visual language.",
+    selections: [
+      ["Atmosphere Spotlight", "world-03-the-salt-line", "The sea remembers everything."],
+      ["Hidden Worlds", "wave-2-atmospheric-mystery", "A room you almost missed."],
+      ["Returning Tonight", "world-05-the-record-shop-at-the-end-of-the-world", "The last song still matters."],
+    ],
+  },
+  movies: {
+    eyebrow: "Atmosphere Spotlight",
+    title: "The Salt Line",
+    itemId: "world-03-the-salt-line",
+    reason: "Coastal folk horror with cold light, weathered wood, and a world that feels slowly reclaimed.",
+    selections: [
+      ["Hidden Worlds", "movies_psychological-horror_the-hollowing-signal_20260526t003000z_h1k9p4", "Something answers from inside the noise."],
+      ["Most Revisited", "night-of-the-living-dead", "No door holds forever."],
+      ["Quietly Emerging", "world-02-the-event-horizon-choir", "A signal sings at the edge."],
+    ],
+  },
+  stories: {
+    eyebrow: "Story That Stayed With People",
+    title: "10 Seconds",
+    itemId: "story-3",
+    reason: "A compact pressure chamber: breath, choice, and fear held close.",
+    selections: [
+      ["Quiet Hour Viewing", "story-1", "A spark asks what it means to live."],
+      ["Hidden Worlds", "story-2", "One decision waits in the dark."],
+      ["Returning Tonight", "world-01-the-weight-of-silence", "Silence keeps its own archive."],
+    ],
+  },
+  music: {
+    eyebrow: "Quiet Hour Listening",
+    title: "The Quiet Frequency",
+    itemId: "music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2",
+    reason: "A late-night sound world built from rain, piano, solitude, and soft spatial presence.",
+    selections: [
+      ["Returning Tonight", "music-echoes-in-orbit", "Memory drifts through signal."],
+      ["Atmosphere Spotlight", "music-velvet-static", "The room hums back."],
+      ["Hidden Worlds", "world-05-the-record-shop-at-the-end-of-the-world", "The last song still matters."],
+    ],
+  },
+};
+
 const ATMOSPHERIC_HOOKS = {
   "The Weight of Silence": "Silence keeps its own archive.",
   "The Last Summer We Spoke": "Some summers never leave.",
@@ -80,10 +127,24 @@ const ATMOSPHERIC_HOOKS = {
   "Creator Worlds": "Artists building places you can enter.",
 };
 
-function posterStyle(experience) {
+function visualFor(experience, preferred = "poster") {
+  const generated = experience.generatedImages || {};
+  if (preferred === "hero") {
+    return generated.hero || experience.heroImage || generated.poster || generated.thumbnail || experience.image;
+  }
+  if (preferred === "rail") {
+    return generated.rail || generated.thumbnail || experience.thumbnailImage || generated.poster || experience.image;
+  }
+  if (preferred === "creator") {
+    return generated.creatorbanner || generated.hero || experience.heroImage || generated.poster || experience.image;
+  }
+  return generated.poster || experience.image || generated.thumbnail || experience.thumbnailImage || experience.heroImage;
+}
+
+function visualStyle(experience, preferred = "poster") {
   return {
     "--poster-accent": experience.accent,
-    "--poster-image": experience.image ? `url(${experience.image})` : "none",
+    "--poster-image": visualFor(experience, preferred) ? `url(${visualFor(experience, preferred)})` : "none",
   };
 }
 
@@ -186,7 +247,7 @@ function featuredForZone(zone) {
 function PosterCard({ experience }) {
   return (
     <Link className={styles.posterCard} href={experience.href || `/watch/${experience.id}`}>
-      <div className={styles.posterArt} style={posterStyle(experience)}>
+      <div className={styles.posterArt} style={visualStyle(experience, "rail")}>
         <div className={styles.badgeRow}>
           <span className={styles.miniBadge}>{primaryBadge(experience)}</span>
         </div>
@@ -209,7 +270,7 @@ function RailSection({ rail }) {
   const items = getConsumerRailItems(rail.ids);
   const railStyle = {
     "--rail-accent": rail.accent || "#b51f2a",
-    "--rail-image": items[0]?.image ? `url(${items[0].image})` : "none",
+    "--rail-image": items[0] ? `url(${visualFor(items[0], "hero")})` : "none",
   };
 
   if (!items.length) return null;
@@ -234,6 +295,49 @@ function RailSection({ rail }) {
   );
 }
 
+function EditorialSection({ zone }) {
+  const editorial = EDITORIAL_MODULES[zone] || EDITORIAL_MODULES.explore;
+  const feature = CONSUMER_EXPERIENCES.find((experience) => experience.id === editorial.itemId);
+  const selections = editorial.selections
+    .map(([label, id, hook]) => ({
+      label,
+      hook,
+      item: CONSUMER_EXPERIENCES.find((experience) => experience.id === id),
+    }))
+    .filter(({ item }) => item);
+
+  if (!feature) return null;
+
+  return (
+    <section className={styles.editorial} style={visualStyle(feature, "creator")} aria-label={`${editorial.eyebrow} editorial spotlight`}>
+      <Link className={styles.editorialFeature} href={feature.href || `/watch/${feature.id}`}>
+        <span className={styles.kicker}>{editorial.eyebrow}</span>
+        <h2>{editorial.title}</h2>
+        <p>{editorial.reason}</p>
+        <div className={styles.editorialMeta}>
+          <span>{feature.creator}</span>
+          <span>{atmosphericHook(feature)}</span>
+        </div>
+      </Link>
+
+      <div className={styles.editorialStack}>
+        {selections.map(({ label, item, hook }) => (
+          <Link
+            key={`${zone}-${label}-${item.id}`}
+            className={styles.editorialMini}
+            href={item.href || `/watch/${item.id}`}
+            style={visualStyle(item, "rail")}
+          >
+            <span>{label}</span>
+            <strong>{item.title}</strong>
+            <small>{hook || atmosphericHook(item)}</small>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function WatchExperiencePage({ zone = "explore" }) {
   const activeZone = ZONES[zone] ? zone : "explore";
   const config = ZONES[activeZone];
@@ -242,7 +346,7 @@ export default function WatchExperiencePage({ zone = "explore" }) {
   const governance = orchestrateEcosystemRails(CONSUMER_RAILS, CONSUMER_EXPERIENCES);
   const featuredStyle = {
     "--poster-accent": featured.accent,
-    "--poster-image": `url(${featured.heroImage || featured.image})`,
+    "--poster-image": `url(${visualFor(featured, "hero")})`,
   };
 
   return (
@@ -290,7 +394,7 @@ export default function WatchExperiencePage({ zone = "explore" }) {
           </div>
         </div>
         <div className={styles.heroPoster}>
-          <div className={styles.posterArt} style={featuredStyle}>
+          <div className={styles.posterArt} style={visualStyle(featured, "poster")}>
             <div className={styles.badgeRow}>
               <span className={styles.miniBadge}>{primaryBadge(featured)}</span>
               <span className={styles.miniBadge}>{posterMeta(featured)}</span>
@@ -304,6 +408,7 @@ export default function WatchExperiencePage({ zone = "explore" }) {
       </section>
 
       <section id="experience-library" className={styles.rails} aria-label={`${config.eyebrow} library`}>
+        <EditorialSection zone={activeZone} />
         {rails.map((rail) => (
           <RailSection rail={rail} key={`${activeZone}-${rail.title}`} />
         ))}

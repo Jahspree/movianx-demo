@@ -27,10 +27,24 @@ export function generateMetadata({ params }) {
   };
 }
 
-function posterStyle(experience) {
+function visualFor(experience, preferred = "poster") {
+  const generated = experience.generatedImages || {};
+  if (preferred === "hero") {
+    return generated.hero || experience.heroImage || generated.poster || generated.thumbnail || experience.image;
+  }
+  if (preferred === "rail") {
+    return generated.rail || generated.thumbnail || experience.thumbnailImage || generated.poster || experience.image;
+  }
+  if (preferred === "creator") {
+    return generated.creatorbanner || generated.hero || experience.heroImage || generated.poster || experience.image;
+  }
+  return generated.poster || experience.image || generated.thumbnail || experience.thumbnailImage || experience.heroImage;
+}
+
+function posterStyle(experience, preferred = "poster") {
   return {
     "--poster-accent": experience.accent,
-    "--poster-image": experience.image ? `url(${experience.image})` : "none",
+    "--poster-image": visualFor(experience, preferred) ? `url(${visualFor(experience, preferred)})` : "none",
   };
 }
 
@@ -67,7 +81,7 @@ function readableTag(tag) {
 function ExperienceCard({ experience }) {
   return (
     <Link className={styles.relatedCard} href={experience.href || `/watch/${experience.id}`}>
-      <div className={styles.relatedPoster} style={posterStyle(experience)}>
+      <div className={styles.relatedPoster} style={posterStyle(experience, "rail")}>
         <strong>{experience.title}</strong>
         <small>{experience.creator}</small>
       </div>
@@ -146,7 +160,7 @@ export default function WatchDetailPage({ params }) {
   const moodLine = readableTag(experience.moodTags?.[0] || experience.genre || "");
 
   return (
-    <main className={styles.watchShell} style={posterStyle(experience)}>
+    <main className={styles.watchShell} style={posterStyle(experience, "hero")}>
       <div className={styles.watchBackground} />
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/">
@@ -188,7 +202,7 @@ export default function WatchDetailPage({ params }) {
           </div>
         </div>
         <div className={styles.detailHeroPoster}>
-          <div className={styles.posterArt} style={posterStyle(experience)}>
+          <div className={styles.posterArt} style={posterStyle(experience, "poster")}>
             <div className={styles.badgeRow}>
               {experience.aiEnhanced && <span className={styles.miniBadge}>AI Enhanced</span>}
               {experience.immersiveReady && <span className={styles.miniBadge}>Immersive Ready</span>}
