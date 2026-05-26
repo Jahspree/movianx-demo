@@ -188,6 +188,34 @@
   font-size: 14px;
 }
 
+.ecosystemPulse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  width: fit-content;
+  max-width: 100%;
+  margin: -6px 0 26px;
+  padding: 9px 11px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.24);
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 12px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.ecosystemPulse span {
+  text-transform: uppercase;
+  font-weight: 820;
+}
+
+.ecosystemPulse strong {
+  color: rgba(255, 255, 255, 0.82);
+  font-weight: 740;
+}
+
 .ctaRow {
   display: flex;
   flex-wrap: wrap;
@@ -336,6 +364,18 @@
 .railCount {
   flex: 0 0 auto;
   padding: 8px 11px;
+}
+
+.governanceSignal {
+  position: relative;
+  z-index: 2;
+  width: fit-content;
+  max-width: 100%;
+  margin: -6px 0 16px;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 12px;
+  font-weight: 720;
+  text-transform: uppercase;
 }
 
 .railScroller {

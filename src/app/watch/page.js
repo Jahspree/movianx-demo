@@ -5,7 +5,10 @@ import {
   CONSUMER_RAILS,
   getConsumerRailItems,
 } from "../../data/consumerExperiences";
+import { orchestrateEcosystemRails } from "../../lib/ecosystemGovernance";
 import WaitlistInline from "./WaitlistInline";
+
+export const revalidate = 3600;
 
 function posterStyle(experience) {
   return {
@@ -61,8 +64,9 @@ function RailSection({ rail }) {
           <h2>{rail.title}</h2>
           <p>{rail.description}</p>
         </div>
-        <span className={styles.railCount}>{items.length} curated</span>
+        <span className={styles.railCount}>{items.length} curated · {rail.governanceMood || "balanced"}</span>
       </div>
+      {rail.governanceSignal && <div className={styles.governanceSignal}>{rail.governanceSignal}</div>}
       <div className={styles.railScroller}>
         {items.map((experience) => (
           <PosterCard key={`${rail.title}-${experience.id}`} experience={experience} />
@@ -80,6 +84,7 @@ export const metadata = {
 
 export default function WatchPage() {
   const featured = CONSUMER_EXPERIENCES.find((experience) => experience.featured && experience.contentFormat === "film") || CONSUMER_EXPERIENCES[0];
+  const governance = orchestrateEcosystemRails(CONSUMER_RAILS, CONSUMER_EXPERIENCES);
   const featuredStyle = {
     "--poster-accent": featured.accent,
     "--poster-image": `url(${featured.heroImage || featured.image})`,
@@ -110,6 +115,10 @@ export default function WatchPage() {
             <span>{featured.runtime}</span>
             <span>{featured.rights}</span>
           </div>
+          <div className={styles.ecosystemPulse}>
+            <span>Ecosystem pulse</span>
+            <strong>{governance.health.summary}</strong>
+          </div>
           <div className={styles.ctaRow}>
             <Link className={styles.primaryButton} href={`/watch/${featured.id}`}>Enter Featured World</Link>
             <Link className={styles.secondaryButton} href="#experience-library">Explore Library</Link>
@@ -130,7 +139,7 @@ export default function WatchPage() {
       </section>
 
       <section id="experience-library" className={styles.rails} aria-label="Immersive experience library">
-        {CONSUMER_RAILS.map((rail) => (
+        {governance.rails.map((rail) => (
           <RailSection rail={rail} key={rail.title} />
         ))}
         <div id="early-access" className={styles.waitlistPanel}>
