@@ -13,6 +13,46 @@
   font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+.watchShell[data-zone="movies"] {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(181, 31, 42, 0.34), transparent 28%),
+    radial-gradient(circle at 82% 4%, rgba(214, 163, 58, 0.13), transparent 24%),
+    linear-gradient(135deg, #050507 0%, #101014 48%, #170808 100%);
+}
+
+.watchShell[data-zone="stories"] {
+  background:
+    radial-gradient(circle at 20% 10%, rgba(124, 58, 237, 0.22), transparent 28%),
+    radial-gradient(circle at 78% 6%, rgba(214, 163, 58, 0.08), transparent 24%),
+    linear-gradient(135deg, #050507 0%, #0c0d14 50%, #120812 100%);
+}
+
+.watchShell[data-zone="music"] {
+  background:
+    radial-gradient(circle at 18% 8%, rgba(15, 118, 110, 0.24), transparent 28%),
+    radial-gradient(circle at 82% 4%, rgba(37, 99, 235, 0.12), transparent 24%),
+    linear-gradient(135deg, #040708 0%, #071011 48%, #050507 100%);
+}
+
+.watchShell[data-zone="movies"] .hero {
+  min-height: 620px;
+}
+
+.watchShell[data-zone="stories"] .hero,
+.watchShell[data-zone="music"] .hero {
+  min-height: 560px;
+}
+
+.watchShell[data-zone="stories"] .rail {
+  border-radius: 18px;
+}
+
+.watchShell[data-zone="music"] .posterArt:before {
+  background:
+    linear-gradient(180deg, transparent 18%, rgba(0, 0, 0, 0.58) 100%),
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.05), transparent 18%);
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -186,6 +226,38 @@
   margin: 22px 0 24px;
   color: rgba(255, 255, 255, 0.62);
   font-size: 14px;
+}
+
+.zoneNav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin: 22px 0 0;
+  max-width: 560px;
+}
+
+.zoneNav a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.065);
+  color: rgba(255, 255, 255, 0.66);
+  padding: 9px 13px;
+  font-size: 12px;
+  font-weight: 780;
+  text-decoration: none;
+  transition: transform 200ms ease, background 200ms ease, color 200ms ease, border-color 200ms ease;
+}
+
+.zoneNav a:hover,
+.zoneNavActive {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--poster-accent) 48%, rgba(255, 255, 255, 0.2)) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: #fff !important;
 }
 
 .ecosystemPulse {
@@ -1416,9 +1488,20 @@
   }
 
   .metaLine,
-  .ecosystemPulse {
+  .ecosystemPulse,
+  .zoneNav a {
     font-size: 11px;
     gap: 8px;
+  }
+
+  .zoneNav {
+    margin-top: 18px;
+    gap: 7px;
+  }
+
+  .zoneNav a {
+    min-height: 34px;
+    padding: 8px 10px;
   }
 
   .posterText {

@@ -41,9 +41,9 @@ const LANDING_FEATURE_TAGS = [
 ];
 
 const LANDING_PORTALS = [
-  ["movies", "Movies", "Cinematic worlds", "/watch", "top", "/images/homepage/movies.jpg", "#b51f2a"],
-  ["music", "Music", "Spatial listening", "/watch#music-experiences", "left", "/images/homepage/music.jpg", "#0f766e"],
-  ["stories", "Stories", "Interactive fiction", "/watch#immersive-stories", "right", "/images/homepage/stories.jpg", "#7c3aed"],
+  ["movies", "Movies", "Cinematic worlds", "/watch/movies", "top", "/images/homepage/movies.jpg", "#b51f2a"],
+  ["music", "Music", "Spatial listening", "/watch/music", "left", "/images/homepage/music.jpg", "#0f766e"],
+  ["stories", "Stories", "Interactive fiction", "/watch/stories", "right", "/images/homepage/stories.jpg", "#7c3aed"],
   ["explore", "Explore", "Enter Movianx", "/watch", "center", "/images/homepage/explore.jpg", "#d6a33a"],
 ];
 

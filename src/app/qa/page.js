@@ -6,9 +6,9 @@ import Link from "next/link";
 const QA_TARGETS = [
   ["Homepage", "/"],
   ["Explore", "/watch"],
-  ["Movies", "/watch#trending-cinema"],
-  ["Music", "/watch#music-experiences"],
-  ["Stories", "/watch#immersive-stories"],
+  ["Movies", "/watch/movies"],
+  ["Music", "/watch/music"],
+  ["Stories", "/watch/stories"],
   ["10 Seconds", "/?story=3&mode=Immersive"],
   ["Dashboard", "/dashboard/welcome"],
   ["Creator Login", "/dashboard/welcome"],
