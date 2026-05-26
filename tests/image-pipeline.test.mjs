@@ -66,7 +66,7 @@ test("validation rejects unsafe or undersized images", () => {
   }), ImageValidationError);
 });
 
-test("mapper injects generated assets while preserving fallback data", () => {
+test("mapper does not let placeholder SVG factory assets override real artwork", () => {
   const mapped = mapGeneratedAssetsToExperience({
     id: "story-3",
     title: "10 Seconds",
@@ -79,7 +79,26 @@ test("mapper injects generated assets while preserving fallback data", () => {
     },
   });
 
-  assert.equal(mapped.image, "/images/generated/content/story-3/poster.svg");
-  assert.equal(mapped.heroImage, "/images/generated/content/story-3/hero.svg");
-  assert.equal(mapped.thumbnailImage, "/images/generated/content/story-3/thumbnail.svg");
+  assert.equal(mapped.image, "/images/stories/ten-seconds.jpg");
+  assert.equal(mapped.heroImage, "/images/stories/ten-seconds.jpg");
+  assert.equal(mapped.thumbnailImage, "/images/stories/ten-seconds.jpg");
+  assert.equal(mapped.generatedImages.poster, "/images/generated/content/story-3/poster.svg");
+});
+
+test("mapper uses raster generated assets when they are available", () => {
+  const mapped = mapGeneratedAssetsToExperience({
+    id: "story-3",
+    title: "10 Seconds",
+    image: "/images/stories/ten-seconds.jpg",
+  }, {
+    "story-3": {
+      poster: "/images/generated/content/story-3/poster.webp",
+      hero: "/images/generated/content/story-3/hero.jpg",
+      thumbnail: "/images/generated/content/story-3/thumbnail.png",
+    },
+  });
+
+  assert.equal(mapped.image, "/images/generated/content/story-3/poster.webp");
+  assert.equal(mapped.heroImage, "/images/generated/content/story-3/hero.jpg");
+  assert.equal(mapped.thumbnailImage, "/images/generated/content/story-3/thumbnail.png");
 });
