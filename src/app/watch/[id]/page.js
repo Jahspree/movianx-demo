@@ -149,6 +149,7 @@ export default function WatchDetailPage({ params }) {
           <div className={styles.creatorLine}>
             <span>By {experience.creator}</span>
             <span>{experience.teamLabel}</span>
+            {experience.creatorWorld && <span>{experience.creatorWorld}</span>}
             {moodLine && <span>{moodLine}</span>}
           </div>
           <div className={styles.tagCloud} aria-label="Discovery tags">
@@ -250,6 +251,9 @@ export default function WatchDetailPage({ params }) {
             <span>{experience.language}</span>
           </div>
           <p>{experience.synopsis}</p>
+          {experience.ecosystemHook && (
+            <p className={styles.ecosystemHook}>{experience.ecosystemHook}</p>
+          )}
 
           <div className={styles.creatorProfileCard}>
             <div className={styles.creatorIdentityHeader}>
@@ -260,7 +264,7 @@ export default function WatchDetailPage({ params }) {
             </div>
             <h2>{experience.creator}</h2>
             <p>
-              {experience.teamLabel || "Creator-led immersive media world"} shaped around
+              {experience.atmosphereProfile || experience.teamLabel || "Creator-led immersive media world"} shaped around
               mood, authorship, and audience connection.
             </p>
             <div className={styles.creatorLanes}>

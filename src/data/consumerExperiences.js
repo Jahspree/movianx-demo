@@ -8,6 +8,45 @@ const STORY_IMAGE = "/images/stories/";
 const MUSIC_IMAGE = "/images/music/";
 const CREATOR_IMAGE = "/images/creators/";
 
+const FACTORY_WORLD_PROFILES = Object.freeze({
+  "night-of-the-living-dead": {
+    factoryIngested: true,
+    creatorWorld: "Romero Night Cycle",
+    atmosphereProfile: "claustrophobic dread, survival pressure, grainy midnight realism",
+    ecosystemHook: "A pressure-built horror world anchored by public-domain cinema and immersive dread.",
+    recommendationCategories: ["After Midnight", "Emotional Descents", "Atmospheric Worlds"],
+    moodTags: ["fear", "survival", "claustrophobic dread"],
+    styleTags: ["public domain horror", "black-and-white", "survival cinema"],
+  },
+  "story-3": {
+    factoryIngested: true,
+    creatorWorld: "Countdown Room",
+    atmosphereProfile: "panic restraint, close-room pressure, instinctive decision making",
+    ecosystemHook: "A timed story world tuned around breath, threat, and impossible choices.",
+    recommendationCategories: ["After Midnight", "Stories That Linger", "Emotional Descents"],
+    moodTags: ["fear", "pressure", "panic"],
+    styleTags: ["interactive thriller", "survival horror", "timed story"],
+  },
+  "music-echoes-in-orbit": {
+    factoryIngested: true,
+    creatorWorld: "Orbiting Signal",
+    atmosphereProfile: "weightless memory, spatial tone, distant electronic warmth",
+    ecosystemHook: "A sound-first world for listeners who want story, space, and atmosphere.",
+    recommendationCategories: ["Immersive Soundscapes", "Atmospheric Worlds", "Dark Sci-Fi Worlds"],
+    moodTags: ["wonder", "memory", "mystery"],
+    styleTags: ["spatial audio", "ambient electronic", "sci-fi soundscape"],
+  },
+  "creator-director-noir": {
+    factoryIngested: true,
+    creatorWorld: "Noir Creator Universe",
+    atmosphereProfile: "shadow, restraint, auteur identity, precise emotional dread",
+    ecosystemHook: "A creator identity built around quiet tension, cinematic discipline, and release-world continuity.",
+    recommendationCategories: ["Creator Spotlight", "Atmospheric Worlds", "Worlds Like This"],
+    moodTags: ["focused", "dark", "auteur"],
+    styleTags: ["director world", "noir", "creator-led cinema"],
+  },
+});
+
 const STORY_ACCENTS = {
   1: "#7f1d1d",
   2: "#334155",
@@ -301,6 +340,36 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
   launchHref: `/?story=${story.id}&mode=Immersive`,
 }));
 
+function mergeUnique(...groups) {
+  return [...new Set(groups.flat().filter(Boolean))];
+}
+
+function withFactoryWorldProfile(experience) {
+  const profile = FACTORY_WORLD_PROFILES[experience.id];
+  if (!profile) return experience;
+
+  return {
+    ...experience,
+    ...profile,
+    discoveryTags: mergeUnique(
+      experience.discoveryTags || [],
+      profile.recommendationCategories || [],
+      [profile.creatorWorld, "cinematic world", "approved world"]
+    ),
+    moodTags: mergeUnique(experience.moodTags || [], profile.moodTags || []),
+    styleTags: mergeUnique(experience.styleTags || [], profile.styleTags || []),
+    tags: mergeUnique(experience.tags || [], ["Cinematic World"]),
+    merchCollections: [
+      ...(experience.merchCollections || []),
+      {
+        title: `${profile.creatorWorld} Collection`,
+        description: "A quiet support release connected to this cinematic world.",
+        label: "From the creator world",
+      },
+    ].slice(0, 2),
+  };
+}
+
 const BASE_CONSUMER_EXPERIENCES = [
   ...MOVIE_EXPERIENCES.map((movie) => ({
     ...movie,
@@ -335,7 +404,9 @@ const BASE_CONSUMER_EXPERIENCES = [
   ...CREATOR_SPOTLIGHTS,
 ];
 
-export const CONSUMER_EXPERIENCES = mapGeneratedAssetsToExperiences(BASE_CONSUMER_EXPERIENCES, GENERATED_IMAGE_MANIFEST);
+const PROFILED_CONSUMER_EXPERIENCES = BASE_CONSUMER_EXPERIENCES.map(withFactoryWorldProfile);
+
+export const CONSUMER_EXPERIENCES = mapGeneratedAssetsToExperiences(PROFILED_CONSUMER_EXPERIENCES, GENERATED_IMAGE_MANIFEST);
 
 export const CONSUMER_RAILS = [
   {
@@ -345,6 +416,22 @@ export const CONSUMER_RAILS = [
     mood: "After midnight",
     accent: "#b51f2a",
     ids: ["story-3", "night-of-the-living-dead", "creator-proof-film", "music-echoes-in-orbit", "a-trip-to-the-moon"],
+  },
+  {
+    title: "Emotional Descents",
+    slug: "emotional-descents",
+    description: "Curated worlds where dread, grief, memory, and pressure deepen gradually.",
+    mood: "Slow pressure",
+    accent: "#7f1d1d",
+    ids: ["story-3", "night-of-the-living-dead", "the-phantom-carriage", "creator-director-noir"],
+  },
+  {
+    title: "Atmospheric Worlds",
+    slug: "atmospheric-worlds",
+    description: "Approved cinematic worlds with strong mood, visual identity, and immersive atmosphere.",
+    mood: "World-built",
+    accent: "#334155",
+    ids: ["creator-director-noir", "music-echoes-in-orbit", "story-1", "cabinet-of-dr-caligari", "the-phantom-carriage"],
   },
   {
     title: "Psychological Horror",
@@ -361,6 +448,14 @@ export const CONSUMER_RAILS = [
     mood: "Choice-aware",
     accent: "#7c3aed",
     ids: ["story-3", "story-1", "story-2", "cabinet-of-dr-caligari"],
+  },
+  {
+    title: "Stories That Linger",
+    slug: "stories-that-linger",
+    description: "Intimate stories and worlds selected for emotional afterimage rather than volume.",
+    mood: "Afterimage",
+    accent: "#d6a33a",
+    ids: ["story-3", "story-1", "music-echoes-in-orbit", "creator-director-noir"],
   },
   {
     title: "Emotional Soundscapes",

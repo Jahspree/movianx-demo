@@ -1,12 +1,10 @@
 import Link from "next/link";
 import styles from "./watch.module.css";
 import {
+  CONSUMER_EXPERIENCES,
   CONSUMER_RAILS,
   getConsumerRailItems,
 } from "../../data/consumerExperiences";
-import {
-  getFeaturedMovieExperience,
-} from "../../data/movieExperiences";
 import WaitlistInline from "./WaitlistInline";
 
 function posterStyle(experience) {
@@ -27,6 +25,7 @@ function PosterCard({ experience }) {
         <div className={styles.badgeRow}>
           {experience.aiEnhanced && <span className={styles.miniBadge}>AI Enhanced</span>}
           {experience.immersiveReady && <span className={styles.miniBadge}>Immersive Ready</span>}
+          {experience.factoryIngested && <span className={styles.miniBadge}>Cinematic World</span>}
         </div>
         <div className={styles.posterText}>
           <h3>{experience.title}</h3>
@@ -40,6 +39,7 @@ function PosterCard({ experience }) {
         </div>
         <h3>{experience.title}</h3>
         <p>{experience.hook}</p>
+        {experience.creatorWorld && <p>{experience.creatorWorld}</p>}
         <p>{experience.genre}</p>
       </div>
     </Link>
@@ -79,10 +79,10 @@ export const metadata = {
 };
 
 export default function WatchPage() {
-  const featured = getFeaturedMovieExperience();
+  const featured = CONSUMER_EXPERIENCES.find((experience) => experience.featured && experience.contentFormat === "film") || CONSUMER_EXPERIENCES[0];
   const featuredStyle = {
     "--poster-accent": featured.accent,
-    "--poster-image": "url(/images/movies/night-of-the-living-dead.jpg)",
+    "--poster-image": `url(${featured.heroImage || featured.image})`,
   };
 
   return (
