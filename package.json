@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "sync:factory-assets": "node src/scripts/sync-factory-assets.js",
     "test": "node --experimental-default-type=module --test tests/*.test.mjs",
     "start": "next start"
   },

@@ -1,5 +1,6 @@
 import { MOVIE_EXPERIENCES } from "./movieExperiences.js";
 import { STORIES } from "./stories.js";
+import { GENERATED_LIVE_IMAGE_MANIFEST } from "./generatedLiveImageManifest.js";
 import { GENERATED_IMAGE_MANIFEST } from "./generatedImageManifest.js";
 import { mapGeneratedAssetsToExperiences } from "../lib/imagePipeline/mapper.js";
 
@@ -406,7 +407,10 @@ const BASE_CONSUMER_EXPERIENCES = [
 
 const PROFILED_CONSUMER_EXPERIENCES = BASE_CONSUMER_EXPERIENCES.map(withFactoryWorldProfile);
 
-export const CONSUMER_EXPERIENCES = mapGeneratedAssetsToExperiences(PROFILED_CONSUMER_EXPERIENCES, GENERATED_IMAGE_MANIFEST);
+export const CONSUMER_EXPERIENCES = mapGeneratedAssetsToExperiences(
+  mapGeneratedAssetsToExperiences(PROFILED_CONSUMER_EXPERIENCES, GENERATED_IMAGE_MANIFEST),
+  GENERATED_LIVE_IMAGE_MANIFEST
+);
 
 export const CONSUMER_RAILS = [
   {
