@@ -102,3 +102,22 @@ test("mapper uses raster generated assets when they are available", () => {
   assert.equal(mapped.heroImage, "/images/generated/content/story-3/hero.jpg");
   assert.equal(mapped.thumbnailImage, "/images/generated/content/story-3/thumbnail.png");
 });
+
+test("mapper binds legacy live content IDs to approved generated-live assets", () => {
+  const mapped = mapGeneratedAssetsToExperience({
+    id: "story-3",
+    title: "10 Seconds",
+    image: "/images/stories/ten-seconds.jpg",
+  }, {
+    "world-01-the-weight-of-silence": {
+      poster: "/images/generated-live/movies/world-01-the-weight-of-silence/poster.jpg",
+      hero: "/images/generated-live/content/world-01-the-weight-of-silence/hero.jpg",
+      rail: "/images/generated-live/content/world-01-the-weight-of-silence/rail.jpg",
+    },
+  });
+
+  assert.equal(mapped.generatedAssetBindingId, "world-01-the-weight-of-silence");
+  assert.equal(mapped.image, "/images/generated-live/movies/world-01-the-weight-of-silence/poster.jpg");
+  assert.equal(mapped.heroImage, "/images/generated-live/content/world-01-the-weight-of-silence/hero.jpg");
+  assert.equal(mapped.thumbnailImage, "/images/generated-live/content/world-01-the-weight-of-silence/rail.jpg");
+});
