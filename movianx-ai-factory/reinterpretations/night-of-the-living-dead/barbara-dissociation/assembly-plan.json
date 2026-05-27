@@ -1,0 +1,56 @@
+{
+  "filmId": "night-of-the-living-dead-1968",
+  "createdAt": "2026-05-27T00:00:00.000Z",
+  "pathway": {
+    "id": "barbara-dissociation-proof-of-concept",
+    "label": "Barbara Dissociation Reinterpretation",
+    "objective": "Splice one emotionally reinterpreted 24-second segment back into the original timeline while preserving source rhythm and continuity.",
+    "segments": [
+      {
+        "type": "original",
+        "sceneIndex": 3,
+        "sourceFile": "source/notld-1968-scene03-prehead.webm",
+        "startTime": 708,
+        "endTime": 720,
+        "transitionIn": "cut",
+        "transitionOut": "cut"
+      },
+      {
+        "type": "reinterpretation",
+        "sceneIndex": 3,
+        "nodeId": "night-of-the-living-dead-1968:rnode:3:barbara-dissociation",
+        "sourceFile": "output/barbara-dissociation-reinterpretation.webm",
+        "startTime": 720,
+        "endTime": 744,
+        "transitionIn": "cut",
+        "transitionOut": "cut",
+        "continuityRequirement": "Generated clip must begin and end on the same frame timing as the source segment."
+      },
+      {
+        "type": "original",
+        "sceneIndex": 3,
+        "sourceFile": "source/notld-1968-scene03-tail.webm",
+        "startTime": 744,
+        "endTime": 756,
+        "transitionIn": "cut",
+        "transitionOut": "cut"
+      }
+    ]
+  },
+  "ffmpegAssemblyReference": [
+    "ffmpeg -y -i source/notld-1968-scene03-prehead.webm -i output/barbara-dissociation-reinterpretation.webm -i source/notld-1968-scene03-tail.webm -filter_complex \"[0:v][0:a][1:v][1:a][2:v][2:a]concat=n=3:v=1:a=1[v][a]\" -map \"[v]\" -map \"[a]\" output/barbara-dissociation-timeline-poc.webm"
+  ],
+  "outputTargets": {
+    "generatedReinterpretationClip": "output/barbara-dissociation-reinterpretation.webm",
+    "reintegratedTimelinePoc": "output/barbara-dissociation-timeline-poc.webm",
+    "sideBySideComparison": "output/barbara-dissociation-side-by-side.webm"
+  },
+  "blockedLocally": {
+    "reason": "This local environment has no ffmpeg binary, no checked-in original film clip, and no configured Kling/Runway/ComfyUI runtime credentials.",
+    "requiredToRender": [
+      "source/notld-1968-scene03-001200-001224.webm",
+      "Kling video-to-video or ComfyUI video workflow runtime",
+      "ffmpeg for reintegration and side-by-side assembly"
+    ]
+  }
+}

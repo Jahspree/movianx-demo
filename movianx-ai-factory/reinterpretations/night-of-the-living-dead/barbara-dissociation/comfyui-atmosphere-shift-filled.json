@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "title": "Night of the Living Dead - Barbara Dissociation Atmosphere Shift",
+    "description": "Filled Movianx atmosphere-shift workflow for a single video-to-video reinterpretation node. This workflow preserves source motion and uses low-strength atmospheric transformation only.",
+    "version": "1.0",
+    "sourceWorkflow": "engine/workflows/atmosphere-shift.json"
+  },
+  "inputs": {
+    "sourceClip": "movianx-ai-factory/reinterpretations/night-of-the-living-dead/barbara-dissociation/source/notld-1968-scene03-001200-001224.webm",
+    "nodeId": "night-of-the-living-dead-1968-rnode-3-barbara-dissociation",
+    "motionStrength": 0.24,
+    "fps": 24,
+    "targetDuration": 24,
+    "positivePrompt": "1960s high-contrast black-and-white independent horror realism, public-domain film reinterpretation through video-to-video, grounded farmhouse interior, Barbara in shock, psychologically dissociated, airless room, cold grey highlights, deep practical shadows, subtle dust in the light, restrained volumetric haze, documentary grain, orthochromatic texture, existential stillness, dread held behind the face, grief and isolation pressing into the frame, realistic film texture, natural skin, preserved performance, preserved composition, preserved blocking, preserved camera geometry, hidden emotional reality inside the original film.",
+    "negativePrompt": "new scene, new camera angle, new actor, changed face, changed lips, altered hands, extra characters, extra zombie, gore added, modern clothing, modern objects, color footage, glossy AI look, plastic skin, oversharpening, HDR effect, digital noise, hallucinated props, unstable motion, temporal flicker, surreal horror effect, jump scare, TikTok horror, expressionless wax face, excessive fog, fake film scratches, meme-like transformation, game cinematic, dramatic new lighting direction."
+  },
+  "nodes": {
+    "1": {
+      "class_type": "LoadVideo",
+      "inputs": {
+        "video": "movianx-ai-factory/reinterpretations/night-of-the-living-dead/barbara-dissociation/source/notld-1968-scene03-001200-001224.webm",
+        "force_rate": 24,
+        "force_size": "Disabled",
+        "frame_load_cap": 576
+      }
+    },
+    "2": {
+      "class_type": "ImageColorAdjust",
+      "inputs": {
+        "image": [
+          "1",
+          0
+        ],
+        "brightness": -0.1,
+        "contrast": 0.18,
+        "saturation": -0.2,
+        "sharpness": 0.04
+      }
+    },
+    "3": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "5",
+          1
+        ],
+        "text": "1960s high-contrast black-and-white independent horror realism, public-domain film reinterpretation through video-to-video, grounded farmhouse interior, Barbara in shock, psychologically dissociated, airless room, cold grey highlights, deep practical shadows, subtle dust in the light, restrained volumetric haze, documentary grain, orthochromatic texture, existential stillness, dread held behind the face, grief and isolation pressing into the frame, realistic film texture, natural skin, preserved performance, preserved composition, preserved blocking, preserved camera geometry, hidden emotional reality inside the original film, high contrast chiaroscuro lighting, expressionist shadow geometry, low-key cinematography"
+      }
+    },
+    "4": {
+      "class_type": "CLIPTextEncode",
+      "inputs": {
+        "clip": [
+          "5",
+          1
+        ],
+        "text": "new scene, new camera angle, new actor, changed face, changed lips, altered hands, extra characters, extra zombie, gore added, modern clothing, modern objects, color footage, glossy AI look, plastic skin, oversharpening, HDR effect, digital noise, hallucinated props, unstable motion, temporal flicker, surreal horror effect, jump scare, TikTok horror, expressionless wax face, excessive fog, fake film scratches, meme-like transformation, game cinematic, dramatic new lighting direction, bright ambient light, cheerful atmosphere, flat lighting"
+      }
+    },
+    "5": {
+      "class_type": "CheckpointLoaderSimple",
+      "inputs": {
+        "ckpt_name": "v2-1_768-ema-pruned.safetensors"
+      }
+    },
+    "6": {
+      "class_type": "VAEEncode",
+      "inputs": {
+        "pixels": [
+          "2",
+          0
+        ],
+        "vae": [
+          "5",
+          2
+        ]
+      }
+    },
+    "7": {
+      "class_type": "KSampler",
+      "inputs": {
+        "model": [
+          "5",
+          0
+        ],
+        "positive": [
+          "3",
+          0
+        ],
+        "negative": [
+          "4",
+          0
+        ],
+        "latent_image": [
+          "6",
+          0
+        ],
+        "seed": 1968003,
+        "steps": 22,
+        "cfg": 6.5,
+        "sampler_name": "dpmpp_2m",
+        "scheduler": "karras",
+        "denoise": 0.24
+      }
+    },
+    "8": {
+      "class_type": "VAEDecode",
+      "inputs": {
+        "samples": [
+          "7",
+          0
+        ],
+        "vae": [
+          "5",
+          2
+        ]
+      }
+    },
+    "9": {
+      "class_type": "GaussianVignette",
+      "inputs": {
+        "image": [
+          "8",
+          0
+        ],
+        "intensity": 0.26,
+        "radius": 0.74
+      }
+    },
+    "10": {
+      "class_type": "SaveAnimatedWEBP",
+      "inputs": {
+        "images": [
+          "9",
+          0
+        ],
+        "filename_prefix": "night-of-the-living-dead-1968-rnode-3-barbara-dissociation-atmo",
+        "fps": 24,
+        "lossless": false,
+        "quality": 92
+      }
+    }
+  }
+}

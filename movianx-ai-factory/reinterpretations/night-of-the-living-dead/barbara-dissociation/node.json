@@ -1,0 +1,64 @@
+{
+  "id": "night-of-the-living-dead-1968:rnode:3:barbara-dissociation",
+  "filmId": "night-of-the-living-dead-1968",
+  "filmTitle": "Night of the Living Dead",
+  "source": "editorial",
+  "type": "atmosphere",
+  "priority": "high",
+  "sceneIndex": 3,
+  "title": "Barbara Dissociation - Farmhouse Shock",
+  "selectedSequence": {
+    "sourceSceneId": "night-of-the-living-dead-1968:scene:3",
+    "startTime": 720,
+    "endTime": 744,
+    "duration": 24,
+    "startFrame": 17280,
+    "endFrame": 17856,
+    "fps": 24,
+    "selectionReason": "Barbara's farmhouse shock is the cleanest first proof node: close-up psychology, low movement, strong emotional reinterpretation potential, and minimal continuity risk."
+  },
+  "originalEmotion": {
+    "tension": 0.42,
+    "dread": 0.38,
+    "isolation": 0.6,
+    "grief": 0.2,
+    "wonder": 0.05,
+    "menace": 0.32,
+    "longing": 0.15,
+    "momentum": 0.3
+  },
+  "targetEmotion": {
+    "tension": 0.5,
+    "dread": 0.64,
+    "isolation": 0.86,
+    "grief": 0.36,
+    "wonder": 0.04,
+    "menace": 0.42,
+    "longing": 0.18,
+    "momentum": 0.18
+  },
+  "emotionalObjective": "Reframe Barbara's shock as dissociation: not louder terror, but the interior collapse after impossible violence. The original performance must remain visible underneath.",
+  "atmosphereObjective": "Make the farmhouse feel airless and psychologically distant: thicker shadow density, colder grey highlights, subtle dust/haze, slight environmental pressure around Barbara, and the sense that exterior sound has fallen away.",
+  "continuityNotes": [
+    "Preserve original shot pacing, blocking, camera geometry, and cut timing.",
+    "Do not change Barbara's facial identity, eye direction, mouth movement, or body position.",
+    "Do not add new characters, gore, modern objects, or stylized supernatural elements.",
+    "Maintain black-and-white 1968 independent film texture and practical-light realism.",
+    "Head and tail frames must match the original clip closely enough to splice back into the timeline without a visible continuity jump.",
+    "The original film must feel present underneath the reinterpretation."
+  ],
+  "audioContinuity": {
+    "preserveOriginal": true,
+    "enhancementAllowed": "very subtle room tone pressure only",
+    "avoid": [
+      "new score",
+      "jump scares",
+      "loud drone",
+      "obvious modern sound design",
+      "overdesigned breathing"
+    ]
+  },
+  "generationStatus": "packaged_for_external_v2v",
+  "generatedClipPath": "movianx-ai-factory/reinterpretations/night-of-the-living-dead/barbara-dissociation/output/barbara-dissociation-reinterpretation.webm",
+  "reviewNotes": null
+}

@@ -1,0 +1,57 @@
+{
+  "nodeId": "night-of-the-living-dead-1968:rnode:3:barbara-dissociation",
+  "version": "1.0",
+  "createdAt": "2026-05-27T00:00:00.000Z",
+  "sourceClip": {
+    "film": "Night of the Living Dead (1968)",
+    "rights": "public-domain",
+    "referenceUrl": "https://commons.wikimedia.org/wiki/File:Night_of_the_Living_Dead_(1968).webm",
+    "directTranscodeUrl": "https://upload.wikimedia.org/wikipedia/commons/transcoded/2/24/Night_of_the_Living_Dead_%281968%29.webm/Night_of_the_Living_Dead_%281968%29.webm.360p.webm",
+    "trim": {
+      "startTime": "00:12:00.000",
+      "endTime": "00:12:24.000",
+      "durationSeconds": 24,
+      "fps": 24
+    }
+  },
+  "sceneDescription": "1960s black-and-white American independent horror. Farmhouse interior. Tight psychological framing around Barbara after the cemetery attack. Dialogue and performance are present; the scene is still and stunned rather than action-driven.",
+  "emotionalObjective": "Reframe Barbara's shock as dissociation: quiet psychic collapse, dread arriving as distance, grief and isolation pressing into the room without changing the original performance.",
+  "atmosphereObjective": "Airless farmhouse interior, colder grey highlights, deeper practical shadows, subtle dust and haze, faint environmental pressure. The room should feel like it has stopped breathing.",
+  "continuityConstraints": [
+    "Use video-to-video only; do not create a new scene from text.",
+    "Preserve original frame count, fps, aspect ratio, shot order, camera movement, blocking, and cut timing.",
+    "Preserve Barbara's identity, face geometry, eye line, hands, posture, and mouth movement.",
+    "Do not add new subjects, extra zombies, new props, gore, modern objects, or fantasy visual effects.",
+    "Head frame and tail frame must match original continuity for reintegration.",
+    "Original soundtrack remains the base audio; optional enhancement must be nearly subliminal."
+  ],
+  "positivePrompt": "1960s high-contrast black-and-white independent horror realism, public-domain film reinterpretation through video-to-video, grounded farmhouse interior, Barbara in shock, psychologically dissociated, airless room, cold grey highlights, deep practical shadows, subtle dust in the light, restrained volumetric haze, documentary grain, orthochromatic texture, existential stillness, dread held behind the face, grief and isolation pressing into the frame, realistic film texture, natural skin, preserved performance, preserved composition, preserved blocking, preserved camera geometry, hidden emotional reality inside the original film.",
+  "negativePrompt": "new scene, new camera angle, new actor, changed face, changed lips, altered hands, extra characters, extra zombie, gore added, modern clothing, modern objects, color footage, glossy AI look, plastic skin, oversharpening, HDR effect, digital noise, hallucinated props, unstable motion, temporal flicker, surreal horror effect, jump scare, TikTok horror, expressionless wax face, excessive fog, fake film scratches, meme-like transformation, game cinematic, dramatic new lighting direction.",
+  "providerSettings": {
+    "preferred": {
+      "provider": "Kling",
+      "mode": "video-to-video",
+      "strength": 0.24,
+      "cfg": 6.5,
+      "durationSeconds": 24,
+      "fps": 24,
+      "motionPreservation": "high",
+      "identityPreservation": "high",
+      "cameraPreservation": "strict",
+      "output": "webm"
+    },
+    "secondary": {
+      "provider": "Runway Gen-4",
+      "mode": "video-to-video",
+      "strength": 0.2,
+      "motionBrush": "none",
+      "cameraMotion": "preserve",
+      "styleReference": "source clip only",
+      "output": "mp4"
+    }
+  },
+  "comfyWorkflow": "comfyui-atmosphere-shift-filled.json",
+  "motionStrength": 0.24,
+  "targetDuration": 24,
+  "estimatedCost": null
+}
