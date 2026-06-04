@@ -216,7 +216,7 @@ export default function SirensPage() {
         <video
           ref={videoRef}
           className="sx-video"
-          src="/images/sirens/sirens.mov"
+          src="/images/sirens/sirens.mp4"
           poster="/images/wraith/performance-red.png"
           loop
           playsInline

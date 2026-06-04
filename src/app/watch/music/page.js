@@ -169,7 +169,7 @@ function SirensPlayer() {
     <div style={{position:"relative",borderRadius:14,overflow:"hidden",background:"#0a0a0c",border:"1px solid rgba(255,255,255,0.1)",boxShadow:"0 16px 60px rgba(0,0,0,0.7)"}}>
       <video
         ref={videoRef}
-        src="/images/sirens/sirens.mov"
+        src="/images/sirens/sirens.mp4"
         poster="/images/wraith/performance-red.png"
         loop
         playsInline
