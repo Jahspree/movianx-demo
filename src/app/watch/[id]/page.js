@@ -199,14 +199,14 @@ export default function WatchDetailPage({ params }) {
           </div>
           <div className={styles.ctaRow}>
             {experience.contentFormat === "interactive_story" ? (
-              // Interactive stories: launch directly into the reading engine
-              // Extract numeric story ID: "story-3" → "3"
-              <Link
+              // Hard navigation forces full page reload so Movianx.jsx re-initialises
+              // with the correct launch params — soft Link nav skips the IIFE re-run.
+              <a
                 className={styles.primaryButton}
                 href={`/?launch=reading&story=${experience.id.replace(/\D/g, "")}&mode=Cinematic`}
               >
                 {primaryAction(experience)}
-              </Link>
+              </a>
             ) : (
               <Link
                 className={styles.primaryButton}

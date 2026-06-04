@@ -307,7 +307,7 @@ const musicPageCSS = `
   }
   .mx-music-hero-img{
     position:absolute;inset:0;
-    background-image:url(/images/wraith/hero-red.png);
+    background-image:url(/images/wraith/gucc1.png);
     background-size:cover;background-position:center top;
     transition:transform 600ms ease;
   }

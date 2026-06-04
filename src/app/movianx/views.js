@@ -506,8 +506,7 @@ const landingCinematicCSS = `
     .mx-rail{ display:flex;overflow-x:auto;gap:12px;padding-bottom:8px;scroll-snap-type:x proximity; }
     .mx-exp-card{ min-width:190px;scroll-snap-align:start; }
     .mx-btn-ghost{ display:none; }
-    .mx-teaser-video{ display:none; }
-    .mx-teaser-poster-fallback{ display:block; }
+    .mx-teaser{ display:none; }
     .mx-discover{ padding:48px 5% 36px; }
     .mx-featured{ padding:0 5% 64px; }
   }
@@ -543,10 +542,10 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
         <div className="mx-hero-left">
           <div className="mx-featured-eyebrow">
             <span className="mx-featured-eyebrow-dot" aria-hidden="true" />
-            Featured Experience
+            Interactive Entertainment
           </div>
-          <h1 className="mx-hero-film-title">Nosferatu</h1>
-          <p className="mx-hero-film-sub">Experience a classic reimagined.</p>
+          <h1 className="mx-hero-film-title">Movianx</h1>
+          <p className="mx-hero-film-sub">Now featuring: Nosferatu</p>
           <p className="mx-hero-copy">
             Movianx transforms films, stories, music, and creative works into interactive experiences through alternate paths, reimagined scenes, alternate endings, and entirely new possibilities.
           </p>
