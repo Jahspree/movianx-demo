@@ -15,8 +15,8 @@ const TIMED_HORROR_AUDIO = {
   assetVersion: "20260501-launch-audio-1",
   title: "10 Seconds",
   timeline: {
-    revealLeadRatio: 0.92,
-    minMsPerWord: 200,
+    revealLeadRatio: 0.72,
+    minMsPerWord: 220,
     choiceRevealBufferMs: 1200,
     promptToTimerBufferMs: 300,
     cinematicTimedChoiceDelayMs: 2000,
@@ -90,17 +90,16 @@ const TIMED_HORROR_AUDIO = {
       audioProfile: {
         musicLayer: { type: "procedural", sound: "drone", volume: 0.045, frequency: 38, waveform: "triangle", fadeIn: 0.8, label: "page1_low_tension_drone" },
         ambienceLayer: [
-          { type: "procedural", sound: "room_tone", volume: 0.012, frequency: 44, waveform: "sine", fadeIn: 0.4, label: "page1_room_air" },
-          { file: "/audio/sfx/electrical_hum.mp3", volume: 0.01, fadeIn: 1.2, label: "page1_distant_house_hum", layers: 1 },
+          { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 44, waveform: "sine", fadeIn: 0.4, label: "page1_room_air" },
         ],
         spatialEvents: [
           { sound: "/audio/sfx/floor_creak.mp3", startPosition: [-0.8, -0.2, -2.2], endPosition: [-0.3, -0.2, -1.4], movement: "approaching", duration: 1200, delay: 650, volume: 0.08, triggerTension: 0.08, label: "page1_first_distant_creak" },
         ],
       },
 
-      // ONE low drone underneath. Cinematic pulse. Clearly present but narrator dominant.
+      // ONE low drone underneath — thriller tension bed, narrator dominant.
       ambient: [
-        { type: "procedural", sound: "drone", volume: 0.06, frequency: 36, waveform: "sine", fadeIn: 3, label: "timed_ch0_drone" },
+        { type: "procedural", sound: "drone", volume: 0.052, frequency: 38, waveform: "triangle", fadeIn: 2, label: "timed_ch0_tension_bed" },
       ],
       environmentEvents: [
         { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -1, -6], endPosition: [0, -0.4, -1.2], movement: "approaching", duration: 5200, delay: 11500, volume: 0.18, triggerTension: 0.22, unsourced: true, voiceReaction: "Don't move. Don't even breathe.", label: "intruder footsteps approaching from downstairs" },
@@ -197,8 +196,7 @@ const TIMED_HORROR_AUDIO = {
       audioProfile: {
         musicLayer: { type: "procedural", sound: "drone", volume: 0.055, frequency: 34, waveform: "triangle", fadeIn: 0.7, label: "page2_tension_drone" },
         ambienceLayer: [
-          { type: "procedural", sound: "room_tone", volume: 0.01, frequency: 42, waveform: "sine", fadeIn: 0.6, label: "page2_hall_air" },
-          { file: "/audio/sfx/electrical_hum.mp3", volume: 0.008, fadeIn: 1.2, label: "page2_thin_hall_hum", layers: 1 },
+          { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 42, waveform: "sine", fadeIn: 0.6, label: "page2_hall_air" },
         ],
         spatialEvents: [
           { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -2, -6], endPosition: [0, -0.5, -2.5], movement: "approaching", duration: 2600, delay: 900, volume: 0.14, triggerTension: 0.12, label: "page2_stairs_begin" },
@@ -206,8 +204,8 @@ const TIMED_HORROR_AUDIO = {
       },
 
       ambient: [
-        { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
-        { file: "/audio/sfx/electrical_hum.mp3", volume: 0.015, fadeIn: 2, label: "timed_ch1_hall_hum" },
+        { type: "procedural", sound: "room_tone", volume: 0.006, frequency: 42, waveform: "sine", fadeIn: 1.5, label: "timed_ch1_room_tone" },
+        { type: "procedural", sound: "drone", volume: 0.048, frequency: 36, waveform: "triangle", fadeIn: 1.2, label: "timed_ch1_tension_bed" },
       ],
       environmentEvents: [
         { sound: "/audio/sfx/footsteps_stone.mp3", startPosition: [0, -2, -7], endPosition: [0, -0.3, -1], movement: "approaching", duration: 6500, delay: 2800, volume: 0.34, triggerTension: 0.28, unsourced: true, voiceReaction: "They're on the stairs.", label: "heavy footsteps climbing behind the wall" },

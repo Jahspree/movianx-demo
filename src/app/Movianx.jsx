@@ -674,28 +674,29 @@ export default function MovianxPlatform(){
   const VIEW_TRANSITION_MS=420;
   const VIEW_ENTER_BUFFER_MS=340;
   const initialLaunch=(()=>{
-    if(typeof window==="undefined")return {pg:"landing",sel:null,mode:"Reader"};
+    if(typeof window==="undefined")return {pg:"landing",sel:null,mode:"Reader",chIdx:0};
     const params=new URLSearchParams(window.location.search);
+    const launch=params.get("launch"); // "reading" | "detail"
     const storyId=Number(params.get("story"));
     const story=storyId?STORIES.find(item=>item.id===storyId):null;
-    if(story&&window.location.pathname==="/"){
-      window.location.replace(`/watch/story-${story.id}`);
-      return {pg:"landing",sel:null,mode:"Reader"};
-    }
-    if(!story)return {pg:"landing",sel:null,mode:"Reader"};
+    if(!story)return {pg:"landing",sel:null,mode:"Reader",chIdx:0};
     const requestedMode=params.get("mode");
-    return {
-      pg:"detail",
-      sel:story,
-      mode:story.immersions.includes(requestedMode)?requestedMode:"Immersive",
-    };
+    const resolvedMode=story.immersions.includes(requestedMode)?requestedMode:"Immersive";
+    const startChapter=Number(params.get("chapter"))||0;
+    if(launch==="reading"){
+      return {pg:"reading",sel:story,mode:resolvedMode,chIdx:startChapter};
+    }
+    // Legacy /?story=N URL (no launch=reading) — redirect to the proper Next.js detail page
+    // to prevent exposing the old SPA DetailView/LibraryView
+    window.location.replace(`/watch/story-${story.id}`);
+    return {pg:"landing",sel:null,mode:"Reader",chIdx:0};
   })();
   // === STATE ===
   const[pg,setPg]=useState(initialLaunch.pg);
   const[sel,setSel]=useState(initialLaunch.sel);
   const[mode,setMode]=useState(initialLaunch.mode);
   const[txt,setTxt]=useState("");
-  const[chIdx,setChIdx]=useState(0);
+  const[chIdx,setChIdx]=useState(initialLaunch.chIdx??0);
   const[choices,setChoices]=useState([]); // Branch memory engine
   const[showChoice,setShowChoice]=useState(false);
   const[timeRemaining,setTimeRemaining]=useState(null);
@@ -745,22 +746,10 @@ export default function MovianxPlatform(){
   useEffect(()=>{
     if(initialLaunchHandledRef.current||typeof window==="undefined")return;
     initialLaunchHandledRef.current=true;
-    const params=new URLSearchParams(window.location.search);
-    const storyId=Number(params.get("story"));
-    if(!storyId)return;
-    const story=STORIES.find(item=>item.id===storyId);
-    if(!story)return;
-    if(window.location.pathname==="/"){
-      window.location.replace(`/watch/story-${story.id}`);
-      return;
+    // Deep-link: if launched into reading via /?launch=reading&story=N, init audio
+    if(initialLaunch.pg==="reading"&&initialLaunch.sel){
+      if(audioEngine&&initialLaunch.mode!=="Reader")audioEngine.init();
     }
-    const requestedMode=params.get("mode");
-    setSel(story);
-    setMode(story.immersions.includes(requestedMode)?requestedMode:"Immersive");
-    setChIdx(0);
-    setChoices([]);
-    setShowChoice(false);
-    setPg("detail");
   },[]);
 
   // === BRANCH MEMORY ENGINE ===
@@ -1622,7 +1611,7 @@ export default function MovianxPlatform(){
         {/* Top Bar - Clean, no duplicate icons */}
         <div style={{position:"fixed",top:0,left:0,right:0,zIndex:100,background:`${currentTheme.bg}F0`,backdropFilter:"blur(12px)",borderBottom:`1px solid ${currentTheme.text}15`,padding:"12px 16px",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <button onClick={()=>navigateTo("detail")} style={{background:"transparent",border:"none",color:currentTheme.text,fontSize:13,cursor:"pointer",fontFamily:FF,opacity:0.7}}>← Back</button>
+            <button onClick={()=>{ window.location.href = sel ? `/watch/story-${sel.id}` : '/watch/stories'; }} style={{background:"transparent",border:"none",color:currentTheme.text,fontSize:13,cursor:"pointer",fontFamily:FF,opacity:0.7}}>← Back</button>
             <span style={{fontSize:12,color:`${currentTheme.text}40`}}>|</span>
             <span style={{fontSize:12,color:`${currentTheme.text}60`}}>{chIdx+1}/{chaps.length}</span>
             {getBranchLabel()&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:8,background:`${C.red}15`,color:C.red,fontWeight:600}}>{getBranchLabel()}</span>}

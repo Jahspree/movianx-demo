@@ -159,6 +159,18 @@
   text-decoration: none;
   font-size: 14px;
   font-weight: 650;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.nav a:hover {
+  color: #fff;
+}
+
+.nav a:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 .creatorButton,
@@ -208,6 +220,27 @@
 .posterCard:hover,
 .featureTile:hover {
   transform: translateY(-3px);
+}
+
+.creatorButton:focus-visible,
+.primaryButton:focus-visible,
+.secondaryButton:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+}
+
+.creatorButton,
+.primaryButton,
+.secondaryButton {
+  cursor: pointer;
+}
+
+.posterCard {
+  cursor: pointer;
+}
+
+.relatedCard {
+  cursor: pointer;
 }
 
 .hero {
@@ -1627,6 +1660,425 @@
   margin: 9px 0 0;
 }
 
+/* ─── UNIVERSAL NAV EXTENSIONS ───────────────────────────────────────── */
+.navLink {
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 180ms ease;
+}
+
+.navLink:hover {
+  color: #fff;
+}
+
+.navLink:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.navLogin {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.84);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 760;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms ease;
+}
+
+.navLogin:hover {
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.navLogin:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+}
+
+.navDivider {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.14);
+  flex-shrink: 0;
+}
+
+.navLinkActive {
+  color: #fff !important;
+  font-weight: 760;
+}
+
+/* ─── PLAYER CONTROLS ────────────────────────────────────────────────── */
+.playerControls {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 22px 22px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.playerPrimary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.playerPlayBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 14px 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(135deg, #a52121 0%, #741414 100%);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 760;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  box-shadow:
+    0 18px 52px rgba(139, 26, 26, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  white-space: nowrap;
+}
+
+.playerPlayBtn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 26px 68px rgba(139, 26, 26, 0.56),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.playerPlayBtn:active {
+  transform: translateY(0);
+}
+
+.playerPlayBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.7);
+  outline-offset: 3px;
+}
+
+.playerPlayIcon {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.playerContinueBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.09);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 15px;
+  font-weight: 650;
+  font-family: inherit;
+  cursor: pointer;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms ease;
+  white-space: nowrap;
+}
+
+.playerContinueBtn:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.playerContinueBtn:active {
+  transform: translateY(0);
+}
+
+.playerContinueBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+}
+
+.playerDivider {
+  width: 100%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 2px 0;
+}
+
+.playerTertiary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.playerLaneBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(255, 255, 255, 0.055);
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 13px;
+  font-weight: 650;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
+}
+
+.playerLaneBtn:hover {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.playerLaneBtn:active {
+  transform: translateY(0);
+}
+
+.playerLaneBtn:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+/* ─── EXPERIENCE MODE SELECTOR ───────────────────────────────────────── */
+.modeSelector {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 22px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  margin-bottom: 14px;
+}
+
+.modeSelectorLabel {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.4px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.modeSelectorBtns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modeBtn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.modeBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #fff;
+}
+
+.modeBtnActive {
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.13);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+/* ─── SUPPORT PANEL ──────────────────────────────────────────────────── */
+.supportPanel {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.085),
+    rgba(255, 255, 255, 0.035)
+  );
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.supportCard {
+  margin-top: 14px;
+}
+
+.supportTitle {
+  margin: 0 0 8px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 760;
+  line-height: 1.12;
+  letter-spacing: 0;
+}
+
+.supportDesc {
+  margin: 0 0 16px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13px;
+  line-height: 1.52;
+}
+
+.supportActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.supportCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(135deg, #a52121 0%, #741414 100%);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 760;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 14px 44px rgba(139, 26, 26, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  transition: transform 200ms ease, box-shadow 200ms ease;
+  white-space: nowrap;
+}
+
+.supportCta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 58px rgba(139, 26, 26, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.supportCta:active {
+  transform: translateY(0);
+}
+
+.supportCta:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.6);
+  outline-offset: 3px;
+}
+
+.supportSecondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 12px 20px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 14px;
+  font-weight: 650;
+  font-family: inherit;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 200ms ease, border-color 200ms ease, color 200ms ease, transform 200ms ease;
+  white-space: nowrap;
+}
+
+.supportSecondary:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.supportSecondary:active {
+  transform: translateY(0);
+}
+
+.supportSecondary:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 3px;
+}
+
+/* ─── DETAIL PANEL UPGRADES ──────────────────────────────────────────── */
+.detailPanel h1 {
+  margin: 12px 0 14px;
+  color: #fff;
+  font-size: clamp(22px, 3.2vw, 32px);
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.detailPanel p {
+  margin: 0 0 16px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+  line-height: 1.62;
+}
+
+.detailPanel .ecosystemHook {
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 13px;
+  font-style: italic;
+  margin-bottom: 18px;
+}
+
+/* ─── TOGGLE AFFORDANCE ──────────────────────────────────────────────── */
+.toggle {
+  cursor: default;
+}
+
+.toggle:hover {
+  background: rgba(0, 0, 0, 0.26);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
 @media (max-width: 900px) {
   .hero,
   .detailHero,
@@ -1674,7 +2126,9 @@
   }
 
   .brand span,
-  .nav a {
+  .navLink,
+  .navLogin,
+  .navDivider {
     display: none;
   }
 
@@ -1909,5 +2363,42 @@
   .playerStatus {
     flex-direction: column;
     gap: 6px;
+  }
+
+  .playerControls {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .playerPlayBtn {
+    width: 100%;
+    min-height: 50px;
+    font-size: 15px;
+  }
+
+  .playerContinueBtn {
+    flex: 1;
+    min-width: 0;
+    min-height: 50px;
+  }
+
+  .playerLaneBtn {
+    flex: 1 1 calc(50% - 4px);
+    min-height: 38px;
+    font-size: 12px;
+  }
+
+  .supportPanel {
+    padding: 16px;
+  }
+
+  .supportActions {
+    flex-direction: column;
+  }
+
+  .supportCta,
+  .supportSecondary {
+    width: 100%;
+    justify-content: center;
   }
 }

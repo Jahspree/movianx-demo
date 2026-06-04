@@ -7,6 +7,7 @@ import {
   getFallbackRecommendations,
   getMoreFromCreator,
 } from "../../../data/consumerExperiences";
+import ExperienceModeSelector from "../ExperienceModeSelector";
 
 export function generateStaticParams() {
   return CONSUMER_EXPERIENCES.map((experience) => ({ id: experience.id }));
@@ -16,9 +17,7 @@ export function generateMetadata({ params }) {
   const experience = getConsumerExperience(params.id);
 
   if (!experience) {
-    return {
-      title: "Experience Not Found — Movianx",
-    };
+    return { title: "Experience Not Found — Movianx" };
   }
 
   return {
@@ -63,7 +62,6 @@ function atmosphericHook(experience) {
   if (ATMOSPHERIC_HOOKS[experience.title]) {
     return ATMOSPHERIC_HOOKS[experience.title];
   }
-
   const source = experience.hook || experience.synopsis || experience.genre || "Enter quietly.";
   return source.split(/[.!?]/).find(Boolean)?.trim() || source;
 }
@@ -76,6 +74,33 @@ function readableTag(tag) {
     .replace(/\s+/g, " ")
     .trim()
     .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+/** Primary play action label by content type */
+function primaryAction(experience) {
+  if (experience.contentFormat === "interactive_story") return "Play Story";
+  if (experience.mediaType === "Music Experience") return "Play Experience";
+  return "Watch Movie";
+}
+
+function previewMood(experience) {
+  if (experience.contentFormat === "interactive_story") return "Interactive launch";
+  if (experience.mediaType === "Music Experience") return "Spatial listening preview";
+  if (experience.contentFormat === "creator_spotlight") return "Creator world preview";
+  return "Cinematic preview";
+}
+
+function creatorLanes(experience) {
+  if (experience.contentFormat === "creator_spotlight") {
+    return ["Films", "Worlds", "Soundscapes", "Collections"];
+  }
+  if (experience.mediaType === "Music Experience") {
+    return ["Soundscapes", "Visuals", "Albums", "Collections"];
+  }
+  if (experience.contentFormat === "interactive_story") {
+    return ["Chapters", "Alternate Endings", "Worlds", "Collections"];
+  }
+  return ["Episodes", "Alternate Endings", "Worlds", "Collections"];
 }
 
 function ExperienceCard({ experience }) {
@@ -92,7 +117,6 @@ function ExperienceCard({ experience }) {
 
 function CuratedRail({ title, description, items }) {
   if (!items.length) return null;
-
   return (
     <section className={styles.curatedSection}>
       <div className={styles.curatedHeader}>
@@ -110,38 +134,6 @@ function CuratedRail({ title, description, items }) {
   );
 }
 
-function creatorLanes(experience) {
-  if (experience.contentFormat === "creator_spotlight") {
-    return ["Films", "Worlds", "Soundscapes", "Collections"];
-  }
-
-  if (experience.mediaType === "Music Experience") {
-    return ["Soundscapes", "Visuals", "Albums", "Collections"];
-  }
-
-  if (experience.contentFormat === "interactive_story") {
-    return ["Stories", "Chapters", "Worlds", "Collections"];
-  }
-
-  return ["Films", "Series", "Worlds", "Collections"];
-}
-
-function previewMood(experience) {
-  if (experience.contentFormat === "interactive_story") {
-    return "Interactive launch";
-  }
-
-  if (experience.mediaType === "Music Experience") {
-    return "Spatial listening preview";
-  }
-
-  if (experience.contentFormat === "creator_spotlight") {
-    return "Creator world preview";
-  }
-
-  return "Cinematic preview";
-}
-
 export default function WatchDetailPage({ params }) {
   const experience = getConsumerExperience(params.id);
 
@@ -151,35 +143,46 @@ export default function WatchDetailPage({ params }) {
 
   const moreFromCreator = getMoreFromCreator(experience);
   const moreLikeThis = getFallbackRecommendations(experience);
-  const visibleTags = [
+
+  // Deduplicated tags — merge all tag arrays, dedupe, transform, cap at 5
+  const rawTags = [
     experience.genre,
     ...(experience.discoveryTags || []),
     ...(experience.moodTags || []),
     ...(experience.styleTags || []),
-  ].filter(Boolean).map(readableTag).slice(0, 4);
+  ].filter(Boolean).map(readableTag);
+  const visibleTags = [...new Set(rawTags)].slice(0, 5);
+
   const moodLine = readableTag(experience.moodTags?.[0] || experience.genre || "");
+  const lanes = creatorLanes(experience);
 
   return (
     <main className={styles.watchShell} style={posterStyle(experience, "hero")}>
       <div className={styles.watchBackground} />
+
+      {/* ── UNIVERSAL HEADER ─────────────────────────────────── */}
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/">
           <img src="/movianx-logo.png" alt="Movianx" />
           <span>Movianx</span>
         </Link>
-        <nav className={styles.nav} aria-label="Watch navigation">
-          <Link href="/watch">Browse</Link>
-          <Link href="/dashboard/welcome">Creator Login</Link>
-          <Link className={styles.creatorButton} href="/watch">Explore</Link>
+        <nav className={styles.nav} aria-label="Main navigation">
+          <Link href="/watch" className={styles.navLink}>Explore</Link>
+          <Link href="/watch/movies" className={styles.navLink}>Movies</Link>
+          <Link href="/watch/stories" className={styles.navLink}>Stories</Link>
+          <Link href="/watch/music" className={styles.navLink}>Music</Link>
+          <span className={styles.navDivider} aria-hidden="true" />
+          <Link href="/dashboard/welcome" className={styles.navLink}>Creator Ecosystem</Link>
+          <Link href="/dashboard/welcome" className={styles.navLogin}>Login</Link>
+          <Link className={styles.creatorButton} href="/watch#early-access">Join Waitlist</Link>
         </nav>
       </header>
 
+      {/* ── HERO ─────────────────────────────────────────────── */}
       <section className={styles.detailHero}>
         <div className={styles.detailBackdrop} />
         <div className={styles.detailAtmosphere} aria-hidden="true">
-          <span />
-          <span />
-          <span />
+          <span /><span /><span />
         </div>
         <div className={styles.detailHeroContent}>
           <span className={styles.badge}>{experience.mediaType}</span>
@@ -195,10 +198,30 @@ export default function WatchDetailPage({ params }) {
             ))}
           </div>
           <div className={styles.ctaRow}>
-            <Link className={styles.primaryButton} href={experience.launchHref || "#player"} scroll>
-              {experience.contentFormat === "interactive_story" ? "Launch Story" : "Watch Preview"}
+            {experience.contentFormat === "interactive_story" ? (
+              // Interactive stories: launch directly into the reading engine
+              // Extract numeric story ID: "story-3" → "3"
+              <Link
+                className={styles.primaryButton}
+                href={`/?launch=reading&story=${experience.id.replace(/\D/g, "")}&mode=Cinematic`}
+              >
+                {primaryAction(experience)}
+              </Link>
+            ) : (
+              <Link
+                className={styles.primaryButton}
+                href={experience.launchHref || "#player"}
+                scroll
+              >
+                {primaryAction(experience)}
+              </Link>
+            )}
+            <Link
+              className={styles.secondaryButton}
+              href={experience.contentFormat === "interactive_story" ? "/watch/stories" : "/watch"}
+            >
+              Back to Library
             </Link>
-            <Link className={styles.secondaryButton} href="/watch">Back to Library</Link>
           </div>
         </div>
         <div className={styles.detailHeroPoster}>
@@ -215,29 +238,103 @@ export default function WatchDetailPage({ params }) {
         </div>
       </section>
 
+      {/* ── WATCH LAYOUT ─────────────────────────────────────── */}
       <section className={styles.watchLayout}>
+
+        {/* LEFT COLUMN — player + panels */}
         <div>
-          <div id="player" className={styles.videoFrame}>
-            <div className={styles.previewAtmosphere} aria-hidden="true">
-              <span />
-              <span />
-              <span />
+          {/* ── PLAYER FRAME ─────────────────────────────────── */}
+          {experience.videoEmbedUrl ? (
+            /* Real video embed for public-domain films */
+            <div id="player" className={styles.videoFrame} style={{ padding: 0, background: "#000" }}>
+              <iframe
+                src={experience.videoEmbedUrl}
+                title={experience.title}
+                allowFullScreen
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", borderRadius: "inherit" }}
+                allow="fullscreen"
+              />
             </div>
-            <div className={styles.playGlyph} aria-hidden="true">
-              <span>▶</span>
+          ) : experience.contentFormat === "music_experience" ? (
+            /* Music experience — honest coming-soon state */
+            <div id="player" className={styles.videoFrame}>
+              <div className={styles.previewAtmosphere} aria-hidden="true">
+                <span /><span /><span />
+              </div>
+              <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 14, zIndex: 2, padding: 32, textAlign: "center" }}>
+                <div style={{ fontSize: 36, opacity: 0.4 }}>♫</div>
+                <p style={{ color: "#fff", fontSize: 15, fontWeight: 600, margin: 0 }}>Audio Experience In Production</p>
+                <p style={{ color: "rgba(255,255,255,0.45)", fontSize: 13, margin: 0, maxWidth: 280, lineHeight: 1.6 }}>
+                  {experience.title} is being mastered for spatial audio. Check back soon.
+                </p>
+              </div>
             </div>
-            <div className={styles.previewMeta}>
-              <span>{previewMood(experience)}</span>
-              <strong>{experience.title}</strong>
+          ) : (
+            /* Decorative preview shell for other content */
+            <div id="player" className={styles.videoFrame}>
+              <div className={styles.previewAtmosphere} aria-hidden="true">
+                <span /><span /><span />
+              </div>
+              <div className={styles.playGlyph} aria-hidden="true">
+                <span>▶</span>
+              </div>
+              <div className={styles.previewMeta}>
+                <span>{previewMood(experience)}</span>
+                <strong>{experience.title}</strong>
+              </div>
+              <div className={styles.playerStatus}>
+                <span>Preview ready</span>
+              </div>
+              <div className={styles.previewTimeline} aria-hidden="true">
+                <span />
+              </div>
             </div>
-            <div className={styles.playerStatus}>
-              <span>Preview ready</span>
+          )}
+
+          {/* ── PLAYER CONTROLS ─────────────────────────────── */}
+          {experience.contentFormat === "interactive_story" ? (
+            <ExperienceModeSelector
+              experienceId={experience.id}
+              primaryLabel={primaryAction(experience)}
+            />
+          ) : experience.contentFormat === "music_experience" ? (
+            /* No fake controls for music — coming soon */
+            <div className={styles.playerControls} style={{ opacity: 0.45, pointerEvents: "none", userSelect: "none" }}>
+              <div className={styles.playerPrimary}>
+                <span className={styles.playerPlayBtn} style={{ display: "inline-flex", alignItems: "center", gap: 10, cursor: "default" }}>
+                  <span className={styles.playerPlayIcon} aria-hidden="true">♫</span>
+                  Audio Coming Soon
+                </span>
+              </div>
             </div>
-            <div className={styles.previewTimeline} aria-hidden="true">
-              <span />
+          ) : (
+            <div className={styles.playerControls}>
+              <div className={styles.playerPrimary}>
+                <Link
+                  href={experience.launchHref || "#player"}
+                  className={styles.playerPlayBtn}
+                  scroll
+                >
+                  <span className={styles.playerPlayIcon} aria-hidden="true">▶</span>
+                  {primaryAction(experience)}
+                </Link>
+                <button type="button" className={styles.playerContinueBtn}>
+                  Continue
+                </button>
+              </div>
+              <div className={styles.playerDivider} aria-hidden="true" />
+              <div className={styles.playerTertiary}>
+                {lanes.map((lane) => (
+                  <button type="button" key={lane} className={styles.playerLaneBtn}>
+                    {lane}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
-          <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
+          )}
+
+          {/* AI Enhancement Panel */}
+          <div className={styles.enhancementPanel} style={{ marginTop: 28 }}>
             <div className={styles.kicker}>AI enhancement layer</div>
             <h2 className={styles.panelTitle}>Cinematic enhancement profile</h2>
             <div className={styles.featureGrid}>
@@ -254,6 +351,7 @@ export default function WatchDetailPage({ params }) {
             </div>
           </div>
 
+          {/* Series / Standalone Panel */}
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
             <div className={styles.kicker}>Series Experience</div>
             <div className={styles.seriesBox}>
@@ -273,20 +371,31 @@ export default function WatchDetailPage({ params }) {
           </div>
         </div>
 
+        {/* RIGHT COLUMN — detail sidebar */}
         <aside className={styles.detailPanel}>
           <span className={styles.badge}>{experience.sourceType}</span>
-          <h1>{experience.title}</h1>
+
+          {/* Title — use h2 here since h1 is in the hero above */}
+          <h2 style={{ margin: "12px 0 10px", color: "#fff", fontSize: "clamp(20px,2.8vw,28px)", lineHeight: 1.1, letterSpacing: 0 }}>
+            {experience.title}
+          </h2>
+
           <div className={styles.metaLine} style={{ marginTop: 0 }}>
             <span>{experience.year}</span>
             <span>{experience.genre}</span>
             <span>{experience.runtime}</span>
             <span>{experience.language}</span>
           </div>
-          <p>{experience.synopsis}</p>
+
+          <p style={{ marginBottom: 16, color: "rgba(255,255,255,0.68)", fontSize: 14, lineHeight: 1.62 }}>
+            {experience.synopsis}
+          </p>
+
           {experience.ecosystemHook && (
             <p className={styles.ecosystemHook}>{experience.ecosystemHook}</p>
           )}
 
+          {/* Creator Profile Card */}
           <div className={styles.creatorProfileCard}>
             <div className={styles.creatorIdentityHeader}>
               <span className={styles.creatorAvatar} aria-hidden="true">
@@ -294,8 +403,12 @@ export default function WatchDetailPage({ params }) {
               </span>
               <span className={styles.kicker}>Creator world</span>
             </div>
-            <h2>{experience.creator}</h2>
-            <p>{experience.atmosphereProfile || experience.teamLabel || "Creator-led immersive media world."}</p>
+            <h3 style={{ margin: "0 0 6px", color: "#fff", fontSize: 18, fontWeight: 760 }}>
+              {experience.creator}
+            </h3>
+            <p style={{ margin: "0 0 14px", color: "rgba(255,255,255,0.56)", fontSize: 13, lineHeight: 1.45 }}>
+              {experience.atmosphereProfile || experience.teamLabel || "Creator-led immersive media world."}
+            </p>
             <div className={styles.creatorLanes}>
               {creatorLanes(experience).map((lane) => (
                 <span key={lane}>{lane}</span>
@@ -303,6 +416,7 @@ export default function WatchDetailPage({ params }) {
             </div>
           </div>
 
+          {/* Experience toggles */}
           <div className={styles.toggleRow} aria-label="Experience controls">
             <div className={styles.toggle}>
               <span>Immersive Audio</span>
@@ -322,17 +436,39 @@ export default function WatchDetailPage({ params }) {
             </div>
           </div>
 
-          <div className={styles.merchPanel}>
-            <span className={styles.kicker}>Fan support</span>
+          {/* ── SUPPORT PANEL — premium Apple-style CTAs ─────── */}
+          <div className={styles.supportPanel}>
+            <span className={styles.kicker}>Fan Support</span>
             {(experience.merchCollections || []).slice(0, 1).map((collection) => (
-              <div key={collection.title}>
-                <h2>{collection.title}</h2>
-                <p>{collection.description}</p>
-                <span>{collection.label}</span>
+              <div key={collection.title} className={styles.supportCard}>
+                <h3 className={styles.supportTitle}>{collection.title}</h3>
+                <p className={styles.supportDesc}>{collection.description}</p>
+                <div className={styles.supportActions}>
+                  <button type="button" className={styles.supportCta}>
+                    {collection.label || "Support Creator"}
+                  </button>
+                  <button type="button" className={styles.supportSecondary}>
+                    View Collection
+                  </button>
+                </div>
               </div>
             ))}
+            {(!experience.merchCollections || !experience.merchCollections.length) && (
+              <div className={styles.supportCard}>
+                <h3 className={styles.supportTitle}>Support this creator</h3>
+                <p className={styles.supportDesc}>
+                  Help fund more immersive experiences from this world.
+                </p>
+                <div className={styles.supportActions}>
+                  <button type="button" className={styles.supportCta}>
+                    Support Creator
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Rights */}
           <details className={styles.rightsNote}>
             <summary>Rights and availability</summary>
             <p>
@@ -343,6 +479,7 @@ export default function WatchDetailPage({ params }) {
         </aside>
       </section>
 
+      {/* ── CURATED RAILS ────────────────────────────────────── */}
       <div className={styles.detailRails}>
         <CuratedRail
           title="More From The Creator"

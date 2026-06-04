@@ -387,9 +387,14 @@ export default function WatchExperiencePage({ zone = "explore" }) {
           <img src="/movianx-logo.png" alt="Movianx" />
           <span>Movianx</span>
         </Link>
-        <nav className={styles.nav} aria-label="Watch navigation">
-          <Link href="/">Home</Link>
-          <Link href="/dashboard/welcome">Creator Login</Link>
+        <nav className={styles.nav} aria-label="Main navigation">
+          <Link href="/watch" className={`${styles.navLink}${activeZone === "explore" ? ` ${styles.navLinkActive}` : ""}`}>Explore</Link>
+          <Link href="/watch/movies" className={`${styles.navLink}${activeZone === "movies" ? ` ${styles.navLinkActive}` : ""}`}>Movies</Link>
+          <Link href="/watch/stories" className={`${styles.navLink}${activeZone === "stories" ? ` ${styles.navLinkActive}` : ""}`}>Stories</Link>
+          <Link href="/watch/music" className={`${styles.navLink}${activeZone === "music" ? ` ${styles.navLinkActive}` : ""}`}>Music</Link>
+          <span className={styles.navDivider} aria-hidden="true" />
+          <Link href="/dashboard/welcome" className={styles.navLink}>Creator Ecosystem</Link>
+          <Link href="/dashboard/welcome" className={styles.navLogin}>Login</Link>
           <Link className={styles.creatorButton} href="#early-access">Join Waitlist</Link>
         </nav>
       </header>
