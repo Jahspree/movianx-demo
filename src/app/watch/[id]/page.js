@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "../watch.module.css";
+import ExperienceModeSelector from "../ExperienceModeSelector";
 import {
   CONSUMER_EXPERIENCES,
   getConsumerExperience,
@@ -142,6 +143,37 @@ function previewMood(experience) {
   return "Cinematic preview";
 }
 
+function storyEngineHref(experience, mode = "Cinematic") {
+  const storyId = String(experience.id || "").replace(/\D/g, "");
+  if (!storyId) return "#player";
+
+  const params = new URLSearchParams({
+    launch: "reading",
+    story: storyId,
+    mode,
+  });
+
+  return `/?${params.toString()}`;
+}
+
+function primaryActionFor(experience) {
+  if (experience.contentFormat === "interactive_story") {
+    return {
+      href: storyEngineHref(experience, "Cinematic"),
+      label: "Play Story",
+    };
+  }
+
+  if (experience.mediaType === "Music Experience") {
+    return null;
+  }
+
+  return {
+    href: experience.videoEmbedUrl ? "#player" : experience.launchHref || "#player",
+    label: "Watch Movie",
+  };
+}
+
 export default function WatchDetailPage({ params }) {
   const experience = getConsumerExperience(params.id);
 
@@ -158,6 +190,7 @@ export default function WatchDetailPage({ params }) {
     ...(experience.styleTags || []),
   ].filter(Boolean).map(readableTag).slice(0, 4);
   const moodLine = readableTag(experience.moodTags?.[0] || experience.genre || "");
+  const primaryAction = primaryActionFor(experience);
 
   return (
     <main className={styles.watchShell} style={posterStyle(experience, "hero")}>
@@ -195,9 +228,11 @@ export default function WatchDetailPage({ params }) {
             ))}
           </div>
           <div className={styles.ctaRow}>
-            <Link className={styles.primaryButton} href={experience.launchHref || "#player"} scroll>
-              {experience.contentFormat === "interactive_story" ? "Launch Story" : "Watch Preview"}
-            </Link>
+            {primaryAction && (
+              <Link className={styles.primaryButton} href={primaryAction.href} scroll>
+                {primaryAction.label}
+              </Link>
+            )}
             <Link className={styles.secondaryButton} href="/watch">Back to Library</Link>
           </div>
         </div>
@@ -217,26 +252,50 @@ export default function WatchDetailPage({ params }) {
 
       <section className={styles.watchLayout}>
         <div>
-          <div id="player" className={styles.videoFrame}>
-            <div className={styles.previewAtmosphere} aria-hidden="true">
-              <span />
-              <span />
-              <span />
+          {experience.contentFormat === "interactive_story" ? (
+            <ExperienceModeSelector experienceId={experience.id} primaryLabel="Play Story" />
+          ) : experience.videoEmbedUrl ? (
+            <div id="player" className={`${styles.videoFrame} ${styles.embedFrame}`}>
+              <iframe
+                className={styles.videoEmbed}
+                src={experience.videoEmbedUrl}
+                title={`${experience.title} playback`}
+                allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+                allowFullScreen
+              />
             </div>
-            <div className={styles.playGlyph} aria-hidden="true">
-              <span>▶</span>
+          ) : experience.mediaType === "Music Experience" ? (
+            <div id="player" className={styles.videoFrame}>
+              <div className={styles.musicProductionState}>
+                <div>
+                  <span>{previewMood(experience)}</span>
+                  <strong>Audio Experience In Production</strong>
+                  <p>{experience.hook || "A spatial listening world is being prepared for release."}</p>
+                </div>
+              </div>
             </div>
-            <div className={styles.previewMeta}>
-              <span>{previewMood(experience)}</span>
-              <strong>{experience.title}</strong>
+          ) : (
+            <div id="player" className={styles.videoFrame}>
+              <div className={styles.previewAtmosphere} aria-hidden="true">
+                <span />
+                <span />
+                <span />
+              </div>
+              <div className={styles.playGlyph} aria-hidden="true">
+                <span>▶</span>
+              </div>
+              <div className={styles.previewMeta}>
+                <span>{previewMood(experience)}</span>
+                <strong>{experience.title}</strong>
+              </div>
+              <div className={styles.playerStatus}>
+                <span>Preview ready</span>
+              </div>
+              <div className={styles.previewTimeline} aria-hidden="true">
+                <span />
+              </div>
             </div>
-            <div className={styles.playerStatus}>
-              <span>Preview ready</span>
-            </div>
-            <div className={styles.previewTimeline} aria-hidden="true">
-              <span />
-            </div>
-          </div>
+          )}
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
             <div className={styles.kicker}>AI enhancement layer</div>
             <h2 className={styles.panelTitle}>Cinematic enhancement profile</h2>

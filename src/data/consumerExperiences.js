@@ -397,6 +397,7 @@ const BASE_CONSUMER_EXPERIENCES = [
       },
     ],
     image: movie.image || MOVIE_IMAGES[movie.id] || `${MOVIE_IMAGE}night-of-the-living-dead.jpg`,
+    videoEmbedUrl: movie.videoEmbedUrl,
     mediaType: "Film Experience",
     href: `/watch/${movie.id}`,
     launchHref: `/watch/${movie.id}#player`,

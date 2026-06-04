@@ -52,6 +52,7 @@ export const MOVIE_EXPERIENCES = [
     tags: ["Expressionist", "Silent Cinema", "Shadow Mapping"],
     moodTags: ["dread", "uncanny", "supernatural"],
     styleTags: ["gothic", "expressionist", "silent cinema"],
+    videoEmbedUrl: "https://archive.org/embed/Nosferatu1922",
     enhancements: [
       "Adaptive score staging",
       "AI shot rhythm analysis",

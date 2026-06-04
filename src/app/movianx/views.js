@@ -25,7 +25,7 @@ function openCreatorDashboard() {
 }
 
 function openConsumerLogin() {
-  window.location.href = "/watch";
+  window.location.href = "/login";
 }
 
 function openWatchLibrary() {

@@ -674,20 +674,32 @@ export default function MovianxPlatform(){
   const VIEW_TRANSITION_MS=420;
   const VIEW_ENTER_BUFFER_MS=340;
   const initialLaunch=(()=>{
-    if(typeof window==="undefined")return {pg:"landing",sel:null,mode:"Reader"};
+    if(typeof window==="undefined")return {pg:"landing",sel:null,mode:"Reader",chIdx:0};
     const params=new URLSearchParams(window.location.search);
     const storyId=Number(params.get("story"));
     const story=storyId?STORIES.find(item=>item.id===storyId):null;
+    if(!story)return {pg:"landing",sel:null,mode:"Reader",chIdx:0};
+    const requestedMode=params.get("mode");
+    const resolvedMode=story.immersions.includes(requestedMode)?requestedMode:"Immersive";
+    const launch=params.get("launch");
+    const requestedChapter=Number(params.get("chapter"));
+    if(launch==="reading"){
+      return {
+        pg:"reading",
+        sel:story,
+        mode:resolvedMode,
+        chIdx:Number.isFinite(requestedChapter)&&requestedChapter>=0?requestedChapter:0,
+      };
+    }
     if(story&&window.location.pathname==="/"){
       window.location.replace(`/watch/story-${story.id}`);
-      return {pg:"landing",sel:null,mode:"Reader"};
+      return {pg:"landing",sel:null,mode:"Reader",chIdx:0};
     }
-    if(!story)return {pg:"landing",sel:null,mode:"Reader"};
-    const requestedMode=params.get("mode");
     return {
       pg:"detail",
       sel:story,
-      mode:story.immersions.includes(requestedMode)?requestedMode:"Immersive",
+      mode:resolvedMode,
+      chIdx:0,
     };
   })();
   // === STATE ===
@@ -695,7 +707,7 @@ export default function MovianxPlatform(){
   const[sel,setSel]=useState(initialLaunch.sel);
   const[mode,setMode]=useState(initialLaunch.mode);
   const[txt,setTxt]=useState("");
-  const[chIdx,setChIdx]=useState(0);
+  const[chIdx,setChIdx]=useState(initialLaunch.chIdx||0);
   const[choices,setChoices]=useState([]); // Branch memory engine
   const[showChoice,setShowChoice]=useState(false);
   const[timeRemaining,setTimeRemaining]=useState(null);
@@ -745,6 +757,10 @@ export default function MovianxPlatform(){
   useEffect(()=>{
     if(initialLaunchHandledRef.current||typeof window==="undefined")return;
     initialLaunchHandledRef.current=true;
+    if(initialLaunch.pg==="reading"&&initialLaunch.sel){
+      if(audioEngine&&initialLaunch.mode!=="Reader")audioEngine.init();
+      return;
+    }
     const params=new URLSearchParams(window.location.search);
     const storyId=Number(params.get("story"));
     if(!storyId)return;
@@ -1281,7 +1297,7 @@ export default function MovianxPlatform(){
     const stabilizeRootShell=()=>{
       const params=new URLSearchParams(window.location.search);
       const storyId=Number(params.get("story"));
-      if(storyId&&window.location.pathname==="/"){
+      if(storyId&&params.get("launch")!=="reading"&&window.location.pathname==="/"){
         window.location.replace(`/watch/story-${storyId}`);
         return;
       }
