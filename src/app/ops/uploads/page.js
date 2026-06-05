@@ -19,8 +19,10 @@ export default async function CreatorUploadReviewPage() {
 
   const auth = authenticateOpsRequest(requestHeaders);
   if (!auth.ok) notFound();
+  if (auth.role !== "admin") notFound();
 
-  const uploads = await listCreatorUploadRecords();
+  const uploads = (await listCreatorUploadRecords())
+    .filter(upload => ["under_review", "flagged"].includes(upload.status));
   const persistence = getUploadPersistenceMode();
 
   return (
@@ -31,8 +33,8 @@ export default async function CreatorUploadReviewPage() {
             <div className={styles.eyebrow}>Movianx internal operations</div>
             <h1>Creator Intake Review</h1>
             <p>
-              Review private creator uploads, verify processing state, and move titles through approval
-              without exposing unfinished content publicly.
+              Moderate private creator uploads awaiting review. Approve, reject, or flag titles without
+              exposing unfinished content publicly.
             </p>
           </div>
           <aside className={styles.statusCard}>
@@ -41,7 +43,7 @@ export default async function CreatorUploadReviewPage() {
               <span>{persistence === "supabase" ? "Supabase records active" : "Supabase not configured"}</span>
               <span className={persistence === "supabase" ? styles.healthy : styles.warning}>{persistence}</span>
             </div>
-            <p className={styles.muted}>Role: {auth.role} · <Link href="/ops">Operations metrics</Link></p>
+            <p className={styles.muted}>Administrator only · <Link href="/ops">Operations metrics</Link></p>
           </aside>
         </header>
 
@@ -49,8 +51,8 @@ export default async function CreatorUploadReviewPage() {
           <section className={`${styles.panel} ${styles.wide}`}>
             <div className={styles.panelHeader}>
               <div>
-                <h2>Upload queue</h2>
-                <p>Allowed flow: Uploaded → Processing → Under Review → Approved → Published or Rejected.</p>
+                <h2>Awaiting review</h2>
+                <p>Moderation actions and review notes are stored in the upload audit log.</p>
               </div>
             </div>
             {!uploads.length ? (
@@ -61,11 +63,13 @@ export default async function CreatorUploadReviewPage() {
                   <article className={styles.row} key={upload.id}>
                     <div className={styles.rowTitle}>
                       <strong>{upload.title}</strong>
-                      <span>{upload.creatorId} · {upload.genre || "genre pending"} · {upload.assets.length} assets</span>
+                      <span>Creator: {upload.creatorId}</span>
+                      <span>Upload date: {formatDate(upload.createdAt)} · Status: {formatStatus(upload.status)}</span>
                       <span>{upload.description || "Description pending."}</span>
+                      <span>Review notes: {upload.reviewNotes || "None yet."}</span>
                       <span>{upload.assets.map(asset => asset.assetType).join(" · ")}</span>
                     </div>
-                    <ReviewActions id={upload.id} currentStatus={upload.status} />
+                    <ReviewActions id={upload.id} currentStatus={upload.status} currentNotes={upload.reviewNotes || ""} />
                   </article>
                 ))}
               </div>
@@ -75,4 +79,19 @@ export default async function CreatorUploadReviewPage() {
       </div>
     </main>
   );
+}
+
+function formatDate(value) {
+  if (!value) return "Pending";
+  return new Date(value).toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+function formatStatus(value = "") {
+  return value.replaceAll("_", " ").replace(/\b\w/g, char => char.toUpperCase());
 }

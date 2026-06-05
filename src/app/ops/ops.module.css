@@ -266,6 +266,26 @@
   min-width: min(100%, 430px);
 }
 
+.reviewNotesField {
+  display: grid;
+  flex-basis: 100%;
+  gap: 6px;
+  color: rgba(245, 239, 231, 0.72);
+  font-size: 12px;
+}
+
+.reviewNotesField textarea {
+  min-height: 72px;
+  width: 100%;
+  border: 1px solid rgba(245, 239, 231, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  color: #f5efe7;
+  font: inherit;
+  padding: 10px;
+  resize: vertical;
+}
+
 .actionButton,
 .dangerButton {
   border: 1px solid rgba(245, 239, 231, 0.16);

@@ -61,9 +61,10 @@ const SAFE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_TRANSITIONS = Object.freeze({
   draft: ["uploading", "review_required"],
   uploading: ["uploaded", "draft", "rejected"],
-  uploaded: ["processing", "under_review", "review_required", "draft", "rejected"],
-  processing: ["ai_analyzed", "under_review", "review_required", "rejected"],
-  under_review: ["approved", "rejected", "processing"],
+  uploaded: ["processing", "under_review", "review_required", "flagged", "draft", "rejected"],
+  processing: ["ai_analyzed", "under_review", "review_required", "flagged", "rejected"],
+  under_review: ["approved", "flagged", "rejected", "processing"],
+  flagged: ["approved", "rejected", "processing", "under_review"],
   ai_analyzed: ["review_required", "approved", "rejected"],
   review_required: ["approved", "rejected", "processing"],
   approved: ["published", "rejected"],

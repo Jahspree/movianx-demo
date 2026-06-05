@@ -164,6 +164,34 @@ test("ops upload status updates enforce review workflow", async () => {
   assert.equal(body.upload.status, "processing");
 });
 
+test("admin moderation can flag with review notes", async () => {
+  resetContentStoreForTests();
+  resetSupabaseUploadFallbackForTests();
+  const createResponse = await createUpload(jsonRequest(validPayload));
+  const createBody = await createResponse.json();
+  const auth = `Basic ${Buffer.from("ops:movianx-ops-dev").toString("base64")}`;
+
+  for (const status of ["processing", "under_review", "flagged"]) {
+    const response = await updateOpsUpload(new Request(`https://movianx-demo.vercel.app/api/ops/uploads/${createBody.content.id}`, {
+      method: "PATCH",
+      headers: {
+        authorization: auth,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        status,
+        reviewNotes: status === "flagged" ? "Audio rights require manual confirmation." : "",
+      }),
+    }), { params: { id: createBody.content.id } });
+    assert.equal(response.status, 200);
+  }
+
+  const [record] = await listCreatorUploadRecords({ creatorId: "dev-creator" });
+  assert.equal(record.status, "flagged");
+  assert.equal(record.reviewNotes, "Audio rights require manual confirmation.");
+  assert.ok(record.lastReviewedAt);
+});
+
 test("upload create endpoint can require creator auth placeholder", async () => {
   const previous = process.env.REQUIRE_CREATOR_AUTH;
   process.env.REQUIRE_CREATOR_AUTH = "true";

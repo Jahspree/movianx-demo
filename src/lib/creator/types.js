@@ -8,6 +8,7 @@ export const CONTENT_STATUSES = Object.freeze([
   "review_required",
   "approved",
   "published",
+  "flagged",
   "rejected",
 ]);
 
@@ -43,6 +44,7 @@ export const CREATOR_UPLOAD_STATUSES = Object.freeze([
   "under_review",
   "approved",
   "published",
+  "flagged",
   "rejected",
 ]);
 

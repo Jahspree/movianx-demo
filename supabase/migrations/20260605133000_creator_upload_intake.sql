@@ -39,13 +39,15 @@ create table if not exists public.creator_upload_records (
   tags text[] not null default '{}',
   status text not null default 'uploaded',
   review_status text not null default 'not_submitted',
+  review_notes text not null default '',
+  last_reviewed_at timestamptz,
   assets jsonb not null default '[]'::jsonb,
   storage_provider text not null default 'supabase-storage',
   security jsonb not null default '{}'::jsonb,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint creator_upload_status_check check (
-    status in ('uploaded', 'processing', 'under_review', 'approved', 'published', 'rejected')
+    status in ('uploaded', 'processing', 'under_review', 'approved', 'published', 'flagged', 'rejected')
   ),
   constraint creator_upload_review_status_check check (
     review_status in ('not_submitted', 'pending', 'in_review', 'approved', 'rejected', 'changes_requested')
