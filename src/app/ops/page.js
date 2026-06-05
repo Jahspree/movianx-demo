@@ -136,7 +136,7 @@ export default async function OpsPage() {
               <span className={statusClass(metrics.status)}>{metrics.status}</span>
             </div>
             <p className={styles.muted}>Role: {role} · Updated {new Date(metrics.generatedAt).toLocaleString("en-US")}</p>
-            <p className={styles.muted}><Link href="/ops/uploads">Creator intake review</Link> · <Link href="/ops/system">System diagnostics</Link></p>
+            <p className={styles.muted}><Link href="/ops/dashboard">Executive dashboard</Link> · <Link href="/ops/uploads">Creator intake review</Link> · <Link href="/ops/system">System diagnostics</Link></p>
           </aside>
         </header>
 

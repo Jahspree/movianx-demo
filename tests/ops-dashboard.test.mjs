@@ -14,6 +14,12 @@ import {
   getEnvironmentStatus,
   getSystemHealth,
 } from "../src/lib/ops/systemHealth.js";
+import {
+  dashboardToCsv,
+  dashboardToJson,
+  getExecutiveDashboardData,
+  normalizeDashboardRange,
+} from "../src/lib/ops/executiveDashboard.js";
 
 function headersFor(username, password) {
   return new Headers({
@@ -116,6 +122,41 @@ test("system diagnostics reports missing Supabase service key safely", async () 
     assert.equal(health.database.status, "failed");
     assert.equal(health.storage.status, "failed");
     assert.doesNotMatch(JSON.stringify(health), /phx_|eyJ[A-Za-z0-9_-]{20,}/);
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
+});
+
+test("executive dashboard normalizes ranges and exports empty-source data safely", async () => {
+  const previous = {
+    POSTHOG_PERSONAL_API_KEY: process.env.POSTHOG_PERSONAL_API_KEY,
+    POSTHOG_PROJECT_ID: process.env.POSTHOG_PROJECT_ID,
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    SUPABASE_UPLOAD_BUCKET: process.env.SUPABASE_UPLOAD_BUCKET,
+  };
+  delete process.env.POSTHOG_PERSONAL_API_KEY;
+  delete process.env.POSTHOG_PROJECT_ID;
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  try {
+    assert.equal(normalizeDashboardRange("90d"), "90d");
+    assert.equal(normalizeDashboardRange("bad"), "today");
+    const data = await getExecutiveDashboardData({
+      range: "7d",
+      auth: { ok: true, role: "admin" },
+      fetchImpl: async () => {
+        throw new Error("fetch should not run without configured data sources");
+      },
+    });
+    assert.equal(data.range.key, "7d");
+    assert.equal(data.sources.posthog.status, "not_connected");
+    assert.equal(data.sources.supabase.status, "not_connected");
+    assert.match(dashboardToCsv(data), /section,metric,value/);
+    assert.match(dashboardToJson(data), /"range"/);
   } finally {
     for (const [key, value] of Object.entries(previous)) {
       if (value === undefined) delete process.env[key];

@@ -340,6 +340,118 @@
   box-shadow: 0 0 14px currentColor;
 }
 
+.dateFilters,
+.exportActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.dateFilters a,
+.exportActions a {
+  border: 1px solid rgba(245, 239, 231, 0.14);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: rgba(245, 239, 231, 0.78);
+  text-decoration: none;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dateFilters a.activeFilter,
+.dateFilters a:hover,
+.exportActions a:hover {
+  border-color: rgba(214, 163, 58, 0.55);
+  color: #f8d88c;
+  background: rgba(214, 163, 58, 0.12);
+}
+
+.executiveSection {
+  margin-top: 16px;
+}
+
+.executiveGrid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.executiveMetric,
+.executiveList,
+.chartCard {
+  grid-column: span 3;
+  min-height: 116px;
+  border: 1px solid rgba(245, 239, 231, 0.1);
+  border-radius: 12px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.executiveMetric span {
+  display: block;
+  color: rgba(245, 239, 231, 0.62);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.executiveMetric strong {
+  display: block;
+  margin-top: 12px;
+  color: #fff;
+  font-size: clamp(22px, 3vw, 34px);
+  line-height: 1.05;
+  overflow-wrap: anywhere;
+}
+
+.executiveList,
+.chartCard {
+  grid-column: span 6;
+}
+
+.executiveList h3,
+.chartCard h3 {
+  margin: 0 0 12px;
+  color: #fff;
+  font-size: 16px;
+}
+
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  min-height: 190px;
+  padding-top: 12px;
+  overflow-x: auto;
+}
+
+.chartBar {
+  display: grid;
+  grid-template-rows: minmax(120px, 1fr) auto;
+  gap: 8px;
+  min-width: 28px;
+  height: 180px;
+  align-items: end;
+  color: rgba(245, 239, 231, 0.5);
+  font-size: 10px;
+  text-align: center;
+}
+
+.chartBar span {
+  display: block;
+  width: 100%;
+  align-self: end;
+  border-radius: 999px 999px 4px 4px;
+  background: linear-gradient(180deg, #d6a33a, #9b1c1f);
+  box-shadow: 0 0 24px rgba(155, 28, 31, 0.28);
+}
+
+.chartBar small {
+  min-height: 24px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .pill {
   border-radius: 999px;
   padding: 7px 10px;
@@ -361,5 +473,19 @@
   .metricCard,
   .panel {
     grid-column: span 12;
+  }
+
+  .executiveMetric,
+  .executiveList,
+  .chartCard {
+    grid-column: span 12;
+  }
+
+  .executiveGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
   }
 }
