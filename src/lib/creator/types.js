@@ -3,6 +3,7 @@ export const CONTENT_STATUSES = Object.freeze([
   "uploading",
   "uploaded",
   "processing",
+  "under_review",
   "ai_analyzed",
   "review_required",
   "approved",
@@ -27,7 +28,23 @@ export const MONETIZATION_STATUSES = Object.freeze([
   "disabled",
 ]);
 
-export const ASSET_TYPES = Object.freeze(["movie", "trailer", "poster"]);
+export const ASSET_TYPES = Object.freeze([
+  "video",
+  "audio",
+  "cover_art",
+  "movie",
+  "trailer",
+  "poster",
+]);
+
+export const CREATOR_UPLOAD_STATUSES = Object.freeze([
+  "uploaded",
+  "processing",
+  "under_review",
+  "approved",
+  "published",
+  "rejected",
+]);
 
 export const CONTENT_FORMATS = Object.freeze([
   "standalone_film",
@@ -104,7 +121,7 @@ export const ANALYSIS_TASKS = Object.freeze([
 /**
  * @typedef {Object} UploadAsset
  * @property {string} id
- * @property {"movie"|"trailer"|"poster"} assetType
+ * @property {"video"|"audio"|"cover_art"|"movie"|"trailer"|"poster"} assetType
  * @property {string} originalFilename
  * @property {string} sanitizedFilename
  * @property {string} contentType
@@ -151,6 +168,20 @@ export const ANALYSIS_TASKS = Object.freeze([
  * @property {UploadAsset[]} assets
  * @property {AIAnalysisJob|null} analysisJob
  * @property {MonetizationSettings} monetization
+ * @property {string} createdAt
+ * @property {string} updatedAt
+ */
+
+/**
+ * @typedef {Object} CreatorUploadRecord
+ * @property {string} id
+ * @property {string} contentId
+ * @property {string} creatorId
+ * @property {string} title
+ * @property {string} description
+ * @property {string} status
+ * @property {UploadAsset[]} assets
+ * @property {string} storageProvider
  * @property {string} createdAt
  * @property {string} updatedAt
  */

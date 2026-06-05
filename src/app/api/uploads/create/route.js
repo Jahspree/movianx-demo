@@ -1,6 +1,12 @@
 import { requireCreator } from "../../../../lib/creator/auth.js";
 import { writeAuditLog } from "../../../../lib/creator/auditLog.js";
 import { createContentItem } from "../../../../lib/creator/contentStore.js";
+import {
+  createUploadRecordFromContent,
+  getUploadPersistenceMode,
+  upsertCreatorUploadRecord,
+  writeCreatorUploadAudit,
+} from "../../../../lib/creator/supabaseUploadStore.js";
 import { createSignedUploadTarget } from "../../../../lib/creator/storage.js";
 import { validateCreatePayload } from "../../../../lib/creator/validation.js";
 import { handleApiError, json } from "../../_creatorResponse.js";
@@ -26,10 +32,16 @@ export async function POST(request) {
       contentType: asset.contentType,
       size: asset.size,
       storagePath: target.storagePath,
+      storageProvider: target.provider,
       status: "pending",
     }));
 
     const content = createContentItem({ creator, payload, uploadAssets, id: contentId });
+    const storageProvider = signedTargets[0]?.target.provider || "unknown";
+    const uploadRecord = await upsertCreatorUploadRecord(createUploadRecordFromContent({
+      content,
+      storageProvider,
+    }));
 
     const uploadTargets = uploadAssets.map(asset => {
       const target = signedTargets.find(entry => entry.target.storagePath === asset.storagePath).target;
@@ -54,7 +66,17 @@ export async function POST(request) {
       metadata: {
         assetCount: uploadAssets.length,
         submitMode: payload.submitMode,
-        storageProvider: signedTargets[0]?.target.provider,
+        storageProvider,
+      },
+    });
+    await writeCreatorUploadAudit({
+      actorId: creator.id,
+      action: "upload.create",
+      recordId: content.id,
+      metadata: {
+        assetCount: uploadAssets.length,
+        submitMode: payload.submitMode,
+        storageProvider,
       },
     });
 
@@ -71,6 +93,8 @@ export async function POST(request) {
       uploadSession: {
         privateStorage: true,
         directPublicAccess: false,
+        persistence: getUploadPersistenceMode(),
+        recordId: uploadRecord.id,
         uploadTargets,
       },
     }, 201);

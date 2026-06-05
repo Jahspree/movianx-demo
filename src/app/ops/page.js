@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { authenticateOpsRequest, isPublicDemoHost } from "../../lib/ops/auth.js";
 import { getOpsMetrics } from "../../lib/ops/posthogMetrics.js";
 import styles from "./ops.module.css";
@@ -135,6 +136,7 @@ export default async function OpsPage() {
               <span className={statusClass(metrics.status)}>{metrics.status}</span>
             </div>
             <p className={styles.muted}>Role: {role} · Updated {new Date(metrics.generatedAt).toLocaleString("en-US")}</p>
+            <p className={styles.muted}><Link href="/ops/uploads">Creator intake review</Link></p>
           </aside>
         </header>
 

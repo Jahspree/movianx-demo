@@ -19,9 +19,10 @@ const emptyForm = {
 
 export default function UploadForm() {
   const [form, setForm] = useState(emptyForm);
-  const [files, setFiles] = useState({ movie: null, trailer: null, poster: null });
+  const [files, setFiles] = useState({ video: null, audio: null, cover_art: null });
   const [result, setResult] = useState("");
   const [busy, setBusy] = useState(false);
+  const [step, setStep] = useState("idle");
 
   function updateField(event) {
     setForm(current => ({ ...current, [event.target.name]: event.target.value }));
@@ -34,6 +35,7 @@ export default function UploadForm() {
   async function submit(submitMode) {
     setBusy(true);
     setResult("");
+    setStep("Creating private upload session...");
     try {
       const assets = Object.entries(files)
         .filter(([, file]) => Boolean(file))
@@ -56,18 +58,69 @@ export default function UploadForm() {
         }),
       });
       const body = await response.json();
-      if (response.ok) {
-        captureMovianxEvent("content_upload_submitted", {
-          submit_mode: submitMode,
-          genre: form.genre,
-          content_format: form.contentFormat,
-          asset_count: assets.length,
-          maturity_rating: form.maturityRating,
+      if (!response.ok) throw new Error(body.error?.message || "Upload session failed");
+
+      setStep("Uploading private assets...");
+      const uploadedAssets = await Promise.all(body.uploadSession.uploadTargets.map(async target => {
+        const file = files[target.assetType];
+        if (!file) throw new Error(`Missing selected file for ${target.assetType}`);
+        const uploadResponse = await fetch(target.uploadUrl, {
+          method: target.method || "PUT",
+          headers: target.headers || { "content-type": file.type },
+          body: file,
         });
+        if (!uploadResponse.ok) {
+          throw new Error(`${target.assetType} upload failed with ${uploadResponse.status}`);
+        }
+        return {
+          assetId: target.assetId,
+          storagePath: target.storagePath,
+          checksum: null,
+        };
+      }));
+
+      setStep("Finalizing upload record...");
+      const completeResponse = await fetch("/api/uploads/complete", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          contentId: body.content.id,
+          uploadedAssets,
+        }),
+      });
+      const completeBody = await completeResponse.json();
+      if (!completeResponse.ok) throw new Error(completeBody.error?.message || "Upload completion failed");
+
+      let finalContent = completeBody.content;
+      if (submitMode === "review") {
+        setStep("Submitting for review...");
+        const reviewResponse = await fetch(`/api/content/${body.content.id}/submit-review`, { method: "POST" });
+        const reviewBody = await reviewResponse.json();
+        if (!reviewResponse.ok) throw new Error(reviewBody.error?.message || "Review submission failed");
+        finalContent = reviewBody.content;
       }
-      setResult(JSON.stringify(body, null, 2));
+
+      captureMovianxEvent("content_upload_submitted", {
+        submit_mode: submitMode,
+        genre: form.genre,
+        content_format: form.contentFormat,
+        asset_count: assets.length,
+        maturity_rating: form.maturityRating,
+      });
+      setStep("Complete");
+      setResult(JSON.stringify({
+        status: finalContent.status,
+        reviewStatus: finalContent.reviewStatus,
+        contentId: finalContent.id,
+        assets: finalContent.assets.map(asset => ({
+          assetType: asset.assetType,
+          status: asset.status,
+        })),
+        persistence: body.uploadSession.persistence,
+      }, null, 2));
     } catch (error) {
       ensurePostHogInitialized()?.captureException?.(error);
+      setStep("Upload failed");
       setResult(JSON.stringify({ error: error.message }, null, 2));
     } finally {
       setBusy(false);
@@ -141,21 +194,21 @@ export default function UploadForm() {
         <input id="episodeNumber" name="episodeNumber" type="number" min="1" max="999" value={form.episodeNumber} onChange={updateField} placeholder="1" />
       </div>
       <div className="field">
-        <label htmlFor="movie">Movie/video upload</label>
-        <input id="movie" type="file" accept="video/mp4,video/quicktime,video/webm" onChange={event => updateFile("movie", event)} required />
+        <label htmlFor="video">Video upload</label>
+        <input id="video" type="file" accept="video/mp4,video/quicktime,video/webm" onChange={event => updateFile("video", event)} required />
       </div>
       <div className="field">
-        <label htmlFor="trailer">Trailer upload</label>
-        <input id="trailer" type="file" accept="video/mp4,video/quicktime,video/webm" onChange={event => updateFile("trailer", event)} />
+        <label htmlFor="audio">Audio upload</label>
+        <input id="audio" type="file" accept="audio/mpeg,audio/mp4,audio/wav,audio/webm,audio/ogg" onChange={event => updateFile("audio", event)} />
       </div>
       <div className="field">
-        <label htmlFor="poster">Poster/thumbnail upload</label>
-        <input id="poster" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => updateFile("poster", event)} />
+        <label htmlFor="cover_art">Cover art upload</label>
+        <input id="cover_art" type="file" accept="image/jpeg,image/png,image/webp" onChange={event => updateFile("cover_art", event)} />
       </div>
       <div className="form-actions">
         <button className="secondary-button" disabled={busy} type="button" onClick={() => submit("draft")}>Submit as draft</button>
         <button className="primary-button" disabled={busy} type="button" onClick={() => submit("review")}>Submit for review</button>
-        <span className="muted">Files stay private. This creates signed upload targets only.</span>
+        <span className="muted">{busy ? step : "Files stay private. Uploads generate review records before anything can publish."}</span>
       </div>
       {result ? <pre className="api-result">{result}</pre> : null}
     </form>

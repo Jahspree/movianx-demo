@@ -1,8 +1,14 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { POST as createUpload } from "../src/app/api/uploads/create/route.js";
+import { PATCH as updateOpsUpload } from "../src/app/api/ops/uploads/[id]/route.js";
 import { PUT as mockUpload } from "../src/app/api/uploads/mock-signed/[token]/route.js";
 import { resetContentStoreForTests } from "../src/lib/creator/contentStore.js";
+import {
+  getUploadPersistenceMode,
+  listCreatorUploadRecords,
+  resetSupabaseUploadFallbackForTests,
+} from "../src/lib/creator/supabaseUploadStore.js";
 import {
   validateAssetMetadata,
   validateStatusTransition,
@@ -19,13 +25,19 @@ const validPayload = {
   submitMode: "draft",
   assets: [
     {
-      assetType: "movie",
+      assetType: "video",
       filename: "../Night Hall Final.mp4",
       contentType: "video/mp4",
       size: 1024 * 1024,
     },
     {
-      assetType: "poster",
+      assetType: "audio",
+      filename: "soundscape.mp3",
+      contentType: "audio/mpeg",
+      size: 500000,
+    },
+    {
+      assetType: "cover_art",
       filename: "poster.png",
       contentType: "image/png",
       size: 400000,
@@ -46,7 +58,7 @@ function jsonRequest(body, headers = {}) {
 
 test("invalid file type is rejected", () => {
   assert.throws(() => validateAssetMetadata({
-    assetType: "movie",
+    assetType: "video",
     filename: "payload.exe",
     contentType: "application/x-msdownload",
     size: 1024,
@@ -102,9 +114,54 @@ test("upload create endpoint returns private signed upload structure", async () 
   assert.equal(body.content.status, "draft");
   assert.equal(body.uploadSession.privateStorage, true);
   assert.equal(body.uploadSession.directPublicAccess, false);
-  assert.equal(body.uploadSession.uploadTargets.length, 2);
+  assert.equal(body.uploadSession.uploadTargets.length, 3);
   assert.match(body.uploadSession.uploadTargets[0].storagePath, /^creators\/dev-creator\/content\//);
   assert.doesNotMatch(body.uploadSession.uploadTargets[0].storagePath, /Night Hall Final/);
+  assert.equal(body.uploadSession.persistence, getUploadPersistenceMode());
+});
+
+test("upload create endpoint generates review records for admin intake", async () => {
+  resetContentStoreForTests();
+  resetSupabaseUploadFallbackForTests();
+  const response = await createUpload(jsonRequest(validPayload));
+  const body = await response.json();
+  const records = await listCreatorUploadRecords({ creatorId: "dev-creator" });
+
+  assert.equal(response.status, 201);
+  assert.equal(records.length, 1);
+  assert.equal(records[0].id, body.content.id);
+  assert.equal(records[0].status, "uploaded");
+  assert.deepEqual(records[0].assets.map(asset => asset.assetType), ["video", "audio", "cover_art"]);
+});
+
+test("ops upload status updates enforce review workflow", async () => {
+  resetContentStoreForTests();
+  resetSupabaseUploadFallbackForTests();
+  const createResponse = await createUpload(jsonRequest(validPayload));
+  const createBody = await createResponse.json();
+  const auth = `Basic ${Buffer.from("ops:movianx-ops-dev").toString("base64")}`;
+
+  const badResponse = await updateOpsUpload(new Request(`https://movianx-demo.vercel.app/api/ops/uploads/${createBody.content.id}`, {
+    method: "PATCH",
+    headers: {
+      authorization: auth,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ status: "published" }),
+  }), { params: { id: createBody.content.id } });
+  assert.equal(badResponse.status, 400);
+
+  const goodResponse = await updateOpsUpload(new Request(`https://movianx-demo.vercel.app/api/ops/uploads/${createBody.content.id}`, {
+    method: "PATCH",
+    headers: {
+      authorization: auth,
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({ status: "processing" }),
+  }), { params: { id: createBody.content.id } });
+  const body = await goodResponse.json();
+  assert.equal(goodResponse.status, 200);
+  assert.equal(body.upload.status, "processing");
 });
 
 test("upload create endpoint can require creator auth placeholder", async () => {

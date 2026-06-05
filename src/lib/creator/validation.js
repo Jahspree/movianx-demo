@@ -7,18 +7,27 @@ import {
 } from "./types.js";
 
 export const MAX_FILE_BYTES = Object.freeze({
+  video: 5 * 1024 * 1024 * 1024,
+  audio: 500 * 1024 * 1024,
+  cover_art: 15 * 1024 * 1024,
   movie: 5 * 1024 * 1024 * 1024,
   trailer: 500 * 1024 * 1024,
   poster: 15 * 1024 * 1024,
 });
 
 export const ALLOWED_MIME_TYPES = Object.freeze({
+  video: ["video/mp4", "video/quicktime", "video/webm"],
+  audio: ["audio/mpeg", "audio/mp4", "audio/wav", "audio/webm", "audio/ogg"],
+  cover_art: ["image/jpeg", "image/png", "image/webp"],
   movie: ["video/mp4", "video/quicktime", "video/webm"],
   trailer: ["video/mp4", "video/quicktime", "video/webm"],
   poster: ["image/jpeg", "image/png", "image/webp"],
 });
 
 const ALLOWED_EXTENSIONS = Object.freeze({
+  video: [".mp4", ".mov", ".webm"],
+  audio: [".mp3", ".m4a", ".wav", ".webm", ".ogg"],
+  cover_art: [".jpg", ".jpeg", ".png", ".webp"],
   movie: [".mp4", ".mov", ".webm"],
   trailer: [".mp4", ".mov", ".webm"],
   poster: [".jpg", ".jpeg", ".png", ".webp"],
@@ -52,8 +61,9 @@ const SAFE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const VALID_TRANSITIONS = Object.freeze({
   draft: ["uploading", "review_required"],
   uploading: ["uploaded", "draft", "rejected"],
-  uploaded: ["processing", "review_required", "draft", "rejected"],
-  processing: ["ai_analyzed", "review_required", "rejected"],
+  uploaded: ["processing", "under_review", "review_required", "draft", "rejected"],
+  processing: ["ai_analyzed", "under_review", "review_required", "rejected"],
+  under_review: ["approved", "rejected", "processing"],
   ai_analyzed: ["review_required", "approved", "rejected"],
   review_required: ["approved", "rejected", "processing"],
   approved: ["published", "rejected"],
@@ -68,6 +78,13 @@ export class ValidationError extends Error {
     this.details = details;
     this.status = 400;
   }
+}
+
+export function normalizeAssetType(assetType = "") {
+  const value = String(assetType || "").trim().toLowerCase();
+  if (value === "movie" || value === "trailer") return "video";
+  if (value === "poster") return "cover_art";
+  return value;
 }
 
 export function sanitizeFilename(filename = "upload") {
@@ -106,7 +123,7 @@ function normalizeContentType(contentType = "") {
 
 export function validateAssetMetadata(asset) {
   const errors = [];
-  const assetType = String(asset?.assetType || "");
+  const assetType = normalizeAssetType(asset?.assetType);
   const filename = sanitizeFilename(asset?.filename || asset?.originalFilename || "");
   const contentType = normalizeContentType(asset?.contentType);
   const size = Number(asset?.size || 0);
@@ -265,8 +282,8 @@ export function validateCreatePayload(payload = {}) {
     throw new ValidationError("episodeNumber must be between 1 and 999");
   }
 
-  if (!assets.some(asset => asset.assetType === "movie")) {
-    throw new ValidationError("Movie upload is required", ["movie asset is required"]);
+  if (!assets.some(asset => asset.assetType === "video")) {
+    throw new ValidationError("Video upload is required", ["video asset is required"]);
   }
 
   return {

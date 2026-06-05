@@ -56,6 +56,10 @@ export function getContent({ id, creatorId }) {
   return item;
 }
 
+export function getContentById({ id }) {
+  return store.content.get(id) || null;
+}
+
 export function patchContent({ id, creatorId, patch }) {
   const item = getContent({ id, creatorId });
   if (!item) return null;
@@ -89,14 +93,25 @@ export function markAssetsUploaded({ id, creatorId, uploadedAssets = [] }) {
 export function submitForReview({ id, creatorId }) {
   const item = getContent({ id, creatorId });
   if (!item) return null;
-  if (item.status !== "review_required") {
-    validateStatusTransition(item.status, "review_required");
+  if (item.status !== "under_review") {
+    validateStatusTransition(item.status, "under_review");
   }
-  item.status = "review_required";
-  item.reviewStatus = "pending";
+  item.status = "under_review";
+  item.reviewStatus = "in_review";
   item.analysisJob = item.analysisJob || createAnalysisJob(id);
   item.analysisJob.status = "processing";
   item.security.aiAnalysis = "pending";
+  item.updatedAt = new Date().toISOString();
+  store.content.set(id, item);
+  return item;
+}
+
+export function updateContentStatusByAdmin({ id, status }) {
+  const item = getContentById({ id });
+  if (!item) return null;
+  if (item.status !== status) validateStatusTransition(item.status, status);
+  item.status = status;
+  item.reviewStatus = mapReviewStatus(status, item.reviewStatus);
   item.updatedAt = new Date().toISOString();
   store.content.set(id, item);
   return item;
@@ -110,4 +125,11 @@ export function getAnalysis({ id, creatorId }) {
 
 export function resetContentStoreForTests() {
   store.content.clear();
+}
+
+function mapReviewStatus(status, current) {
+  if (status === "under_review" || status === "processing") return "in_review";
+  if (status === "approved" || status === "published") return "approved";
+  if (status === "rejected") return "rejected";
+  return current || "not_submitted";
 }

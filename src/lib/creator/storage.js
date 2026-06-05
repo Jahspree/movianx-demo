@@ -1,4 +1,5 @@
 import { sanitizeFilename } from "./validation.js";
+import { createSupabaseSignedUploadTarget, hasSupabaseConfig } from "./supabaseUploadStore.js";
 
 const DEFAULT_SIGNED_URL_TTL_SECONDS = 15 * 60;
 
@@ -26,6 +27,19 @@ export async function createSignedUploadTarget({ asset, creatorId, contentId }) 
   });
 
   const expiresAt = new Date(Date.now() + DEFAULT_SIGNED_URL_TTL_SECONDS * 1000).toISOString();
+
+  if (hasSupabaseConfig() && process.env.MOCK_SIGNED_UPLOADS !== "true") {
+    const supabaseTarget = await createSupabaseSignedUploadTarget({
+      storagePath,
+      contentType: asset.contentType,
+    });
+    return {
+      ...supabaseTarget,
+      storagePath,
+      expiresAt,
+      publicAccess: false,
+    };
+  }
 
   if (!hasGoogleCloudStorageConfig() || process.env.MOCK_SIGNED_UPLOADS !== "false") {
     const token = crypto.randomUUID();
