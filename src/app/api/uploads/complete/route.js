@@ -3,6 +3,7 @@ import { writeAuditLog } from "../../../../lib/creator/auditLog.js";
 import { markAssetsUploaded } from "../../../../lib/creator/contentStore.js";
 import { sanitizeText, ValidationError } from "../../../../lib/creator/validation.js";
 import { handleApiError, json } from "../../_creatorResponse.js";
+import { captureServerEvent } from "../../../../lib/posthog-server.js";
 
 export const dynamic = "force-dynamic";
 
@@ -24,6 +25,11 @@ export async function POST(request) {
       resourceId: contentId,
       metadata: { uploadedAssetCount: uploadedAssets.length },
     });
+
+    captureServerEvent("upload_completed", {
+      content_id: contentId,
+      uploaded_asset_count: uploadedAssets.length,
+    }, creator.id);
 
     return json({ content });
   } catch (error) {

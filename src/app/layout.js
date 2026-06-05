@@ -1,4 +1,5 @@
 import './globals.css';
+import PostHogRouteController from './PostHogRouteController';
 
 export const metadata = {
   title: 'Movianx — Immersive Media Powered by AI',
@@ -28,7 +29,10 @@ export const viewport = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body style={{ margin: 0, padding: 0 }}>{children}</body>
+      <body style={{ margin: 0, padding: 0 }}>
+        <PostHogRouteController />
+        {children}
+      </body>
     </html>
   );
 }

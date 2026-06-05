@@ -2,6 +2,7 @@ import { writeAuditLog } from "../../../lib/creator/auditLog.js";
 import { saveEmailCapture } from "../../../lib/creator/intakeStore.js";
 import { validateEmailCapturePayload } from "../../../lib/creator/validation.js";
 import { handleApiError, json } from "../_creatorResponse.js";
+import { captureServerEvent } from "../../../lib/posthog-server.js";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,8 @@ export async function POST(request) {
         intent: payload.intent,
       },
     });
+
+    captureServerEvent("waitlist_email_captured", { source: payload.source, intent: payload.intent }, entry.id);
 
     if (isFormPost) {
       return Response.redirect(new URL("/watch?waitlist=joined#early-access", request.url), 303);

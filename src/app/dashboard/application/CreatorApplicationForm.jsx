@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { MOVIANX_EVENTS, captureMovianxEvent, ensurePostHogInitialized } from "../../../lib/movianx-analytics";
 
 const initialForm = {
   name: "",
@@ -33,6 +34,16 @@ export default function CreatorApplicationForm() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body?.error?.message || "Application failed");
+      ensurePostHogInitialized()?.identify(form.email, { creator_type: form.creatorType });
+      captureMovianxEvent("creator_application_submitted", {
+        creator_type: form.creatorType,
+        verification_state: body.application.verificationState,
+        upload_permission: body.application.uploadPermission,
+      });
+      captureMovianxEvent(MOVIANX_EVENTS.ACCOUNT_CREATED, {
+        account_type: "creator",
+        creator_type: form.creatorType,
+      });
       setResult(`Application received. Creator access: ${body.application.verificationState}. Upload permission: ${body.application.uploadPermission}.`);
       setForm(initialForm);
     } catch (error) {

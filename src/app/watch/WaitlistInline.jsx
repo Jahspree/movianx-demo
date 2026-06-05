@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import styles from "./watch.module.css";
+import { captureMovianxEvent } from "../../lib/movianx-analytics";
 
 export default function WaitlistInline() {
   const [email, setEmail] = useState("");
@@ -21,6 +22,7 @@ export default function WaitlistInline() {
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body?.error?.message || "Could not join yet");
+      captureMovianxEvent("waitlist_joined", { source: "watch", intent: "early_access" });
       setEmail("");
       setStatus("You're on the list. We'll send release notes quietly.");
     } catch (error) {

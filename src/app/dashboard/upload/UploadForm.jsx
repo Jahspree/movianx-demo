@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { captureMovianxEvent, ensurePostHogInitialized } from "../../../lib/movianx-analytics";
 
 const emptyForm = {
   title: "",
@@ -55,8 +56,18 @@ export default function UploadForm() {
         }),
       });
       const body = await response.json();
+      if (response.ok) {
+        captureMovianxEvent("content_upload_submitted", {
+          submit_mode: submitMode,
+          genre: form.genre,
+          content_format: form.contentFormat,
+          asset_count: assets.length,
+          maturity_rating: form.maturityRating,
+        });
+      }
       setResult(JSON.stringify(body, null, 2));
     } catch (error) {
+      ensurePostHogInitialized()?.captureException?.(error);
       setResult(JSON.stringify({ error: error.message }, null, 2));
     } finally {
       setBusy(false);

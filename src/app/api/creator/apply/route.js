@@ -5,6 +5,7 @@ import {
   validateEmailCapturePayload,
 } from "../../../../lib/creator/validation.js";
 import { handleApiError, json } from "../../_creatorResponse.js";
+import { getPostHogClient, captureServerEvent } from "../../../../lib/posthog-server.js";
 
 export const dynamic = "force-dynamic";
 
@@ -32,6 +33,25 @@ export async function POST(request) {
         verificationState: application.verificationState,
       },
     });
+
+    const posthog = getPostHogClient();
+    posthog?.identify({
+      distinctId: application.email,
+      properties: {
+        creator_type: application.creatorType,
+        verification_state: application.verificationState,
+        upload_permission: application.uploadPermission,
+      },
+    });
+    captureServerEvent("creator_application_received", {
+      creator_type: application.creatorType,
+      verification_state: application.verificationState,
+      upload_permission: application.uploadPermission,
+    }, application.email);
+    captureServerEvent("account_created", {
+      account_type: "creator",
+      creator_type: application.creatorType,
+    }, application.email);
 
     return json({
       application: {

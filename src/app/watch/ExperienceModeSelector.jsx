@@ -2,11 +2,16 @@
 
 import { useState } from "react";
 import styles from "./watch.module.css";
+import {
+  MOVIANX_EVENTS,
+  captureMovianxEvent,
+  storyMetadata,
+} from "../../lib/movianx-analytics";
 
 const MODES = [
-  { id: "original", label: "Original", engineMode: "Cinematic" },
-  { id: "reimagined", label: "Reimagined", engineMode: "Immersive" },
-  { id: "alternate", label: "Alternate Ending", engineMode: "Immersive", startChapter: 3 },
+  { id: "original", label: "Original", engineMode: "Cinematic", event: MOVIANX_EVENTS.ORIGINAL_VERSION_SELECTED },
+  { id: "reimagined", label: "Reimagined", engineMode: "Immersive", event: MOVIANX_EVENTS.REIMAGINED_VERSION_SELECTED },
+  { id: "alternate_ending", label: "Alternate Ending", engineMode: "Immersive", startChapter: 3, event: MOVIANX_EVENTS.ALTERNATE_ENDING_SELECTED },
 ];
 
 function storyIdFromExperience(experienceId) {
@@ -20,6 +25,21 @@ export default function ExperienceModeSelector({ experienceId, primaryLabel = "P
   function handlePlay() {
     const mode = MODES.find((item) => item.id === selected) || MODES[0];
     if (!storyId) return;
+
+    const properties = storyMetadata({ id: storyId, title: experienceId }, {
+      current_page: mode.startChapter || 1,
+      completion_percentage: 0,
+      mode: mode.id,
+    });
+
+    captureMovianxEvent(mode.event, properties, { dedupeKey: `story-mode:${storyId}:${mode.id}` });
+    captureMovianxEvent(MOVIANX_EVENTS.STORY_STARTED, properties, { dedupeKey: `story-start:${storyId}:${mode.id}` });
+    captureMovianxEvent("story_mode_launched", {
+      experience_id: experienceId,
+      story_id: storyId,
+      mode: mode.id,
+      engine_mode: mode.engineMode,
+    });
 
     const params = new URLSearchParams({
       launch: "reading",

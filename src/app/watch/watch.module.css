@@ -1033,6 +1033,14 @@
   isolation: isolate;
 }
 
+button.videoFrame {
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
 .videoFrame:before {
   content: "";
   position: absolute;

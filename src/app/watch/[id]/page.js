@@ -2,6 +2,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "../watch.module.css";
 import ExperienceModeSelector from "../ExperienceModeSelector";
+import PlayerAnalyticsPanel from "../PlayerAnalyticsPanel";
+import TrackExperienceView from "../TrackExperienceView";
+import TrackedLink from "../../TrackedLink";
 import {
   CONSUMER_EXPERIENCES,
   getConsumerExperience,
@@ -174,6 +177,55 @@ function primaryActionFor(experience) {
   };
 }
 
+function detailMetadata(experience, extra = {}) {
+  const base = {
+    content_id: experience.id,
+    content_title: experience.title,
+    content_format: experience.contentFormat,
+    media_type: experience.mediaType,
+  };
+  if (experience.contentFormat === "interactive_story") {
+    return {
+      ...base,
+      story_id: experience.storyId || experience.id,
+      story_title: experience.title,
+      current_page: extra.current_page,
+      completion_percentage: extra.completion_percentage,
+      mode: extra.mode,
+    };
+  }
+  if (experience.mediaType === "Music Experience") {
+    return {
+      ...base,
+      song_id: experience.id,
+      song_title: experience.title,
+      artist_name: experience.creator,
+      play_duration: extra.play_duration,
+    };
+  }
+  if (experience.contentFormat === "creator_spotlight") {
+    return {
+      ...base,
+      creator_id: experience.id,
+      creator_name: experience.creator || experience.title,
+    };
+  }
+  return {
+    ...base,
+    movie_id: experience.id,
+    movie_title: experience.title,
+    watch_duration: extra.watch_duration,
+    completion_percentage: extra.completion_percentage,
+  };
+}
+
+function detailStartEvent(experience) {
+  if (experience.contentFormat === "interactive_story") return "story_started";
+  if (experience.mediaType === "Music Experience") return "music_started";
+  if (experience.contentFormat === "creator_spotlight") return "creator_profile_viewed";
+  return "movie_started";
+}
+
 export default function WatchDetailPage({ params }) {
   const experience = getConsumerExperience(params.id);
 
@@ -194,6 +246,7 @@ export default function WatchDetailPage({ params }) {
 
   return (
     <main className={styles.watchShell} style={posterStyle(experience, "hero")}>
+      <TrackExperienceView experience={experience} />
       <div className={styles.watchBackground} />
       <header className={styles.topbar}>
         <Link className={styles.brand} href="/">
@@ -229,9 +282,16 @@ export default function WatchDetailPage({ params }) {
           </div>
           <div className={styles.ctaRow}>
             {primaryAction && (
-              <Link className={styles.primaryButton} href={primaryAction.href} scroll>
+              <TrackedLink
+                className={styles.primaryButton}
+                href={primaryAction.href}
+                scroll
+                event={detailStartEvent(experience)}
+                properties={detailMetadata(experience, { completion_percentage: 0, current_page: 1 })}
+                dedupeKey={`detail-start:${experience.id}`}
+              >
                 {primaryAction.label}
-              </Link>
+              </TrackedLink>
             )}
             <Link className={styles.secondaryButton} href="/watch">Back to Library</Link>
           </div>
@@ -254,47 +314,8 @@ export default function WatchDetailPage({ params }) {
         <div>
           {experience.contentFormat === "interactive_story" ? (
             <ExperienceModeSelector experienceId={experience.id} primaryLabel="Play Story" />
-          ) : experience.videoEmbedUrl ? (
-            <div id="player" className={`${styles.videoFrame} ${styles.embedFrame}`}>
-              <iframe
-                className={styles.videoEmbed}
-                src={experience.videoEmbedUrl}
-                title={`${experience.title} playback`}
-                allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : experience.mediaType === "Music Experience" ? (
-            <div id="player" className={styles.videoFrame}>
-              <div className={styles.musicProductionState}>
-                <div>
-                  <span>{previewMood(experience)}</span>
-                  <strong>Audio Experience In Production</strong>
-                  <p>{experience.hook || "A spatial listening world is being prepared for release."}</p>
-                </div>
-              </div>
-            </div>
           ) : (
-            <div id="player" className={styles.videoFrame}>
-              <div className={styles.previewAtmosphere} aria-hidden="true">
-                <span />
-                <span />
-                <span />
-              </div>
-              <div className={styles.playGlyph} aria-hidden="true">
-                <span>▶</span>
-              </div>
-              <div className={styles.previewMeta}>
-                <span>{previewMood(experience)}</span>
-                <strong>{experience.title}</strong>
-              </div>
-              <div className={styles.playerStatus}>
-                <span>Preview ready</span>
-              </div>
-              <div className={styles.previewTimeline} aria-hidden="true">
-                <span />
-              </div>
-            </div>
+            <PlayerAnalyticsPanel experience={experience} />
           )}
           <div className={styles.enhancementPanel} style={{ marginTop: 22 }}>
             <div className={styles.kicker}>AI enhancement layer</div>

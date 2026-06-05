@@ -5,6 +5,12 @@ import assetResolver from "../lib/AssetResolver";
 import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioDirector";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 import RuntimeManager from "../lib/runtime/RuntimeManager";
+import {
+  MOVIANX_EVENTS,
+  captureMovianxEvent,
+  captureMovianxEventOnce,
+  storyMetadata,
+} from "../lib/movianx-analytics";
 // === AUDIO MANIFESTS ===
 import { FRANKENSTEIN_AUDIO } from "../data/audioManifest";
 import { TIMED_HORROR_AUDIO } from "../data/audioManifest-timed";
@@ -1328,6 +1334,18 @@ export default function MovianxPlatform(){
     stopAllAudio("chapter_navigation");
     runtimeRef.current?.navigate({from:chIdx,to:idx,kind:"chapter"});
     logEvent("page_view",{chapter:idx,title:chaps[idx]?.title});
+    if(sel&&idx>chIdx){
+      const completion=Math.round(((idx+1)/chaps.length)*100);
+      const properties=storyMetadata(sel,{
+        current_page:idx+1,
+        completion_percentage:completion,
+        mode:mode==="Cinematic"?"original":mode==="Immersive"?"reimagined":String(mode).toLowerCase(),
+      });
+      captureMovianxEvent(MOVIANX_EVENTS.STORY_PAGE_ADVANCED,properties,{dedupeKey:`story-page:${sel.id}:${idx}:${mode}`});
+      if(idx===chaps.length-1){
+        captureMovianxEventOnce(MOVIANX_EVENTS.STORY_COMPLETED,properties,`story-complete:${sel.id}:${mode}`);
+      }
+    }
     setPageAnim("out");
     setTimeout(()=>{
       setChIdx(idx);setShowChoice(false);setTimerActive(false);setTimeRemaining(null);
@@ -1375,6 +1393,13 @@ export default function MovianxPlatform(){
     setTxt(activeChapterText);
     setRevealedWordCount(-1);
     logEvent("scene_playback_started",{chapter:chIdx,title:ch.title,mode});
+    if(sel&&chIdx===0){
+      captureMovianxEventOnce(MOVIANX_EVENTS.STORY_STARTED,storyMetadata(sel,{
+        current_page:1,
+        completion_percentage:Math.round((1/chaps.length)*100),
+        mode:mode==="Cinematic"?"original":mode==="Immersive"?"reimagined":String(mode).toLowerCase(),
+      }),`story-reader-start:${sel.id}:${mode}`);
+    }
     runtimeRef.current?.startScene({
       storyId:sel?.id,
       chapterIdx:chIdx,

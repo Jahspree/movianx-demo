@@ -1,4 +1,5 @@
 import Link from "next/link";
+import TrackedLink from "../TrackedLink";
 
 export const metadata = {
   title: "Login - Movianx",
@@ -64,8 +65,11 @@ export default function LoginPage() {
           >
             Explore Experiences
           </Link>
-          <Link
+          <TrackedLink
             href="/dashboard/welcome"
+            event="account_logged_in"
+            properties={{ account_type: "creator", source: "login_page" }}
+            dedupeKey="creator-login-page"
             style={{
               display: "inline-flex",
               minHeight: 46,
@@ -81,7 +85,7 @@ export default function LoginPage() {
             }}
           >
             Creator Login
-          </Link>
+          </TrackedLink>
         </div>
       </section>
     </main>

@@ -4,6 +4,7 @@ import { createContentItem } from "../../../../lib/creator/contentStore.js";
 import { createSignedUploadTarget } from "../../../../lib/creator/storage.js";
 import { validateCreatePayload } from "../../../../lib/creator/validation.js";
 import { handleApiError, json } from "../../_creatorResponse.js";
+import { captureServerEvent } from "../../../../lib/posthog-server.js";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +57,14 @@ export async function POST(request) {
         storageProvider: signedTargets[0]?.target.provider,
       },
     });
+
+    captureServerEvent("upload_session_created", {
+      content_id: content.id,
+      submit_mode: payload.submitMode,
+      asset_count: uploadAssets.length,
+      genre: payload.genre,
+      content_format: payload.contentFormat,
+    }, creator.id);
 
     return json({
       content,

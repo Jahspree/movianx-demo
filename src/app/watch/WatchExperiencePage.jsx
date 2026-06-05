@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "./watch.module.css";
+import TrackedLink from "../TrackedLink";
 import {
   CONSUMER_EXPERIENCES,
   CONSUMER_RAILS,
@@ -203,6 +204,59 @@ function posterMeta(experience) {
   return experience.runtime || experience.year;
 }
 
+function contentMetadata(experience, extra = {}) {
+  const base = {
+    content_id: experience.id,
+    content_title: experience.title,
+    content_format: experience.contentFormat,
+    media_type: experience.mediaType,
+    source_type: experience.sourceType,
+  };
+  if (experience.contentFormat === "film") {
+    return {
+      ...base,
+      movie_id: experience.id,
+      movie_title: experience.title,
+      completion_percentage: extra.completion_percentage,
+      watch_duration: extra.watch_duration,
+    };
+  }
+  if (experience.contentFormat === "interactive_story") {
+    return {
+      ...base,
+      story_id: experience.storyId || experience.id,
+      story_title: experience.title,
+      current_page: extra.current_page,
+      completion_percentage: extra.completion_percentage,
+      mode: extra.mode,
+    };
+  }
+  if (experience.contentFormat === "music_experience") {
+    return {
+      ...base,
+      song_id: experience.id,
+      song_title: experience.title,
+      artist_name: experience.creator,
+      play_duration: extra.play_duration,
+    };
+  }
+  if (experience.contentFormat === "creator_spotlight") {
+    return {
+      ...base,
+      creator_id: experience.id,
+      creator_name: experience.creator || experience.title,
+    };
+  }
+  return base;
+}
+
+function startEventFor(experience) {
+  if (experience.contentFormat === "interactive_story") return "story_started";
+  if (experience.contentFormat === "music_experience") return "music_started";
+  if (experience.contentFormat === "creator_spotlight") return "creator_profile_viewed";
+  return "movie_started";
+}
+
 function byFormat(format) {
   return CONSUMER_EXPERIENCES.filter((experience) => experience.contentFormat === format);
 }
@@ -274,7 +328,13 @@ function featuredForZone(zone) {
 
 function PosterCard({ experience }) {
   return (
-    <Link className={styles.posterCard} href={experience.href || `/watch/${experience.id}`}>
+    <TrackedLink
+      className={styles.posterCard}
+      href={experience.href || `/watch/${experience.id}`}
+      event="explore_item_clicked"
+      properties={contentMetadata(experience)}
+      dedupeKey={`explore:${experience.id}`}
+    >
       <div className={styles.posterArt} style={visualStyle(experience, "rail")}>
         <div className={styles.badgeRow}>
           <span className={styles.miniBadge}>{primaryBadge(experience)}</span>
@@ -290,7 +350,7 @@ function PosterCard({ experience }) {
         </div>
         <p className={styles.cardHook}>{atmosphericHook(experience)}</p>
       </div>
-    </Link>
+    </TrackedLink>
   );
 }
 
@@ -340,7 +400,13 @@ function EditorialSection({ zone }) {
 
   return (
     <section className={styles.editorial} style={visualStyle(feature, featureVisualPreference)} aria-label={`${editorial.eyebrow} editorial spotlight`}>
-      <Link className={styles.editorialFeature} href={feature.href || `/watch/${feature.id}`}>
+      <TrackedLink
+        className={styles.editorialFeature}
+        href={feature.href || `/watch/${feature.id}`}
+        event={zone === "explore" ? "creator_profile_viewed" : "explore_item_clicked"}
+        properties={contentMetadata(feature)}
+        dedupeKey={`editorial:${zone}:${feature.id}`}
+      >
         <span className={styles.kicker}>{editorial.eyebrow}</span>
         <h2>{editorial.title}</h2>
         <p>{editorial.reason}</p>
@@ -348,20 +414,23 @@ function EditorialSection({ zone }) {
           <span>{feature.creator}</span>
           <span>{atmosphericHook(feature)}</span>
         </div>
-      </Link>
+      </TrackedLink>
 
       <div className={styles.editorialStack}>
         {selections.map(({ label, item, hook }) => (
-          <Link
+          <TrackedLink
             key={`${zone}-${label}-${item.id}`}
             className={styles.editorialMini}
             href={item.href || `/watch/${item.id}`}
             style={visualStyle(item, "rail")}
+            event="explore_item_clicked"
+            properties={{ ...contentMetadata(item), rail_label: label, zone }}
+            dedupeKey={`editorial-mini:${zone}:${item.id}`}
           >
             <span>{label}</span>
             <strong>{item.title}</strong>
             <small>{hook || atmosphericHook(item)}</small>
-          </Link>
+          </TrackedLink>
         ))}
       </div>
     </section>
@@ -420,7 +489,15 @@ export default function WatchExperiencePage({ zone = "explore" }) {
             <strong>{activeZone === "explore" ? governance.health.summary : atmosphericHook(featured)}</strong>
           </div>
           <div className={styles.ctaRow}>
-            <Link className={styles.primaryButton} href={`/watch/${featured.id}`}>{config.cta}</Link>
+            <TrackedLink
+              className={styles.primaryButton}
+              href={`/watch/${featured.id}`}
+              event={startEventFor(featured)}
+              properties={contentMetadata(featured, { completion_percentage: 0, current_page: 1 })}
+              dedupeKey={`hero-start:${activeZone}:${featured.id}`}
+            >
+              {config.cta}
+            </TrackedLink>
             <Link className={styles.secondaryButton} href="#experience-library">{config.secondary}</Link>
           </div>
         </div>
