@@ -10,6 +10,10 @@ import {
   getPostHogOpsConfig,
   shapeOpsMetrics,
 } from "../src/lib/ops/posthogMetrics.js";
+import {
+  getEnvironmentStatus,
+  getSystemHealth,
+} from "../src/lib/ops/systemHealth.js";
 
 function headersFor(username, password) {
   return new Headers({
@@ -93,4 +97,29 @@ test("ops metrics are shaped deterministically without fabricating rows", () => 
   assert.equal(metrics.topCreators[0].name, "Movianx Originals");
   assert.equal(metrics.recentActivity[0].distinctId, "user-12345");
   assert.ok(metrics.instrumentation.missing.includes("movie_started"));
+});
+
+test("system diagnostics reports missing Supabase service key safely", async () => {
+  const previous = {
+    SUPABASE_URL: process.env.SUPABASE_URL,
+    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
+    SUPABASE_UPLOAD_BUCKET: process.env.SUPABASE_UPLOAD_BUCKET,
+  };
+  process.env.SUPABASE_URL = "https://example.supabase.co";
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+  process.env.SUPABASE_UPLOAD_BUCKET = "creator-private-uploads";
+
+  try {
+    const env = getEnvironmentStatus();
+    const health = await getSystemHealth({ auth: { ok: true, role: "admin" } });
+    assert.equal(env.missing.includes("SUPABASE_SERVICE_ROLE_KEY"), true);
+    assert.equal(health.database.status, "failed");
+    assert.equal(health.storage.status, "failed");
+    assert.doesNotMatch(JSON.stringify(health), /phx_|eyJ[A-Za-z0-9_-]{20,}/);
+  } finally {
+    for (const [key, value] of Object.entries(previous)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
 });

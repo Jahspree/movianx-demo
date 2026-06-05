@@ -43,7 +43,7 @@ export default async function CreatorUploadReviewPage() {
               <span>{persistence === "supabase" ? "Supabase records active" : "Supabase not configured"}</span>
               <span className={persistence === "supabase" ? styles.healthy : styles.warning}>{persistence}</span>
             </div>
-            <p className={styles.muted}>Administrator only · <Link href="/ops">Operations metrics</Link></p>
+            <p className={styles.muted}>Administrator only · <Link href="/ops">Operations metrics</Link> · <Link href="/ops/system">System diagnostics</Link></p>
           </aside>
         </header>
 

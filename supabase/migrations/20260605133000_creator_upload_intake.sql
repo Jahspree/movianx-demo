@@ -75,6 +75,7 @@ create index if not exists creator_upload_audit_logs_record_idx
 create or replace function public.set_creator_upload_updated_at()
 returns trigger
 language plpgsql
+set search_path = public, pg_temp
 as $$
 begin
   new.updated_at = now();
