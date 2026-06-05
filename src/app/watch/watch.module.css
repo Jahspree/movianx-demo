@@ -2402,3 +2402,37 @@
     justify-content: center;
   }
 }
+
+/* ── FEATURED ARTIST STRIP ─────────────────────────────────────── */
+.artistStrip {
+  display: flex;
+  align-items: stretch;
+  border-radius: 14px;
+  overflow: hidden;
+  margin: 0 0 32px;
+  border: 1px solid rgba(255,255,255,0.08);
+  text-decoration: none;
+  background: #0e0e11;
+  min-height: 160px;
+  transition: border-color 240ms ease, box-shadow 240ms ease;
+}
+.artistStrip:hover {
+  border-color: rgba(15,118,110,0.4);
+  box-shadow: 0 8px 40px rgba(15,118,110,0.15);
+}
+.artistStripImage {
+  width: 220px;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center top;
+}
+.artistStripBody {
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 640px) {
+  .artistStripImage { width: 120px; }
+  .artistStripBody { padding: 20px; }
+}

@@ -78,11 +78,11 @@ const DISCOVER_CARDS = [
     image: "/images/wraith-the-don.jpg",
   },
   {
-    badge: "CREATIVES",
+    badge: "CREATORS",
     badgeColor: "#b45309",
-    title: "Creator Universe",
-    desc: "Art, fashion, photography, books, audiobooks, merch and digital assets.",
-    cta: "Explore Creatives",
+    title: "Creator Studio",
+    desc: "Build your world on Movianx. AI-enhanced cinema, immersive audio, and direct audience support — creators keep up to 85% of revenue.",
+    cta: "Open Creator Studio",
     href: "/dashboard/welcome",
     image: "/images/generated-live/content/world-05-the-record-shop-at-the-end-of-the-world/thumbnail.jpg",
   },
@@ -546,6 +546,45 @@ const landingCinematicCSS = `
     .mx-nav,.mx-hero,.mx-teaser,.mx-discover,.mx-featured{ animation:none!important; }
     .mx-disc-card,.mx-exp-card,.mx-disc-img,.mx-nos-poster{ transition:none!important; }
   }
+
+  /* ── REVENUE BADGE ─────────────────────────── */
+  .mx-revenue-badge{
+    display:inline-flex;align-items:center;gap:8px;
+    margin-top:14px;padding:8px 14px;
+    background:rgba(192,57,43,0.12);
+    border:1px solid rgba(192,57,43,0.28);
+    border-radius:8px;
+  }
+  .mx-revenue-num{
+    font-size:22px;font-weight:900;color:#c0392b;letter-spacing:-0.03em;
+  }
+  .mx-revenue-label{
+    font-size:12px;color:rgba(255,255,255,0.55);font-weight:500;line-height:1.3;
+  }
+
+  /* ── WAITLIST SECTION ──────────────────────── */
+  .mx-waitlist-section{
+    max-width:1280px;margin:0 auto;
+    padding:48px 5% 96px;
+    animation:mxFadeUp 0.7s ease both 0.5s;
+  }
+  .mx-waitlist-inner{
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:16px;
+    padding:40px 48px;
+    display:flex;align-items:center;justify-content:space-between;gap:40px;
+    flex-wrap:wrap;
+  }
+  .mx-waitlist-copy h2{
+    font-size:22px;font-weight:700;color:#fff;margin:0 0 6px;letter-spacing:-0.02em;
+  }
+  .mx-waitlist-copy p{
+    font-size:13px;color:rgba(255,255,255,0.45);margin:0;
+  }
+  @media(max-width:640px){
+    .mx-waitlist-inner{ padding:28px 24px;flex-direction:column;align-items:flex-start;gap:24px; }
+  }
 `;
 
 export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
@@ -563,8 +602,8 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
           ))}
         </ul>
         <div className="mx-nav-right">
-          <button className="mx-btn-ghost" style={{fontFamily:FF}} onClick={openConsumerLogin}>Login</button>
-          <button className="mx-btn-waitlist" style={{fontFamily:FF}} onClick={openCreatorDashboard}>Join Waitlist</button>
+          <button className="mx-btn-ghost" style={{fontFamily:FF}} onClick={openConsumerLogin}>Watch Free</button>
+          <button className="mx-btn-waitlist" style={{fontFamily:FF}} onClick={()=>{ const el=document.getElementById("waitlist-section"); if(el) el.scrollIntoView({behavior:"smooth"}); else window.location.href="/watch#early-access"; }}>Join Waitlist</button>
         </div>
       </nav>
 
@@ -673,10 +712,14 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
             <h3>Enter a Living World</h3>
             <p>AI-enhanced audio, branching choices, timed decisions, and reimagined scenes transform passive watching into active experience.</p>
           </div>
-          <div className="mx-how-step">
+          <div className="mx-how-step mx-how-step-revenue">
             <span className="mx-how-num">03</span>
             <h3>Support Creators Directly</h3>
-            <p>Creators keep 85% of revenue. Tip, buy merch, or subscribe — all without leaving the experience.</p>
+            <p>Tip, buy merch, or subscribe — all without leaving the experience.</p>
+            <div className="mx-revenue-badge">
+              <span className="mx-revenue-num">85%</span>
+              <span className="mx-revenue-label">of revenue goes to creators</span>
+            </div>
           </div>
         </div>
       </section>
@@ -708,6 +751,18 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
               </div>
             </a>
           ))}
+        </div>
+      </section>
+
+      {/* ── WAITLIST SECTION ────────────────────────────────────── */}
+      <div className="mx-divider" aria-hidden="true" />
+      <section id="waitlist-section" className="mx-waitlist-section" aria-label="Join the early access waitlist">
+        <div className="mx-waitlist-inner">
+          <div className="mx-waitlist-copy">
+            <h2>Get early access.</h2>
+            <p>Privacy-first updates. No spam. Creator paths stay separate from the viewer experience.</p>
+          </div>
+          <WaitlistCapture FF={FF} />
         </div>
       </section>
 

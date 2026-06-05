@@ -17,9 +17,9 @@ export default function CreatorWelcomePage() {
 
   const revenueModel = [
     { tier: "Explorer", split: "60 / 40", min: "Getting started" },
-    { tier: "Pro", split: "70 / 30", min: "1,000+ monthly readers" },
-    { tier: "Elite", split: "80 / 20", min: "5,000+ monthly readers" },
-    { tier: "Partner", split: "85 / 15", min: "20,000+ monthly readers" },
+    { tier: "Pro", split: "70 / 30", min: "1,000+ monthly viewers" },
+    { tier: "Elite", split: "80 / 20", min: "5,000+ monthly viewers" },
+    { tier: "Partner", split: "85 / 15", min: "20,000+ monthly viewers" },
   ];
 
   return (

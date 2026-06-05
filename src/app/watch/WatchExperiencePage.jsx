@@ -72,8 +72,8 @@ const ZONE_ENVIRONMENT_IMAGES = {
 
 const EDITORIAL_MODULES = {
   explore: {
-    eyebrow: "Creator of the Week",
-    title: "Mara Kaine",
+    eyebrow: "Featured World",
+    title: "The Weight of Silence",
     itemId: "world-01-the-weight-of-silence",
     reason: "Most revisited this week for its quiet domestic dread and restrained visual language.",
     selections: [
@@ -200,6 +200,7 @@ function posterMeta(experience) {
   if (experience.contentFormat === "interactive_story") return "Story";
   if (experience.mediaType === "Music Experience") return "Sound";
   if (experience.contentFormat === "creator_spotlight") return "Creator";
+  if (experience.factoryIngested && (!experience.runtime || experience.runtime === "Preview")) return "World";
   return experience.runtime || experience.year;
 }
 
@@ -286,7 +287,7 @@ function PosterCard({ experience }) {
       </div>
       <div className={styles.cardInfo}>
         <div className={styles.creatorLine}>
-          <span>{experience.creator}</span>
+          <span>{experience.factoryIngested && !["night-of-the-living-dead","nosferatu","cabinet-of-dr-caligari","a-trip-to-the-moon","the-general","house-on-haunted-hill","the-phantom-carriage","the-lost-world"].includes(experience.id) ? "Movianx World" : experience.creator}</span>
         </div>
         <p className={styles.cardHook}>{atmosphericHook(experience)}</p>
       </div>
@@ -345,7 +346,7 @@ function EditorialSection({ zone }) {
         <h2>{editorial.title}</h2>
         <p>{editorial.reason}</p>
         <div className={styles.editorialMeta}>
-          <span>{feature.creator}</span>
+          {!feature.factoryIngested && <span>{feature.creator}</span>}
           <span>{atmosphericHook(feature)}</span>
         </div>
       </Link>
@@ -445,9 +446,27 @@ export default function WatchExperiencePage({ zone = "explore" }) {
 
       <section id="experience-library" className={styles.rails} aria-label={`${config.eyebrow} library`}>
         <EditorialSection zone={activeZone} />
-        {rails.map((rail) => (
-          <RailSection rail={rail} key={`${activeZone}-${rail.title}`} />
-        ))}
+        {activeZone === "explore" && (
+          <a href="/watch/music" className={styles.artistStrip} aria-label="Wraith The Don — Featured Artist">
+            <div className={styles.artistStripImage} style={{backgroundImage:"url(/images/wraith-the-don.jpg)"}} />
+            <div className={styles.artistStripBody}>
+              <span className={styles.miniBadge} style={{background:"#0f766e",marginBottom:8,display:"inline-block"}}>Featured Artist</span>
+              <h2 style={{margin:"0 0 4px",fontSize:"clamp(22px,3vw,32px)",fontWeight:800,color:"#fff",letterSpacing:"-0.03em"}}>Wraith The Don</h2>
+              <p style={{margin:"0 0 16px",fontSize:14,color:"rgba(255,255,255,0.55)"}}>Parallel Us — New Album · Sirens cinematic experience · Now on Movianx</p>
+              <span style={{fontSize:13,fontWeight:600,color:"rgba(255,255,255,0.7)"}}>Watch Sirens · Full Catalog →</span>
+            </div>
+          </a>
+        )}
+        {(() => {
+          const seen = new Set();
+          const deduped = rails.map(rail => ({
+            ...rail,
+            ids: rail.ids.filter(id => { if (seen.has(id)) return false; seen.add(id); return true; }),
+          })).filter(rail => rail.ids.length > 0);
+          return deduped.map((rail) => (
+            <RailSection rail={rail} key={`${activeZone}-${rail.title}`} />
+          ));
+        })()}
         <div id="early-access" className={styles.waitlistPanel}>
           <div>
             <span className={styles.badge}>Early Access</span>
