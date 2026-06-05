@@ -440,9 +440,6 @@ export default function WatchDetailPage({ params }) {
                   <button type="button" className={styles.supportCta}>
                     {collection.label || "Support Creator"}
                   </button>
-                  <button type="button" className={styles.supportSecondary}>
-                    View Collection
-                  </button>
                 </div>
               </div>
             ))}
