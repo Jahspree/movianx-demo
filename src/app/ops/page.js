@@ -1,4 +1,6 @@
 import { headers } from "next/headers";
+import { notFound } from "next/navigation";
+import { authenticateOpsRequest, isPublicDemoHost } from "../../lib/ops/auth.js";
 import { getOpsMetrics } from "../../lib/ops/posthogMetrics.js";
 import styles from "./ops.module.css";
 
@@ -102,9 +104,15 @@ function ActivityList({ items }) {
 }
 
 export default async function OpsPage() {
-  const metrics = await getOpsMetrics();
   const requestHeaders = await headers();
-  const role = requestHeaders.get("x-movianx-ops-role") || "protected";
+  const host = requestHeaders.get("host") || "";
+  if (isPublicDemoHost(host)) notFound();
+
+  const auth = authenticateOpsRequest(requestHeaders);
+  if (!auth.ok) notFound();
+
+  const metrics = await getOpsMetrics();
+  const role = requestHeaders.get("x-movianx-ops-role") || auth.role;
   const summary = metrics.summary;
   const missing = metrics.instrumentation?.missing || [];
 

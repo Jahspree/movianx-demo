@@ -4,7 +4,7 @@ import {
   getOpsRealm,
   isOpsPath,
   isPublicDemoHost,
-} from "./src/lib/ops/auth.js";
+} from "./lib/ops/auth.js";
 
 function unauthorized(message = "Operations access required", status = 401) {
   return new NextResponse(message, {
