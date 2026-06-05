@@ -83,7 +83,7 @@ const DISCOVER_CARDS = [
     title: "Creator Universe",
     desc: "Art, fashion, photography, books, audiobooks, merch and digital assets.",
     cta: "Explore Creatives",
-    href: "/watch/creatives",
+    href: "/dashboard/welcome",
     image: "/images/generated-live/content/world-05-the-record-shop-at-the-end-of-the-world/thumbnail.jpg",
   },
 ];
@@ -132,7 +132,7 @@ const FEATURED_RAIL = [
     genre: "Art · Fashion · Books",
     runtime: "Open World",
     image: "/images/generated-live/content/world-05-the-record-shop-at-the-end-of-the-world/thumbnail.jpg",
-    href: "/watch/creatives",
+    href: "/dashboard/welcome",
   },
 ];
 
