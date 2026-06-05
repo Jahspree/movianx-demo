@@ -45,14 +45,14 @@ const STREAMING_LINKS = [
   },
 ];
 
-const MUSIC_CATALOG = [
+const WRAITH_COLLECTION = [
   {
     id: "sirens",
     title: "Sirens",
     type: "MUSIC EXPERIENCE",
     typeColor: "#0f766e",
     desc: "A cinematic audio-visual experience. Autoplay video with spatial audio.",
-    image: "/images/wraith/performance-red.png",
+    image: "/images/sirens/sirensposter.png",
     href: "/watch/sirens",
     isNew: true,
   },
@@ -74,6 +74,9 @@ const MUSIC_CATALOG = [
     image: "/images/wraith/studio-red.png",
     href: "#studio",
   },
+];
+
+const SIMILAR_SOUNDS = [
   {
     id: "echoes-in-orbit",
     title: "Echoes in Orbit",
@@ -102,6 +105,9 @@ const MUSIC_CATALOG = [
     href: "/watch/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2",
   },
 ];
+
+// Legacy combined export kept for any remaining single-list render paths
+const MUSIC_CATALOG = [...WRAITH_COLLECTION, ...SIMILAR_SOUNDS];
 
 function SpotifyIcon() {
   return (
@@ -170,7 +176,7 @@ function SirensPlayer() {
       <video
         ref={videoRef}
         src="/images/sirens/sirens.mp4"
-        poster="/images/wraith/performance-red.png"
+        poster="/images/sirens/sirensposter.png"
         loop
         playsInline
         muted={muted}
@@ -567,26 +573,47 @@ export default function MusicPage() {
 
       {/* ── SECTION 3: MUSIC CATALOG ──────────────────────────────── */}
       <div className="mx-music-divider" aria-hidden="true" />
-      <section className="mx-catalog-section" id="catalog" aria-label="Music Catalog">
+      {/* ── WRAITH COLLECTION ───────────────────────── */}
+      <section className="mx-catalog-section" id="catalog" aria-label="Wraith The Don — Collection">
         <div className="mx-catalog-header">
           <div>
-            <h2 className="mx-catalog-title">Music Catalog</h2>
-            <p className="mx-catalog-sub">Every release. Every experience.</p>
+            <h2 className="mx-catalog-title">Wraith Collection</h2>
+            <p className="mx-catalog-sub">Experiences, albums, and exclusive content from Wraith The Don.</p>
+          </div>
+        </div>
+        <div className="mx-catalog-grid">
+          {WRAITH_COLLECTION.map(item => (
+            <a key={item.id} href={item.href} className="mx-catalog-card" aria-label={item.title}>
+              <div className="mx-catalog-img" style={{backgroundImage:`url(${item.image})`}} />
+              <div className="mx-catalog-overlay" />
+              <div className="mx-catalog-body">
+                {item.isNew && <span className="mx-catalog-new">New</span>}
+                <span className="mx-catalog-type" style={{background: item.typeColor}}>{item.type}</span>
+                <p className="mx-catalog-name">{item.title}</p>
+                <p className="mx-catalog-desc">{item.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* ── SIMILAR SOUNDS ──────────────────────────── */}
+      <section className="mx-catalog-section" id="similar-sounds" aria-label="Similar Sounds">
+        <div className="mx-catalog-header">
+          <div>
+            <h2 className="mx-catalog-title">Similar Sounds</h2>
+            <p className="mx-catalog-sub">More immersive music worlds on Movianx.</p>
           </div>
           <Link href="/watch" className={styles.navLink} style={{fontSize:12.5,padding:"6px 12px",border:"1px solid rgba(255,255,255,0.1)",borderRadius:6}}>
             Explore All
           </Link>
         </div>
         <div className="mx-catalog-grid">
-          {MUSIC_CATALOG.map(item => (
+          {SIMILAR_SOUNDS.map(item => (
             <a key={item.id} href={item.href} className="mx-catalog-card" aria-label={item.title}>
-              <div
-                className="mx-catalog-img"
-                style={{backgroundImage:`url(${item.image})`}}
-              />
+              <div className="mx-catalog-img" style={{backgroundImage:`url(${item.image})`}} />
               <div className="mx-catalog-overlay" />
               <div className="mx-catalog-body">
-                {item.isNew && <span className="mx-catalog-new">New</span>}
                 <span className="mx-catalog-type" style={{background: item.typeColor}}>{item.type}</span>
                 <p className="mx-catalog-name">{item.title}</p>
                 <p className="mx-catalog-desc">{item.desc}</p>

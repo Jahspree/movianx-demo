@@ -240,7 +240,7 @@ const landingCinematicCSS = `
   .mx-hero{
     display:grid;grid-template-columns:1fr 1fr;
     gap:0;align-items:stretch;
-    min-height:calc(100svh - 64px);
+    min-height:min(72svh,660px);
     max-width:100%;
     overflow:hidden;
     animation:mxFadeUp 0.7s ease both 0.08s;
@@ -447,6 +447,38 @@ const landingCinematicCSS = `
   }
   .mx-disc-card:hover .mx-disc-cta{ color:#fff;gap:8px; }
 
+  /* ── HOW MOVIANX WORKS ──────────────────────────── */
+  .mx-how{
+    max-width:1280px;margin:0 auto;
+    padding:72px 5% 56px;
+    animation:mxFadeUp 0.7s ease both 0.35s;
+  }
+  .mx-how-steps{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:8px;
+  }
+  .mx-how-step{
+    background:rgba(255,255,255,0.035);
+    border:1px solid rgba(255,255,255,0.07);
+    border-radius:14px;padding:28px 24px;
+  }
+  .mx-how-num{
+    font-size:11px;font-weight:800;letter-spacing:3px;
+    color:rgba(192,57,43,0.8);text-transform:uppercase;
+    display:block;margin-bottom:12px;
+  }
+  .mx-how-step h3{
+    font-size:17px;font-weight:700;color:#fff;
+    margin:0 0 10px;letter-spacing:-0.02em;
+  }
+  .mx-how-step p{
+    font-size:13px;color:rgba(255,255,255,0.5);
+    line-height:1.65;margin:0;
+  }
+  @media(max-width:768px){
+    .mx-how-steps{ grid-template-columns:1fr; }
+    .mx-how{ padding:48px 5% 36px; }
+  }
+
   /* ── FEATURED RAIL ───────────────────────────────── */
   .mx-featured{
     max-width:1280px;margin:0 auto;
@@ -555,11 +587,11 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
             ))}
           </div>
           <div className="mx-cta-row">
-            <button className="mx-cta-primary" style={{fontFamily:FF}} onClick={()=>{ window.location.href="/watch/nosferatu"; }}>
-              Watch Preview
+            <button className="mx-cta-primary" style={{fontFamily:FF}} onClick={()=>{ window.location.href="/watch"; }}>
+              Explore Platform
             </button>
             <button className="mx-cta-secondary" style={{fontFamily:FF}} onClick={()=>{ window.location.href="/watch/nosferatu"; }}>
-              Explore Experience
+              Watch Nosferatu
             </button>
           </div>
         </div>
@@ -618,6 +650,34 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
               </div>
             </a>
           ))}
+        </div>
+      </section>
+
+      {/* ── HOW MOVIANX WORKS ───────────────────────────────────── */}
+      <div className="mx-divider" aria-hidden="true" />
+      <section className="mx-how" aria-label="How Movianx works">
+        <div className="mx-section-header">
+          <div>
+            <h2 className="mx-section-title">How Movianx Works</h2>
+            <p className="mx-section-sub">One platform. Films, stories, music, and creators — all interactive.</p>
+          </div>
+        </div>
+        <div className="mx-how-steps">
+          <div className="mx-how-step">
+            <span className="mx-how-num">01</span>
+            <h3>Choose Your Experience</h3>
+            <p>Browse films, interactive stories, music experiences, and creator worlds — all in one place.</p>
+          </div>
+          <div className="mx-how-step">
+            <span className="mx-how-num">02</span>
+            <h3>Enter a Living World</h3>
+            <p>AI-enhanced audio, branching choices, timed decisions, and reimagined scenes transform passive watching into active experience.</p>
+          </div>
+          <div className="mx-how-step">
+            <span className="mx-how-num">03</span>
+            <h3>Support Creators Directly</h3>
+            <p>Creators keep 85% of revenue. Tip, buy merch, or subscribe — all without leaving the experience.</p>
+          </div>
         </div>
       </section>
 

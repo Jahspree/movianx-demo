@@ -91,16 +91,17 @@ function previewMood(experience) {
 }
 
 function creatorLanes(experience) {
+  // Only return lanes that have real destinations
   if (experience.contentFormat === "creator_spotlight") {
-    return ["Films", "Worlds", "Soundscapes", "Collections"];
+    return ["Films", "Soundscapes"];
   }
   if (experience.mediaType === "Music Experience") {
-    return ["Soundscapes", "Visuals", "Albums", "Collections"];
+    return ["Soundscapes", "Albums"];
   }
   if (experience.contentFormat === "interactive_story") {
-    return ["Chapters", "Alternate Endings", "Worlds", "Collections"];
+    return ["Chapters"];
   }
-  return ["Episodes", "Alternate Endings", "Worlds", "Collections"];
+  return ["More Like This"];
 }
 
 function ExperienceCard({ experience }) {
@@ -321,14 +322,6 @@ export default function WatchDetailPage({ params }) {
                 <button type="button" className={styles.playerContinueBtn}>
                   Continue
                 </button>
-              </div>
-              <div className={styles.playerDivider} aria-hidden="true" />
-              <div className={styles.playerTertiary}>
-                {lanes.map((lane) => (
-                  <button type="button" key={lane} className={styles.playerLaneBtn}>
-                    {lane}
-                  </button>
-                ))}
               </div>
             </div>
           )}
