@@ -1270,11 +1270,13 @@ export default function MovianxPlatform(){
     const stabilizeRootShell=()=>{
       const params=new URLSearchParams(window.location.search);
       const storyId=Number(params.get("story"));
-      if(storyId&&window.location.pathname==="/"){
+      const launch=params.get("launch");
+      // Only redirect legacy /?story=N URLs — never interrupt a valid reading session
+      if(storyId&&window.location.pathname==="/"&&launch!=="reading"){
         window.location.replace(`/watch/story-${storyId}`);
         return;
       }
-      if(window.location.pathname==="/"&&!storyId){
+      if(window.location.pathname==="/"&&!storyId&&launch!=="reading"){
         setPg("landing");
         setViewTransitionState("idle");
       }
