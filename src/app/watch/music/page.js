@@ -313,7 +313,7 @@ const musicPageCSS = `
   }
   .mx-music-hero-img{
     position:absolute;inset:0;
-    background-image:url(/images/wraith/gucc1.png);
+    background-image:url(/images/wraith-the-don.jpg);
     background-size:cover;background-position:center top;
     transition:transform 600ms ease;
   }
@@ -454,6 +454,13 @@ const musicPageCSS = `
     .mx-music-artist-name{ font-size:clamp(44px,8vw,66px); }
     .mx-sirens-grid{ grid-template-columns:1fr;gap:32px; }
     .mx-catalog-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width:1024px){
+    /* On mobile the hero-right becomes a landscape band.
+       wraith-the-don.jpg is landscape; face is at ~25% from top.
+       background-position: center 18% keeps Wraith's face in the focal
+       center of the visible crop rather than defaulting to the top edge. */
+    .mx-music-hero-img{ background-position:center 18%; }
   }
   @media (max-width:600px){
     .mx-music-hero-left{ padding:36px 5%; }
