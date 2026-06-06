@@ -75,7 +75,7 @@ const DISCOVER_CARDS = [
     desc: "Immersive music experiences. Artists performing live inside the platform.",
     cta: "Explore Music",
     href: "/watch/music",
-    image: "/images/wraith/wraith-promo.jpg",
+    image: "/images/wraith/gucc1.png",
   },
   {
     badge: "CREATORS",
