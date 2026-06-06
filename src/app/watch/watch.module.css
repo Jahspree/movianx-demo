@@ -1074,6 +1074,7 @@
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 28%, rgba(0, 0, 0, 0.58)),
     repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.025) 0, rgba(255, 255, 255, 0.025) 1px, transparent 1px, transparent 54px);
   z-index: 1;
+  pointer-events: none;
 }
 
 .videoFrame:target {
@@ -2433,6 +2434,13 @@
   justify-content: center;
 }
 @media (max-width: 640px) {
-  .artistStripImage { width: 120px; }
+  .artistStripImage {
+    width: 120px;
+    /* Desktop uses center top (shows stage lights + performer from top).
+       On mobile the strip grows taller relative to its width, shifting the
+       visible window down so the mic appears centered and the face is cropped.
+       background-position: center 18% locks the focal point on Wraith's face. */
+    background-position: center 18%;
+  }
   .artistStripBody { padding: 20px; }
 }

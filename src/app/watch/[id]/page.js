@@ -252,8 +252,8 @@ export default function WatchDetailPage({ params }) {
                 src={experience.videoEmbedUrl}
                 title={experience.title}
                 allowFullScreen
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", borderRadius: "inherit" }}
-                allow="fullscreen"
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", borderRadius: "inherit", zIndex: 2 }}
+                allow="autoplay; fullscreen; picture-in-picture"
               />
             </div>
           ) : experience.contentFormat === "music_experience" ? (

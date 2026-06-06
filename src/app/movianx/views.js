@@ -538,7 +538,9 @@ const landingCinematicCSS = `
     .mx-rail{ display:flex;overflow-x:auto;gap:12px;padding-bottom:8px;scroll-snap-type:x proximity; }
     .mx-exp-card{ min-width:190px;scroll-snap-align:start; }
     .mx-btn-ghost{ display:none; }
-    .mx-teaser{ display:none; }
+    .mx-teaser{ display:block;max-height:320px; }
+    .mx-teaser-video{ position:relative;z-index:1;max-height:320px;object-position:center 20%; }
+    .mx-teaser-poster-fallback{ display:block;position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;z-index:0; }
     .mx-discover{ padding:48px 5% 36px; }
     .mx-featured{ padding:0 5% 64px; }
   }
@@ -648,6 +650,7 @@ export function LandingView({ C, FF, CSS, transitionState, navigateTo }) {
         <video
           className="mx-teaser-video"
           src="/images/nosferatu-teaser.mov"
+          poster="/images/nosferatu-poster.png"
           autoPlay
           muted
           loop
