@@ -313,7 +313,7 @@ const musicPageCSS = `
   }
   .mx-music-hero-img{
     position:absolute;inset:0;
-    background-image:url(/images/wraith-the-don.jpg);
+    background-image:url(/images/wraith/hero-red.png);
     background-size:cover;background-position:center top;
     transition:transform 600ms ease;
   }
@@ -456,10 +456,10 @@ const musicPageCSS = `
     .mx-catalog-grid{ grid-template-columns:repeat(2,1fr); }
   }
   @media (max-width:1024px){
-    /* On mobile the hero-right becomes a landscape band.
-       wraith-the-don.jpg is landscape; face is at ~25% from top.
-       background-position: center 18% keeps Wraith's face in the focal
-       center of the visible crop rather than defaulting to the top edge. */
+    /* On mobile the hero-right collapses to a landscape band (55vw height).
+       hero-red.png is portrait; Wraith's face is in the upper 20-30%.
+       background-position: center 18% slightly shifts the crop so both
+       Wraith's face and the Rolls Royce are visible without clipping the face. */
     .mx-music-hero-img{ background-position:center 18%; }
   }
   @media (max-width:600px){
