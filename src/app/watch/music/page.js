@@ -6,7 +6,7 @@ import styles from "../watch.module.css";
 import AtmosphereBridge from "../AtmosphereBridge";
 
 // ─── UNIQUE ARTWORK ASSIGNMENT TABLE ──────────────────────────────────────────
-// Wraith The Don — Featured Artist        → /images/wraith/portrait.jpg
+// Wraith The Don — Music Profile Hero     → /images/wraith/gucc1.png
 // Parallel Us — Album Cover               → /images/wraith/parallel-us.png
 // Sirens — Experience Poster              → /images/wraith/performance-red.png
 // Artist Portrait                         → /images/wraith/portrait.jpg
@@ -313,7 +313,7 @@ const musicPageCSS = `
   }
   .mx-music-hero-img{
     position:absolute;inset:0;
-    background-image:url(/images/wraith/portrait.jpg);
+    background-image:url(/images/wraith/gucc1.png);
     background-size:cover;background-position:center top;
     transition:transform 600ms ease;
   }
@@ -457,10 +457,10 @@ const musicPageCSS = `
   }
   @media (max-width:1024px){
     /* On mobile the hero-right collapses to a landscape band (55vw height).
-       portrait.jpg is a square studio portrait; Wraith's face is in the upper 30-40%.
-       background-position: center 15% keeps the face visible and centered
+       gucc1.png is portrait orientation; Wraith is centered vertically beneath the mic.
+       background-position: center 20% keeps Wraith's face and the mic visible
        in the collapsed mobile hero band without clipping. */
-    .mx-music-hero-img{ background-position:center 15%; }
+    .mx-music-hero-img{ background-position:center 20%; }
   }
   @media (max-width:600px){
     .mx-music-hero-left{ padding:36px 5%; }
