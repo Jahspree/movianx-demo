@@ -75,7 +75,7 @@ const DISCOVER_CARDS = [
     desc: "Immersive music experiences. Artists performing live inside the platform.",
     cta: "Explore Music",
     href: "/watch/music",
-    image: "/images/wraith/hero-red.png",
+    image: "/images/wraith/portrait.jpg",
   },
   {
     badge: "CREATORS",
@@ -113,7 +113,7 @@ const FEATURED_RAIL = [
     title: "Wraith The Don",
     genre: "Hip-Hop · Live Experience",
     runtime: "Live",
-    image: "/images/wraith/hero-red.png",
+    image: "/images/wraith/portrait.jpg",
     href: "/watch/music",
   },
   {

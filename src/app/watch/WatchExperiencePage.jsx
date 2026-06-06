@@ -65,7 +65,7 @@ const ZONE_ENVIRONMENT_IMAGES = {
     secondary: "/images/generated-live/stories/world-04-the-last-summer-we-spoke/story.jpg",
   },
   music: {
-    primary: "/images/wraith/hero-red.png",
+    primary: "/images/wraith/gucc1.png",
     secondary: "/images/generated-live/music/music_ambient-dreamlike_the-quiet-frequency_20260526t003500z_e4n7r2/poster.jpg",
   },
 };
@@ -448,7 +448,7 @@ export default function WatchExperiencePage({ zone = "explore" }) {
         <EditorialSection zone={activeZone} />
         {(activeZone === "explore" || activeZone === "music") && (
           <a href="/watch/music" className={styles.artistStrip} aria-label="Wraith The Don — Featured Artist">
-            <div className={styles.artistStripImage} style={{backgroundImage:"url(/images/wraith/hero-red.png)"}} />
+            <div className={styles.artistStripImage} style={{backgroundImage:"url(/images/wraith/gucc1.png)"}} />
             <div className={styles.artistStripBody}>
               <span className={styles.miniBadge} style={{background:"#0f766e",marginBottom:8,display:"inline-block"}}>Featured Artist</span>
               <h2 style={{margin:"0 0 4px",fontSize:"clamp(22px,3vw,32px)",fontWeight:800,color:"#fff",letterSpacing:"-0.03em"}}>Wraith The Don</h2>
