@@ -319,9 +319,6 @@ export default function WatchDetailPage({ params }) {
                   <span className={styles.playerPlayIcon} aria-hidden="true">▶</span>
                   {primaryAction(experience)}
                 </Link>
-                <button type="button" className={styles.playerContinueBtn}>
-                  Continue
-                </button>
               </div>
             </div>
           )}

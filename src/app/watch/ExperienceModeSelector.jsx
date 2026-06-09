@@ -6,7 +6,7 @@ import styles from "./watch.module.css";
 const MODES = [
   { id: "original",   label: "Original",        engineMode: "Cinematic"  },
   { id: "reimagined", label: "Reimagined",       engineMode: "Immersive"  },
-  { id: "alternate",  label: "Alternate Ending", engineMode: "Immersive", startChapter: 3 },
+  { id: "alternate",  label: "Alternate Ending", engineMode: "Immersive", startChapter: 2 },
 ];
 
 export default function ExperienceModeSelector({ experienceId, primaryLabel }) {

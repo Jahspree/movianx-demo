@@ -297,7 +297,7 @@ export const STORY_EXPERIENCES = STORIES.map((story) => ({
     ? "A timed survival experience built around pressure, sound, and instinct."
     : "A cinematic interactive story shaped for intimate, choice-aware immersion.",
   genre: story.genre,
-  runtime: story.isTimed ? "4 chapters" : `${story.chapters} chapters`,
+  runtime: `${story.chapters} chapters`,
   rating: String(story.rating),
   language: "English",
   mediaType: story.isTimed ? "Timed Interactive Story" : "Interactive Story",

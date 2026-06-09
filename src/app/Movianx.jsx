@@ -718,6 +718,8 @@ export default function MovianxPlatform(){
   const[selectedText,setSelectedText]=useState("");
   const[touchStartX,setTouchStartX]=useState(0);
   const[touchEndX,setTouchEndX]=useState(0);
+  const[touchStartY,setTouchStartY]=useState(0);
+  const[touchEndY,setTouchEndY]=useState(0);
   const[showMonetize,setShowMonetize]=useState(false);
   const[showBranchInfo,setShowBranchInfo]=useState(false);
   const[currentWordIdx,setCurrentWordIdx]=useState(-1); // word-by-word highlight
@@ -1318,13 +1320,17 @@ export default function MovianxPlatform(){
   };
 
   // === SWIPE HANDLER ===
-  const onTouchStart=e=>setTouchStartX(e.touches[0].clientX);
-  const onTouchMove=e=>setTouchEndX(e.touches[0].clientX);
+  const onTouchStart=e=>{setTouchStartX(e.touches[0].clientX);setTouchStartY(e.touches[0].clientY);};
+  const onTouchMove=e=>{setTouchEndX(e.touches[0].clientX);setTouchEndY(e.touches[0].clientY);};
   const onTouchEnd=()=>{
-    const dist=touchStartX-touchEndX;
-    setTouchStartX(0);setTouchEndX(0);
-    if(Math.abs(dist)<50)return;
-    if(dist>0)goChapter(chIdx+1); // swipe left = next
+    const distX=touchStartX-touchEndX;
+    const distY=touchStartY-touchEndY;
+    setTouchStartX(0);setTouchEndX(0);setTouchStartY(0);setTouchEndY(0);
+    // Only fire chapter nav for clear horizontal swipes:
+    // horizontal distance must exceed 50px AND be larger than vertical distance
+    if(Math.abs(distX)<50)return;
+    if(Math.abs(distX)<=Math.abs(distY))return; // vertical scroll — ignore
+    if(distX>0)goChapter(chIdx+1); // swipe left = next
     else goChapter(chIdx-1); // swipe right = prev
   };
 
