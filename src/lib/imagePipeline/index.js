@@ -10,7 +10,7 @@ export async function runCinematicImagePipeline({
   requestedTypes = ["poster", "hero", "thumbnail"],
   persist = true,
 } = {}) {
-  const analysis = analyzeVisualMetadata(content);
+  const analysis = await analyzeVisualMetadata(content);
   const prompts = buildCinematicPrompts(analysis, requestedTypes);
   const assets = [];
 
