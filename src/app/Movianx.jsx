@@ -1032,6 +1032,14 @@ export default function MovianxPlatform(){
       });
     }
 
+    // Pre-timer heartbeat for timed stories — starts low during narration,
+    // escalates into the existing timer fear curve. Label must match the timer
+    // useEffect's labeledGains key exactly so the fade automation lands on it.
+    if(timedStory){
+      const hbVolume=0.025+(sceneAnalysis.tension||0)*0.035;
+      audioEngine.playSpatial(assetResolver.getAudio("heartbeat"),hbVolume,{x:0,y:0,z:0},true,2.5,"your heartbeat","tension");
+    }
+
     if(!timedStory&&intensityLevel>=2){
       audioEngine.playSpatial(assetResolver.getAudio("heartbeat"),0.05+(intensityLevel*0.045),{x:0,y:0,z:0},true,1.2,"intensity heartbeat","tension");
     }
@@ -1100,10 +1108,10 @@ export default function MovianxPlatform(){
       });
     }
 
-    // 3. Execute timed sequence
+    // 3. Execute timed sequence — precision timing, no jitter
     if(chManifest.timedSequence){
       chManifest.timedSequence.forEach(cue=>{
-        scheduleExperienceEvent(()=>{
+        audioEngine.addTimeout(()=>{
           if(cue.triggerTension)audioEngine.addExperienceImpulse({tension:cue.triggerTension,presence:cue.presence||0.05,uncertainty:cue.uncertainty||0.02});
           if(cue.action==="play"){
             if(cue.type==="procedural"){
@@ -1119,15 +1127,14 @@ export default function MovianxPlatform(){
               }
             }
           }else if(cue.action==="silence"){
-            const silenceJitter=Math.round(Math.random()*450);
-            audioEngine.silence((cue.duration||600)+silenceJitter,{floor:getTimeline(storyId).silenceFloor});
+            audioEngine.silence(cue.duration||600,{floor:getTimeline(storyId).silenceFloor});
           }else if(cue.action==="fadeGain"){
             const targetGain=audioEngine.labeledGains[cue.target];
             if(targetGain)audioEngine.fadeGain(targetGain,cue.toVolume,cue.duration);
           }else if(cue.action==="fadeAllAmbient"){
             audioEngine.fadeAllAmbient(cue.toVolume,cue.duration);
           }
-        },cue.time,sceneAnalysis.tension*0.08);
+        },cue.time);
       });
     }
 
@@ -1532,8 +1539,11 @@ export default function MovianxPlatform(){
       const manifest=getManifest(sel.id);
       const chManifest=manifest?.chapters?.[chIdx];
       if(chManifest?.timerAudio?.heartbeatIntensity){
-        // Start heartbeat when timer first begins (heartbeatStartAt: "timerStart")
-        if(chManifest.timerAudio.heartbeatStartAt==="timerStart"&&timeRemaining===limit){
+        // Start heartbeat when timer first begins (heartbeatStartAt: "timerStart").
+        // Guard: if pre-timer heartbeat is already running (label registered by
+        // playChapterAudio), skip re-spawning — just let the fade automation
+        // below escalate the existing node to the timer intensity curve.
+        if(chManifest.timerAudio.heartbeatStartAt==="timerStart"&&timeRemaining===limit&&!audioEngine.labeledGains["your heartbeat"]){
           const url=assetResolver.getAudio("heartbeat");
           const startIntensity=chManifest.timerAudio.heartbeatIntensity[timeRemaining]||0.1;
           audioEngine.playSpatial(url,startIntensity,{x:0,y:0,z:0},true,0,"your heartbeat","tension");

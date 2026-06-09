@@ -2,14 +2,75 @@
   "name": "NarrationProfile_10Seconds_FemaleFear",
   "voice_id": "21m00Tcm4TlvDq8ikWAM",
   "voice_name": "Rachel",
-  "model_id": "eleven_turbo_v2",
-  "voice_settings": {
-    "stability": 0.38,
-    "similarity_boost": 0.88,
-    "style": 0.55,
-    "use_speaker_boost": true
-  },
-  "processing_chain": "ElevenLabs MP3 render; runtime narration FX only",
+  "model_id": "eleven_multilingual_v2",
+  "emotional_arc": [
+    {
+      "chapter": 0,
+      "label": "terrified whisper, shaking breath, hesitant pauses, fear starting immediately",
+      "stability": 0.35,
+      "similarity_boost": 0.85,
+      "style": 0.45,
+      "use_speaker_boost": true
+    },
+    {
+      "chapter": 1,
+      "label": "panicked urgency, clipped breath, listening between phrases, voice shaking",
+      "stability": 0.22,
+      "similarity_boost": 0.8,
+      "style": 0.72,
+      "use_speaker_boost": true
+    },
+    {
+      "chapter": 2,
+      "label": "near tears, broken pacing, breath catching, desperation building to the choice",
+      "stability": 0.12,
+      "similarity_boost": 0.74,
+      "style": 0.9,
+      "use_speaker_boost": true
+    },
+    {
+      "chapter": 3,
+      "label": "hollow aftermath, grief-filled delivery, numb and quiet, all urgency gone",
+      "stability": 0.72,
+      "similarity_boost": 0.92,
+      "style": 0.12,
+      "use_speaker_boost": true
+    }
+  ],
+  "companion_arc": [
+    {
+      "chapter": 0,
+      "label": "terrified whisper, mouth close to listener's ear, panic rising, intimate and urgent",
+      "stability": 0.3,
+      "similarity_boost": 0.85,
+      "style": 0.55,
+      "use_speaker_boost": true
+    },
+    {
+      "chapter": 1,
+      "label": "panicked whisper, interrupted breathing, urgent but trying not to be heard, fragments",
+      "stability": 0.18,
+      "similarity_boost": 0.78,
+      "style": 0.8,
+      "use_speaker_boost": true
+    },
+    {
+      "chapter": 2,
+      "label": "crying or near tears, broken words, desperate and breathless, barely holding together",
+      "stability": 0.1,
+      "similarity_boost": 0.72,
+      "style": 0.92,
+      "use_speaker_boost": true
+    },
+    {
+      "chapter": 3,
+      "label": "hollow shock, grief-filled delivery, disconnected and quiet, all urgency gone",
+      "stability": 0.68,
+      "similarity_boost": 0.9,
+      "style": 0.1,
+      "use_speaker_boost": true
+    }
+  ],
   "scope": "10 Seconds standard and companion narration assets only",
   "files": [
     "ch0.mp3",

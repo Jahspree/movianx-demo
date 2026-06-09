@@ -33,15 +33,23 @@ const TIMED_HORROR_AUDIO = {
   },
 
   // Per-chapter voice settings for emotional progression
+  // Model: eleven_multilingual_v2 (higher expressiveness than turbo)
+  // stability:        0 = max variation/emotion, 1 = flat/monotone
+  // style:            0 = neutral delivery,      1 = max exaggeration/drama
+  // similarity_boost: voice identity fidelity; slightly lower for wilder chapters
   chapterVoiceSettings: {
-    // Ch0: Trembling whisper. Scared. Shaky breath. Unstable.
-    0: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
-    // Ch1: Full fear, trying to stay quiet. Voice shakes.
-    1: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
-    // Ch2: Absolute panic barely contained. Maximum emotional variation.
-    2: { stability: 0.38, similarity_boost: 0.88, style: 0.55, use_speaker_boost: true },
-    // Ch3: Hollow, broken, empty. Numb, flat delivery.
-    3: { stability: 0.6, similarity_boost: 0.9, style: 0.3 },
+    // Ch0: 3:47 AM — Fear just starting. Controlled but shaking.
+    //   Whispered, hesitant, pauses to listen. Scared but still composed.
+    0: { stability: 0.35, similarity_boost: 0.85, style: 0.45, use_speaker_boost: true },
+    // Ch1: The Hallway — Fear rising. Voice breaks on key words.
+    //   Clipped, urgent, breath audible. Trying hard not to make sound.
+    1: { stability: 0.22, similarity_boost: 0.80, style: 0.72, use_speaker_boost: true },
+    // Ch2: The Choice — Absolute panic, barely contained.
+    //   Maximum expressiveness. Near tears. Voice cracking and rushing.
+    2: { stability: 0.12, similarity_boost: 0.74, style: 0.90, use_speaker_boost: true },
+    // Ch3: Consequences — Hollow aftermath. All emotion spent.
+    //   Numb, flat, disconnected. High stability strips the life out.
+    3: { stability: 0.72, similarity_boost: 0.92, style: 0.12, use_speaker_boost: true },
   },
 
   companionScript: {
@@ -88,7 +96,7 @@ const TIMED_HORROR_AUDIO = {
       sceneAnalysis: { mood: "horror", tension: 0.72, environment: "indoor" },
       tension: 0.72,
       audioProfile: {
-        musicLayer: { type: "procedural", sound: "drone", volume: 0.045, frequency: 38, waveform: "triangle", fadeIn: 0.8, label: "page1_low_tension_drone" },
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.14, frequency: 38, waveform: "triangle", fadeIn: 0.8, label: "page1_low_tension_drone" },
         ambienceLayer: [
           { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 44, waveform: "sine", fadeIn: 0.4, label: "page1_room_air" },
         ],
@@ -112,7 +120,7 @@ const TIMED_HORROR_AUDIO = {
         {
           time: 6000,
           action: "play",
-          file: "/audio/sfx/ice_crack.mp3",
+          file: "/audio/sfx/glass_break.mp3",
           volume: 0.6,
           position: { x: 0, y: -1, z: -4 },
           label: "glass breaking downstairs",
@@ -194,7 +202,7 @@ const TIMED_HORROR_AUDIO = {
       sceneAnalysis: { mood: "horror", tension: 0.84, environment: "indoor" },
       tension: 0.84,
       audioProfile: {
-        musicLayer: { type: "procedural", sound: "drone", volume: 0.055, frequency: 34, waveform: "triangle", fadeIn: 0.7, label: "page2_tension_drone" },
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.17, frequency: 34, waveform: "triangle", fadeIn: 0.7, label: "page2_tension_drone" },
         ambienceLayer: [
           { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 42, waveform: "sine", fadeIn: 0.6, label: "page2_hall_air" },
         ],
@@ -314,7 +322,7 @@ const TIMED_HORROR_AUDIO = {
       sceneAnalysis: { mood: "horror", tension: 0.96, environment: "indoor" },
       tension: 0.96,
       audioProfile: {
-        musicLayer: { type: "procedural", sound: "drone", volume: 0.068, frequency: 30, waveform: "sawtooth", fadeIn: 0.5, label: "page3_danger_drone" },
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.22, frequency: 30, waveform: "sawtooth", fadeIn: 0.5, label: "page3_danger_drone" },
         ambienceLayer: [
           { type: "procedural", sound: "room_tone", volume: 0.008, frequency: 38, waveform: "sine", fadeIn: 0.5, label: "page3_room_pressure" },
         ],
@@ -398,7 +406,7 @@ const TIMED_HORROR_AUDIO = {
       sceneAnalysis: { mood: "dark", tension: 0.35, environment: "indoor" },
       tension: 0.35,
       audioProfile: {
-        musicLayer: { type: "procedural", sound: "drone", volume: 0.032, frequency: 48, waveform: "sine", fadeIn: 1.2, label: "page4_aftermath_low_drone" },
+        musicLayer: { type: "procedural", sound: "drone", volume: 0.045, frequency: 48, waveform: "sine", fadeIn: 1.2, label: "page4_aftermath_low_drone" },
         ambienceLayer: [
           { type: "procedural", sound: "room_tone", volume: 0.006, frequency: 50, waveform: "sine", fadeIn: 1.2, label: "page4_aftermath_air" },
         ],
