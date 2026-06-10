@@ -154,6 +154,8 @@ class AudioEngine {
     this.masterGain = null;
     this.tensionDistortion = null;
     this.atmosphereFilter = null; // BiquadFilter on ambient bus — driven by EmotionConductor
+    this.duckingGain = null;      // GainNode on ambient path — ducked on narration start/SFX fire
+    this.foleyReverb = null;      // ConvolverNode shared by tension+event — puts foley in the same room as voice
     this.currentTension = 0;
     this.experienceState = {
       tension: 0,
@@ -233,14 +235,33 @@ class AudioEngine {
     this.atmosphereFilter.frequency.setValueAtTime(1800, ctx.currentTime);
     this.atmosphereFilter.Q.setValueAtTime(0.6, ctx.currentTime);
 
+    // Ducking gain — sits between ambient bus and atmosphere filter.
+    // Ramped to 0.58 when narration starts, restored on narration end.
+    // Ramped to 0.78 briefly when major foley fires, restores after 1.2s.
+    this.duckingGain = ctx.createGain();
+    this.duckingGain.gain.setValueAtTime(1, ctx.currentTime);
+
+    // Shared room reverb for tension + event foley — puts Foley in the same
+    // acoustic space as the voice reverb. Short impulse (0.10s, fast decay)
+    // at 1.8% wet so it adds room presence without muddying the mix.
+    this.foleyReverb = ctx.createConvolver();
+    this.foleyReverb.buffer = this.createCloseRoomImpulse(0.10, 0.28);
+    const foleyReverbWet = ctx.createGain();
+    foleyReverbWet.gain.setValueAtTime(0.018, ctx.currentTime);
+
     this.layerGains.narration.connect(this.masterGain);
-    this.layerGains.ambient.connect(this.atmosphereFilter);
+    this.layerGains.ambient.connect(this.duckingGain);
+    this.duckingGain.connect(this.atmosphereFilter);
     this.atmosphereFilter.connect(this.masterGain);
     this.layerGains.tension.connect(this.tensionDistortion);
     this.tensionDistortion.connect(this.masterGain);
+    this.tensionDistortion.connect(this.foleyReverb);
     this.layerGains.event.connect(this.masterGain);
+    this.layerGains.event.connect(this.foleyReverb);
+    this.foleyReverb.connect(foleyReverbWet);
+    foleyReverbWet.connect(this.masterGain);
     this.masterGain.connect(ctx.destination);
-    this.activeNodes.push(this.masterGain, this.tensionDistortion, this.atmosphereFilter, ...Object.values(this.layerGains));
+    this.activeNodes.push(this.masterGain, this.tensionDistortion, this.atmosphereFilter, this.duckingGain, this.foleyReverb, foleyReverbWet, ...Object.values(this.layerGains));
   }
 
   makeDistortionCurve(amount = 0) {
@@ -351,8 +372,11 @@ class AudioEngine {
     audio.addEventListener("loadedmetadata", () => {
       this.narrationManager.duration = Number.isFinite(audio.duration) ? audio.duration * 1000 : 0;
     }, { once: true });
+    // Duck ambient while Sarah speaks — restores after narration ends
+    this.duckAmbient(0.58, 120, 0);
     audio.addEventListener("ended", () => {
       this.narrationManager.completed = true;
+      this.restoreAmbientDuck(280);
       console.log("narration_completed", {
         url,
         elapsedMs: Math.round((typeof performance !== "undefined" ? performance.now() : Date.now()) - this.narrationManager.startedAt),
@@ -555,6 +579,8 @@ class AudioEngine {
   playSpatial(url, volume = 0.2, position = { x: 0, y: 0, z: 0 }, loop = false, fadeIn = 0, label = null, role = "tension") {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
+    // Brief ambient duck when a major foley event fires so the SFX cuts through
+    if (role === "tension" && volume >= 0.3) this.duckAmbient(0.76, 60, 1200);
     const spatial = new SpatialSound(this, url, { volume, position, loop, fadeIn, label, role });
     return { audio: spatial.audio, gainNode: spatial.gainNode, pannerNode: spatial.pannerNode, sourceNode: spatial.sourceNode, spatial };
   }
@@ -562,6 +588,7 @@ class AudioEngine {
   playSpatialMoving(url, volume, from, to, duration, loop = false, fadeWithDistance = false, label = null, role = "tension") {
     const ctx = this.ctx;
     if (!ctx || !url) return null;
+    if (role === "tension" && volume >= 0.3) this.duckAmbient(0.76, 60, 1200);
     const spatial = new SpatialSound(this, url, { volume, position: from, loop, label, role });
     spatial.moveTo(to, duration, fadeWithDistance);
     return { audio: spatial.audio, gainNode: spatial.gainNode, pannerNode: spatial.pannerNode, sourceNode: spatial.sourceNode, spatial };
@@ -753,6 +780,29 @@ class AudioEngine {
 
   // --- Gain control --------------------------------------------------------
 
+  // Duck ambient when Sarah speaks or when a major Foley event fires.
+  // targetGain: how far to duck (0.58 for voice, 0.78 for SFX).
+  // rampMs: time to reach the duck level.
+  // restoreMs: how long before restoring to 1.0 (0 = restore when narration ends).
+  duckAmbient(targetGain = 0.58, rampMs = 120, restoreMs = 0) {
+    if (!this.ctx || !this.duckingGain) return;
+    const t = this.ctx.currentTime;
+    this.duckingGain.gain.cancelScheduledValues(t);
+    this.duckingGain.gain.setValueAtTime(this.duckingGain.gain.value, t);
+    this.duckingGain.gain.linearRampToValueAtTime(targetGain, t + rampMs / 1000);
+    if (restoreMs > 0) {
+      this.duckingGain.gain.linearRampToValueAtTime(1.0, t + (rampMs + restoreMs) / 1000);
+    }
+  }
+
+  restoreAmbientDuck(rampMs = 220) {
+    if (!this.ctx || !this.duckingGain) return;
+    const t = this.ctx.currentTime;
+    this.duckingGain.gain.cancelScheduledValues(t);
+    this.duckingGain.gain.setValueAtTime(this.duckingGain.gain.value, t);
+    this.duckingGain.gain.linearRampToValueAtTime(1.0, t + rampMs / 1000);
+  }
+
   fadeGain(gainNode, toValue, duration) {
     if (!gainNode || !this.ctx) return;
     const t = this.ctx.currentTime;
@@ -921,6 +971,8 @@ class AudioEngine {
     this.masterGain = null;
     this.tensionDistortion = null;
     this.atmosphereFilter = null;
+    this.duckingGain = null;
+    this.foleyReverb = null;
     this.currentTension = 0;
     this.experienceLoop = null;
     this.experienceState = { tension: 0, presence: 0, immersion: 0, uncertainty: 0, control: 0 };

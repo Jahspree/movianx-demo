@@ -67,9 +67,9 @@ const CHAPTERS = [
       {
         beatId:    "ch0_realization",
         beatIndex: 3,
-        text:      "<<breathless>> I can hear them moving. More than one. <<whispering>> The bat's in the closet. My phone's dead. The kids are down the hall.",
-        stability: 0.18, style: 0.80, speed: 0.84, similarity_boost: 0.84,
-        direction: "cold inventory under terror — 'More than one' is the blow, then resource-checking against impossibility",
+        text:      "<<whispering>> I can hear them moving... More than one. The bat's in the closet— My phone's dead— The kids are down the hall.",
+        stability: 0.48, style: 0.85, speed: 0.92, similarity_boost: 0.78,
+        direction: "rapid inventory under terror — single whispering tag, em-dashes break the list rhythm, ... holds the breath after 'moving'",
       },
       {
         beatId:    "ch0_timer_warning",
@@ -95,9 +95,9 @@ const CHAPTERS = [
       {
         beatId:    "ch1_upstairs",
         beatIndex: 1,
-        text:      "<<breathless>> One step. Two. Three. <<whispering>> They stopped. <<breathless>> No. They're moving again.",
-        stability: 0.12, style: 0.90, speed: 0.80, similarity_boost: 0.80,
-        direction: "counting footsteps, false hope on 'They stopped', whisper because silence might mean safety, 'No.' shatters it",
+        text:      "<<panicked>> One step. Two. Three— They stopped... No. They're moving again.",
+        stability: 0.42, style: 0.95, speed: 1.02, similarity_boost: 0.72,
+        direction: "counting footsteps — single panicked tag, — after Three for abrupt cut, ... holds the false-hope moment, 'No.' arrives small",
       },
       {
         beatId:    "ch1_landing",
@@ -109,9 +109,9 @@ const CHAPTERS = [
       {
         beatId:    "ch1_come_out",
         beatIndex: 3,
-        text:      "<<whispering>> He's on the landing now. Same floor. <<breathless>> Same air. I can't think. What do we do? <<crying>> Please.",
-        stability: 0.10, style: 0.92, speed: 0.82, similarity_boost: 0.80,
-        direction: "'Same air' through the door — most intimate line. 'Please' is the most vulnerable word in the story",
+        text:      "<<whispering>> He's on the landing now. Same floor. Same air... I can't think. What do we do? Please.",
+        stability: 0.48, style: 0.90, speed: 0.88, similarity_boost: 0.75,
+        direction: "single whisper throughout — removes theatrical <<crying>> from 'Please', ... after 'Same air' holds the proximity horror, 'Please' arrives small and broken",
       },
     ],
   },
@@ -144,9 +144,9 @@ const CHAPTERS = [
       {
         beatId:    "ch2_handle_turns",
         beatIndex: 3,
-        text:      "<<breathless>> The handle is turning. Right now.",
-        stability: 0.06, style: 0.95, speed: 0.90, similarity_boost: 0.76,
-        direction: "present tense, happening as she speaks, 'Right now' because she can't believe it, voice is barely air",
+        text:      "<<whispering>> The handle is turning... Right now.",
+        stability: 0.42, style: 1.00, speed: 0.78, similarity_boost: 0.72,
+        direction: "frozen terror watching the handle — whispering (not breathless, she's still), ... holds the pause as time slows, slow delivery 0.78",
       },
       {
         beatId:    "ch2_the_choice",
@@ -179,9 +179,9 @@ const CHAPTERS = [
       {
         beatId:    "ch3_james_speaks",
         beatIndex: 2,
-        text:      "<<crying>> What did we become?",
-        stability: 0.60, style: 0.20, speed: 0.76, similarity_boost: 0.88,
-        direction: "asking partner, or herself, or both — not rhetorical, she genuinely doesn't know, let silence breathe after",
+        text:      "<<whispering>> What did we become?",
+        stability: 0.48, style: 0.65, speed: 0.76, similarity_boost: 0.82,
+        direction: "hollow dissociated whisper — removed <<crying>> tag (was theatrical grief), whispering delivers hollow shock instead",
       },
       {
         beatId:    "ch3_the_weight",

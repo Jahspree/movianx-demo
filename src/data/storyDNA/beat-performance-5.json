@@ -1,0 +1,113 @@
+{
+  "storyKey": "10seconds",
+  "generatedBy": "gemini-2.5-flash",
+  "generatedAt": "2026-06-10T17:51:46.207Z",
+  "scope": "5 highest-ROI beats for voice performance improvement",
+  "beats": [
+    {
+      "globalIndex": 3,
+      "label": "First Escalation",
+      "beatId": "ch0_realization",
+      "chapterIdx": 0,
+      "beatIndex": 3,
+      "screenText": "I can hear them moving. More than one. The bat's in the closet. My phone's dead. The kids are down the hall.",
+      "contextPrefix": "Sarah and her spouse are in bed, having just heard the initial sounds of intruders breaking into their home downstairs. Sarah is rapidly processing the threat and their limited options.",
+      "emotionallyOptimizedDialogue": "<<whispering>> I can hear them moving... More than one. The bat's in the closet— My phone's dead— The kids are down the hall.",
+      "hiddenEmotion": "Overwhelmed, desperate, a frantic mental checklist of threats and dwindling resources.",
+      "listenerRelationship": "Confiding, seeking shared understanding and a solution to an impossible situation.",
+      "breathingPattern": "shallow",
+      "roomPresence": "Dark bedroom, heavy silence broken by distant, terrifying sounds from downstairs.",
+      "performanceObjective": "Convey the rapid, internal inventory of threats and dwindling resources under extreme duress.",
+      "voiceSettings": {
+        "stability": 0.48,
+        "style": 0.85,
+        "similarityBoost": 0.78,
+        "speed": 0.92
+      }
+    },
+    {
+      "globalIndex": 6,
+      "label": "Ten Second Countdown",
+      "beatId": "ch1_upstairs",
+      "chapterIdx": 1,
+      "beatIndex": 1,
+      "screenText": "One step. Two. Three. They stopped. No. They're moving again.",
+      "contextPrefix": "The intruders are now moving upstairs. Sarah is counting their footsteps, each one bringing them closer to her and her spouse's bedroom door.",
+      "emotionallyOptimizedDialogue": "<<panicked>> One step. Two. Three— They stopped... No. They're moving again.",
+      "hiddenEmotion": "Utter terror, a desperate attempt to track the immediate threat, a flicker of false hope immediately crushed.",
+      "listenerRelationship": "Desperately informing, sharing the immediate, escalating threat in real-time.",
+      "breathingPattern": "panic",
+      "roomPresence": "Dark bedroom, oppressive silence, every distant sound amplified and terrifying.",
+      "performanceObjective": "Convey the agonizing, real-time tracking of the intruders' approach and the crushing of false hope.",
+      "voiceSettings": {
+        "stability": 0.42,
+        "style": 0.95,
+        "similarityBoost": 0.72,
+        "speed": 1.02
+      }
+    },
+    {
+      "globalIndex": 8,
+      "label": "Complicity Disclosure",
+      "beatId": "ch1_come_out",
+      "chapterIdx": 1,
+      "beatIndex": 3,
+      "screenText": "He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
+      "contextPrefix": "An intruder is now on the landing, just outside their bedroom door. Sarah feels their presence acutely, her mind shutting down under the pressure.",
+      "emotionallyOptimizedDialogue": "<<whispering>> He's on the landing now. Same floor. Same air... I can't think. What do we do? Please.",
+      "hiddenEmotion": "Complete mental shutdown, desperate plea for guidance, utter helplessness and vulnerability.",
+      "listenerRelationship": "Desperate appeal for help and direction, admitting total failure to cope.",
+      "breathingPattern": "shallow",
+      "roomPresence": "Dark bedroom, the air thick with an unseen, terrifying presence just beyond the door.",
+      "performanceObjective": "Deliver the raw, broken plea for help, emphasizing the feeling of the intruder's proximity and Sarah's mental collapse.",
+      "voiceSettings": {
+        "stability": 0.48,
+        "style": 0.9,
+        "similarityBoost": 0.75,
+        "speed": 0.88
+      }
+    },
+    {
+      "globalIndex": 12,
+      "label": "Two Seconds",
+      "beatId": "ch2_handle_turns",
+      "chapterIdx": 2,
+      "beatIndex": 3,
+      "screenText": "The handle is turning. Right now.",
+      "contextPrefix": "Sarah is frozen in terror, watching the door handle to their bedroom slowly begin to turn, signaling the imminent breach.",
+      "emotionallyOptimizedDialogue": "<<whispering>> The handle is turning... Right now.",
+      "hiddenEmotion": "Shock, disbelief, a primal fear that freezes her in place, unable to move or react.",
+      "listenerRelationship": "Sharing an immediate, terrifying, unbelievable observation, as if to confirm it's real.",
+      "breathingPattern": "held",
+      "roomPresence": "Dark bedroom, the only sound the creak of the turning handle, amplified in the silence.",
+      "performanceObjective": "Convey the absolute, frozen terror of watching the door handle turn, as if time itself has slowed.",
+      "voiceSettings": {
+        "stability": 0.42,
+        "style": 1,
+        "similarityBoost": 0.72,
+        "speed": 0.78
+      }
+    },
+    {
+      "globalIndex": 16,
+      "label": "Neurological Breakdown",
+      "beatId": "ch3_james_speaks",
+      "chapterIdx": 3,
+      "beatIndex": 2,
+      "screenText": "What did we become?",
+      "contextPrefix": "After the home invasion, Sarah is in a state of hollow shock, grappling with the profound trauma and the irreversible changes it has wrought.",
+      "emotionallyOptimizedDialogue": "<<whispering>> What did we become?",
+      "hiddenEmotion": "Profound loss of self, existential despair, the weight of irreversible trauma and the question of their identity post-event.",
+      "listenerRelationship": "A shared, existential question, seeking understanding and connection in the aftermath of trauma.",
+      "breathingPattern": "slow",
+      "roomPresence": "The quiet, heavy space of the aftermath, filled with unspoken trauma and a sense of emptiness.",
+      "performanceObjective": "Deliver the line with a hollow, dissociated quality, reflecting the profound, internal shift caused by the trauma.",
+      "voiceSettings": {
+        "stability": 0.48,
+        "style": 0.65,
+        "similarityBoost": 0.82,
+        "speed": 0.76
+      }
+    }
+  ]
+}
