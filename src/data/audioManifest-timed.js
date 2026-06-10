@@ -115,15 +115,13 @@ const TIMED_HORROR_AUDIO = {
       ],
 
       timedSequence: [
-        // 6s: Glass break. Late. After the narrator has been whispering.
-        // The listener has settled into silence. Then this.
+        // 6s: Advance to beat ch0_glass_breaks — BeatScheduler hook fires the SFX.
+        // Timing is still manuscript-authored; action is now beat-driven.
         {
           time: 6000,
-          action: "play",
-          file: "/audio/sfx/glass_break.mp3",
-          volume: 0.6,
-          position: { x: 0, y: -1, z: -4 },
-          label: "glass breaking downstairs",
+          action: "advanceBeat",
+          beatIndex: 2,
+          label: "beat: ch0_glass_breaks",
         },
 
         // 7s: Total silence. Let the glass ring in their ears.

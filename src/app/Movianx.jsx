@@ -3,6 +3,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import audioEngine from "../lib/AudioEngine";
 import assetResolver from "../lib/AssetResolver";
 import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioDirector";
+import { emotionEngine } from "../lib/emotion/EmotionEngine";
+import { beatScheduler } from "../lib/emotion/BeatScheduler";
+import { emotionConductor } from "../lib/emotion/EmotionConductor";
+import { characterReactionEngine } from "../lib/emotion/CharacterReactionEngine";
+import { spatialReactionBus } from "../lib/emotion/SpatialReactionBus";
+import { BEAT_MANIFEST } from "../data/beatManifest-10seconds";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 import RuntimeManager from "../lib/runtime/RuntimeManager";
 // === AUDIO MANIFESTS ===
@@ -17,6 +23,9 @@ const AUDIO_MANIFESTS_BY_STORY = {
   [FRANKENSTEIN_AUDIO.storyId]: FRANKENSTEIN_AUDIO,
   [TIMED_HORROR_AUDIO.storyId]: TIMED_HORROR_AUDIO,
 };
+
+// Wire beat manifest once at module load — no-op on re-renders
+beatScheduler.loadManifest(BEAT_MANIFEST);
 
 // === SCENE ILLUSTRATIONS ===
 function SceneIllustration({chapterIdx,storyId,theme}){
@@ -770,6 +779,11 @@ export default function MovianxPlatform(){
     try{runtimeRef.current?.stopScene?.()?.catch?.(error=>console.error("cleanup_plugin_error",{reason,error:error?.message||String(error)}))}catch(error){console.error("cleanup_plugin_error",{reason,error:error?.message||String(error)})}
     try{runtimeRef.current?.playbackManager?.stopScene?.()}catch(error){console.error("cleanup_playback_error",{reason,error:error?.message||String(error)})}
     try{audioEngine?.stopAll?.(reason)}catch(error){console.error("cleanup_audio_error",{reason,error:error?.message||String(error)})}
+    emotionConductor.deactivate();
+    characterReactionEngine.deactivate();
+    beatScheduler.clearHooks();
+    beatScheduler.reset();
+    emotionEngine.reset();
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
     setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
     console.log("cleanup_completed",{reason});
@@ -976,6 +990,48 @@ export default function MovianxPlatform(){
     const audioPlan=buildAdaptiveAudioPlan(audioSceneProfile,chManifest);
     const intensityLevel=audioPlan.intensityLevel ?? getIntensityLevel(audioSceneProfile);
     const tensionLevel=typeof chManifest.tension==="number"?chManifest.tension:audioPlan.tension;
+
+    // ── Emotional Runtime Engine ──────────────────────────────────────────
+    // Update single source of truth before any audio fires; load beats for
+    // this chapter so BeatScheduler hooks can be called during the sequence.
+    const storyKey=timedStory?"10seconds":null;
+    emotionEngine.setState({
+      tension:   Math.round(tensionLevel*100),
+      chapter:   chapIdx,
+      storyId:   storyId,
+      phase:     "narrating",
+      beatIndex: 0,
+    });
+    if(storyKey){
+      // Register per-chapter BeatScheduler hooks
+      beatScheduler.clearHooks();
+
+      // Publish spatial context + beat events to SpatialReactionBus on every beat
+      beatScheduler.on("onBeatStart",(beat,ctx)=>{
+        spatialReactionBus.publishBeat(beat,ctx);
+        console.log(`[Beat] ${beat.id} | tension ${beat.tension} | ${beat.proximity} | events: ${beat.events?.join(", ")||"—"}`);
+      });
+
+      // Beat-driven glass break — fires when BeatScheduler advances to ch0_glass_breaks
+      beatScheduler.on("onBeatStart",(beat)=>{
+        if(beat.id==="ch0_glass_breaks"&&timedStory){
+          audioEngine.playSpatial(
+            assetResolver.resolveFile("/audio/sfx/glass_break.mp3"),
+            0.6,{x:0,y:-1,z:-4},false,0,"glass breaking downstairs","tension"
+          );
+          audioEngine.addExperienceImpulse({tension:0.28,presence:0.18,uncertainty:0.14});
+        }
+      });
+
+      // Activate the conductor and character engine now that AudioContext is open
+      emotionConductor.activate(audioEngine);
+      characterReactionEngine.activate(audioEngine, assetResolver);
+
+      beatScheduler.loadChapter(chapIdx, storyKey);
+      beatScheduler.advance(); // execute beat 0 — sets tension, fires hooks
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     setNarrationStatus(narrationUrl?"loading":"ready");
     console.log("EMOTION:",audioSceneProfile.emotionLabel||audioSceneProfile.characterEmotion||audioSceneProfile.mood);
     console.log("SCENE PROFILE:",audioSceneProfile);
@@ -1133,6 +1189,11 @@ export default function MovianxPlatform(){
             if(targetGain)audioEngine.fadeGain(targetGain,cue.toVolume,cue.duration);
           }else if(cue.action==="fadeAllAmbient"){
             audioEngine.fadeAllAmbient(cue.toVolume,cue.duration);
+          }else if(cue.action==="advanceBeat"){
+            // Beat-driven: advance the scheduler rather than firing audio directly.
+            // The BeatScheduler onBeatStart hook owns the action.
+            if(cue.beatIndex!==undefined) beatScheduler.seekTo(cue.beatIndex);
+            else beatScheduler.advance();
           }
         },cue.time);
       });
@@ -1536,6 +1597,7 @@ export default function MovianxPlatform(){
       const limit=ch.choice?.timeLimit||getTimeline(sel.id).defaultTimeLimit;
       const pressure=limit?Math.max(0,Math.min(1,1-(timeRemaining/limit))):0;
       audioEngine.updateExperienceState({control:Math.max(0.35,pressure),tension:Math.max(audioEngine.currentTension||0,0.45+pressure*0.45),presence:0.45+pressure*0.35});
+      emotionEngine.setState({ tension: Math.round((0.45+pressure*0.45)*100), phase: "countdown" });
       const manifest=getManifest(sel.id);
       const chManifest=manifest?.chapters?.[chIdx];
       if(chManifest?.timerAudio?.heartbeatIntensity){

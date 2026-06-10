@@ -153,6 +153,7 @@ class AudioEngine {
     this.layerGains = null;
     this.masterGain = null;
     this.tensionDistortion = null;
+    this.atmosphereFilter = null; // BiquadFilter on ambient bus — driven by EmotionConductor
     this.currentTension = 0;
     this.experienceState = {
       tension: 0,
@@ -225,13 +226,21 @@ class AudioEngine {
     this.layerGains.tension.gain.setValueAtTime(0.001, ctx.currentTime);
     this.layerGains.event.gain.setValueAtTime(1, ctx.currentTime);
 
+    // Atmosphere filter — swept by EmotionConductor based on tension
+    // Low tension: warm lowpass (~1200Hz) | High tension: open highpass (~3600Hz)
+    this.atmosphereFilter = ctx.createBiquadFilter();
+    this.atmosphereFilter.type = "lowpass";
+    this.atmosphereFilter.frequency.setValueAtTime(1800, ctx.currentTime);
+    this.atmosphereFilter.Q.setValueAtTime(0.6, ctx.currentTime);
+
     this.layerGains.narration.connect(this.masterGain);
-    this.layerGains.ambient.connect(this.masterGain);
+    this.layerGains.ambient.connect(this.atmosphereFilter);
+    this.atmosphereFilter.connect(this.masterGain);
     this.layerGains.tension.connect(this.tensionDistortion);
     this.tensionDistortion.connect(this.masterGain);
     this.layerGains.event.connect(this.masterGain);
     this.masterGain.connect(ctx.destination);
-    this.activeNodes.push(this.masterGain, this.tensionDistortion, ...Object.values(this.layerGains));
+    this.activeNodes.push(this.masterGain, this.tensionDistortion, this.atmosphereFilter, ...Object.values(this.layerGains));
   }
 
   makeDistortionCurve(amount = 0) {
@@ -763,6 +772,21 @@ class AudioEngine {
     this.updateExperienceState({ tension: clamped });
   }
 
+  // Sweep atmosphere filter cutoff — called by EmotionConductor
+  setAtmosphereFilterFreq(hz, rampTime = 1.2) {
+    if (!this.ctx || !this.atmosphereFilter) return;
+    const t = this.ctx.currentTime;
+    this.atmosphereFilter.frequency.cancelScheduledValues(t);
+    this.atmosphereFilter.frequency.setValueAtTime(this.atmosphereFilter.frequency.value, t);
+    this.atmosphereFilter.frequency.linearRampToValueAtTime(Math.max(200, hz), t + rampTime);
+  }
+
+  // Adjust heartbeat playback rate (changes apparent BPM) — called by EmotionConductor
+  setHeartbeatPlaybackRate(rate) {
+    const audio = this.physiology.heartbeat?.audio;
+    if (audio) audio.playbackRate = Math.max(0.5, Math.min(3.0, rate));
+  }
+
   updateAudio(state = this.experienceState) {
     if (!this.ctx || !this.layerGains) return;
     const clamped = this.clamp01(state.tension);
@@ -896,6 +920,7 @@ class AudioEngine {
     this.layerGains = null;
     this.masterGain = null;
     this.tensionDistortion = null;
+    this.atmosphereFilter = null;
     this.currentTension = 0;
     this.experienceLoop = null;
     this.experienceState = { tension: 0, presence: 0, immersion: 0, uncertainty: 0, control: 0 };
