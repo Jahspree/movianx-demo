@@ -744,6 +744,9 @@ export default function MovianxPlatform(){
   const navFailsafeRef=useRef(null);
   const runtimeRef=useRef(null);
   const beatNarrationRef=useRef(false);
+  const revealCancelRef=useRef(null);
+  const beatChapterDoneRef=useRef(null);
+  const choiceTriggeredRef=useRef(false);
   const initialLaunchHandledRef=useRef(false);
 
   if(!runtimeRef.current){
@@ -786,6 +789,9 @@ export default function MovianxPlatform(){
     beatScheduler.clearHooks();
     beatScheduler.reset();
     beatNarrationRef.current=false;
+    revealCancelRef.current=null;
+    beatChapterDoneRef.current=null;
+    choiceTriggeredRef.current=false;
     emotionEngine.reset();
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
     setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
@@ -1031,13 +1037,25 @@ export default function MovianxPlatform(){
       // Each beat's audio drives the next: ended → silenceAfter delay → advance.
       beatScheduler.on("onBeatStart",(beat)=>{
         if(!beatNarrationRef.current)return;
+        // Sync screen text to current beat voice — cancels chapter word-reveal
+        setTxt(beat.text);
+        setRevealedWordCount(-1);
+        revealCancelRef.current?.();
+        revealCancelRef.current=null;
         const beatUrl=`/audio/v3/timed/beats/ch${chapIdx}_beat${beat.beatIndex}.mp3`;
         const audio=audioEngine.playNarration(beatUrl,1.4);
         if(audio){
           audio.addEventListener("ended",()=>{
             const delay=beat.silenceAfter||0;
-            if(delay>0)setTimeout(()=>beatScheduler.advance(),delay);
-            else beatScheduler.advance();
+            const doAdvance=()=>{
+              const hasMore=beatScheduler.advance();
+              if(!hasMore){
+                beatChapterDoneRef.current?.();
+                beatChapterDoneRef.current=null;
+              }
+            };
+            if(delay>0)setTimeout(doAdvance,delay);
+            else doAdvance();
           },{once:true});
         }
       });
@@ -1509,10 +1527,13 @@ export default function MovianxPlatform(){
             setRevealedWordCount(wordCount);
             clearInterval(revealInterval);
             revealInterval=null;
+            revealCancelRef.current=null;
           }else{
             setRevealedWordCount(wordIdx);
           }
         },msPerWord);
+        // Beat narration can cancel this interval when it takes over display
+        revealCancelRef.current=()=>{clearInterval(revealInterval);revealInterval=null;};
       };
       // Try to get actual MP3 duration, else estimate
       if(sel){
@@ -1540,7 +1561,9 @@ export default function MovianxPlatform(){
       if(cancelled)return;
 
       if(isImmersiveTimed&&ch.choice){
-        addLocalTimer(()=>{
+        const fireImmersiveChoice=()=>{
+          if(choiceTriggeredRef.current)return;
+          choiceTriggeredRef.current=true;
           setShowChoice(true);
           audioEngine?.updateExperienceState({control:0.92,presence:0.72,uncertainty:0.68});
           const manifest=sel?getManifest(sel.id):null;
@@ -1568,7 +1591,11 @@ export default function MovianxPlatform(){
               setVoiceMode(true);startVoiceRec();
             },promptDelay+timeline.promptToTimerBufferMs);
           }
-        },narrationDuration+timeline.choiceRevealBufferMs);
+        };
+        // Beat narration fires choice at exact completion (no dead silence gap)
+        beatChapterDoneRef.current=()=>addLocalTimer(fireImmersiveChoice,timeline.choiceRevealBufferMs);
+        // Fallback: fires if beat narration doesn't complete (chapter audio or slow preload)
+        addLocalTimer(fireImmersiveChoice,narrationDuration+timeline.choiceRevealBufferMs);
         return;
       }
 
@@ -1577,8 +1604,10 @@ export default function MovianxPlatform(){
       const timedChoiceDelay=isTimedStory
         ?narrationDuration+timeline.choiceRevealBufferMs
         :Math.max(fallbackReadDelay,narrationDuration);
-      addLocalTimer(()=>{
+      const fireTimedChoice=()=>{
         if(!ch.choice)return;
+        if(choiceTriggeredRef.current)return;
+        choiceTriggeredRef.current=true;
         setShowChoice(true);
         audioEngine?.updateExperienceState({control:isTimedStory?0.82:0.46,presence:isTimedStory?0.6:0.3,uncertainty:isTimedStory?0.58:0.24});
         if(isTimedStory){
@@ -1618,7 +1647,9 @@ export default function MovianxPlatform(){
             }
           }
         },timeline.cinematicTimedChoiceDelayMs);
-      },timedChoiceDelay);
+      };
+      if(isTimedStory)beatChapterDoneRef.current=()=>addLocalTimer(fireTimedChoice,timeline.choiceRevealBufferMs);
+      addLocalTimer(fireTimedChoice,timedChoiceDelay);
     };
 
     scheduleChoiceFlow();
@@ -1693,12 +1724,12 @@ export default function MovianxPlatform(){
     if(audioEngine){
       audioEngine.init();
       setNeedsAudioUnlock(false);
-      if(sel&&mode!=="Reader"&&narratorOn&&narrationStatus!=="playing"){
+      if(sel&&mode!=="Reader"&&narratorOn){
         stopAllAudio("audio_unlock_restart");
         setTimeout(()=>playChapterAudio(sel.id,chIdx,mode),60);
       }
     }
-  },[sel,mode,narratorOn,narrationStatus,chIdx,stopAllAudio]);
+  },[sel,mode,narratorOn,chIdx,stopAllAudio]);
 
   // CRITICAL: cleanup on unmount + page change
   useEffect(()=>{return()=>stopAllAudio()},[]);
