@@ -1,0 +1,538 @@
+{
+  "storyKey": "10seconds",
+  "title": "10 Seconds",
+  "premise": "Home invasion survival thriller. 3:47 AM. Intruders break in downstairs. Sarah and her spouse are in bed upstairs; their two children sleep down the hall. Every line is Sarah whispering to her spouse in real time.",
+  "listenerRole": "The listener IS Sarah's spouse, lying beside her in the dark. Sarah speaks directly to them. They make the choices. They are hiding together.",
+  "generatedBy": "gemini-2.5-flash",
+  "generatedAt": "2026-06-10T16:18:41.415Z",
+  "chapters": {
+    "0": {
+      "label": "the quiet before",
+      "hasChoice": true,
+      "beats": [
+        {
+          "id": "ch0_sleeping",
+          "beatIndex": 0,
+          "text": "Hey. Wake up.",
+          "tension": 12,
+          "silenceAfter": 1200,
+          "emotion": "Urgent concern",
+          "voiceDirection": "Softly but urgently, trying to rouse her spouse without making too much noise.",
+          "breathing": "slow",
+          "silenceType": "normal",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "house settling",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "movementMs": 0
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch0_first_creak",
+          "beatIndex": 1,
+          "text": "Did you hear that? No. Listen. That wasn't nothing.",
+          "tension": 34,
+          "silenceAfter": 900,
+          "emotion": "Growing unease",
+          "voiceDirection": "More insistent, a hushed whisper, straining to hear.",
+          "breathing": "uneven",
+          "silenceType": "anticipation",
+          "soundPriority": "distant creak",
+          "spatial": {
+            "sourceLabel": "floor creak downstairs",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "movementMs": 0
+          },
+          "sfx": "floor_creak",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch0_glass_breaks",
+          "beatIndex": 2,
+          "text": "Someone's in the house. I heard glass downstairs. They're inside.",
+          "tension": 68,
+          "silenceAfter": 600,
+          "emotion": "Sudden terror",
+          "voiceDirection": "A sharp, choked whisper, conveying shock and fear.",
+          "breathing": "held",
+          "silenceType": "fear",
+          "soundPriority": "glass breaking",
+          "spatial": {
+            "sourceLabel": "glass breaking downstairs",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "movementMs": 0
+          },
+          "sfx": "glass_break",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch0_realization",
+          "beatIndex": 3,
+          "text": "I can hear them moving. More than one. The bat's in the closet. My phone's dead. The kids are down the hall.",
+          "tension": 82,
+          "silenceAfter": 800,
+          "emotion": "Terrified calculation",
+          "voiceDirection": "Rapid, hushed delivery, listing facts with a desperate urgency.",
+          "breathing": "shallow",
+          "silenceType": "fear",
+          "soundPriority": "footsteps downstairs",
+          "spatial": {
+            "sourceLabel": "footsteps downstairs",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -5
+            },
+            "movementMs": 2000
+          },
+          "sfx": "footsteps_stone",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch0_timer_warning",
+          "beatIndex": 4,
+          "text": "What do we do?",
+          "tension": 88,
+          "silenceAfter": 400,
+          "emotion": "Desperate plea",
+          "voiceDirection": "A barely audible, pleading whisper, full of panic and reliance on the spouse.",
+          "breathing": "panic",
+          "silenceType": "anticipation",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "footsteps on stairs",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -5
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -5
+            },
+            "movementMs": 0
+          },
+          "sfx": null,
+          "isChoiceMoment": true
+        }
+      ]
+    },
+    "1": {
+      "label": "the threat advances",
+      "hasChoice": true,
+      "beats": [
+        {
+          "id": "ch1_ransacking",
+          "beatIndex": 0,
+          "text": "They're coming up. The stairs. I can hear them.",
+          "tension": 72,
+          "silenceAfter": 700,
+          "emotion": "Terrified realization",
+          "voiceDirection": "Whisper with a strained urgency, conveying the dawning horror of the approaching threat.",
+          "breathing": "shallow",
+          "silenceType": "fear",
+          "soundPriority": "footsteps on stairs",
+          "spatial": {
+            "sourceLabel": "footsteps on stairs",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -8
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -5
+            },
+            "movementMs": 2500
+          },
+          "sfx": "footsteps_stone",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch1_upstairs",
+          "beatIndex": 1,
+          "text": "One step. Two. Three. They stopped. No. They're moving again.",
+          "tension": 84,
+          "silenceAfter": 600,
+          "emotion": "Petrified tracking",
+          "voiceDirection": "A hushed, almost internal monologue, punctuated by sharp, fearful intakes of breath as she counts.",
+          "breathing": "uneven",
+          "silenceType": "anticipation",
+          "soundPriority": "individual footsteps",
+          "spatial": {
+            "sourceLabel": "footsteps on stairs",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -5
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -4.5
+            },
+            "movementMs": 3000
+          },
+          "sfx": "footsteps_stone",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch1_landing",
+          "beatIndex": 2,
+          "text": "The kids are right there. Three doors down. He said something. He knows we're here.",
+          "tension": 91,
+          "silenceAfter": 500,
+          "emotion": "Desperate panic",
+          "voiceDirection": "A frantic, choked whisper, tinged with the terror of her children's proximity and the intruder's awareness.",
+          "breathing": "panic",
+          "silenceType": "fear",
+          "soundPriority": "intruder's voice",
+          "spatial": {
+            "sourceLabel": "intruder on landing",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -4.5
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -2
+            },
+            "movementMs": 2000
+          },
+          "sfx": "floor_creak",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch1_come_out",
+          "beatIndex": 3,
+          "text": "He's on the landing now. Same floor. Same air. I can't think. What do we do? Please.",
+          "tension": 94,
+          "silenceAfter": 400,
+          "emotion": "Overwhelmed terror",
+          "voiceDirection": "A barely audible plea, her voice cracking with the weight of the impossible decision and proximity of the threat.",
+          "breathing": "panic",
+          "silenceType": "fear",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "intruder outside bedroom door",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -2
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "movementMs": 1500
+          },
+          "sfx": null,
+          "isChoiceMoment": true
+        }
+      ]
+    },
+    "2": {
+      "label": "the choice",
+      "hasChoice": true,
+      "beats": [
+        {
+          "id": "ch2_gun_revealed",
+          "beatIndex": 0,
+          "text": "He has a gun. I can see it.",
+          "tension": 88,
+          "silenceAfter": 700,
+          "emotion": "Terrified realization",
+          "voiceDirection": "Whisper with a sudden, sharp intake of breath, conveying shock and dread.",
+          "breathing": "held",
+          "silenceType": "fear",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "intruder outside bedroom door",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "movementMs": 0
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch2_daughter_cry",
+          "beatIndex": 1,
+          "text": "Our baby is crying. She can hear us.",
+          "tension": 95,
+          "silenceAfter": 500,
+          "emotion": "Desperate panic",
+          "voiceDirection": "Urgent, hushed plea, tinged with maternal terror and a hint of accusation.",
+          "breathing": "panic",
+          "silenceType": "fear",
+          "soundPriority": "baby's distant cry",
+          "spatial": {
+            "sourceLabel": "baby crying down the hall",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -3.5
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -3.5
+            },
+            "movementMs": 0
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch2_last_chance",
+          "beatIndex": 2,
+          "text": "He said last chance. Whatever happens, protect the kids. Promise me. Promise me.",
+          "tension": 98,
+          "silenceAfter": 300,
+          "emotion": "Desperate plea",
+          "voiceDirection": "Voice cracking with raw emotion, a desperate, almost pleading whisper, emphasizing 'Promise me.'",
+          "breathing": "uneven",
+          "silenceType": "grief",
+          "soundPriority": "her desperate whisper",
+          "spatial": {
+            "sourceLabel": "intruder outside bedroom door",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "movementMs": 0
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch2_handle_turns",
+          "beatIndex": 3,
+          "text": "The handle is turning. Right now.",
+          "tension": 100,
+          "silenceAfter": 200,
+          "emotion": "Pure terror",
+          "voiceDirection": "A sharp, almost inaudible gasp followed by a choked, terrified whisper, conveying immediate, undeniable threat.",
+          "breathing": "held",
+          "silenceType": "anticipation",
+          "soundPriority": "door handle turning",
+          "spatial": {
+            "sourceLabel": "door handle turning",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "movementMs": 0
+          },
+          "sfx": "door_handle",
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch2_the_choice",
+          "beatIndex": 4,
+          "text": "Tell me. Please. I can't do this alone.",
+          "tension": 100,
+          "silenceAfter": 1500,
+          "emotion": "Overwhelmed desperation",
+          "voiceDirection": "A broken, pleading whisper, on the verge of tears, conveying total emotional collapse and reliance on the listener.",
+          "breathing": "panic",
+          "silenceType": "fear",
+          "soundPriority": "her desperate plea",
+          "spatial": {
+            "sourceLabel": "intruder at bedroom door",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": -0.9
+            },
+            "movementMs": 0
+          },
+          "sfx": null,
+          "isChoiceMoment": true
+        }
+      ]
+    },
+    "3": {
+      "label": "the weight",
+      "hasChoice": true,
+      "beats": [
+        {
+          "id": "ch3_aftermath",
+          "beatIndex": 0,
+          "text": "It's done. There was no right answer. There never was.",
+          "tension": 42,
+          "silenceAfter": 1500,
+          "emotion": "numb grief",
+          "voiceDirection": "Whispering with a hollow, defeated tone, reflecting the weight of what just happened.",
+          "breathing": "shallow",
+          "silenceType": "grief",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "sirens far away",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": 10
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": 12
+            },
+            "movementMs": 2000
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch3_sirens",
+          "beatIndex": 1,
+          "text": "I keep hearing it. Over and over. The sound. The choices. The ten seconds.",
+          "tension": 36,
+          "silenceAfter": 1200,
+          "emotion": "haunted despair",
+          "voiceDirection": "Her voice is a fragile, repetitive whisper, caught in a loop of traumatic memory.",
+          "breathing": "uneven",
+          "silenceType": "fear",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "sirens fading",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": 12
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": 14
+            },
+            "movementMs": 2000
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch3_james_speaks",
+          "beatIndex": 2,
+          "text": "What did we become?",
+          "tension": 32,
+          "silenceAfter": 2000,
+          "emotion": "self-questioning anguish",
+          "voiceDirection": "A raw, vulnerable question, barely audible, filled with self-reproach.",
+          "breathing": "held",
+          "silenceType": "grief",
+          "soundPriority": "her whisper",
+          "spatial": {
+            "sourceLabel": "sirens very distant",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": 14
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": 16
+            },
+            "movementMs": 2000
+          },
+          "sfx": null,
+          "isChoiceMoment": false
+        },
+        {
+          "id": "ch3_the_weight",
+          "beatIndex": 3,
+          "text": "What did we become... in ten seconds?",
+          "tension": 30,
+          "silenceAfter": 3000,
+          "emotion": "profound regret",
+          "voiceDirection": "Trailing off, the final words are heavy with the full, crushing weight of their shared experience.",
+          "breathing": "slow",
+          "silenceType": "grief",
+          "soundPriority": "total silence",
+          "spatial": {
+            "sourceLabel": "sirens disappearing",
+            "from": {
+              "x": 0,
+              "y": 0,
+              "z": 16
+            },
+            "to": {
+              "x": 0,
+              "y": 0,
+              "z": 18
+            },
+            "movementMs": 2000
+          },
+          "sfx": null,
+          "isChoiceMoment": true
+        }
+      ]
+    }
+  }
+}

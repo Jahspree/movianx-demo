@@ -204,7 +204,7 @@ export default function WatchDetailPage({ params }) {
               // with the correct launch params — soft Link nav skips the IIFE re-run.
               <a
                 className={styles.primaryButton}
-                href={`/?launch=reading&story=${experience.id.replace(/\D/g, "")}&mode=Cinematic`}
+                href={`/?launch=reading&story=${experience.id.replace(/\D/g, "")}&mode=${experience.mediaType === "Timed Interactive Story" ? "Immersive" : "Cinematic"}`}
               >
                 {primaryAction(experience)}
               </a>

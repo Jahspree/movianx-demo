@@ -9,6 +9,7 @@ import { emotionConductor } from "../lib/emotion/EmotionConductor";
 import { characterPresenceEngine } from "../lib/emotion/CharacterPresenceEngine";
 import { spatialReactionBus } from "../lib/emotion/SpatialReactionBus";
 import { BEAT_MANIFEST } from "../data/beatManifest-10seconds";
+import { getBeatSfx } from "../lib/storyDNA";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
 import RuntimeManager from "../lib/runtime/RuntimeManager";
 // === AUDIO MANIFESTS ===
@@ -1019,16 +1020,27 @@ export default function MovianxPlatform(){
       // Publish spatial context + beat events to SpatialReactionBus on every beat
       beatScheduler.on("onBeatStart",(beat,ctx)=>{
         spatialReactionBus.publishBeat(beat,ctx);
-        console.log(`[Beat] ${beat.id} | tension ${beat.tension} | ${beat.proximity} | events: ${beat.events?.join(", ")||"—"}`);
+        console.log(`[Beat] ${beat.id} | tension ${beat.tension} | ${beat.proximity} | breath:${beat.breathing||"—"} | sfx:${beat.sfx||"—"} | ${beat.soundPriority||""}`);
       });
 
-      // Beat-driven glass break — fires when BeatScheduler advances to ch0_glass_breaks
+      // StoryDNA-driven beat SFX — each beat's threat sound plays at its
+      // position on the approach path (downstairs → stairs → landing → door),
+      // moving when the DNA says the source moves during the beat.
       beatScheduler.on("onBeatStart",(beat)=>{
-        if(beat.id==="ch0_glass_breaks"&&timedStory){
-          audioEngine.playSpatial(
-            assetResolver.resolveFile("/audio/sfx/glass_break.mp3"),
-            0.6,{x:0,y:-1,z:-4},false,0,"glass breaking downstairs","tension"
-          );
+        if(!timedStory)return;
+        const sfx=getBeatSfx(beat);
+        if(sfx){
+          const url=assetResolver.resolveFile(sfx.file);
+          const sp=sfx.spatial;
+          if(sp&&sp.movementMs>0){
+            audioEngine.playSpatialMoving(url,sfx.volume,sp.from,sp.to,sp.movementMs,false,false,sp.sourceLabel,"tension");
+          }else if(sp){
+            audioEngine.playSpatial(url,sfx.volume,sp.from,false,0,sp.sourceLabel,"tension");
+          }else{
+            audioEngine.playAmbient(url,sfx.volume,0,beat.id,"tension");
+          }
+        }
+        if(beat.id==="ch0_glass_breaks"){
           audioEngine.addExperienceImpulse({tension:0.28,presence:0.18,uncertainty:0.14});
         }
       });
@@ -1205,6 +1217,10 @@ export default function MovianxPlatform(){
     if(chManifest.timedSequence){
       chManifest.timedSequence.forEach(cue=>{
         audioEngine.addTimeout(()=>{
+          // When beat narration self-drives, BeatScheduler owns the timeline —
+          // absolute-time SFX/advance cues would fire against a different clock.
+          // Ambient fades are housekeeping and stay active.
+          if(beatNarrationRef.current&&cue.action!=="fadeGain"&&cue.action!=="fadeAllAmbient")return;
           if(cue.triggerTension)audioEngine.addExperienceImpulse({tension:cue.triggerTension,presence:cue.presence||0.05,uncertainty:cue.uncertainty||0.02});
           if(cue.action==="play"){
             if(cue.type==="procedural"){
@@ -1227,8 +1243,6 @@ export default function MovianxPlatform(){
           }else if(cue.action==="fadeAllAmbient"){
             audioEngine.fadeAllAmbient(cue.toVolume,cue.duration);
           }else if(cue.action==="advanceBeat"){
-            // Skip when beat narration is self-driving — beats chain themselves.
-            if(beatNarrationRef.current)return;
             if(cue.beatIndex!==undefined) beatScheduler.seekTo(cue.beatIndex);
             else beatScheduler.advance();
           }

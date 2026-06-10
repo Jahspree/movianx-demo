@@ -9,8 +9,9 @@
 // events[]: array of action tags future hooks can branch on.
 // ===========================================================================
 
-export const BEAT_MANIFEST = {
-  "10seconds": {
+import { applyDNA } from "../lib/storyDNA.js";
+
+const MANIFEST_10SECONDS = {
 
     // ─── Chapter 0: The Quiet Before ───────────────────────────────────────
     // A family asleep. The first sound breaks everything.
@@ -255,7 +256,12 @@ export const BEAT_MANIFEST = {
       ],
     },
 
-  },
+};
+
+// StoryDNA enriches every beat with emotion, voiceDirection, breathing,
+// silenceType, soundPriority, spatial path, sfx, and isChoiceMoment.
+export const BEAT_MANIFEST = {
+  "10seconds": applyDNA("10seconds", MANIFEST_10SECONDS),
 };
 
 /** Convenience — get all beats for a chapter flat array */
