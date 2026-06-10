@@ -734,6 +734,7 @@ export default function MovianxPlatform(){
   const[currentWordIdx,setCurrentWordIdx]=useState(-1); // word-by-word highlight
   const[revealedWordCount,setRevealedWordCount]=useState(-1); // word-by-word reveal for Immersive timed
   const[narrationStatus,setNarrationStatus]=useState("ready");
+  const[needsAudioUnlock,setNeedsAudioUnlock]=useState(false);
 
   const recognitionRef=useRef(null);
   const navLockRef=useRef(false); // P0: prevents double navigation
@@ -742,6 +743,7 @@ export default function MovianxPlatform(){
   const narrationRequestRef=useRef(0);
   const navFailsafeRef=useRef(null);
   const runtimeRef=useRef(null);
+  const beatNarrationRef=useRef(false);
   const initialLaunchHandledRef=useRef(false);
 
   if(!runtimeRef.current){
@@ -783,6 +785,7 @@ export default function MovianxPlatform(){
     characterPresenceEngine.deactivate();
     beatScheduler.clearHooks();
     beatScheduler.reset();
+    beatNarrationRef.current=false;
     emotionEngine.reset();
     if(recognitionRef.current){try{recognitionRef.current.stop()}catch(e){} recognitionRef.current=null}
     setVoiceActive(false);setVoiceMode(false);setCurrentWordIdx(-1);
@@ -1005,6 +1008,7 @@ export default function MovianxPlatform(){
     if(storyKey){
       // Register per-chapter BeatScheduler hooks
       beatScheduler.clearHooks();
+      beatNarrationRef.current=false;
 
       // Publish spatial context + beat events to SpatialReactionBus on every beat
       beatScheduler.on("onBeatStart",(beat,ctx)=>{
@@ -1023,12 +1027,27 @@ export default function MovianxPlatform(){
         }
       });
 
+      // Beat-level narration — plays individual beat audio files when available.
+      // Each beat's audio drives the next: ended → silenceAfter delay → advance.
+      beatScheduler.on("onBeatStart",(beat)=>{
+        if(!beatNarrationRef.current)return;
+        const beatUrl=`/audio/v3/timed/beats/ch${chapIdx}_beat${beat.beatIndex}.mp3`;
+        const audio=audioEngine.playNarration(beatUrl,1.4);
+        if(audio){
+          audio.addEventListener("ended",()=>{
+            const delay=beat.silenceAfter||0;
+            if(delay>0)setTimeout(()=>beatScheduler.advance(),delay);
+            else beatScheduler.advance();
+          },{once:true});
+        }
+      });
+
       // Activate the conductor and character engine now that AudioContext is open
       emotionConductor.activate(audioEngine);
       characterPresenceEngine.activate(audioEngine, assetResolver);
 
       beatScheduler.loadChapter(chapIdx, storyKey);
-      beatScheduler.advance(); // execute beat 0 — sets tension, fires hooks
+      // beatScheduler.advance() is deferred — called after beat file detection in section 4
     }
     // ─────────────────────────────────────────────────────────────────────
 
@@ -1190,8 +1209,8 @@ export default function MovianxPlatform(){
           }else if(cue.action==="fadeAllAmbient"){
             audioEngine.fadeAllAmbient(cue.toVolume,cue.duration);
           }else if(cue.action==="advanceBeat"){
-            // Beat-driven: advance the scheduler rather than firing audio directly.
-            // The BeatScheduler onBeatStart hook owns the action.
+            // Skip when beat narration is self-driving — beats chain themselves.
+            if(beatNarrationRef.current)return;
             if(cue.beatIndex!==undefined) beatScheduler.seekTo(cue.beatIndex);
             else beatScheduler.advance();
           }
@@ -1199,10 +1218,39 @@ export default function MovianxPlatform(){
       });
     }
 
-    // 4. Start narration after verified preload. Preload begins before any
-    // scene layers above, then retries once if the browser rejects the asset.
-    if(narrationUrl){
-      const narrationVolume=isTimedExperience(storyId)?1.4:1.0; // timed companion narration is intentionally close and dominant
+    // 4. Start narration. Timed stories: attempt beat-level files first, fall back to chapter audio.
+    const narrationVolume=isTimedExperience(storyId)?1.4:1.0;
+    if(timedStory&&storyKey){
+      const beat0Url=`/audio/v3/timed/beats/ch${chapIdx}_beat0.mp3`;
+      preloadNarrationAsset(beat0Url,{storyId,chapIdx,currentMode}).then(b0result=>{
+        if(narrationRequestRef.current!==narrationToken)return;
+        if(b0result?.ok){
+          // Beat files confirmed — activate self-driving beat narration chain
+          beatNarrationRef.current=true;
+          setNarrationStatus("playing");
+          beatScheduler.advance(); // fires beat 0 onBeatStart → audio → ended → advance chain
+        }else{
+          // Beat files not ready — chapter audio fallback + emotional state advance
+          beatScheduler.advance();
+          if(narrationUrl){
+            narrationPreload.then(result=>{
+              if(narrationRequestRef.current!==narrationToken)return;
+              if(!result?.ok){
+                setNarrationStatus("unavailable");
+                console.error("AUDIO UNAVAILABLE:",narrationUrl,{storyId,chapIdx,currentMode,error:result?.reason||result?.status});
+                return;
+              }
+              const started=audioEngine.playNarration(narrationUrl,narrationVolume);
+              if(started)setNarrationStatus("playing");
+              else{setNarrationStatus("unavailable");console.error("AUDIO UNAVAILABLE:",narrationUrl,{reason:"engine_rejected_play"});}
+            }).catch(error=>{
+              setNarrationStatus("unavailable");
+              console.error("AUDIO UNAVAILABLE:",narrationUrl,{error:error?.message||String(error)});
+            });
+          }
+        }
+      });
+    }else if(narrationUrl){
       narrationPreload.then(result=>{
         if(narrationRequestRef.current!==narrationToken)return;
         if(!result?.ok){
@@ -1524,6 +1572,11 @@ export default function MovianxPlatform(){
         return;
       }
 
+      // For timed stories use actual narration duration; fallbackReadDelay is text-length
+      // based and is always longer than the real audio — causes ~46s silence after narration.
+      const timedChoiceDelay=isTimedStory
+        ?narrationDuration+timeline.choiceRevealBufferMs
+        :Math.max(fallbackReadDelay,narrationDuration);
       addLocalTimer(()=>{
         if(!ch.choice)return;
         setShowChoice(true);
@@ -1565,7 +1618,7 @@ export default function MovianxPlatform(){
             }
           }
         },timeline.cinematicTimedChoiceDelayMs);
-      },Math.max(fallbackReadDelay,narrationDuration));
+      },timedChoiceDelay);
     };
 
     scheduleChoiceFlow();
@@ -1622,6 +1675,30 @@ export default function MovianxPlatform(){
     const cd=setTimeout(()=>setTimeRemaining(timeRemaining-1),1000);
     return()=>clearTimeout(cd);
   },[timerActive,timeRemaining]);
+
+  // AudioContext unlock — detect suspended context on reading page load
+  useEffect(()=>{
+    if(pg!=="reading")return;
+    const check=()=>{
+      const state=audioEngine?.ctx?.state;
+      if(state==="suspended")setNeedsAudioUnlock(true);
+      else if(state==="running")setNeedsAudioUnlock(false);
+    };
+    check();
+    const tid=setTimeout(check,400);
+    return()=>clearTimeout(tid);
+  },[pg]);
+
+  const handleAudioUnlock=useCallback(()=>{
+    if(audioEngine){
+      audioEngine.init();
+      setNeedsAudioUnlock(false);
+      if(sel&&mode!=="Reader"&&narratorOn&&narrationStatus!=="playing"){
+        stopAllAudio("audio_unlock_restart");
+        setTimeout(()=>playChapterAudio(sel.id,chIdx,mode),60);
+      }
+    }
+  },[sel,mode,narratorOn,narrationStatus,chIdx,stopAllAudio]);
 
   // CRITICAL: cleanup on unmount + page change
   useEffect(()=>{return()=>stopAllAudio()},[]);
@@ -1701,6 +1778,7 @@ export default function MovianxPlatform(){
             <button onClick={()=>setListenOnly(!listenOnly)} style={{padding:"5px 10px",borderRadius:6,background:listenOnly?`${C.red}15`:"transparent",border:`1px solid ${listenOnly?C.red:`${currentTheme.text}15`}`,color:listenOnly?C.red:`${currentTheme.text}90`,fontSize:11,cursor:"pointer"}}>🎧</button>
             <button onClick={()=>{
               const next=!narratorOn;setNarratorOn(next);
+              if(audioEngine){audioEngine.init();setNeedsAudioUnlock(false);}
               logEvent("narration_toggled",{enabled:next,chapter:chIdx});
               if(next&&activeChapterText&&mode!=="Reader"&&sel)setTimeout(()=>playChapterAudio(sel.id,chIdx,mode),100);
               else setCurrentWordIdx(-1);
@@ -1871,6 +1949,12 @@ export default function MovianxPlatform(){
             </div>
           )}
         </div>
+        {/* Audio unlock — shown when AudioContext is suspended after page load */}
+        {needsAudioUnlock&&mode!=="Reader"&&(
+          <div onClick={handleAudioUnlock} role="button" aria-label="Enable audio" style={{position:"fixed",bottom:28,left:"50%",transform:"translateX(-50%)",zIndex:300,background:C.red,color:"#fff",padding:"13px 28px",borderRadius:28,fontSize:14,fontWeight:700,cursor:"pointer",boxShadow:"0 4px 20px rgba(0,0,0,0.35)",animation:"fadeUp 0.5s ease both",userSelect:"none",display:"flex",alignItems:"center",gap:8}}>
+            <span style={{fontSize:18}}>▶</span> Tap to enable audio
+          </div>
+        )}
         <style>{CSS}</style>
       </div>
     );
