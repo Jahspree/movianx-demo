@@ -6,7 +6,7 @@ import { buildAdaptiveAudioPlan, getIntensityLevel } from "../lib/AdaptiveAudioD
 import { emotionEngine } from "../lib/emotion/EmotionEngine";
 import { beatScheduler } from "../lib/emotion/BeatScheduler";
 import { emotionConductor } from "../lib/emotion/EmotionConductor";
-import { characterReactionEngine } from "../lib/emotion/CharacterReactionEngine";
+import { characterPresenceEngine } from "../lib/emotion/CharacterPresenceEngine";
 import { spatialReactionBus } from "../lib/emotion/SpatialReactionBus";
 import { BEAT_MANIFEST } from "../data/beatManifest-10seconds";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
@@ -780,7 +780,7 @@ export default function MovianxPlatform(){
     try{runtimeRef.current?.playbackManager?.stopScene?.()}catch(error){console.error("cleanup_playback_error",{reason,error:error?.message||String(error)})}
     try{audioEngine?.stopAll?.(reason)}catch(error){console.error("cleanup_audio_error",{reason,error:error?.message||String(error)})}
     emotionConductor.deactivate();
-    characterReactionEngine.deactivate();
+    characterPresenceEngine.deactivate();
     beatScheduler.clearHooks();
     beatScheduler.reset();
     emotionEngine.reset();
@@ -1025,7 +1025,7 @@ export default function MovianxPlatform(){
 
       // Activate the conductor and character engine now that AudioContext is open
       emotionConductor.activate(audioEngine);
-      characterReactionEngine.activate(audioEngine, assetResolver);
+      characterPresenceEngine.activate(audioEngine, assetResolver);
 
       beatScheduler.loadChapter(chapIdx, storyKey);
       beatScheduler.advance(); // execute beat 0 — sets tension, fires hooks
