@@ -1077,7 +1077,6 @@ export default function MovianxPlatform(){
       // Activate the conductor, character engine, and silence engine
       emotionConductor.activate(audioEngine);
       characterPresenceEngine.activate(audioEngine, assetResolver);
-      silenceEngine.activate(audioEngine);
 
       beatScheduler.loadChapter(chapIdx, storyKey);
       // beatScheduler.advance() is deferred — called after beat file detection in section 4

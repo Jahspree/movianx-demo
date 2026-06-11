@@ -79,10 +79,7 @@ class CharacterPresenceEngine {
 
     // Register afterBeat hook for silence requests
     beatScheduler.on("afterBeat", (beat, ctx) => {
-      proximitySystem.fromBeat(beat);          // update Sarah's position
-      if (beat.silenceType && beat.silenceAfter) {
-        silenceEngine.fromBeat(beat);          // typed silence
-      }
+      proximitySystem.fromBeat(beat);
     });
 
     this.#active = true;
