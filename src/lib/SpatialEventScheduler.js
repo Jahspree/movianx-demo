@@ -8,7 +8,13 @@ export class SpatialEventScheduler {
 
   schedule(event, baseDelay = 0, pressure = 0) {
     if (!this.audioEngine || !event) return null;
-    const jitter = Math.round((Math.random() * 2 - 1) * (180 + this.uncertainty * 650));
+    // In beat-narration mode (protectNarration), high-pressure events get
+    // tight timing (±80ms) so approach sounds stay close to their authored beat
+    // positions. Low-pressure events keep full jitter for naturalism.
+    const jitterRange = (this.protectNarration && pressure > 0.2)
+      ? 80
+      : Math.round(180 + this.uncertainty * 650);
+    const jitter = Math.round((Math.random() * 2 - 1) * jitterRange);
     const delay = Math.max(0, baseDelay + jitter);
     return this.audioEngine.addTimeout(() => {
       if (!this.protectNarration && pressure > 0.16 && Math.random() > 0.35) {
