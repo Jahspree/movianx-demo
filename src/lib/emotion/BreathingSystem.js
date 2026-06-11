@@ -24,10 +24,10 @@
 // rate:     playbackRate on Audio element (0.8 = slower/deeper, 1.4 = rapid)
 // pos:      3D spatial position relative to listener
 const MODES = {
-  slow:   { interval: 5200, volume: 0.020, rate: 0.82, pos: { x:  0.06, y: 0, z: -0.22 } },
-  uneven: { interval: 2800, volume: 0.035, rate: 0.91, pos: { x:  0.14, y: 0, z: -0.14 } },
-  shallow:{ interval: 1600, volume: 0.052, rate: 1.08, pos: { x:  0.18, y: 0, z: -0.08 } },
-  panic:  { interval:  640, volume: 0.082, rate: 1.42, pos: { x:  0.10, y: 0, z: -0.04 } },
+  slow:   { interval: 5200, volume: 0.020, rate: 0.82, pos: { x: -0.06, y: 0, z: -0.22 } },
+  uneven: { interval: 2800, volume: 0.035, rate: 0.91, pos: { x: -0.14, y: 0, z: -0.14 } },
+  shallow:{ interval: 1600, volume: 0.052, rate: 1.08, pos: { x: -0.18, y: 0, z: -0.08 } },
+  panic:  { interval:  640, volume: 0.082, rate: 1.42, pos: { x: -0.10, y: 0, z: -0.04 } },
 };
 
 // Tension → breathing mode
