@@ -241,11 +241,13 @@ class AudioEngine {
     this.duckingGain = ctx.createGain();
     this.duckingGain.gain.setValueAtTime(1, ctx.currentTime);
 
-    // Shared room reverb for tension + event foley — puts Foley in the same
-    // acoustic space as the voice reverb. Short impulse (0.10s, fast decay)
-    // at 1.8% wet so it adds room presence without muddying the mix.
+    // Shared room reverb for tension + event foley — puts foley in the same
+    // acoustic space as voice. Impulse parameters match playNarration's reverb
+    // exactly (0.14s, 0.38 decay) so the ear places them in one room.
+    // Wet level (1.8%) is lower than voice (3.8%) — foley is slightly drier
+    // because it's not intimate close-mic, but the room character matches.
     this.foleyReverb = ctx.createConvolver();
-    this.foleyReverb.buffer = this.createCloseRoomImpulse(0.10, 0.28);
+    this.foleyReverb.buffer = this.createCloseRoomImpulse(0.14, 0.38);
     const foleyReverbWet = ctx.createGain();
     foleyReverbWet.gain.setValueAtTime(0.018, ctx.currentTime);
 

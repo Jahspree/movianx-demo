@@ -8,6 +8,7 @@ import { beatScheduler } from "../lib/emotion/BeatScheduler";
 import { emotionConductor } from "../lib/emotion/EmotionConductor";
 import { characterPresenceEngine } from "../lib/emotion/CharacterPresenceEngine";
 import { spatialReactionBus } from "../lib/emotion/SpatialReactionBus";
+import { silenceEngine } from "../lib/emotion/SilenceEngine";
 import { BEAT_MANIFEST } from "../data/beatManifest-10seconds";
 import { getBeatSfx } from "../lib/storyDNA";
 import SpatialEventScheduler from "../lib/SpatialEventScheduler";
@@ -1058,6 +1059,7 @@ export default function MovianxPlatform(){
         const audio=audioEngine.playNarration(beatUrl,1.4);
         if(audio){
           audio.addEventListener("ended",()=>{
+            silenceEngine.fromBeat(beat);
             const delay=beat.silenceAfter||0;
             const doAdvance=()=>{
               const hasMore=beatScheduler.advance();
@@ -1072,9 +1074,10 @@ export default function MovianxPlatform(){
         }
       });
 
-      // Activate the conductor and character engine now that AudioContext is open
+      // Activate the conductor, character engine, and silence engine
       emotionConductor.activate(audioEngine);
       characterPresenceEngine.activate(audioEngine, assetResolver);
+      silenceEngine.activate(audioEngine);
 
       beatScheduler.loadChapter(chapIdx, storyKey);
       // beatScheduler.advance() is deferred — called after beat file detection in section 4
