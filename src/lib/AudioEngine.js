@@ -439,10 +439,23 @@ class AudioEngine {
         compressor.connect(reverb);
         reverb.connect(wetGain);
         wetGain.connect(this.getLayerDestination("narration"));
-        this.activeNodes.push(reverb, wetGain);
-        this.narrationManager.nodes.push(reverb, wetGain);
+        // Place Sarah beside the listener — slightly left, level, fractionally ahead.
+        // Dry voice is HRTF-positioned; reverb wet path stays diffuse (direct to bus).
+        const narratorPanner = ctx.createPanner();
+        narratorPanner.panningModel = "HRTF";
+        narratorPanner.distanceModel = "inverse";
+        narratorPanner.refDistance = 1;
+        narratorPanner.rolloffFactor = 1;
+        narratorPanner.positionX.setValueAtTime(-0.15, ctx.currentTime);
+        narratorPanner.positionY.setValueAtTime(0, ctx.currentTime);
+        narratorPanner.positionZ.setValueAtTime(-0.08, ctx.currentTime);
+        gain.connect(narratorPanner);
+        narratorPanner.connect(this.getLayerDestination("narration"));
+        this.activeNodes.push(reverb, wetGain, narratorPanner);
+        this.narrationManager.nodes.push(reverb, wetGain, narratorPanner);
+      } else {
+        gain.connect(this.getLayerDestination("narration"));
       }
-      gain.connect(this.getLayerDestination("narration"));
       this.activeNodes.push(source, filter, proximity, presence, compressor, gain, humanize, humanizeDepth);
       this.registerLayerGain(gain, "narration");
       this.narrationManager.gainNode = gain;
