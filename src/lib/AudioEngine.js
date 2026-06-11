@@ -156,6 +156,7 @@ class AudioEngine {
     this.atmosphereFilter = null; // BiquadFilter on ambient bus — driven by EmotionConductor
     this.duckingGain = null;      // GainNode on ambient path — ducked on narration start/SFX fire
     this.foleyReverb = null;      // ConvolverNode shared by tension+event — puts foley in the same room as voice
+    this.roomImpulseBuffer = null; // AudioBuffer generated once at init, shared by foley + narration reverbs
     this.currentTension = 0;
     this.experienceState = {
       tension: 0,
@@ -247,7 +248,8 @@ class AudioEngine {
     // Wet level (1.8%) is lower than voice (3.8%) — foley is slightly drier
     // because it's not intimate close-mic, but the room character matches.
     this.foleyReverb = ctx.createConvolver();
-    this.foleyReverb.buffer = this.createCloseRoomImpulse(0.14, 0.38);
+    this.roomImpulseBuffer = this.createCloseRoomImpulse(0.14, 0.38);
+    this.foleyReverb.buffer = this.roomImpulseBuffer;
     const foleyReverbWet = ctx.createGain();
     foleyReverbWet.gain.setValueAtTime(0.018, ctx.currentTime);
 
@@ -435,7 +437,7 @@ class AudioEngine {
         const wetGain = ctx.createGain();
         wetGain.gain.setValueAtTime(0.038, ctx.currentTime);
         const reverb = ctx.createConvolver();
-        reverb.buffer = this.createCloseRoomImpulse(0.14, 0.38);
+        reverb.buffer = this.roomImpulseBuffer;
         compressor.connect(reverb);
         reverb.connect(wetGain);
         wetGain.connect(this.getLayerDestination("narration"));
@@ -988,6 +990,7 @@ class AudioEngine {
     this.atmosphereFilter = null;
     this.duckingGain = null;
     this.foleyReverb = null;
+    this.roomImpulseBuffer = null;
     this.currentTension = 0;
     this.experienceLoop = null;
     this.experienceState = { tension: 0, presence: 0, immersion: 0, uncertainty: 0, control: 0 };
