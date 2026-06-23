@@ -114,6 +114,17 @@ function transform(file, compName) {
                  .split('logo-mark.png').join('/movianx-logo.png')
                  .split('logo-full.png').join('/movianx-logo.png');
 
+  // ---- fonts: brand spec is Inter Tight (display/wordmark/labels) + Inter (body/nav/inputs).
+  // Landing v2 + Experience already declare these. The Portal was exported with Archivo — remap it:
+  // root default → Inter Tight (covers wordmark, "CHOOSE YOUR PATH", h1, CREATE/EXPLORE labels),
+  // and the descriptive body paragraphs → Inter.
+  if (/Portal/.test(file)) {
+    markup = markup.replace(/'Archivo',\s*-apple-system,\s*sans-serif/g, "'Inter Tight',-apple-system,BlinkMacSystemFont,sans-serif");
+    // the two body <p> blocks (sub-headline + card descriptions) → Inter
+    markup = markup.replace(/font-size:15px;\s*line-height:1\.7;/g, "font-family:'Inter',sans-serif; font-size:15px; line-height:1.7;");
+    markup = markup.replace(/font-size:15px;\s*line-height:1\.75;/g, "font-family:'Inter',sans-serif; font-size:15px; line-height:1.75;");
+  }
+
   // ---- emit component ----
   const comp = `"use client";
 /* AUTO-GENERATED from approved design "${file}". Do not hand-edit; regenerate via scripts/dc-to-react.js */
