@@ -1,0 +1,21 @@
+# Heavy POC / non-web artifacts — NOT part of the Next.js app build graph.
+# Excluded so the Vercel upload stays small (was ~9.4 GB of these alone).
+
+# Audio render outputs from the A2–A7C POC work (6+ GB)
+outputs/
+
+# StyleTTS2 Python models + venv (3+ GB). No page/route/api imports this; only standalone
+# CLI scripts reference it, and those are not part of `next build`.
+src/lib/poc/speech/
+
+# Dev-only knowledge notes and local agent config
+knowledge/
+.claude/
+
+# Python / OS cruft
+**/__pycache__/
+**/*.pyc
+**/.DS_Store
+
+# Backup audio takes
+**/*.bak.mp3

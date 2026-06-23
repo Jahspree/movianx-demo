@@ -4,3 +4,11 @@ node_modules/
 .env.local
 .vercel
 .env*.local
+
+# POC / heavy non-web artifacts (mirror of .vercelignore)
+outputs/
+src/lib/poc/speech/
+knowledge/
+**/__pycache__/
+**/*.pyc
+**/*.bak.mp3
