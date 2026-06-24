@@ -341,6 +341,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (!el){ el = d.createElement('style'); el.id='mx-perf-style'; (d.head||d.documentElement).appendChild(el); }
     if (el.textContent !== FIXCSS) el.textContent = FIXCSS;
   }
+  // ---- mobile scroll dead-zone fix (root cause) ----
+  // The posters/thumbnails are real <img> elements rendered INSIDE each image-slot's shadow DOM, so
+  // document CSS can't reach them. On iOS those shadow images intercept the initial touch (long-press
+  // callout / drag) after scroll momentum stops, so you can't start a new scroll from a card. Inject
+  // the fix into each shadow root and make the image layer pass touches through to the page.
+  function fixMedia(){
+    d.querySelectorAll('image-slot').forEach(function(s){
+      if (s.__mxMediaFixed) return;
+      var sr = s.shadowRoot; if (!sr) return;
+      s.__mxMediaFixed = 1;
+      var st = d.createElement('style');
+      st.textContent = ':host{-webkit-touch-callout:none;-webkit-user-drag:none;touch-action:pan-y;}'
+        + 'img,.frame,picture,video,div{pointer-events:none !important;-webkit-touch-callout:none !important;'
+        + '-webkit-user-drag:none !important;user-select:none !important;touch-action:pan-y !important;}';
+      sr.appendChild(st);
+    });
+  }
   // form-fit: also enforce in JS (covers browsers without :has and the bundler's inline widths)
   function fixForms(){
     var mob = window.innerWidth <= 560;
@@ -412,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async function() {
       });
     });
   }
-  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); fixForms(); }catch(e){} }
+  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); fixForms(); fixMedia(); }catch(e){} }
 
   var tries = 0, iv = setInterval(function(){
     tries++; run();
