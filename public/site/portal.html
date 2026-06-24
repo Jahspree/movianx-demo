@@ -300,19 +300,45 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700&display=swap">
 <script>
 (function(){
   var d = document, BG = "#020203";
-  // ---- page-transition overlay: covers during load, fades to reveal; fades back on nav ----
-  // Attached to <html> (and re-ensured in run()) so it survives the bundler replacing <body>.
+  // ---- page-transition overlay (survives bundler body re-render; never deadlocks on bfcache) ----
+  // Bug fix: previously, on browser-Back the page restored from bfcache with the overlay still
+  // 'covering' (opacity 1, pointer-events auto) from the outgoing navigation, so the Create/Explore
+  // selector was unclickable until a refresh. Now a 'navigating' flag + a bfcache-aware pageshow
+  // handler guarantee the overlay is cleared on return.
   var ov = d.createElement('div');
   ov.setAttribute('data-mx-overlay','1');
   ov.style.cssText = 'position:fixed;inset:0;z-index:2147483647;background:'+BG+';opacity:1;transition:opacity .45s ease;pointer-events:none;';
-  var revealed = false;
-  function ensureOverlay(){ try{ if(!ov.isConnected) d.documentElement.appendChild(ov); ov.style.opacity = revealed ? '0' : '1'; }catch(e){} }
-  ensureOverlay();
-  function reveal(){ if(revealed) return; revealed = true; ensureOverlay(); ov.style.opacity = '0'; setTimeout(function(){ ov.style.pointerEvents='none'; }, 500); }
+  var navigating = false;
+  function attach(){ try{ if(!ov.isConnected) d.documentElement.appendChild(ov); }catch(e){} }
+  function cover(){ attach(); ov.style.pointerEvents='auto'; ov.style.opacity='1'; }
+  function uncover(){ attach(); ov.style.opacity='0'; ov.style.pointerEvents='none'; }
+  cover();                                  // cover during the initial bundle decode
+  function reveal(){ if (navigating) return; uncover(); }
+
+  // ---- perf: pause infinite animations + drop GPU layers in OFFSCREEN sections ----
+  // The bundles run continuous animations (marquee, node-graph float/nerve, ken-burns) even when
+  // scrolled out of view, and pin ~22 will-change layers. That's the Explore scroll lag/freeze.
+  // Pausing offscreen animations + releasing will-change is non-visual for anything on screen.
+  var animIO = null;
+  function perfStyle(){
+    if (!d.getElementById('mx-perf-style')){           // re-add if the bundler wiped <head>
+      var ps = d.createElement('style'); ps.id='mx-perf-style';
+      ps.textContent='[data-mx-off] *{animation-play-state:paused !important;will-change:auto !important;}';
+      (d.head||d.documentElement).appendChild(ps);
+    }
+  }
+  function perfHarden(){
+    perfStyle();
+    if (!animIO){ try{ animIO = new IntersectionObserver(function(es){ es.forEach(function(e){
+      if (e.isIntersecting) e.target.removeAttribute('data-mx-off'); else e.target.setAttribute('data-mx-off','');
+    }); }, { rootMargin:'300px' }); }catch(e){ return; } }
+    d.querySelectorAll('section').forEach(function(s){ if(!s.__mxObs){ s.__mxObs=1; try{ animIO.observe(s); }catch(e){} } });
+  }
 
   function rewire(){
     d.querySelectorAll('a[href]').forEach(function(a){
@@ -362,14 +388,13 @@ document.addEventListener('DOMContentLoaded', async function() {
       a.addEventListener('click', function(ev){
         var href = a.getAttribute('href') || '';
         if (/^\/(creators|explore)?$/.test(href)){
-          ev.preventDefault();
-          ov.style.pointerEvents='auto'; ov.style.opacity='1';
+          ev.preventDefault(); navigating = true; cover();
           setTimeout(function(){ window.location.href = href; }, 360);
         }
       });
     });
   }
-  function run(){ try{ ensureOverlay(); rewire(); fonts(); responsive(); bindNav(); }catch(e){} }
+  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); }catch(e){} }
 
   var tries = 0, iv = setInterval(function(){
     tries++; run();
@@ -379,7 +404,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   try { new MutationObserver(run).observe(d.documentElement, { childList:true, subtree:true }); } catch(e){}
   window.addEventListener('resize', function(){ try{ responsive(); }catch(e){} });
   window.addEventListener('load', function(){ run(); setTimeout(reveal, 600); });
-  window.addEventListener('pageshow', reveal);
+  // bfcache restore (browser Back/Forward): force the overlay clear so the selector is usable
+  // again without a refresh — this is the Create/Explore navigation-lock fix.
+  window.addEventListener('pageshow', function(e){ if (e.persisted){ navigating = false; uncover(); run(); } });
+  // safety net: a tap when not mid-navigation guarantees the overlay is never a blocker
+  window.addEventListener('pointerdown', function(){ if(!navigating) uncover(); }, true);
 })();
 </script>
 
