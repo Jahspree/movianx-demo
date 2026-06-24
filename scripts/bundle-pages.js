@@ -49,12 +49,30 @@ const INJECT = (bg) => `
   // scrolled out of view, and pin ~22 will-change layers. That's the Explore scroll lag/freeze.
   // Pausing offscreen animations + releasing will-change is non-visual for anything on screen.
   var animIO = null;
+  var FIXCSS = [
+    // perf: pause offscreen animations + release their GPU layers
+    '[data-mx-off] *{animation-play-state:paused !important;will-change:auto !important;}',
+    // mobile scroll fix: links/cards/images are draggable by default, so on iOS a touch-drag over
+    // a card/poster starts a native drag/callout instead of scrolling. Disable drag + callout and
+    // keep vertical panning so a swipe over any media scrolls the page.
+    'a,img,image-slot,[class*="mx-fc"],[class*="mx-rail"],[id^="mx-rail"]{-webkit-user-drag:none !important;-webkit-touch-callout:none !important;}',
+    'image-slot,[class*="mx-fc"],[id^="mx-rail"]{touch-action:pan-y;}',
+    // mobile overflow fix: keep the email-capture pill (and its button) inside the viewport
+    '@media (max-width:560px){div:has(> input[type="email"]){max-width:calc(100vw - 28px) !important;box-sizing:border-box !important;}div:has(> input[type="email"]) > input[type="email"]{width:auto !important;flex:1 1 0 !important;min-width:0 !important;}}'
+  ].join('');
   function perfStyle(){
-    if (!d.getElementById('mx-perf-style')){           // re-add if the bundler wiped <head>
-      var ps = d.createElement('style'); ps.id='mx-perf-style';
-      ps.textContent='[data-mx-off] *{animation-play-state:paused !important;will-change:auto !important;}';
-      (d.head||d.documentElement).appendChild(ps);
-    }
+    var el = d.getElementById('mx-perf-style');
+    if (!el){ el = d.createElement('style'); el.id='mx-perf-style'; (d.head||d.documentElement).appendChild(el); }
+    if (el.textContent !== FIXCSS) el.textContent = FIXCSS;
+  }
+  // form-fit: also enforce in JS (covers browsers without :has and the bundler's inline widths)
+  function fixForms(){
+    var mob = window.innerWidth <= 560;
+    d.querySelectorAll('input[type="email"]').forEach(function(inp){
+      var pill = inp.parentElement;
+      if (pill && pill.style){ pill.style.maxWidth = mob?'calc(100vw - 28px)':''; pill.style.boxSizing = mob?'border-box':''; }
+      inp.style.width = mob?'auto':''; inp.style.flex = mob?'1 1 0':''; inp.style.minWidth = mob?'0':'';
+    });
   }
   function perfHarden(){
     perfStyle();
@@ -118,7 +136,7 @@ const INJECT = (bg) => `
       });
     });
   }
-  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); }catch(e){} }
+  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); fixForms(); }catch(e){} }
 
   var tries = 0, iv = setInterval(function(){
     tries++; run();
@@ -126,7 +144,7 @@ const INJECT = (bg) => `
     if (tries > 50){ reveal(); clearInterval(iv); }
   }, 150);
   try { new MutationObserver(run).observe(d.documentElement, { childList:true, subtree:true }); } catch(e){}
-  window.addEventListener('resize', function(){ try{ responsive(); }catch(e){} });
+  window.addEventListener('resize', function(){ try{ responsive(); fixForms(); }catch(e){} });
   window.addEventListener('load', function(){ run(); setTimeout(reveal, 600); });
   // bfcache restore (browser Back/Forward): force the overlay clear so the selector is usable
   // again without a refresh — this is the Create/Explore navigation-lock fix.
