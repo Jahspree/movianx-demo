@@ -16,19 +16,19 @@ const OUT = path.join(__dirname, '../public/site');
 fs.mkdirSync(OUT, { recursive: true });
 
 const MAP = [
-  { src: 'MOVIANX Portal.html',     out: 'portal.html',     bg: '#020203' },
-  { src: 'MOVIANX Landing v2.html', out: 'creators.html',   bg: '#FAFAF9' },
-  { src: 'MOVIANX Experience.html', out: 'experience.html', bg: '#FAFAF9' },
+  { src: 'MOVIANX Portal.html',     out: 'portal.html',     bg: '#020203', audience: null },
+  { src: 'MOVIANX Landing v2.html', out: 'creators.html',   bg: '#FAFAF9', audience: 'creator' },
+  { src: 'MOVIANX Experience.html', out: 'experience.html', bg: '#FAFAF9', audience: 'viewer' },
 ];
 
-const INJECT = (bg) => `
+const INJECT = (bg, audience) => `
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700&display=swap">
 <script>
 (function(){
-  var d = document, BG = ${JSON.stringify(bg)};
+  var d = document, BG = ${JSON.stringify(bg)}, AUDIENCE = ${JSON.stringify(audience)};
   // ---- page-transition overlay (survives bundler body re-render; never deadlocks on bfcache) ----
   // Bug fix: previously, on browser-Back the page restored from bfcache with the overlay still
   // 'covering' (opacity 1, pointer-events auto) from the outgoing navigation, so the Create/Explore
@@ -89,6 +89,47 @@ const INJECT = (bg) => `
       var pill = inp.parentElement;
       if (pill && pill.style){ pill.style.maxWidth = mob?'calc(100vw - 28px)':''; pill.style.boxSizing = mob?'border-box':''; }
       inp.style.width = mob?'auto':''; inp.style.flex = mob?'1 1 0':''; inp.style.minWidth = mob?'0':'';
+    });
+  }
+  // ---- signup wiring: email pill -> /api/subscribe -> Loops onboarding trigger ----
+  // The bundle renders the email input at runtime, so we bind here. On submit we fire our own POST
+  // (creator_signup on /creators, viewer_signup on /explore) and show a confirmation in place,
+  // suppressing the bundle's native button/form handler so nothing navigates away.
+  var EMAIL_RE = /^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/;
+  function showSuccess(inp){
+    try{
+      var pill = inp.closest('form') || inp.parentElement;
+      var host = (pill && pill.parentElement) || pill;
+      if (!host) return;
+      var msg = d.createElement('div');
+      msg.setAttribute('data-mx-thanks','1');
+      msg.style.cssText = 'padding:14px 20px;text-align:center;font-family:Inter,sans-serif;font-weight:500;font-size:15px;line-height:1.45;color:inherit;opacity:.92;';
+      msg.textContent = "You're on the list — check your inbox for your first message from Movianx.";
+      host.innerHTML = '';
+      host.appendChild(msg);
+    }catch(e){}
+  }
+  function wireForms(){
+    if (!AUDIENCE) return;                      // portal has no signup form
+    d.querySelectorAll('input[type="email"]').forEach(function(inp){
+      if (inp.__mxSub) return; inp.__mxSub = 1;
+      var form = inp.closest('form');
+      var scope = form || inp.parentElement || inp;
+      var btn = scope.querySelector && scope.querySelector('button');
+      if (!btn && inp.parentElement && inp.parentElement.parentElement){ btn = inp.parentElement.parentElement.querySelector('button'); }
+      function submit(ev){
+        if (ev){ ev.preventDefault(); ev.stopPropagation(); }
+        var email = (inp.value || '').trim();
+        if (!EMAIL_RE.test(email)){ try{ inp.focus(); }catch(e){} return; }
+        try{
+          fetch('/api/subscribe', { method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ email: email, audience: AUDIENCE }) }).catch(function(){});
+        }catch(e){}
+        showSuccess(inp);                       // optimistic confirmation
+      }
+      if (btn && !btn.__mxSub){ btn.__mxSub = 1; btn.addEventListener('click', submit, true); }
+      inp.addEventListener('keydown', function(e){ if (e.key === 'Enter'){ submit(e); } }, true);
+      if (form && !form.__mxSub){ form.__mxSub = 1; form.addEventListener('submit', submit, true); }
     });
   }
   function perfHarden(){
@@ -153,7 +194,28 @@ const INJECT = (bg) => `
       });
     });
   }
-  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); fixForms(); fixMedia(); }catch(e){} }
+  // ---- footer wiring: route the (previously dead href="#") footer links to real destinations ----
+  // Company/Legal text links -> internal pages; the four Follow icons -> external socials.
+  // Social URLs mirror the canonical list in src/lib/socialLinks.js (single source of truth).
+  var FOOTER_MAP = { 'about':'/about','news':'/news','contact':'/contact','privacy':'/privacy','terms':'/terms','for creators':'/creators' };
+  var SOCIAL_URLS = ['https://instagram.com/movianx','https://tiktok.com/@movianx','https://youtube.com/@movianx','https://x.com/movianx'];
+  function wireFooter(){
+    var f = d.querySelector('footer'); if (!f) return;
+    var icons = [];
+    f.querySelectorAll('a').forEach(function(a){
+      var txt = (a.textContent || '').trim().toLowerCase().replace(/\\s+/g,' ');
+      if (FOOTER_MAP[txt]) { a.setAttribute('href', FOOTER_MAP[txt]); }
+      else if (a.querySelector('svg')) { icons.push(a); }
+    });
+    icons.forEach(function(a, i){
+      if (i < SOCIAL_URLS.length){
+        a.setAttribute('href', SOCIAL_URLS[i]);
+        a.setAttribute('target','_blank');
+        a.setAttribute('rel','noopener noreferrer');
+      }
+    });
+  }
+  function run(){ try{ attach(); rewire(); fonts(); responsive(); bindNav(); perfHarden(); fixForms(); fixMedia(); wireForms(); wireFooter(); }catch(e){} }
 
   var tries = 0, iv = setInterval(function(){
     tries++; run();
@@ -176,7 +238,7 @@ for (const m of MAP) {
   let html = fs.readFileSync(path.join(SRC, m.src), 'utf8');
   const idx = html.lastIndexOf('</body>');
   if (idx === -1) { console.error('no </body> in', m.src); continue; }
-  html = html.slice(0, idx) + INJECT(m.bg) + '\n' + html.slice(idx);
+  html = html.slice(0, idx) + INJECT(m.bg, m.audience) + '\n' + html.slice(idx);
   fs.writeFileSync(path.join(OUT, m.out), html);
   console.log('wrote public/site/' + m.out, '(' + (html.length/1024/1024).toFixed(1) + ' MB)');
 }

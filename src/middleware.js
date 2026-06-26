@@ -1,12 +1,23 @@
 import { NextResponse } from 'next/server';
 
 // TEMPORARY SITE LOCKDOWN
-// Public surface = exactly three routes. Everything else (dashboards, /watch story routes, /qa,
-// /poc, internal demos, experimental/unfinished functionality) is redirected to the homepage so
-// it cannot be discovered via URL manipulation. No auth/waitlist/invite — pure routing lockdown.
+// Public surface = the marketing pages plus the public supporting pages. Everything else
+// (dashboards, /watch story routes, /qa, /poc, internal demos, experimental/unfinished
+// functionality) is redirected to the homepage so it cannot be discovered via URL manipulation.
+// No auth/waitlist/invite — pure routing lockdown.
 // Reverse this by widening PUBLIC_ROUTES (or removing this file) when those areas are ready.
 
-const PUBLIC_ROUTES = new Set(['/', '/creators', '/explore']);
+const PUBLIC_ROUTES = new Set([
+  '/',
+  '/creators',
+  '/explore',
+  // Public supporting pages (footer destinations): About / News / Contact / Privacy / Terms.
+  '/about',
+  '/news',
+  '/contact',
+  '/privacy',
+  '/terms',
+]);
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;

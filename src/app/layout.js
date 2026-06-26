@@ -1,6 +1,7 @@
 import './globals.css';
 
 export const metadata = {
+  metadataBase: new URL('https://demo.movianx.com'),
   title: 'Movianx — Immersive Media Powered by AI',
   description: 'Experience immersive AI-enhanced entertainment across films, interactive stories, and cinematic media worlds.',
   openGraph: {
