@@ -1,42 +1,91 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
+import { createMiddlewareClient } from "./lib/supabase/middleware.js";
 
-// TEMPORARY SITE LOCKDOWN
-// Public surface = the marketing pages plus the public supporting pages. Everything else
-// (dashboards, /watch story routes, /qa, /poc, internal demos, experimental/unfinished
-// functionality) is redirected to the homepage so it cannot be discovered via URL manipulation.
-// No auth/waitlist/invite — pure routing lockdown.
-// Reverse this by widening PUBLIC_ROUTES (or removing this file) when those areas are ready.
+// Site access model:
+//  - Public marketing pages (/, /create, /creators, /explore) are open and untouched (no session work).
+//  - PUBLIC watch: /watch (published discovery hub) + /watch/[published-slug] (detail; page enforces
+//    published+public+non-archived, else 404). Demo/internal watch zones are NOT public.
+//  - /dashboard and /studio require a logged-in Supabase session, else → /login.
+//  - /api/* passes through (each route enforces its own auth); /login + /auth/* are open.
+//  - Everything else (poc, qa, experimental) stays hidden → redirected home.
 
-const PUBLIC_ROUTES = new Set([
-  '/',
-  '/creators',
-  '/explore',
+const PUBLIC_PAGES = new Set([
+  "/",
+  "/create",
+  "/creators",
+  "/explore",
   // Public supporting pages (footer destinations): About / News / Contact / Privacy / Terms.
-  '/about',
-  '/news',
-  '/contact',
-  '/privacy',
-  '/terms',
+  "/about",
+  "/news",
+  "/contact",
+  "/privacy",
+  "/terms",
 ]);
 
-export function middleware(request) {
+// Demo/internal watch zones — hidden from the public at launch (redirect to the public hub).
+const BLOCKED_WATCH_ZONES = new Set(["/watch/movies", "/watch/music", "/watch/stories", "/watch/sirens"]);
+
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
-  if (PUBLIC_ROUTES.has(pathname)) {
+  // Demo/internal watch zones: redirect to the public watch hub before any public bypass.
+  if (BLOCKED_WATCH_ZONES.has(pathname)) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/watch";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+
+  // Marketing pages + public watch (hub + published detail slugs): bypass entirely (fast, no session).
+  // The /watch/[slug] page itself enforces published-only, so unpublished/archived/demo slugs 404.
+  if (PUBLIC_PAGES.has(pathname) || pathname === "/watch" || pathname.startsWith("/watch/")) {
     return NextResponse.next();
   }
 
-  // Anything else → send to the public homepage.
+  // Refresh the Supabase session and read the current user.
+  const { supabase, response } = createMiddlewareClient(request);
+  let user = null;
+  if (supabase) {
+    try {
+      user = (await supabase.auth.getUser()).data?.user || null;
+    } catch {
+      user = null;
+    }
+  }
+
+  // API routes + auth flow pass through (routes/pages enforce their own access).
+  if (
+    pathname.startsWith("/api/") ||
+    pathname === "/login" ||
+    pathname.startsWith("/auth/")
+  ) {
+    return response;
+  }
+
+  // Session-gated areas.
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/studio")) {
+    if (user) return response;
+    // Dev-only founder bypass: the Genesis Lab opens locally (e.g. when Supabase auth isn't
+    // configured) so the founder can test in the browser. NEVER active in a production build.
+    if (process.env.NODE_ENV !== "production" && pathname.startsWith("/dashboard/genesis-test")) {
+      return response;
+    }
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    url.searchParams.set("next", pathname);
+    return NextResponse.redirect(url);
+  }
+
+  // Everything else stays hidden.
   const url = request.nextUrl.clone();
-  url.pathname = '/';
-  url.search = '';
-  return NextResponse.redirect(url, 307);
+  url.pathname = "/";
+  url.search = "";
+  return NextResponse.redirect(url);
 }
 
 export const config = {
-  // Run on page navigations only. Skip Next internals and any static asset (paths containing a dot,
-  // plus the public asset folders) so the locked pages still load their images, audio, and logo.
   matcher: [
-    '/((?!_next/static|_next/image|favicon.ico|images/|audio/|movianx-logo.png|.*\\..*).*)',
+    "/((?!_next/static|_next/image|favicon.ico|images/|audio/|movianx-logo.png|.*\\..*).*)",
   ],
 };
